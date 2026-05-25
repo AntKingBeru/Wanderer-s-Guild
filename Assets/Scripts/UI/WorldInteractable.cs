@@ -17,11 +17,11 @@ namespace QuestSystem.UI
  
         [Header("Interaction")]
         [Tooltip("Maximum distance from the camera for the raycast to register.")]
-        [SerializeField] private float interactDistance = 10f;
+        [SerializeField] private float interactDistance = 20f;
  
         [Tooltip("Layer(s) this interactable's collider lives on. " +
                  "Create a dedicated layer (e.g. 'Interactable') and assign it here " +
-                 "AND on the GameObject itself so the raycast only hits interactables.")]
+                 "AND on the GameObject itself so the raycast only hits interactable.")]
         [SerializeField] private LayerMask interactLayer = ~0;
  
         [Tooltip("Child GameObject used as a hover highlight (e.g. an outline mesh, " +
@@ -29,8 +29,8 @@ namespace QuestSystem.UI
         [SerializeField] private GameObject highlightObject;
         
         [SerializeField] private Camera mainCamera;
- 
-        protected bool IsOpen { get; private set; }
+
+        private bool IsOpen { get; set; }
  
         private void OnEnable()
         {
@@ -58,7 +58,8 @@ namespace QuestSystem.UI
  
         private void OnClickPerformed(InputAction.CallbackContext ctx)
         {
-            if (!IsPointerOverThis()) return;
+            if (!IsPointerOverThis())
+                return;
  
             if (IsOpen)
                 ClosePanel();
@@ -68,7 +69,7 @@ namespace QuestSystem.UI
         
         /// <summary>
         /// Returns true if the current pointer position ray hits this object's collider.
-        /// Uses Mouse.current for pointer position (new Input System).
+        /// Uses Mouse.Current for pointer position (new Input System).
         /// </summary>
         private bool IsPointerOverThis()
         {
