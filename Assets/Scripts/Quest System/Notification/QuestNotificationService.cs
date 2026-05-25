@@ -23,8 +23,8 @@ namespace QuestSystem
  
         public NotificationData(NotificationType type, string message)
         {
-            Type      = type;
-            Message   = message;
+            Type = type;
+            Message = message;
             Timestamp = DateTime.Now;
         }
     }
