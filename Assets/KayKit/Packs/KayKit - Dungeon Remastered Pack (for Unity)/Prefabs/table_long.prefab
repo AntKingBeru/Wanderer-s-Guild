@@ -127,7 +127,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e61fda297a31124eb73f3594fa688a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestSystem.UI.QuestCreatorInteractable
-  clickAction: {fileID: -2176014840162207243, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  clickAction: {fileID: -1599879734669290544, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  cameraActionMapName: Camera
   interactDistance: 20
   interactLayer:
     serializedVersion: 2

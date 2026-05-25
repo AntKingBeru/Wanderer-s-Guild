@@ -19,7 +19,7 @@ namespace QuestSystem.UI
                 return;
             }
 
-            boardUI.Show();
+            boardUI.Show(this);
             SetOpen(true);
         }
 
@@ -29,7 +29,6 @@ namespace QuestSystem.UI
                 return;
 
             boardUI.Hide();
-            SetOpen(false);
         }
     }
 }

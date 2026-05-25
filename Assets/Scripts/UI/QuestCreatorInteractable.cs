@@ -19,7 +19,7 @@ namespace QuestSystem.UI
                 return;
             }
 
-            creatorUI.Show();
+            creatorUI.Show(this);
             SetOpen(true);
         }
 
@@ -29,7 +29,6 @@ namespace QuestSystem.UI
                 return;
 
             creatorUI.Hide();
-            SetOpen(false);
         }
     }
 }

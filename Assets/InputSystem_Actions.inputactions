@@ -50,15 +50,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
-                },
-                {
-                    "name": "Click",
-                    "type": "Button",
-                    "id": "ea685a5a-6ea0-4488-91b3-b694dbf4a2d0",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -116,10 +107,27 @@
                     "action": "Zoom",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
+                }
+            ]
+        },
+        {
+            "name": "Player",
+            "id": "eac94602-e288-4ce9-9d5f-4383677d0398",
+            "actions": [
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "9addcede-f568-4ea9-9597-0b4c03c8ddb6",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
                 {
                     "name": "",
-                    "id": "4a936b7a-9619-4f3d-93d0-ffcd71f7a008",
+                    "id": "13bbb9e8-a59d-4a8d-bf97-a10d807e5ee9",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",

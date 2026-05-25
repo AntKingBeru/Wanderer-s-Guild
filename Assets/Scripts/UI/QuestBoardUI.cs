@@ -22,14 +22,14 @@ namespace QuestSystem.UI
         
         [Header("Right Panel – Board Slots")]
         [SerializeField] private List<BoardSlotUI> boardSlots = new();
-        
         [SerializeField] private Button closeButton;
  
+        private QuestBoardInteractable _ownerInteractable;
         private readonly List<QuestCardUI> _spawnedCards = new();
  
         private void Awake()
         {
-            closeButton.onClick.AddListener(Hide);
+            closeButton.onClick.AddListener(OnClickClosed);
  
             // Assign slot indices
             for (var i = 0; i < boardSlots.Count; i++)
@@ -50,14 +50,23 @@ namespace QuestSystem.UI
                 QuestManager.Instance.OnQuestCreated -= OnQuestCreated;
         }
         
-        public void Show()
+        public void Show(QuestBoardInteractable owner = null)
         {
+            _ownerInteractable = owner;
             RefreshUnpostedList();
             RefreshBoardSlots();
             rootPanel.SetActive(true);
         }
- 
+
         public void Hide() => rootPanel.SetActive(false);
+        
+        private void OnClickClosed()
+        {
+            if (_ownerInteractable)
+                _ownerInteractable.RequestClose();
+            else
+                Hide();
+        }
         
         private void RefreshUnpostedList()
         {
@@ -97,15 +106,13 @@ namespace QuestSystem.UI
  
         private void OnCardDroppedOnSlot(QuestCardUI card, BoardSlotUI slot)
         {
-            if (!slot.IsEmpty) return;
-            if (!QuestManager.Instance) return;
+            if (!slot.IsEmpty || !QuestManager.Instance)
+                return;
  
             var success = QuestManager.Instance.PostQuestToSlot(card.Quest, slot.SlotIndex);
             if (success)
             {
                 slot.Fill(card.Quest);
- 
-                // Remove card from the left list
                 _spawnedCards.Remove(card);
                 Destroy(card.gameObject);
             }

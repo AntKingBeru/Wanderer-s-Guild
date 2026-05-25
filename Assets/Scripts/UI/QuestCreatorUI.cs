@@ -25,13 +25,20 @@ namespace QuestSystem.UI
  
         [Header("Popup")]
         [SerializeField] private RequestPopupUI requestPopup;
+        
+        // The world-prop that opened us - needed so Close re-enables camera controls.
+        private QuestCreatorInteractable _ownerInteractable;
  
         // Track spawned list items so we can refresh the list
         private readonly List<RequestListItemUI> _spawnedItems = new();
+        
+        // Tracks which request is loaded into the middle panel (but not yet confirmed).
+        // We must NOT remove it from the list until the quest is actually created.
+        private QuestRequest _pendingRequest;
  
         private void Awake()
         {
-            closeButton.onClick.AddListener(Hide);
+            closeButton.onClick.AddListener(OnCloseClicked);
             requestPopup.OnCreateQuestClicked += OnCreateQuestFromPopup;
             rootPanel.SetActive(false);
         }
@@ -48,9 +55,16 @@ namespace QuestSystem.UI
                 QuestManager.Instance.OnRequestReceived -= OnNewRequestArrived;
         }
         
-        public void Show()
+        /// <summary>
+        /// Open the window. Pass the interactable so the Close button can re-enable
+        /// the camera action map via RequestClose().
+        /// </summary>
+        public void Show(QuestCreatorInteractable owner = null)
         {
+            _ownerInteractable = owner;
+            _pendingRequest = null;
             RefreshRequestList();
+            creationPanel.ShowEmpty();
             rootPanel.SetActive(true);
         }
  
@@ -58,6 +72,18 @@ namespace QuestSystem.UI
         {
             requestPopup.Hide();
             rootPanel.SetActive(false);
+        }
+
+        private void OnCloseClicked()
+        {
+            // Restore any in-progress request back to the list before closing
+            // (in case the player had loaded on into the middle panel but didn't confirm)
+            _pendingRequest = null;
+
+            if (_ownerInteractable)
+                _ownerInteractable.RequestClose();
+            else
+                Hide();
         }
         
         private void RefreshRequestList()
@@ -85,14 +111,23 @@ namespace QuestSystem.UI
  
         private void OnCreateQuestFromPopup(QuestRequest request)
         {
-            creationPanel.PopulateFromRequest(request);
-            // Remove the corresponding list item immediately
-            var toRemove = _spawnedItems.Find(i => i.Request == request);
+            _pendingRequest = request;
+            creationPanel.PopulateFromRequest(request, OnQuestConfirmed);
+        }
+
+        /// <summary>
+        ///  Callback fired by QuestCreationPanelUI after the player confirms creation.
+        /// Only at this point is the request removed from the left-panel list
+        /// </summary>
+        private void OnQuestConfirmed(QuestRequest confirmedRequest)
+        {
+            var toRemove = _spawnedItems.Find(item => item.Request == confirmedRequest);
             if (toRemove)
             {
                 _spawnedItems.Remove(toRemove);
                 Destroy(toRemove.gameObject);
             }
+            _pendingRequest = null;
         }
  
         private void OnNewRequestArrived(QuestRequest _)

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -41,7 +42,7 @@ namespace QuestSystem.UI
         [SerializeField] private GameObject emptyStateLabel;
         
         private QuestRequest _activeRequest;
-        private int _rankMin, _rankMax;
+        private Action<QuestRequest> _onConfirmed;
         
         private void Awake()
         {
@@ -52,35 +53,38 @@ namespace QuestSystem.UI
             ShowEmpty();
         }
         
-        /// <summary>Populate the panel with data from the chosen request.</summary>
-        public void PopulateFromRequest(QuestRequest request)
+        /// <summary>
+        /// Populate the panel with data from the chosen request.
+        /// </summary>
+        public void PopulateFromRequest(QuestRequest request, Action<QuestRequest> onConfirmed)
         {
             _activeRequest = request;
+            _onConfirmed = onConfirmed;
             var globalMax = QuestManager.Instance ? QuestManager.Instance.GlobalMaxRank : 10;
  
             // Static fields
             questNameText.text = request.requestName;
             categoryText.text = request.category.ToString();
             adventurerLimitText.text = $"Party Size: {request.adventurerLimit}";
-            timeLimitText.text = $"Time Limit: {request.timeLimitMinutes} min";
+            timeLimitText.text = $"Time Limit: {GameClock.FormatMinutesAsGameTime(request.timeLimitMinutes)}";
  
             // Category tags (small, read-only)
             var tags = QuestCategoryTags.GetTags(request.category);
             categoryTagsText.text = tags.Count > 0 ? "Tags: " + string.Join(", ", tags) : "";
  
             // Rank slider
-            _rankMin = Mathf.Max(0, request.minRank - 1);
-            _rankMax = Mathf.Min(globalMax, request.maxRank + 1);
-            rankSlider.minValue = _rankMin;
-            rankSlider.maxValue = _rankMax;
+            var rankMin = Mathf.Max(0, request.minRank - 1);
+            var rankMax = Mathf.Min(globalMax, request.maxRank + 1);
+            rankSlider.minValue = rankMin;
+            rankSlider.maxValue = rankMax;
             rankSlider.wholeNumbers = true;
-            rankSlider.value = Mathf.Clamp(request.minRank, _rankMin, _rankMax);
+            rankSlider.value = Mathf.Clamp(request.minRank, rankMin, rankMax);
  
             // Reward slider
             rewardSlider.minValue = 0;
             rewardSlider.maxValue = request.maxGoldReward;
             rewardSlider.wholeNumbers = true;
-            rewardSlider.value = request.maxGoldReward;
+            rewardSlider.value = request.maxGoldReward * 0.75f;
  
             RefreshPoints();
             SetActiveState(true);
@@ -88,12 +92,15 @@ namespace QuestSystem.UI
         
         public void ShowEmpty()
         {
+            _activeRequest = null;
+            _onConfirmed = null;
             SetActiveState(false);
         }
         
         private void SetActiveState(bool active)
         {
-            if (emptyStateLabel) emptyStateLabel.SetActive(!active);
+            if (emptyStateLabel)
+                emptyStateLabel.SetActive(!active);
             rankSlider.gameObject.SetActive(active);
             rewardSlider.gameObject.SetActive(active);
             postQuestButton.gameObject.SetActive(active);
@@ -101,13 +108,13 @@ namespace QuestSystem.UI
             if (active)
                 return;
             
-            questNameText.text   = "";
-            categoryText.text    = "";
+            questNameText.text = "";
+            categoryText.text = "";
             categoryTagsText.text = "";
             adventurerLimitText.text = "";
-            timeLimitText.text   = "";
-            pointsText.text      = "";
-            rankValueText.text   = "";
+            timeLimitText.text = "";
+            pointsText.text = "";
+            rankValueText.text = "";
             rewardValueText.text = "";
         }
  
@@ -142,9 +149,12 @@ namespace QuestSystem.UI
                     (int)rankSlider.value,
                     (int)rewardSlider.value);
  
+                var confirmed = _activeRequest;
+                // Clears _activeRequest before invoking callback
                 ShowEmpty();
+                _onConfirmed?.Invoke(confirmed);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 Debug.LogError($"[QuestCreationPanelUI] Failed to create quest: {ex.Message}");
             }
