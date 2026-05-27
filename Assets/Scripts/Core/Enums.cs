@@ -29,11 +29,11 @@ public enum Season
 // Named "Weekday" (not DayOfWeek) to avoid ambiguity with System.DayOfWeak in files that import System.
 public enum Weekday
 {
-    Moonday,
-    Tysday,
-    Odinday,
-    Thorday,
-    Frigday,
-    Laufeyday,
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
     Sunday
 }

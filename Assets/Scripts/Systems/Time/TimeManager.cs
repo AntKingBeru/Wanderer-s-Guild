@@ -15,26 +15,26 @@ public class TimeManager : MonoBehaviour
     [Header("Time Configuration")]
     [Tooltip("How many real-world seconds equal one in-game minute. Lower = faster days.")]
     [SerializeField] private float realSecondsPerGameMinute = 1f;
-    
-    [Tooltip("In-game hour to start at (0-23).")]
+
+    [Tooltip("In-game hour to start at (0–23).")]
     [SerializeField, Range(0, 23)] private int startHour = 6;
-    
-    [Tooltip("In-game minute to start at (0-59).")]
+
+    [Tooltip("In-game minute to start at (0–59).")]
     [SerializeField, Range(0, 59)] private int startMinute;
-    
-    [Tooltip("Starting day of the month (1-based.")]
+
+    [Tooltip("Starting day of the month (1-based).")]
     [SerializeField, Min(1)] private int startDay = 1;
-    
-    [Tooltip("Starting month of the year (1-based).")]
+
+    [Tooltip("Starting month (1-based).")]
     [SerializeField, Range(1, 12)] private int startMonth = 1;
-    
+
     [Tooltip("Starting year.")]
-    [SerializeField] private int startYear = 1;
-    
+    [SerializeField, Min(1)] private int startYear = 1;
+
     [Tooltip("How many days are in each month. Kept uniform for simplicity.")]
     [SerializeField, Min(1)] private int daysPerMonth = 30;
-    
-    [Tooltip("How many months are in a year. Should be divisible by 4 to keep season even.")]
+
+    [Tooltip("How many months are in a year. Should be divisible by 4 to keep seasons even.")]
     [SerializeField, Range(4, 24)] private int monthsPerYear = 12;
     #endregion
     
@@ -114,7 +114,6 @@ public class TimeManager : MonoBehaviour
         _day = startDay;
         _month = startMonth;
         _year = startYear;
-        _isPaused = false;
     }
 
     private void OnEnable()
@@ -191,7 +190,7 @@ public class TimeManager : MonoBehaviour
         // Capture season before incrementing so we can detect a season boundary crossing.
         var previousSeason = GetCurrentSeason();
         _month++;
-        if (_month >= monthsPerYear)
+        if (_month > monthsPerYear)
         {
             _month = 1;
             AdvanceYear();
@@ -228,25 +227,17 @@ public class TimeManager : MonoBehaviour
     /// </summary>
     public TimeOfDay GetCurrentTimeOfDay()
     {
-        switch (_hour)
+        return _hour switch
         {
-            case < 5:
-                return TimeOfDay.Midnight;
-            case < 7:
-                return TimeOfDay.Dawn;
-            case < 12:
-                return TimeOfDay.Morning;
-            case < 13:
-                return TimeOfDay.Noon;
-            case < 17:
-                return TimeOfDay.Afternoon;
-            case < 19:
-                return TimeOfDay.Evening;
-            case < 21:
-                return TimeOfDay.Dusk;
-            default:
-                return TimeOfDay.Night;
-        }
+            < 5 => TimeOfDay.Midnight,
+            < 7 => TimeOfDay.Dawn,
+            < 12 => TimeOfDay.Morning,
+            < 13 => TimeOfDay.Noon,
+            < 17 => TimeOfDay.Afternoon,
+            < 19 => TimeOfDay.Evening,
+            < 21 => TimeOfDay.Dusk,
+            _ => TimeOfDay.Night
+        };
     }
 
     /// <summary>
@@ -274,11 +265,14 @@ public class TimeManager : MonoBehaviour
     #endregion
     
     #region Input Callbacks
-    private void OnPauseTogglePerformed(InputAction.CallbackContext context) => SetPaused(!_isPaused);
+    private void OnPauseTogglePerformed(InputAction.CallbackContext context)
+        => SetPaused(!_isPaused);
     
-    private void OnIncreasePerformed(InputAction.CallbackContext context) => SetTimeScale(timeScale + timeScaleStep);
+    private void OnIncreasePerformed(InputAction.CallbackContext context)
+        => SetTimeScale(timeScale + timeScaleStep);
     
-    private void OnDecreasePerformed(InputAction.CallbackContext context) => SetTimeScale(timeScale - timeScaleStep);
+    private void OnDecreasePerformed(InputAction.CallbackContext context)
+        => SetTimeScale(timeScale - timeScaleStep);
     #endregion
     
     #region Helpers
@@ -294,8 +288,8 @@ public class TimeManager : MonoBehaviour
     {
         if (actionRef.action == null)
             return;
-        actionRef.action.Disable();
         actionRef.action.performed -= callback;
+        actionRef.action.Disable();
     }
     #endregion
 }

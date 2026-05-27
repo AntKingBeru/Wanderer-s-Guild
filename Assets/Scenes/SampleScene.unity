@@ -1463,6 +1463,64 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7fd20cf199cb93a4986c1f3864630c06, type: 3}
   m_PrefabInstance: {fileID: 939692541}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &959265398
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 959265399}
+  - component: {fileID: 959265400}
+  m_Layer: 0
+  m_Name: TimeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &959265399
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 959265398}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1744095568}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &959265400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 959265398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5c129ab73b00014e98dbdafa461fc7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimeManager
+  realSecondsPerGameMinute: 1
+  startHour: 6
+  startMinute: 0
+  startDay: 1
+  startMonth: 1
+  startYear: 1
+  daysPerMonth: 30
+  monthsPerYear: 12
+  timeScale: 1
+  maxTimeScale: 10
+  timeScaleStep: 1
+  pauseToggleAction: {fileID: 6074864741519636265, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  increaseTimeScaleAction: {fileID: -5010977517870401914, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  decreaseTimeScaleAction: {fileID: 2581665825403100586, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
 --- !u!1001 &982768226
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2379,19 +2437,64 @@ MonoBehaviour:
       value: 0
       inSlope: 0
       outSlope: 0
-      tangentMode: 0
+      tangentMode: 34
       weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1
-      value: 1
+      time: 0.22
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.27
+      value: 0.6
+      inSlope: 7.304347
+      outSlope: 7.304347
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 1.2
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.73
+      value: 0.6
+      inSlope: -7.3043537
+      outSlope: -7.3043537
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.78
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -2433,7 +2536,7 @@ MonoBehaviour:
     serializedVersion: 2
     key0: {r: 0.019607844, g: 0.019607844, b: 0.0627451, a: 1}
     key1: {r: 0.23921569, g: 0.12156863, b: 0.050980393, a: 1}
-    key2: {r: 0.49411765, g: 0.65882355, b: 0.78431374, a: 0}
+    key2: {r: 0.5196592, g: 0.44537973, b: 0.40081203, a: 0}
     key3: {r: 0.23921569, g: 0.12156863, b: 0.050980393, a: 0}
     key4: {r: 0.019607844, g: 0.019607844, b: 0.0627451, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
@@ -2504,7 +2607,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
-  m_UsePipelineSettings: 1
+  m_UsePipelineSettings: 0
   m_AdditionalLightsShadowResolutionTier: 2
   m_CustomShadowLayers: 0
   m_LightCookieSize: {x: 1, y: 1}
@@ -2595,7 +2698,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1744095568}
-  - component: {fileID: 1744095569}
   m_Layer: 0
   m_Name: _Managers
   m_TagString: Untagged
@@ -2615,35 +2717,10 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 959265399}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1744095569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1744095567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5c129ab73b00014e98dbdafa461fc7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TimeManager
-  realSecondsPerGameMinute: 1
-  startHour: 6
-  startMinute: 0
-  startDay: 1
-  startMonth: 1
-  startYear: 1
-  daysPerMonth: 30
-  monthsPerYear: 12
-  timeScale: 1
-  maxTimeScale: 10
-  timeScaleStep: 1
-  pauseToggleAction: {fileID: 6074864741519636265, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
-  increaseTimeScaleAction: {fileID: -5010977517870401914, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
-  decreaseTimeScaleAction: {fileID: 2581665825403100586, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
 --- !u!1001 &1758645680
 PrefabInstance:
   m_ObjectHideFlags: 0

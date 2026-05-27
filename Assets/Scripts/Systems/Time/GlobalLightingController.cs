@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class GlobalLightingController : MonoBehaviour
 {
-    // Sun
+    #region Sun
     [Header("Sun")]
     [Tooltip("The directional light representing the sun")]
     [SerializeField] private Light sunLight;
@@ -21,8 +21,9 @@ public class GlobalLightingController : MonoBehaviour
     [Tooltip("Y-axis rotation of the sun's arc, controlling its east-to-west direction. " +
              "-30 gives a southward trajectory typical for a northern-hemisphere aesthetics.")]
     [SerializeField, Range(-180f, 180f)] private float sunArcYRotation = -30f;
+    #endregion
     
-    // Moon
+    #region Moon
     [Header("Moon")]
     [Tooltip("The directional light representing the moon")]
     [SerializeField] private Light moonLight;
@@ -32,13 +33,15 @@ public class GlobalLightingController : MonoBehaviour
     
     [Tooltip("Color of the moonLight. A cool desaturated blue-white works well.")]
     [SerializeField] private Color moonColor = new Color(0.6f, 0.7f, 1f);
+    #endregion
     
-    // Ambient Light
+    #region Ambient Light
     [Header("Ambient Light")]
     [Tooltip("Ambient scene color over the day. Should be dark blue at night and warm at dawn/dusk.")]
     [SerializeField] private Gradient ambientColorGradient;
+    #endregion
     
-    // Internal
+    #region Internal
     // Threshold below which the sunlight is disabled to prevent underground shadow artifacts.
     // A small positive value (not exactly 0) avoids the light flickering at the horizon.
     private const float SunHorizonThreshold = 0.02f;
@@ -56,8 +59,9 @@ public class GlobalLightingController : MonoBehaviour
             return;
         ApplyLighting(TimeManager.Instance.NormalizedDayTime);
     }
+    #endregion
     
-    // Lighting Application
+    #region Lighting Application
     private void ApplyLighting(float time)
     {
         UpdateSun(time);
@@ -70,12 +74,12 @@ public class GlobalLightingController : MonoBehaviour
         if (!sunLight)
             return;
         
-        // Sun arc: rotates 360 degrees around the X-axis over one full day.
-        // At time = 0.0 (midnight): xAngle = -90
-        // At time = 0.25 (midnight): xAngle = 0
-        // At time = 0.5 (midnight): xAngle = 90
-        // At time = 0.75 (midnight): xAngle = 180
-        // At time = 1.0 (midnight): xAngle = 270
+        // Sun arc: rotates 360° around the X-axis over one full day.
+        // At t=0.0 (midnight): xAngle = -90° → light points upward → below horizon
+        // At t=0.25 (6 AM): xAngle = 0° → horizontal → sunrise
+        // At t=0.5 (noon): xAngle = 90° → straight down → overhead
+        // At t=0.75 (6 PM): xAngle = 180° → horizontal → sunset
+        // At t=1.0 (midnight): xAngle = 270° → back below horizon
         var xAngle = time * 360f - 90f;
         sunLight.transform.rotation = Quaternion.Euler(xAngle, sunArcYRotation, 0f);
         
@@ -86,7 +90,7 @@ public class GlobalLightingController : MonoBehaviour
         
         // Disable the light when it is below the horizon threshold to avoid shadow artifacts caused by an underground directional light.
         // xAngle in [0, 180] = above the horizon.
-        var normalizedAngle = (xAngle % 360f * 360f) % 360f; // ensures 0-360
+        var normalizedAngle = (xAngle % 360f + 360f) % 360f; // ensures 0-360
         sunLight.enabled = normalizedAngle is > SunHorizonThreshold * 360f and < 180f - SunHorizonThreshold * 360f;
     }
 
@@ -103,7 +107,7 @@ public class GlobalLightingController : MonoBehaviour
         moonLight.intensity = moonIntensity;
         
         // Moon is visible only when the sun is below the horizon threshold.
-        var normalizedSunAngle = (sunXAngle % 360f * 360f) % 360f;
+        var normalizedSunAngle = (sunXAngle % 360f + 360f) % 360f;
         var sunIsAboveHorizon = normalizedSunAngle is > SunHorizonThreshold * 360f and < 180f - SunHorizonThreshold * 360f;
         moonLight.enabled = !sunIsAboveHorizon;
     }
@@ -113,4 +117,5 @@ public class GlobalLightingController : MonoBehaviour
         if (ambientColorGradient != null)
             RenderSettings.ambientLight = ambientColorGradient.Evaluate(time);
     }
+    #endregion
 }
