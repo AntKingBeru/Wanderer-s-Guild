@@ -3,6 +3,12 @@
     "name": "InputSystem_Actions",
     "maps": [
         {
+            "name": "Gameplay",
+            "id": "9e49a56f-e6ba-4313-a897-70f876c713af",
+            "actions": [],
+            "bindings": []
+        },
+        {
             "name": "Camera",
             "id": "99792c78-eb5f-485f-b8a7-b9e2ea9577f8",
             "actions": [
@@ -111,32 +117,10 @@
             ]
         },
         {
-            "name": "Player",
-            "id": "eac94602-e288-4ce9-9d5f-4383677d0398",
-            "actions": [
-                {
-                    "name": "Click",
-                    "type": "Button",
-                    "id": "9addcede-f568-4ea9-9597-0b4c03c8ddb6",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "13bbb9e8-a59d-4a8d-bf97-a10d807e5ee9",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Click",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
+            "name": "Building",
+            "id": "bd1709d4-87d5-4ce7-a4bc-abbd15295b31",
+            "actions": [],
+            "bindings": []
         }
     ],
     "controlSchemes": [
