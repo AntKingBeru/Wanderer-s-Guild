@@ -82,6 +82,8 @@ public class TimeManager : MonoBehaviour
     #endregion
     
     #region Public Read-Only Properties
+    public int DaysPerMonth => daysPerMonth;
+    public int MonthsPerYear => monthsPerYear;
     public int Minute => _minute;
     public int Hour => _hour;
     public int Day => _day;
