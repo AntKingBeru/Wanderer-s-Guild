@@ -32,6 +32,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "70391ffd-3be0-49cc-af4b-5d81b0a90b2f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -89,12 +98,29 @@
                     "action": "DecreaseTimeScale",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c006143a-8f74-4532-b2af-639b292ed121",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
         {
             "name": "Building",
             "id": "a089d1ff-c620-480b-a39f-c91da5f03912",
+            "actions": [],
+            "bindings": []
+        },
+        {
+            "name": "Camera",
+            "id": "dbafc4c5-6754-4aae-8c1c-6c36324fad40",
             "actions": [],
             "bindings": []
         }
