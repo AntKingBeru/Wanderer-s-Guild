@@ -68,6 +68,7 @@ public class QuestManager : MonoBehaviour
     
     #region Public Properties
     public int GuildFunds => _guildFunds;
+    public QuestConfig Config => questConfig;
     public IReadOnlyList<QuestRequest> AvailableRequests => _availableRequests;
     public IReadOnlyList<QuestData> UnpostedQuests => _unpostedQuests;
     public IReadOnlyList<QuestData> InProgressQuests => _inProgressQuests;

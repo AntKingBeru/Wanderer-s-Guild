@@ -29,6 +29,9 @@ public class InteractionManager : MonoBehaviour
              "Bind to: Mouse/Left Button")]
     [SerializeField] private InputActionReference interactAction;
     
+    [Tooltip("Closes any open screen. Bind to Escape in the Gameplay map.")]
+    [SerializeField] private InputActionReference closeScreenAction;
+    
     [Tooltip("Camera used to build the interaction ray. " +
              "Leave empty to fall back to Camera.main at runtime.")]
     [SerializeField] private Camera cam;
@@ -112,6 +115,10 @@ public class InteractionManager : MonoBehaviour
             return;
         interactAction.action.Enable();
         interactAction.action.performed += HandleInteract;
+        if (!closeScreenAction)
+            return;
+        closeScreenAction.action.Enable();
+        closeScreenAction.action.performed += HandleCloseScreen;
     }
 
     private void OnDisable()
@@ -120,6 +127,10 @@ public class InteractionManager : MonoBehaviour
             return;
         interactAction.action.performed -= HandleInteract;
         interactAction.action.Disable();
+        if (!closeScreenAction)
+            return;
+        closeScreenAction.action.performed -= HandleCloseScreen;
+        closeScreenAction.action.Disable();
         // Prevent props staying highlighted if this component is toggled off.
         ClearHover();
     }
@@ -198,6 +209,9 @@ public class InteractionManager : MonoBehaviour
 
         OpenScreen(_hoveredInteractable.ScreenType);
     }
+
+    private void HandleCloseScreen(InputAction.CallbackContext ctx) 
+        => CloseScreen();
     #endregion
     
     #region Screen Control

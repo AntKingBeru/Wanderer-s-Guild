@@ -4174,6 +4174,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractionManager
   inputActionAsset: {fileID: -944628639613478452, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
   interactAction: {fileID: -8338691786309594367, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  closeScreenAction: {fileID: 3584001168404311939, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
   cam: {fileID: 330585545}
   interactableLayer:
     serializedVersion: 2
