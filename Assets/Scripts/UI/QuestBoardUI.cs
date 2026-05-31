@@ -1,6 +1,5 @@
-// Root controller for the Quest Board screen.
-// Left panel: scrollable list of unposted quests (draggable).
-// Right panel: 10 board slots in a 2*5 grid (drop targets).
+// Controls the Quest Board screen.
+// Uses a CanvasGroup for visibility so the GameObject stays active at all times.
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,9 +7,9 @@ using UnityEngine.UI;
 
 public class QuestBoardUI : MonoBehaviour
 {
-    [Header("Screen Root")]
-    [Tooltip("Root GameObject of the entire Quest Board screen.")]
-    [SerializeField] private GameObject screenRoot;
+    [Header("Screen Visibility")]
+    [Tooltip("CanvasGroup on the QuestBoardScreen root.")]
+    [SerializeField] private CanvasGroup screenCanvasGroup;
     
     [Header("Left Panel - Unposted Quests")]
     [Tooltip("VerticalLayoutGroup content object inside the unposted quests scroll view.")]
@@ -63,8 +62,8 @@ public class QuestBoardUI : MonoBehaviour
             QuestManager.Instance.OnBoardChanged += RefreshAllSlots;
             QuestManager.Instance.OnQuestStatusChanged += HandleQuestStatusChanged;
         }
-        
-        screenRoot?.SetActive(false);
+
+        HideScreen();
     }
 
     private void OnDisable()
@@ -85,12 +84,29 @@ public class QuestBoardUI : MonoBehaviour
     #endregion
     
     #region Screen Visibility
+    private void ShowScreen()
+    {
+        if (!screenCanvasGroup)
+            return;
+        screenCanvasGroup.alpha = 1f;
+        screenCanvasGroup.interactable = true;
+        screenCanvasGroup.blocksRaycasts = true;
+    }
 
+    private void HideScreen()
+    {
+        if (!screenCanvasGroup)
+            return;
+        screenCanvasGroup.alpha = 0f;
+        screenCanvasGroup.interactable = false;
+        screenCanvasGroup.blocksRaycasts = false;
+    }
+    
     private void HandleScreenOpened(ScreenType type)
     {
         if (type != ScreenType.QuestBoard)
             return;
-        screenRoot?.SetActive(true);
+        ShowScreen();
         RefreshUnpostedList();
         RefreshAllSlots();
     }
@@ -99,7 +115,7 @@ public class QuestBoardUI : MonoBehaviour
     {
         if (type != ScreenType.QuestBoard)
             return;
-        screenRoot?.SetActive(false);
+        HideScreen();
     }
 
     private void HandleClose()
@@ -112,7 +128,6 @@ public class QuestBoardUI : MonoBehaviour
         foreach (var item in _unpostedItems)
             Destroy(item.gameObject);
         _unpostedItems.Clear();
-
         if (!QuestManager.Instance || !unpostedItemPrefab)
             return;
         foreach (var quest in QuestManager.Instance.UnpostedQuests)
@@ -133,7 +148,7 @@ public class QuestBoardUI : MonoBehaviour
         for (var i = 0; i < boardSlots.Length; i++)
         {
             if (!boardSlots[i])
-                return;
+                continue;
             var slotQuest = QuestManager.Instance.GetBoardSlot(i);
             if (slotQuest != null)
                 boardSlots[i].SetOccupied(slotQuest);

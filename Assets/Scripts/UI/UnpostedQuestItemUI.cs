@@ -86,22 +86,9 @@ public class UnpostedQuestItemUI : MonoBehaviour, IBeginDragHandler, IDragHandle
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!_dragGhost || !_rootCanvas)
+        if (!_dragGhost)
             return;
-        
-        // Convert screen position to the root canvas's local space.
-        var uiCamera = _rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay
-            ? null
-            : _rootCanvas.worldCamera;
-
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                _rootCanvas.transform as RectTransform,
-                eventData.position,
-                uiCamera,
-                out var localPoint))
-        {
-            ((RectTransform)_rootCanvas.transform).anchoredPosition = localPoint;
-        }
+        PositionGhostAtCursor(eventData.position);
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -118,6 +105,28 @@ public class UnpostedQuestItemUI : MonoBehaviour, IBeginDragHandler, IDragHandle
         {
             Destroy(_dragGhost);
             _dragGhost = null;
+        }
+    }
+    #endregion
+    
+    #region Helpers
+    private void PositionGhostAtCursor(Vector2 screenPosition)
+    {
+        if (!_dragGhost || !_rootCanvas)
+            return;
+        
+        // Convert screen position to the root canvas's local space.
+        var uiCamera = _rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay
+            ? null
+            : _rootCanvas.worldCamera;
+
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                _rootCanvas.transform as RectTransform,
+                screenPosition,
+                uiCamera,
+                out var localPoint))
+        {
+            ((RectTransform)_rootCanvas.transform).anchoredPosition = localPoint;
         }
     }
     #endregion

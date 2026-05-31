@@ -1,6 +1,6 @@
-// Root controller for the Reception Desk
-// Coordinates the request list (left), quest creation form (middle), and request popup.
-// Subscribes to InteractionManager for screen open/close and QuestManager for data changes.
+// Controls the Reception Desk screen.
+// Uses a CanvasGroup for visibility so the GameObject stays active at all times
+// and OnEnable subscriptions are never missed.
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,9 +8,10 @@ using UnityEngine.UI;
 
 public class ReceptionDeskUI : MonoBehaviour
 {
-    [Header("Screen Root")]
-    [Tooltip("Root GameObject of the entire Reception Desk screen. Shown/hidden on open/close.")]
-    [SerializeField] private GameObject screenRoot;
+    [Header("Screen Visibility")]
+    [Tooltip("CanvasGroup on the ReceptionDeskScreen root. " +
+             "Used to show/hide the screen without disabling the GameObject.")]
+    [SerializeField] private CanvasGroup screenCanvasGroup;
 
     [Header("Left Panel")]
     [Tooltip("Vertical layout container inside the request list scroll view's content.")]
@@ -63,8 +64,8 @@ public class ReceptionDeskUI : MonoBehaviour
         if (questForm)
             questForm.OnCreateQuestClicked += HandleFormCreate;
         
-        // Always start hidden; InteractionManager reveals it on demand.
-        screenRoot.SetActive(false);
+        // Start hidden. The GameObject must stay active so this subscription persists.
+        HideScreen();
     }
 
     private void OnDisable()
@@ -90,11 +91,29 @@ public class ReceptionDeskUI : MonoBehaviour
     #endregion
 
     #region Screen Visibility
+    private void ShowScreen()
+    {
+        if (!screenCanvasGroup)
+            return;
+        screenCanvasGroup.alpha = 1f;
+        screenCanvasGroup.interactable = true;
+        screenCanvasGroup.blocksRaycasts = true;
+    }
+
+    private void HideScreen()
+    {
+        if (!screenCanvasGroup)
+            return;
+        screenCanvasGroup.alpha = 0f;
+        screenCanvasGroup.interactable = false;
+        screenCanvasGroup.blocksRaycasts = false;
+    }
+    
     private void HandleScreenOpened(ScreenType type)
     {
         if (type != ScreenType.ReceptionDesk)
             return;
-        screenRoot.SetActive(true);
+        ShowScreen();
         RefreshRequestList();
         questForm?.Clear();
         requestPopup?.Hide();
@@ -104,7 +123,7 @@ public class ReceptionDeskUI : MonoBehaviour
     {
         if (type != ScreenType.ReceptionDesk)
             return;
-        screenRoot.SetActive(false);
+        HideScreen();
     }
 
     private void HandleClose()
@@ -127,7 +146,7 @@ public class ReceptionDeskUI : MonoBehaviour
         foreach (var request in QuestManager.Instance.AvailableRequests)
         {
             if (!request.IsAvailable)
-                return;
+                continue;
             var item = Instantiate(requestItemPrefab, requestListContent);
             item.Populate(request);
             item.OnClicked += HandleRequestItemClicked;
@@ -136,9 +155,7 @@ public class ReceptionDeskUI : MonoBehaviour
     }
 
     private void HandleRequestItemClicked(QuestRequest request)
-    {
-        requestPopup?.Show(request);
-    }
+        => requestPopup?.Show(request);
     #endregion
     
     #region Popup
