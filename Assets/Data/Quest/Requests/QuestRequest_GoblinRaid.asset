@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestRequestData
   requestId: 8ae577ad-baed-45e4-892e-46c9811cc0be
   requestName: Goblin Raid on the Outpost
-  description: 'A golin horde is raiding the Outpost just outside the nearest village,
+  description: 'A goblin horde is raiding the Outpost just outside the nearest village,
     and the guard are overwhelmed.
 
     Please send help!'

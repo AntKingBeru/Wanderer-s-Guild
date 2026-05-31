@@ -27,6 +27,9 @@ public class QuestCardUI : MonoBehaviour
     [Tooltip("Displays the party size limit.")]
     [SerializeField] private TextMeshProUGUI partySizeLabel;
     
+    [Tooltip("Displays the quest time limit.")]
+    [SerializeField] private TextMeshProUGUI timeLimitLabel;
+    
     [Tooltip("Displays the current quest status.")]
     [SerializeField] private TextMeshProUGUI statusLabel;
     
@@ -46,6 +49,7 @@ public class QuestCardUI : MonoBehaviour
         categoryLabel.text = quest.Category.ToString();
         rewardLabel.text = $"{quest.PartyReward}g";
         partySizeLabel.text = $"Party: 1-{quest.PartyLimit}";
+        timeLimitLabel.text = $"{quest.TimeLimitHours}h";
         statusLabel.text = quest.Status.ToString();
 
         if (QuestManager.Instance?.Config)
