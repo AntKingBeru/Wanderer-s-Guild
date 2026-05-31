@@ -95,6 +95,8 @@ public class QuestFormUI : MonoBehaviour
         // Trigger label updates for the initial values.
         HandleRankSliderChanged(rankSlider.value);
         HandleRewardSliderChanged(rewardSlider.value);
+        
+        RefreshStateVisibility();
     }
     
     // Clears the form and shows the empty state prompt.
