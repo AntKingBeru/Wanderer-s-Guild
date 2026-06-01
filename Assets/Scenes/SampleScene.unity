@@ -1681,6 +1681,7 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
+  - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1806,6 +1807,31 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &330585548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee013f3f7a72247489c8555405853d72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IsoCamController
+  panAction: {fileID: -7379532543577999220, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  panButtonAction: {fileID: -2419410816180486909, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  rotateAction: {fileID: 6287468808123388421, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  rotateButtonAction: {fileID: 7439415754297113158, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  zoomAction: {fileID: 5766174040180321490, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  panSpeed: 0.02
+  rotateSpeed: 0.3
+  minPitch: -45
+  maxPitch: 45
+  zoomSpeed: 2
+  minZoomDistance: 3
+  maxZoomDistance: 40
+  zoomSmoothTime: 0.15
 --- !u!1 &352068308
 GameObject:
   m_ObjectHideFlags: 0
@@ -13679,7 +13705,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.33, y: 1}
-  m_AnchoredPosition: {x: 4.0005493, y: 0}
+  m_AnchoredPosition: {x: 4.0006104, y: 0}
   m_SizeDelta: {x: -8, y: -16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2098791528
