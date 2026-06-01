@@ -97,3 +97,15 @@ public enum ScreenType
     QuestBoard
 }
 #endregion
+
+#region Reputation
+
+public enum ReputationLevel
+{
+    ExtremelyLow,
+    Low,
+    Average,
+    High
+}
+
+#endregion
