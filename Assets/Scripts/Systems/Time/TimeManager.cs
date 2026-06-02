@@ -250,7 +250,7 @@ public class TimeManager : MonoBehaviour
     /// <summary>
     /// Returns a readable date string, e.g. "Day 4, Month 3, Year 2".
     /// </summary>
-    public string GetFormattedDate() => $"Day {_day}, Month {_month}, Year {_year}";
+    public string GetFormattedDate() => $"{(Weekday)(_day - 1)}, {(MonthDisplay)(_month - 1)}, Year {_year}";
     #endregion
     
     #region Public Control Methods

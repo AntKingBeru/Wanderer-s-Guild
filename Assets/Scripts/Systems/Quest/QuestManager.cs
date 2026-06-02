@@ -304,7 +304,7 @@ public class QuestManager : MonoBehaviour
         OnQuestStatusChanged?.Invoke(quest);
         return true;
     }
-    // Returns the quest in a given slot, or null if the slot is empty or the index is invalid.
+    // Returns the quest in a given slot or null if the slot is empty or the index is invalid.
     public QuestData GetBoardSlot(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= _boardSlots.Length)
@@ -414,7 +414,7 @@ public class QuestManager : MonoBehaviour
     #endregion
     
     #region PLACEHOLDER Application Simulator
-    // PLACEHOLDER: Entire block replaced when adventurer system is implemented.
+    // PLACEHOLDER: Entire block replaced when the adventurer system is implemented.
     // Each posted quest has a season-adjusted chance per hour to receive a dummy application.
     private void SimulateAdventurerApplications()
     {
@@ -467,7 +467,7 @@ public class QuestManager : MonoBehaviour
     #region Formulas
     // Computes the probability of a party succeeding on a quest.
     // Class affinity modifiers are left as zero until adventurer class data exists.
-    // This method is public so the UI can call it when displaying application details.
+    // This method is public, so the UI can call it when displaying application details.
     public float CalculateSuccessChance(QuestData quest, float partyStrength)
     {
         if (!questConfig)
@@ -488,7 +488,7 @@ public class QuestManager : MonoBehaviour
         );
     }
     // Computes when the quest will resolve, measured from the moment of dispatch.
-    // More efficient parties finish sooner; the result is clamped so it never equals or exceeds the quest's expiry (which would merge success and deadline failure).
+    // More efficient parties finish sooner; the result is clamped, so it never equals or exceeds the quest's expiry (which would merge success and deadline failure).
     private float CalculateResolveAtHour(QuestData quest, float partyStrength, float currentHour)
     {
         if (!questConfig)
@@ -508,7 +508,7 @@ public class QuestManager : MonoBehaviour
         var variance = rawHours * questConfig.CompletionTimeVariance;
         var finalHours = rawHours + UnityEngine.Random.Range(-variance, variance);
         // Clamp: at least a minimal resolution time, at most just under the expiry.
-        // Separating the two clamps avoids Mathf.Clamp(x, imn, max) with nim > max when remainingHours is shorter that the minimum floor.
+        // Separating the two clamps avoids Mathf.Clamp(x, imn, max) with nim > max when the remainingHours variable is shorter than the minimum floor.
         var safeMin = Mathf.Min(0.1f, remainingHours * 0.5f);
         var safeMax = Mathf.Max(finalHours, remainingHours - 0.5f);
         finalHours = Mathf.Clamp(finalHours, safeMin, safeMax);
