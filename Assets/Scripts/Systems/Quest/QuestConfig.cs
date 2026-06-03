@@ -1,6 +1,6 @@
 // ScriptableObject that centralizes every designer-tunable constant in the quest system.
 // One instance lives in Assets/Data/Quest/ and is referenced by QuestManager.
-// RankConfig is a struct (not a class) so it shares this file without violating the one-class-per-script rule.
+// RankConfig is a struct (not a class), so it shares this file without violating the one-class-per-script rule.
 
 using System;
 using UnityEngine;
@@ -38,12 +38,6 @@ public class QuestConfig : ScriptableObject
 
     [Tooltip("Ceiling on success chance regardless of how overpowered the party is.")]
     [SerializeField, Range(0f, 1f)] private float maxSuccessChance = 0.95f;
-
-    [Tooltip("Flat success chance added per party member whose class is preferred for the quest category.")]
-    [SerializeField, Range(0f, 0.5f)] private float preferredClassBonus = 0.08f;
-
-    [Tooltip("Flat success chance removed per party member whose class is disliked for the quest category.")]
-    [SerializeField, Range(0f, 0.5f)] private float dislikedClassPenalty = 0.12f;
     
     [Header("Completion Time Formula")]
     [Tooltip("Fastest a quest can resolve as a fraction of the remaining time at dispatch. " +
@@ -67,8 +61,6 @@ public class QuestConfig : ScriptableObject
     public int ApplicationWindowEndHour => applicationWindowEndHour;
     public float MinSuccessChance => minSuccessChance;
     public float MaxSuccessChance => maxSuccessChance;
-    public float PreferredClassBonus => preferredClassBonus;
-    public float DislikedClassPenalty => dislikedClassPenalty;
     public float MinCompletionRatio => minCompletionRatio;
     public float MaxCompletionRatio => maxCompletionRatio;
     public float CompletionTimeVariance => completionTimeVariance;
@@ -96,7 +88,7 @@ public class QuestConfig : ScriptableObject
     
     #region Editor Default Initialization
     // Called by Unity when the asset is first created via the menu.
-    // Pre-populates all 8 rank entries with the temp defaults so the inspector is never left with blank entries.
+    // Pre-populates all 8 rank entries with the temp defaults, so the inspector is never left with blank entries.
     // All values remain fully editable afterward.
     private void Reset()
     {

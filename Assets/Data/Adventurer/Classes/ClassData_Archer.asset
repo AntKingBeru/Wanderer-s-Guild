@@ -14,31 +14,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ClassData
   adventurerClass: 0
   displayName: Class
-  baseHp: 100
-  baseDamage: 10
-  baseSpeed: 8
-  hpPerLevel: 8
-  damagePerLevel: 2
+  baseHp: 80
+  baseDamage: 12
+  baseSpeed: 12
+  hpPerLevel: 5
+  damagePerLevel: 1.5
   speedPerLevel: 0.3
-  hpWeight: 0.3
-  damageWeight: 0.5
-  speedWeight: 0.2
+  hpWeight: 0.2
+  damageWeight: 0.4
+  speedWeight: 0.4
   categoryAffinities:
     combat: 1
-    gathering: 1
+    gathering: 0
     escort: 1
     delivery: 1
-    subjugation: 1
-    exploration: 1
-    investigation: 1
-    dungeon: 1
-  rankUpQuestCategory: 0
+    subjugation: 0
+    exploration: 0
+    investigation: 0
+    dungeon: 2
+  rankUpQuestCategory: 5
   rankUpDurations:
-    fToE: 24
-    eToD: 36
-    dToC: 48
-    cToB: 60
-    bToA: 72
-    aToS: 96
-    sToSpecial: 120
+    fToE: 30
+    eToD: 44
+    dToC: 56
+    cToB: 80
+    bToA: 104
+    aToS: 130
+    sToSpecial: 156
   advancedClassPaths: 

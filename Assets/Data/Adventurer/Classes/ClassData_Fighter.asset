@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: ClassData_Fighter
   m_EditorClassIdentifier: Assembly-CSharp::ClassData
   adventurerClass: 0
-  displayName: Class
-  baseHp: 100
-  baseDamage: 10
+  displayName: Fighter
+  baseHp: 120
+  baseDamage: 15
   baseSpeed: 8
   hpPerLevel: 8
   damagePerLevel: 2
@@ -24,21 +24,21 @@ MonoBehaviour:
   damageWeight: 0.5
   speedWeight: 0.2
   categoryAffinities:
-    combat: 1
-    gathering: 1
+    combat: 0
+    gathering: 2
     escort: 1
-    delivery: 1
-    subjugation: 1
+    delivery: 2
+    subjugation: 0
     exploration: 1
     investigation: 1
-    dungeon: 1
+    dungeon: 0
   rankUpQuestCategory: 0
   rankUpDurations:
     fToE: 24
     eToD: 36
     dToC: 48
-    cToB: 60
-    bToA: 72
-    aToS: 96
-    sToSpecial: 120
+    cToB: 72
+    bToA: 96
+    aToS: 120
+    sToSpecial: 144
   advancedClassPaths: 

@@ -29,18 +29,6 @@ public class ClassData : ScriptableObject
     [SerializeField, Min(0f)] private float speedPerLevel = 0.3f;
     #endregion
     
-    #region Power Calculation Weights
-    [Header("Power Calculation Weights")]
-    [Tooltip("Contribution of HP to the power score. All three weights should sum to 1.0.")]
-    [SerializeField, Range(0f, 1f)] private float hpWeight = 0.3f;
-    
-    [Tooltip("Contribution of Damage to the power score.")]
-    [SerializeField, Range(0f, 1f)] private float damageWeight = 0.5f;
-    
-    [Tooltip("Contribution of Speed to the power score.")]
-    [SerializeField, Range(0f, 1f)] private float speedWeight = 0.2f;
-    #endregion
-    
     #region Quest Category Affinities
     [Header("Quest Category Affinities")]
     [Tooltip("Preferred gives a positive flat modifier to success chance per member. " +
@@ -60,27 +48,10 @@ public class ClassData : ScriptableObject
     [SerializeField] private RankUpDurationSet rankUpDurations;
     #endregion
     
-    #region Future Training Paths
-    [Header("Advanced Class Training Paths — Future")]
-    [Tooltip("Classes this class can train into once the training room system is implemented. " +
-             "Leave empty until that system is built.")]
-    [SerializeField] private AdventurerClass[] advancedClassPaths = System.Array.Empty<AdventurerClass>();
-    #endregion
-    
     #region Public Accessors
     public AdventurerClass AdventurerClass => adventurerClass;
     public string DisplayName => displayName;
-    public float BaseHp => baseHp;
-    public float BaseDamage => baseDamage;
-    public float BaseSpeed => baseSpeed;
-    public float HpPerLevel => hpPerLevel;
-    public float DamagePerLevel => damagePerLevel;
-    public float SpeedPerLevel => speedPerLevel;
-    public float HpWeight => hpWeight;
-    public float DamageWeight => damageWeight;
-    public float SpeedWeight => speedWeight;
-    public QuestCategory RankUpQuestCategory => rankUpQuestCategory;
-    public AdventurerClass[] AdvancedClassPaths => advancedClassPaths;
+    public QuestCategory RankUpCategory => rankUpQuestCategory;
     #endregion
 
     #region Helpers
@@ -91,13 +62,6 @@ public class ClassData : ScriptableObject
         => baseDamage * damagePerLevel * (Mathf.Max(1, level) - 1);
     public float GetSpeed(int level) 
         => baseSpeed * speedPerLevel * (Mathf.Max(1, level) - 1);
-    
-    // Raw power for a given level before the rank multiplier is applied.
-    // Called by AdventurerManager when computing success chance and completions time.
-    public float GetBasePower(int level) 
-        => GetHp(level) * hpWeight
-           + GetDamage(level) * damageWeight
-           + GetSpeed(level) * speedWeight;
 
     // Returns this class's affinity for a given quest category
     public CategoryAffinity GetAffinity(QuestCategory category) 
@@ -135,14 +99,6 @@ public class ClassData : ScriptableObject
             aToS = 96f,
             sToSpecial = 120f,
         };
-    }
-
-    private void OnValidate()
-    {
-        var weightSum = hpWeight + damageWeight + speedWeight;
-        if (Mathf.Abs(weightSum - 1f) > 0.01f)
-            Debug.LogWarning($"[ClassData] '{name}': power weights sum to {weightSum:F2} " +
-                            $"(should be 1.0). Adjust HP / Damage / Speed weights.");
     }
 #endif
 }
