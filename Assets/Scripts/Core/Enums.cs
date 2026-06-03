@@ -102,9 +102,9 @@ public enum ScreenType
 
 public enum ReputationLevel
 {
-    ExtremelyLow,
-    Low,
-    Average,
+    ExtremelyLow = -51,
+    Low          = -1,
+    Average      = 50,
     High
 }
 
