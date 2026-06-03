@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b7713ca83072444951ba46e75c225d, type: 3}
+  m_Name: ClassData_Fighter
+  m_EditorClassIdentifier: Assembly-CSharp::ClassData
+  adventurerClass: 0
+  displayName: Class
+  baseHp: 100
+  baseDamage: 10
+  baseSpeed: 8
+  hpPerLevel: 8
+  damagePerLevel: 2
+  speedPerLevel: 0.3
+  hpWeight: 0.3
+  damageWeight: 0.5
+  speedWeight: 0.2
+  categoryAffinities:
+    combat: 1
+    gathering: 1
+    escort: 1
+    delivery: 1
+    subjugation: 1
+    exploration: 1
+    investigation: 1
+    dungeon: 1
+  rankUpQuestCategory: 0
+  rankUpDurations:
+    fToE: 24
+    eToD: 36
+    dToC: 48
+    cToB: 60
+    bToA: 72
+    aToS: 96
+    sToSpecial: 120
+  advancedClassPaths: 

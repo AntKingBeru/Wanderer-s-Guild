@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3e35ed302905864db3b369164ddd0eb, type: 3}
+  m_Name: AdventurerConfig
+  m_EditorClassIdentifier: Assembly-CSharp::AdventurerConfig
+  classPool: []
+  maxLevel: 50
+  xpBrackets:
+  - minLevel: 1
+    maxLevel: 10
+    xpPerLevelMultiplier: 100
+  - minLevel: 11
+    maxLevel: 25
+    xpPerLevelMultiplier: 200
+  - minLevel: 26
+    maxLevel: 50
+    xpPerLevelMultiplier: 400
+  rankPointThresholds:
+  - 100
+  - 300
+  - 700
+  - 1500
+  - 3000
+  - 6000
+  - 12000
+  - 0
+  rankMultipliers:
+  - 1
+  - 1.5
+  - 2.25
+  - 3.5
+  - 5
+  - 7
+  - 10
+  - 15
+  guildRankCap: 3
+  normalMaxPartySize: 5
+  eliteMaxPartySize: 7
+  elitePartyMinRank: 4
+  sleepPenalty1Night: 0.05
+  sleepPenalty2Nights: 0.12
+  sleepPenalty3PlusNights: 0.2
+  foodGraceDays: 1
+  foodPenaltyPerDay: 0.08
+  maxFoodPenalty: 0.2
+  failCheckChanceMultiplier: 0.08
+  failMarksToFail: 3
+  rankGapSplitThreshold: 2
+  rankGapSplitChance: 0.15
+  oneDeathSplitChance: 0.3
+  multiDeathSplitChance: 0.7
+  consecutiveFailSplitThreshold: 3
+  consecutiveFailSplitChance: 0.25
+  lowHpThreshold: 0.3
+  lowHpMajorityFraction: 0.5
+  lowHpSplitChance: 0.2
+  temporaryToPermQuestsRequired: 5
+  rankUpRetryQuestsRequired: 5
+  rankUpRetryCooldownMonths: 0.5
+  arrivalMinDays: 2
+  arrivalMaxDays: 3
+  startingRankWeights:
+  - 0.65
+  - 0.25
+  - 0.08
+  - 0.02
+  - 0
+  - 0
+  - 0
+  - 0
+  maxArrivalRankAboveCap: 1
