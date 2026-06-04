@@ -18,7 +18,7 @@ public class RandomAdventurerFactory : AdventurerFactory
     private static readonly int[] StartLevelMin = { 1, 4, 9, 16, 26, 37, 46, 50 };
     private static readonly int[] StartLevelMax = { 3, 8, 15, 25, 36, 45, 49, 50 };
     
-    private RandomAdventurerFactory(AdventurerConfig config)
+    public RandomAdventurerFactory(AdventurerConfig config)
     {
         if (!config)
             Debug.LogError("[RandomAdventurerFactory] AdventurerConfig is null. " +

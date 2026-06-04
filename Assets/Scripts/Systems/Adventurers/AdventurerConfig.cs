@@ -89,6 +89,12 @@ public class AdventurerConfig : ScriptableObject
              "Ranks above GuildRankCap + MaxArrivalRankAboveCap are ignored.")]
     [SerializeField] private float[] startingRankWeights =
         { 65f, 25f, 8f, 2f, 0f, 0f, 0f, 0f };
+    
+    [Tooltip("Base probability per in-game hour that an idle adventurer submits a quest application.")]
+    [SerializeField, Range(0f, 1f)] private float baseApplicationChancePerHour = 0.15f;
+    
+    [Tooltip("Application rate multiplier per season. Index matches Season enum (0=Spring…3=Winter).")]
+    [SerializeField] private float[] seasonApplicationRateModifiers = { 1.0f, 0.8f, 1.2f, 0.6f };
     #endregion
     
     #region Maintenance
@@ -180,6 +186,7 @@ public class AdventurerConfig : ScriptableObject
     public int MaxLevel => maxLevel;
     public float ArrivalRateMinDays => arrivalRateMinDays;
     public float ArrivalRateMaxDays => arrivalRateMaxDays;
+    public float BaseApplicationChancePerHour => baseApplicationChancePerHour;
     public float EarlyFailureCoefficient => earlyFailureCoefficient;
     public int EarlyFailureMarksRequired => earlyFailureMarksRequired;
     public int RankUpRetrySuccessesRequired => rankUpRetrySuccessesRequired;
@@ -245,6 +252,14 @@ public class AdventurerConfig : ScriptableObject
         if (foodDeprivedPenalties == null || foodDeprivedPenalties.Length == 0)
             return 0f;
         return foodDeprivedPenalties[Mathf.Clamp(daysDeprived, 0, foodDeprivedPenalties.Length - 1)];
+    }
+
+    public float GetSeasonApplicationModifier(Season season)
+    {
+        var index = (int)season;
+        if (seasonApplicationRateModifiers == null || index >= seasonApplicationRateModifiers.Length)
+            return 1f;
+        return seasonApplicationRateModifiers[index];
     }
     
     // Draws a random starting rank using the configured weight distribution.

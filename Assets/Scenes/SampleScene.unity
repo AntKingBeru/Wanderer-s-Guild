@@ -12113,6 +12113,7 @@ GameObject:
   - component: {fileID: 1744095569}
   - component: {fileID: 1744095570}
   - component: {fileID: 1744095571}
+  - component: {fileID: 1744095572}
   m_Layer: 0
   m_Name: _Managers
   m_TagString: Untagged
@@ -12207,6 +12208,20 @@ MonoBehaviour:
   interactionRange: 25
   hoverCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
+--- !u!114 &1744095572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1744095567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ba0f8d332cf07349ad5b369fb122be0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdventurerManager
+  config: {fileID: 11400000, guid: 3391bdffc63728e4e9c09f0b7d48b5ec, type: 2}
+  questConfig: {fileID: 11400000, guid: 8c1bf9dbd2b5cf548a348f6e8874f061, type: 2}
 --- !u!1 &1751517059
 GameObject:
   m_ObjectHideFlags: 0

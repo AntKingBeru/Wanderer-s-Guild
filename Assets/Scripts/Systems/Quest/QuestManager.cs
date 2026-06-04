@@ -145,7 +145,7 @@ public class QuestManager : MonoBehaviour
             && hour >= questConfig.ApplicationWindowStartHour
             && hour <= questConfig.ApplicationWindowEndHour;
 
-        if (inApplicationWindow)
+        if (inApplicationWindow && !AdventurerManager.Instance)
             SimulateAdventurerApplications(); // PLACEHOLDER
     }
     #endregion
@@ -263,6 +263,31 @@ public class QuestManager : MonoBehaviour
         OnAvailableRequestsChanged?.Invoke();
         OnUnpostedQuestsChanged?.Invoke();
         return quest;
+    }
+
+    public void ForceFailQuest(string questId)
+    {
+        for (var i = _inProgressQuests.Count - 1; i >= 0; i--)
+        {
+            var quest = _inProgressQuests[i];
+            if (quest.QuestId != questId)
+                continue;
+            _inProgressQuests.RemoveAt(i);
+            _resolvedQuests.Add(quest);
+            quest.Fail();
+            ApplyFailurePenalties(quest);
+            OnQuestStatusChanged?.Invoke(quest);
+            return;
+        } 
+        Debug.LogWarning($"[QuestManager] ForceFailQuest: '{questId}' not found in InProgress.");
+    }
+
+    public bool SubmitApplication(QuestData quest, QuestApplication application)
+    {
+        if (!quest.AddApplication(application))
+            return false;
+        OnApplicationSubmitted?.Invoke(application);
+        return true;
     }
     #endregion
     

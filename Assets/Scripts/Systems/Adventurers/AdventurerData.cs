@@ -151,6 +151,19 @@ public class AdventurerData
         return true;
     }
 
+    public bool DispatchToQuest(string questId)
+    {
+        if (_status != AdventurerStatus.AppliedToQuest)
+        {
+            Debug.LogWarning($"[AdventurerData] '{_name}' cannot be dispatched — status is {_status}.");
+            return false;
+        }
+        _status = AdventurerStatus.OnQuest;
+        _currentQuestId = questId;
+        _currentApplicationId = null;
+        return true;
+    }
+
     public bool ReturnFromQuest()
     {
         if (_status != AdventurerStatus.OnQuest)

@@ -12,7 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3e35ed302905864db3b369164ddd0eb, type: 3}
   m_Name: AdventurerConfig
   m_EditorClassIdentifier: Assembly-CSharp::AdventurerConfig
-  classPool: []
+  classPool:
+  - {fileID: 11400000, guid: e825226a00c6031438b3e1d62b3dd819, type: 2}
+  - {fileID: 11400000, guid: da0d0ce8aba68ff4a8b94be742f53896, type: 2}
+  guildRankCap: 3
+  hpWeight: 0.3
+  damageWeight: 0.5
+  speedWeight: 0.2
+  rankMultipliers:
+  - 1
+  - 1.5
+  - 2.25
+  - 3.5
+  - 5
+  - 7
+  - 10
+  - 15
+  preferredClassBonus: 0.08
+  dislikedClassPenalty: 0.12
   maxLevel: 50
   xpBrackets:
   - minLevel: 1
@@ -24,50 +41,9 @@ MonoBehaviour:
   - minLevel: 26
     maxLevel: 50
     xpPerLevelMultiplier: 400
-  rankPointThresholds:
-  - 100
-  - 300
-  - 700
-  - 1500
-  - 3000
-  - 6000
-  - 12000
-  - 0
-  rankMultipliers:
-  - 1
-  - 1.5
-  - 2.25
-  - 3.5
-  - 5
-  - 7
-  - 10
-  - 15
-  guildRankCap: 3
-  normalMaxPartySize: 5
-  eliteMaxPartySize: 7
-  elitePartyMinRank: 4
-  sleepPenalty1Night: 0.05
-  sleepPenalty2Nights: 0.12
-  sleepPenalty3PlusNights: 0.2
-  foodGraceDays: 1
-  foodPenaltyPerDay: 0.08
-  maxFoodPenalty: 0.2
-  failCheckChanceMultiplier: 0.08
-  failMarksToFail: 3
-  rankGapSplitThreshold: 2
-  rankGapSplitChance: 0.15
-  oneDeathSplitChance: 0.3
-  multiDeathSplitChance: 0.7
-  consecutiveFailSplitThreshold: 3
-  consecutiveFailSplitChance: 0.25
-  lowHpThreshold: 0.3
-  lowHpMajorityFraction: 0.5
-  lowHpSplitChance: 0.2
-  temporaryToPermQuestsRequired: 5
-  rankUpRetryQuestsRequired: 5
-  rankUpRetryCooldownMonths: 0.5
-  arrivalMinDays: 2
-  arrivalMaxDays: 3
+  rankPointThresholds: 0000000000000000000000000000000000000000000000000000000000000000
+  arrivalRateMinDays: 2
+  arrivalRateMaxDays: 3
   startingRankWeights:
   - 0.65
   - 0.25
@@ -77,4 +53,30 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  maxArrivalRankAboveCap: 1
+  sleepMissedPenalties:
+  - 0
+  - 0.05
+  - 0.12
+  - 0.2
+  foodDeprivedPenalties:
+  - 0
+  - 0
+  - 0.08
+  - 0.2
+  earlyFailureCoefficient: 0.08
+  earlyFailureMarksRequired: 3
+  rankUpRetrySuccessesRequired: 5
+  rankUpRetryCooldownMonthFraction: 0.5
+  normalPartyMaxSize: 5
+  highRankPartyMaxSize: 7
+  highRankPartyThreshold: 5
+  temporaryPartyQuestsToMakePermanent: 5
+  rankGapSplitThreshold: 2
+  rankGapSplitChance: 0.15
+  oneMemberDeathSplitChance: 0.3
+  multiMemberDeathDisbandChance: 0.7
+  consecutiveFailSplitThreshold: 3
+  consecutiveFailSplitChancePerExtra: 0.25
+  lowHpThreshold: 0.3
+  lowHpMemberCountForMoraleCheck: 2
+  lowHpMoraleSplitChance: 0.2
