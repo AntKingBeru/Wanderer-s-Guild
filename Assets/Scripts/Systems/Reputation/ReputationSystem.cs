@@ -10,7 +10,7 @@ public class ReputationSystem : MonoBehaviour
     // Dictionary
     
     // To change bar fill percentage
-    public Image BarFill; // Not sure if to listen to rider with this or not, rider says first letter lowercase, but its public but serializable
+    public Image ReputationBarFill; // Not sure if to listen to rider with this or not, rider says first letter lowercase, but its public but serializable
     public TextMeshProUGUI ReputationLevelText; // Not sure if to listen to rider with this or not, rider says first letter lowercase, but its public but serializable
     
     public int CurrentReputation => _currentReputation;
@@ -115,6 +115,6 @@ public class ReputationSystem : MonoBehaviour
         };
         
         // TODO - Change color based on state
-        BarFill.fillAmount = (_currentReputation + 100) / 200.0f;
+        ReputationBarFill.fillAmount = (_currentReputation + 100) / 200.0f;
     }
 }
