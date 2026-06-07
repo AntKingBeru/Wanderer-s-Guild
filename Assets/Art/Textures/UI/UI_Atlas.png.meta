@@ -119,7 +119,7 @@ TextureImporter:
         height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 4, y: 4, z: 4, w: 4}
       customData: 
       outline: []
       physicsShape: []
@@ -141,7 +141,7 @@ TextureImporter:
         height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 4, y: 4, z: 4, w: 4}
       customData: 
       outline: []
       physicsShape: []
@@ -220,16 +220,16 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI_Background_1
+      name: UI_Background
       rect:
         serializedVersion: 2
-        x: 217
-        y: 260
-        width: 5
-        height: 5
+        x: 219
+        y: 250
+        width: 15
+        height: 15
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 5, y: 5, z: 5, w: 5}
       customData: 
       outline: []
       physicsShape: []
@@ -242,60 +242,16 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI_Background_2
+      name: UI_Background_Dark
       rect:
         serializedVersion: 2
-        x: 224
-        y: 260
-        width: 5
-        height: 5
+        x: 244
+        y: 242
+        width: 24
+        height: 24
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: edd1054c0e4ee8a4ea5ff4f5e23811e2
-      internalID: -1511208978
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_3
-      rect:
-        serializedVersion: 2
-        x: 231
-        y: 260
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b983804769dc92e4381856910f9a6fac
-      internalID: -1865133746
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Dark_1
-      rect:
-        serializedVersion: 2
-        x: 242
-        y: 258
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 8, y: 8, z: 8, w: 8}
       customData: 
       outline: []
       physicsShape: []
@@ -303,314 +259,6 @@ TextureImporter:
       bones: []
       spriteID: 7a2cc1d2cc9271c40820f66de6fa21f1
       internalID: 1144062369
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Dark_2
-      rect:
-        serializedVersion: 2
-        x: 252
-        y: 258
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2d3ec89315eab1c42b331fcfa3f4959b
-      internalID: -87000685
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Dark_3
-      rect:
-        serializedVersion: 2
-        x: 262
-        y: 258
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 921486f72482bbf458dd655e2d78eab9
-      internalID: 1287371460
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_4
-      rect:
-        serializedVersion: 2
-        x: 217
-        y: 253
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e8db68d622fd2754fad817b8f4b11b9f
-      internalID: -331252128
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_5
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 253
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 615a7ce3ba79a5044ae5ba73a3a5b385
-      internalID: -1595957077
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_6
-      rect:
-        serializedVersion: 2
-        x: 231
-        y: 253
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: cf6d62a3e62fcd54882f00e6f6b6043d
-      internalID: -1019516827
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Dark_4
-      rect:
-        serializedVersion: 2
-        x: 242
-        y: 248
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d2ac6657efbaf6d44a9a4b6b71c51295
-      internalID: -1515120972
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Dark_5
-      rect:
-        serializedVersion: 2
-        x: 252
-        y: 248
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ccb42d9dcce8ace40a4e12168ab3344a
-      internalID: 952226712
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Dark_6
-      rect:
-        serializedVersion: 2
-        x: 262
-        y: 248
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 856811a0cd9dc8448b5d9d6ff6529bb7
-      internalID: -1879878509
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_7
-      rect:
-        serializedVersion: 2
-        x: 217
-        y: 246
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7087c20763711fd48b6069d773156242
-      internalID: -478156598
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_8
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 246
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 93a59e0f4c8ade94dafbd68defc6562a
-      internalID: 2007208190
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_9
-      rect:
-        serializedVersion: 2
-        x: 231
-        y: 246
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: eb054de5c2ec459438ebef2d19fc0a80
-      internalID: 1637848988
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Dark_7
-      rect:
-        serializedVersion: 2
-        x: 242
-        y: 238
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4c908b77d1f70394cb50598d1ef7745e
-      internalID: -811635276
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Dark_8
-      rect:
-        serializedVersion: 2
-        x: 252
-        y: 238
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bfadb869cff232249b67af47ed0edc79
-      internalID: -1583388520
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Dark_9
-      rect:
-        serializedVersion: 2
-        x: 262
-        y: 238
-        width: 8
-        height: 8
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7a08a674663699c4aa0ab4374d6b851b
-      internalID: -202755613
       vertices: []
       indices: 
       edges: []
@@ -625,7 +273,7 @@ TextureImporter:
         height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 4, y: 4, z: 4, w: 4}
       customData: 
       outline: []
       physicsShape: []
@@ -660,38 +308,16 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI_Background_Light_1
+      name: UI_Background_Light
       rect:
         serializedVersion: 2
-        x: 217
-        y: 236
-        width: 5
-        height: 5
+        x: 219
+        y: 226
+        width: 15
+        height: 15
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8119f7ec0c478a04ba38b22af6a2044d
-      internalID: -802454920
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Light_2
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 236
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 5, y: 5, z: 5, w: 5}
       customData: 
       outline: []
       physicsShape: []
@@ -699,94 +325,6 @@ TextureImporter:
       bones: []
       spriteID: e07b6a5711803434a978ef99ddcd5b66
       internalID: -15850576
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Light_3
-      rect:
-        serializedVersion: 2
-        x: 231
-        y: 236
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 05c738120483d92449c8dfef7500c976
-      internalID: 1691184355
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Light_4
-      rect:
-        serializedVersion: 2
-        x: 217
-        y: 229
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0d731a73e2b9f47429f75d8bd32bf383
-      internalID: -1270710887
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Light_5
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 229
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 153651416aae761468cfd1df5b39f68a
-      internalID: -763119472
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Light_6
-      rect:
-        serializedVersion: 2
-        x: 231
-        y: 229
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c0342c2d887abf34ba75c5200f6f852e
-      internalID: 1831923603
       vertices: []
       indices: 
       edges: []
@@ -809,72 +347,6 @@ TextureImporter:
       bones: []
       spriteID: f320efcd977ce8d40a77712ef3eb0524
       internalID: 191747653
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Light_7
-      rect:
-        serializedVersion: 2
-        x: 217
-        y: 222
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 24071b54424cebf42a4747436820294b
-      internalID: -100862350
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Light_8
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 222
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: decdc5e2a32eba1479fee961cce32b59
-      internalID: -1279987764
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI_Background_Light_9
-      rect:
-        serializedVersion: 2
-        x: 231
-        y: 222
-        width: 5
-        height: 5
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 57c1b8d92a7308c49bc520e10fecafe0
-      internalID: 1938001862
       vertices: []
       indices: 
       edges: []
@@ -967,6 +439,94 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Summer
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 251
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a1942048a68cc354a8ca009c8daf4b9b
+      internalID: -1041124110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Spring
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 235
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a33ffb5e0cd86748a56a59d447c9443
+      internalID: 669589208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_fall
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 235
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca45fd71f6137304a8eddc9390fa5877
+      internalID: 1338840592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Icon_Winter
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 251
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b08479adaebe84242847e47b91002989
+      internalID: 587538910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -983,15 +543,13 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      UI_Atlas_0: 2078837865
-      UI_Atlas_1: -81365360
       UI_Atlas_36: -808914910
       UI_Atlas_37: -1283061270
       UI_Atlas_39: 722743610
       UI_Atlas_40: 1882429070
       UI_Atlas_42: 599208589
       UI_Atlas_43: 1011369795
-      UI_Background_1: 10663635
+      UI_Background: 10663635
       UI_Background_2: -1511208978
       UI_Background_3: -1865133746
       UI_Background_4: -331252128
@@ -1000,7 +558,7 @@ TextureImporter:
       UI_Background_7: -478156598
       UI_Background_8: 2007208190
       UI_Background_9: 1637848988
-      UI_Background_Dark_1: 1144062369
+      UI_Background_Dark: 1144062369
       UI_Background_Dark_2: -87000685
       UI_Background_Dark_3: 1287371460
       UI_Background_Dark_4: -1515120972
@@ -1009,8 +567,8 @@ TextureImporter:
       UI_Background_Dark_7: -811635276
       UI_Background_Dark_8: -1583388520
       UI_Background_Dark_9: -202755613
+      UI_Background_Light: -15850576
       UI_Background_Light_1: -802454920
-      UI_Background_Light_2: -15850576
       UI_Background_Light_3: 1691184355
       UI_Background_Light_4: -1270710887
       UI_Background_Light_5: -763119472
@@ -1019,6 +577,10 @@ TextureImporter:
       UI_Background_Light_8: -1279987764
       UI_Background_Light_9: 1938001862
       UI_EmptyQuestSlot: -847691493
+      UI_Icon_Spring: -81365360
+      UI_Icon_Summer: 2078837865
+      UI_Icon_Winter: 587538910
+      UI_Icon_fall: 1338840592
       UI_LargeButton_Green: 1894759448
       UI_LargeButton_Metal: 1836442368
       UI_LargeButton_Red: 2017202684
