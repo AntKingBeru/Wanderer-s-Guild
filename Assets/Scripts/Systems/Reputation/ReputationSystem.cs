@@ -40,7 +40,7 @@ public class ReputationSystem : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-       BroadcastState();
+        BroadcastState();
     }
     
     // Resets reputation to given number, default is 0
