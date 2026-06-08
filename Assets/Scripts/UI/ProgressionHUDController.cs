@@ -23,7 +23,7 @@ public class ProgressionHUDController : MonoBehaviour
     #region Display Names
     // Matches with the number of ranks (7)
     // Replace with localization lookup when i18n is added
-    private readonly System.Collections.Generic.Dictionary<int, string> 
+    private static readonly System.Collections.Generic.Dictionary<int, string> 
         DisplayNames = new()
     {
         {0, "0"},

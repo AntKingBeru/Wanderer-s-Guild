@@ -20,7 +20,7 @@ public class ProgressionSystem : MonoBehaviour
     // Subscribe wherever progression rank tier matters (adventurer morale, factory rate, etc.)
     public static event Action<int> OnProgressionRankChanged;
     
-    // Fires on every xp value change, including resets.
+    // Fires on every xp value change.
     // Subscribe in ProgressionHUDController to keep the bar fill current.
     // Sending threshold too for calculations
     public static event Action<int, int> OnProgressionXpChanged;
