@@ -1,6 +1,6 @@
 // ScriptableObject that centralizes every designer-tunable constant in the quest system.
 // One instance lives in Assets/Data/Quest/ and is referenced by QuestManager.
-// RankConfig is a struct (not a class) so it shares this file without violating the one-class-per-script rule.
+// RankConfig is a struct (not a class), so it shares this file without violating the one-class-per-script rule.
 
 using System;
 using UnityEngine;
@@ -38,12 +38,6 @@ public class QuestConfig : ScriptableObject
 
     [Tooltip("Ceiling on success chance regardless of how overpowered the party is.")]
     [SerializeField, Range(0f, 1f)] private float maxSuccessChance = 0.95f;
-
-    [Tooltip("Flat success chance added per party member whose class is preferred for the quest category.")]
-    [SerializeField, Range(0f, 0.5f)] private float preferredClassBonus = 0.08f;
-
-    [Tooltip("Flat success chance removed per party member whose class is disliked for the quest category.")]
-    [SerializeField, Range(0f, 0.5f)] private float dislikedClassPenalty = 0.12f;
     
     [Header("Completion Time Formula")]
     [Tooltip("Fastest a quest can resolve as a fraction of the remaining time at dispatch. " +
@@ -67,8 +61,6 @@ public class QuestConfig : ScriptableObject
     public int ApplicationWindowEndHour => applicationWindowEndHour;
     public float MinSuccessChance => minSuccessChance;
     public float MaxSuccessChance => maxSuccessChance;
-    public float PreferredClassBonus => preferredClassBonus;
-    public float DislikedClassPenalty => dislikedClassPenalty;
     public float MinCompletionRatio => minCompletionRatio;
     public float MaxCompletionRatio => maxCompletionRatio;
     public float CompletionTimeVariance => completionTimeVariance;
@@ -96,20 +88,20 @@ public class QuestConfig : ScriptableObject
     
     #region Editor Default Initialization
     // Called by Unity when the asset is first created via the menu.
-    // Pre-populates all 8 rank entries with the temp defaults so the inspector is never left with blank entries.
+    // Pre-populates all 8 rank entries with the temp defaults, so the inspector is never left with blank entries.
     // All values remain fully editable afterward.
     private void Reset()
     {
         rankConfigs = new[]
         {
-            new RankConfig("F", new Color(0.619f, 0.619f, 0.619f, 1f), 10f, 50),
-            new RankConfig("E", new Color(0.553f, 0.431f, 0.388f, 1f), 20f, 120),
-            new RankConfig("D", new Color(0.400f, 0.733f, 0.416f, 1f), 35f, 250),
-            new RankConfig("C", new Color(0.259f, 0.647f, 0.961f, 1f), 55f, 450),
-            new RankConfig("B", new Color(0.671f, 0.278f, 0.737f, 1f), 80f, 750),
-            new RankConfig("A", new Color(1.000f, 0.753f, 0.027f, 1f), 110f, 1200),
-            new RankConfig("S", new Color(0.937f, 0.325f, 0.314f, 1f), 150f, 2000),
-            new RankConfig("Special", new Color(0.149f, 0.776f, 0.855f, 1f), 200f, 5000),
+            new RankConfig("F", new Color(0.619f, 0.619f, 0.619f, 1f), 10f, 50, 2, 1, 0),
+            new RankConfig("E", new Color(0.553f, 0.431f, 0.388f, 1f), 20f, 120, 3, 2, 1),
+            new RankConfig("D", new Color(0.400f, 0.733f, 0.416f, 1f), 35f, 250, 5, 3, 1),
+            new RankConfig("C", new Color(0.259f, 0.647f, 0.961f, 1f), 55f, 450, 8, 5, 2),
+            new RankConfig("B", new Color(0.671f, 0.278f, 0.737f, 1f), 80f, 750, 12, 7, 3),
+            new RankConfig("A", new Color(1.000f, 0.753f, 0.027f, 1f), 110f, 1200, 18, 10, 4),
+            new RankConfig("S", new Color(0.937f, 0.325f, 0.314f, 1f), 150f, 2000, 25, 14, 5),
+            new RankConfig("Special", new Color(0.149f, 0.776f, 0.855f, 1f), 200f, 5000, 35, 20, 7),
         };
     }
     #endregion
@@ -135,13 +127,28 @@ public class QuestConfig : ScriptableObject
                  "The adventurer system will apply per-member scaling on top of this value.")]
         [SerializeField, Min(0)] private int baseXpReward;
         
+        [Tooltip("Reputation gained by the guild when a quest of this rank completes successfully.")]
+        public int reputationReward;
+        
+        [Tooltip("Reputation lost when a quest of this rank fails " +
+                 "(party wipes, early failure, or in-progress deadline exceeded).")]
+        public int reputationFailurePenalty;
+        
+        [Tooltip("Reputation lost when a quest of this rank expires on the board " +
+                 "without any application ever being approved. " +
+                 "Set to 0 to apply no penalty for unanswered jobs.")]
+        public int reputationExpiryPenalty;
+        
         // Constructor used by QuestConfig.Reset() to set defaults without reflection.
-        public RankConfig(string name, Color color, float power, int xp)
+        public RankConfig(string name, Color color, float power, int xp, int reputationReward, int reputationFailurePenalty, int reputationExpiryPenalty)
         {
             displayName = name;
             cardColor = color;
             basePowerThreshold = power;
             baseXpReward = xp;
+            this.reputationReward = reputationReward;
+            this.reputationFailurePenalty = reputationFailurePenalty;
+            this.reputationExpiryPenalty = reputationExpiryPenalty;
         }
 
         public string DisplayName => displayName;
