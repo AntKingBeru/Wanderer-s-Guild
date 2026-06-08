@@ -163,13 +163,11 @@ public enum ScreenType
 #endregion
 
 #region Reputation
-
 public enum ReputationLevel
 {
     ExtremelyLow = -51,
-    Low          = -1,
-    Average      = 50,
+    Low  = -1,
+    Average = 50,
     High
 }
-
 #endregion

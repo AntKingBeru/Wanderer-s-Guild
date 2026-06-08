@@ -1,7 +1,11 @@
 // Singleton that owns all quest-related state and drives the full quest lifecycle.
-// Responsibilities: request pool draw, request/quest expiry, board slot management, application handling, success/completion formulas, quest resolution, and guild funds.
-// Placeholder application simulation is active until the adventurer system is built.
-// Search "// PLACEHOLDER" to find every method that will be replaced or extended.
+// Responsibilities: request pool draw, request/quest expiry, board slot management,
+// application handling, success/completion formulas, quest resolution, and guild funds.
+// Adventurer integration: AdventurerManager subscribes to OnQuestStatusChanged and
+// handles adventurer-side rewards (XP, rank points, adventurer gold) via that event.
+// QuestManager handles guild-side rewards (treasury gold, reputation) directly here.
+// Fallback application simulation runs only when AdventurerManager.Instance is null
+// (useful for testing quests without a full adventurer roster in the scene).
 
 using System;
 using System.Linq;
@@ -146,7 +150,7 @@ public class QuestManager : MonoBehaviour
             && hour <= questConfig.ApplicationWindowEndHour;
 
         if (inApplicationWindow && !AdventurerManager.Instance)
-            SimulateAdventurerApplications(); // PLACEHOLDER
+            SimulateFallbackApplications();
     }
     #endregion
     
@@ -228,7 +232,7 @@ public class QuestManager : MonoBehaviour
     }
     #endregion
     
-    #region Quest Creatoin
+    #region Quest Creation
     // Creates a QuestData from a chosen request with the player's rank and reward decisions.
     // Marks the source request as converted so it cannot be used again.
     public QuestData CreateQuest(QuestRequest request, QuestRank chosenRank, int adventurerReward)
@@ -338,9 +342,7 @@ public class QuestManager : MonoBehaviour
     }
     // Returns the number of currently empty board slots.
     public int GetEmptySlotCount()
-    {
-        return _boardSlots.Count(q => q == null);
-    }
+        => _boardSlots.Count(q => q == null);
     // Finds which slot index a quest occupies, or -1 if it is not on the board.
     private int FindBoardSlotIndex(QuestData quest)
     {
@@ -377,6 +379,15 @@ public class QuestManager : MonoBehaviour
             _boardSlots[i] = null;
             _resolvedQuests.Add(quest);
             boardDirty = true;
+            // Reputation: expired jobs signal a guild that cannot attract adventurers.
+            // Penalty is smaller than an active failure — the job just wasn't taken.
+            if (questConfig)
+            {
+                var expiryPenalty = questConfig.GetRankConfig(quest.Rank).reputationExpiryPenalty;
+                if (expiryPenalty > 0)
+                    ReputationSystem.Instance?.ChangeReputation(-expiryPenalty);
+            }
+            
             OnQuestStatusChanged?.Invoke(quest);
         }
 
@@ -438,10 +449,10 @@ public class QuestManager : MonoBehaviour
     }
     #endregion
     
-    #region PLACEHOLDER Application Simulator
-    // PLACEHOLDER: Entire block replaced when the adventurer system is implemented.
+    #region Fallback Application Simulator
+    // Runs only when AdventurerManager.Instance is null (e.g. testing quests in isolation).
     // Each posted quest has a season-adjusted chance per hour to receive a dummy application.
-    private void SimulateAdventurerApplications()
+    private void SimulateFallbackApplications()
     {
         var seasonMod = GetSeasonApplicationModifier();
 
@@ -449,13 +460,12 @@ public class QuestManager : MonoBehaviour
         {
             if (quest is not { Status: QuestStatus.Posted })
                 continue;
-            var roll = UnityEngine.Random.value;
-            if (roll < baseApplicationChancePerHour * seasonMod)
-                SubmitPlaceholderApplication(quest);
+            if (UnityEngine.Random.value < baseApplicationChancePerHour * seasonMod)
+                SubmitFallbackApplication(quest);
         }
     }
-    // PLACEHOLDER: Generates a QuestApplication with random party strength and dummy IDs.
-    private void SubmitPlaceholderApplication(QuestData quest)
+    
+    private void SubmitFallbackApplication(QuestData quest)
     {
         var threshold = questConfig.GetRankPowerThreshold(quest.Rank);
         var partyStrength = UnityEngine.Random.Range(threshold * 0.5f, threshold * 1.5f);
@@ -463,7 +473,7 @@ public class QuestManager : MonoBehaviour
 
         var memberIds = new string[partySize];
         for (var i = 0; i < partySize; i++)
-            memberIds[i] = $"placeholder_adventurer_{UnityEngine.Random.Range(1, 1000)}";
+            memberIds[i] = $"fallback_adventurer_{UnityEngine.Random.Range(1, 1000)}";
 
         var leaderId = memberIds[0];
         var isTemp = partySize > 1;
@@ -472,12 +482,13 @@ public class QuestManager : MonoBehaviour
 
         var application = new QuestApplication(
             quest.QuestId, memberIds, leaderId, isTemp,
-            partyStrength, successChance, currentHour);
+            partyStrength, successChance, currentHour
+        );
 
         if (quest.AddApplication(application))
             OnApplicationSubmitted?.Invoke(application);
     }
-    // PLACEHOLDER: Returns the season modifier for application frequency.
+    
     private float GetSeasonApplicationModifier()
     {
         if (!TimeManager.Instance)
@@ -503,11 +514,8 @@ public class QuestManager : MonoBehaviour
         // Linear interpolation: 0.15 at minimum efficiency (0.5), 0.9 at maximum (2).
         var t = (efficiency - 0.5f) / 1.5f;
         var baseChance = Mathf.Lerp(0.15f, 0.9f, t);
-        // PLACEHOLDER: Category affinity modifier will be summed here per party member
-        // once adventurer classes are defined (positive for preferred, negative for disliked).
-        var affinityModifier = 0f;
 
-        return Mathf.Clamp(baseChance + affinityModifier,
+        return Mathf.Clamp(baseChance,
             questConfig.MinSuccessChance,
             questConfig.MaxSuccessChance
         );
@@ -600,23 +608,43 @@ public class QuestManager : MonoBehaviour
         if (quest.GuildReward > 0)
             AddGuildFunds(quest.GuildReward);
 
+        if (questConfig)
+        {
+            var repGain = questConfig.GetRankConfig(quest.Rank).reputationReward;
+            if (repGain > 0)
+                ReputationSystem.Instance?.ChangeReputation(repGain);
+        }
+
         var partySize = quest.ApprovedApplication?.PartySize ?? 1;
         var perMember = quest.GetGoldPerMember(partySize);
         var leaderBonus = quest.GetLeaderBonus(partySize);
-        
-        // PLACEHOLDER: When AdventurerManager exists, call it here to credit each member's wallet.
-        // For now, log the intended distribution so it can be verified in the console.
         var bonusNote = leaderBonus > 0 ? $", leader +{leaderBonus}g bonus" : string.Empty;
+        var repGainLog = questConfig ? questConfig.GetRankConfig(quest.Rank).reputationReward : 0;
         Debug.Log($"[QuestManager] '{quest.QuestName}' completed. " +
                   $"Guild +{quest.GuildReward}g | " +
+                  $"Reputation +{repGainLog} | " +
                   $"Each adventurer +{perMember}g{bonusNote}.");
     }
     
-    // PLACEHOLDER: Injury, death risk, streak tracking, and reputation loss go here.
+    // Applies guild reputation loss on quest failure.
+    // Injury and death consequences are deferred to the injury/death system;
+    // AdventurerManager handles adventurer-side failure consequences (party deterioration, rank-up cooldown resets) via its OnQuestStatusChanged subscription.
     private void ApplyFailurePenalties(QuestData quest)
     {
-        Debug.Log($"[QuestManager] '{quest.QuestName}' failed. " +
-                  $"Failure penalties pending adventurer system implementation.");
+        if (questConfig)
+        {
+            var repLoss = questConfig.GetRankConfig(quest.Rank).reputationFailurePenalty;
+            if (repLoss > 0)
+                ReputationSystem.Instance?.ChangeReputation(-repLoss);
+
+            Debug.Log($"[QuestManager] '{quest.QuestName}' failed. " +
+                      $"Reputation -{repLoss}. " +
+                      $"Adventurer injury/death consequences pending that system.");
+        }
+        else
+        {
+            Debug.Log($"[QuestManager] '{quest.QuestName}' failed.");
+        }
     }
     #endregion
     
@@ -656,8 +684,6 @@ public class QuestManager : MonoBehaviour
     // Searches board slots for a quest in the Posted state with a matching ID.
     // Only Posted quests are eligible for dispatch; InProgress quests are no longer on the board.
     private QuestData FindPostedQuestById(string questId)
-    {
-        return _boardSlots.FirstOrDefault(q => q is { Status: QuestStatus.Posted } && q.QuestId == questId);
-    }
+        => _boardSlots.FirstOrDefault(q => q is { Status: QuestStatus.Posted } && q.QuestId == questId);
     #endregion
 }

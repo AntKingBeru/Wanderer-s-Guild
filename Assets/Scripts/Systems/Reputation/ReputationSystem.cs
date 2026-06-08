@@ -1,42 +1,34 @@
+// Singleton data manager for guild reputation.
+// Range: -100 (worst) to +100 (best). Starts at 0 (Average).
+// Fires two events:
+//   OnReputationChanged — every value change (int newValue)
+//   OnReputationLevelChanged — only when the ReputationLevel tier flips
+// UI is handled entirely by ReputationHUDController.
+// Integration: call ChangeReputation() from QuestManager on quest completion/failure, and from any other system that should affect guild standing.
+
 using System;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ReputationSystem : MonoBehaviour
 {
+    public static ReputationSystem Instance { get; private set; }
     
-    // Dictionary
+    // Fires on every reputation value change, including resets.
+    // Subscribe in ReputationHUDController to keep the bar fill current.
+    public static event Action<int> OnReputationChanged;
     
-    // To change bar fill percentage
-    public Image BarFill; // Not sure if to listen to rider with this or not, rider says first letter lowercase, but its public but serializable
-    public TextMeshProUGUI ReputationLevelText; // Not sure if to listen to rider with this or not, rider says first letter lowercase, but its public but serializable
+    // Fires only when the tier (ExtremelyLow / Low / Average / High) changes.
+    // Subscribe wherever reputation tier matters (adventurer morale, factory rate, etc.)
+    public static event Action<ReputationLevel> OnReputationLevelChanged;
+    
+    public const int MaxReputation = 100;
+    public const int MinReputation = -100;
+    
+    private int _currentReputation;
+    private ReputationLevel _currentLevel = ReputationLevel.Average;
     
     public int CurrentReputation => _currentReputation;
-    public ReputationLevel CurrentState => _currentState;
-    
-    // Triggers only when reputation level changed
-    public static event Action<ReputationLevel> ReputationLevelChanged;
-    
-    // Making this class singleton
-    public static ReputationSystem Instance { get; private set; }
-
-
-    private const int MaxReputation = 100;
-    private const int MinReputation = -100;
-    
-    private int _currentReputation = 0;
-    private ReputationLevel _currentState = ReputationLevel.Average;
-
-    // Sorry if this is not good, we did not talk about the texts, we can use i18n later here
-    private readonly Dictionary<ReputationLevel, string> _levelText = new Dictionary<ReputationLevel, string>()
-    {
-        { ReputationLevel.ExtremelyLow, "ExtremelyLow" },
-        { ReputationLevel.Low, "Low" },
-        { ReputationLevel.Average, "Average" },
-        { ReputationLevel.High, "High" },
-    };
+    public ReputationLevel CurrentLevel => _currentLevel;
 
     private void Awake()
     {
@@ -45,76 +37,47 @@ public class ReputationSystem : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
-        
-        // Initial check to set all UI components correctly
-        CheckLevel();
-        
-        // Cross-Scene singleton
         DontDestroyOnLoad(gameObject);
-    }
 
-    /**
-     * Resets reputation to given number, default is 0
-     */
-    public void ResetReputation(int reputation = 0)
-    {
-        // Better be safe than sorry
-        var newReputation = reputation;
-        if (newReputation is < MinReputation or > MaxReputation)
-        {
-            newReputation = 0;
-        } 
-        _currentReputation = newReputation;
-        
-        // Do more resets here if needed
-
-        CheckLevel();
-    }
-
-    /**
-     * Increasing or Decreasing reputation according to the given number
-     */
-    public void ChangeReputation(int reputation)
-    {
-        _currentReputation += reputation;
-        
-        if (_currentReputation > MaxReputation)
-        {
-            _currentReputation = MaxReputation;
-        }
-        
-        if (_currentReputation < MinReputation)
-        {
-            _currentReputation = MinReputation;
-        }
-        
-
-        CheckLevel();
+       BroadcastState();
     }
     
-    private void CheckLevel()
+    // Resets reputation to given number, default is 0
+    public void ResetReputation(int reputation = 0)
     {
-        // Checking if reputation level changed
-        var newRep = _currentReputation switch
-        {
-            <  -50 => ReputationLevel.ExtremelyLow,
-            <= -1  =>  ReputationLevel.Low,
-            >   0   and <= 50 =>  ReputationLevel.Average,
-            >   50  and <= 100 => ReputationLevel.High,
-            _ => ReputationLevel.ExtremelyLow
-        };
-        
-        if (newRep != _currentState)
-        {
-            _currentState = newRep;
-            // TODO - change colors as needed
-            ReputationLevelText.SetText(_levelText[_currentState]);
-            ReputationLevelChanged?.Invoke(_currentState);
-        };
-        
-        // TODO - Change color based on state
-        BarFill.fillAmount = (_currentReputation + 100) / 200.0f;
+        _currentReputation = Mathf.Clamp(reputation, MinReputation, MaxReputation);
+        BroadcastState();
     }
+    
+    // Increasing or Decreasing reputation according to the given number
+    public void ChangeReputation(int delta)
+    {
+        _currentReputation = Mathf.Clamp(_currentReputation + delta, MinReputation, MaxReputation);
+        BroadcastState();
+    }
+    
+    private void BroadcastState()
+    {
+        OnReputationChanged?.Invoke(_currentReputation);
+        var newLevel = ComputeLevel(_currentReputation);
+        if (newLevel == _currentLevel)
+            return;
+        _currentLevel = newLevel;
+        OnReputationLevelChanged?.Invoke(_currentLevel);
+    }
+    
+    // Pure function - no side effects. Determines tier from a raw reputation value.
+    // Boundaries:
+    //   ExtremelyLow : -100 to -51
+    //   Low : -50 to -1
+    //   Average : 0 to 50
+    //   High : 51 to 100
+    private static ReputationLevel ComputeLevel(int reputation) => reputation switch
+    {
+        < -50 => ReputationLevel.ExtremelyLow,
+        >= -50 and <= -1 => ReputationLevel.Low,
+        >= 0 and <= 50 => ReputationLevel.Average,
+        _ => ReputationLevel.High
+    };
 }
