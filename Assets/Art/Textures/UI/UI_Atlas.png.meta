@@ -448,7 +448,7 @@ TextureImporter:
         width: 15
         height: 15
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 5, y: 5, z: 5, w: 5}
       customData: 
       outline: []
@@ -457,6 +457,94 @@ TextureImporter:
       bones: []
       spriteID: e6a7e252e0fe92f4da79ca8d09c3cf99
       internalID: 2078837865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Summer
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 251
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9c56c382a1bab447a19ccd447e42c6a
+      internalID: 2086166700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Winter
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 251
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d31ebf84ce5301940891d8606e589659
+      internalID: -2040264101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Fall
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 235
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 957c68cb3b9de0b419a68658cdaca9e6
+      internalID: -481762881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Spring
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 235
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a7cbf53c3d155f4ab173ae61f8ef481
+      internalID: 1936827323
       vertices: []
       indices: 
       edges: []
@@ -478,7 +566,6 @@ TextureImporter:
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       UI_Atlas_0: 2078837865
-      UI_Atlas_1: -81365360
       UI_Atlas_36: -808914910
       UI_Atlas_37: -1283061270
       UI_Atlas_39: 722743610
@@ -513,6 +600,7 @@ TextureImporter:
       UI_Background_Light_8: -1279987764
       UI_Background_Light_9: 1938001862
       UI_EmptyQuestSlot: -847691493
+      UI_Fall: -481762881
       UI_LargeButton_Green: 1894759448
       UI_LargeButton_Metal: 1836442368
       UI_LargeButton_Red: 2017202684
@@ -524,6 +612,9 @@ TextureImporter:
       UI_SmallButton_Green: -1489836631
       UI_SmallButton_Red: -867792345
       UI_SmallButton_White: 1071366238
+      UI_Spring: 1936827323
+      UI_Summer: -81365360
+      UI_Winter: -2040264101
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
