@@ -46,8 +46,8 @@ MonoBehaviour:
     basePowerThreshold: 200
     baseXpReward: 5000
   maxBoardSlots: 10
-  requestsPerDay: 1
-  requestExpiryDays: 2
+  requestsPerDay: 3
+  requestExpiryDays: 4
   applicationWindowStartHour: 7
   applicationWindowEndHour: 16
   minSuccessChance: 0.05

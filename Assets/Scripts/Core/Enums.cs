@@ -88,6 +88,70 @@ public enum ApplicationStatus
 }
 #endregion
 
+#region Adventurer
+// Governs base stats, category affinities, rank-up quest category and duration, and which future advanced class paths are available.
+// Advanced classes (unlocked in training rooms in the build system) will be added here when that system is implemented (DO NOT TOUCH COMMENTED BLOCKS)
+public enum AdventurerClass
+{
+    Fighter, // Melee specialist. High Strength (used for hidden tag check). Preferred: Combat, Subjugation, DungeonDelving.
+    Archer, // Ranged specialist. High Dexterity (used for hidden tag check). Preferred: Gathering, Exploration, Investigation, Subjugation.
+    // Future advanced classes (unlocked in training)
+    // Barbarian, // Fighter → Barbarian path
+    // Paladin, // Fighter → Paladin path (requires Priest)
+    // Ranger, // Archer → Ranger path
+}
+
+// How a quest category relates to a specific adventurer class.
+// Applied per party member when calculation total success chance in AdventurerManager
+public enum CategoryAffinity
+{
+    Preferred, // Positive modifier
+    Neutral, // No modifier
+    Disliked // Negative modifier
+}
+
+// Primary engagement status of an adventurer.
+// Rank-up quest application are tracked in a separate field on AdventurerData so they do not conflict with regular quest state.
+// An adventurer can have a pending rank-up application while simultaneously being Idle, AppliedToQuest, or OnQuest, but cannot be dispatched to both at once.
+public enum AdventurerStatus
+{
+    Idle, // Free to browse posted quests and submit applications
+    AppliedToQuest, // Has a pending regular quest application awaiting player approval
+    OnQuest, // Dispatched on a regular quest; unavailable for other quests
+    OnRankUpQuest, // Dispatched on a rank-up quest; regular quest dispatch blocked
+    // Placeholders (injury and death system not yet implemented)
+    // Set these values in code only when the corresponding system is built.
+    Injured, // Temporarily unable to take quests; recovers over time
+    Dead // Permanently removed from the active roster
+}
+
+// Where an adventurer sleeps each night.
+// Checked at midnight by AdventurerManager.
+// InGuild requires an available bed in a housing room (build system adds this).
+// Nowhere causes sleep maintenance to degrade each night until a bed is assigned.
+public enum LodgingState
+{
+    InGuild, // Assigned to a bed in a guild housing room
+    OutsideGuild, // Has private accommodation; no guild cost; uncommon
+    Nowhere // Unhoused; sleep penalty accumulates nightly
+}
+
+// The event that causes a change to a party's composition or status.
+// Stored on the change event so AdventurerManager and future UI can display history.
+public enum PartyChangeReason
+{
+    Formed, // Initial party creation (permanent or temporary)
+    MemberJoined, // An adventurer was added to an existing party
+    MemberLeft, // An adventurer voluntarily departed the party
+    RankDifference, // Members split off due to a rank gap exceeding the threshold
+    MemberDied, // One or more party members died during a quest
+    ConsecutiveFailures, // Too many consecutive failures caused dissolution
+    LowMorale, // Multiple members returned with critically low HP
+    Disbanded, // The party was fully dissolved; all members become solo
+    TemporaryMadePermanent // A temporary per-quest grouping became a registered party
+}
+#endregion
+
 #region World Interaction
 // Identifies which UI screen a world-space interactable prop opens when clicked.
 // Add entries here as new screen are introduced.
@@ -95,5 +159,15 @@ public enum ScreenType
 {
     ReceptionDesk,
     QuestBoard
+}
+#endregion
+
+#region Reputation
+public enum ReputationLevel
+{
+    ExtremelyLow = -51,
+    Low  = -1,
+    Average = 50,
+    High
 }
 #endregion
