@@ -439,28 +439,6 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: UI_Atlas_0
-      rect:
-        serializedVersion: 2
-        x: 197
-        y: 226
-        width: 15
-        height: 15
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 5, y: 5, z: 5, w: 5}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e6a7e252e0fe92f4da79ca8d09c3cf99
-      internalID: 2078837865
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
