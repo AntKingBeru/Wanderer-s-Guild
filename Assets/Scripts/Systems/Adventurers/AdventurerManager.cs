@@ -1,9 +1,9 @@
-// Singleton owning all adventurer and party state. Responsibilities:
+// Singleton owning all adventurers and party states. Responsibilities:
 //   - Factory timer: generate new adventurers on a configurable schedule.
 //   - Quest application simulation: idle adventurers/parties apply to posted quests.
 //   - Quest outcome: distribute XP, rank points, and gold; return adventurers.
 //   - Early quest failure: hourly chance-based mark accumulation.
-//   - Rank-up eligibility: create applications when point threshold is crossed.
+//   - Rank-up eligibility: create applications when the point threshold is crossed.
 //   - Rank-up quest resolution: approve/reject and resolve rank-up quests.
 //   - Maintenance: nightly sleep and daily food checks.
 //   - Party management: deterioration checks after each quest.
@@ -53,7 +53,6 @@ public class AdventurerManager : MonoBehaviour
     public AdventurerConfig Config => config;
     public IReadOnlyList<AdventurerData> Adventurers => _adventurers;
     public IReadOnlyDictionary<string, PartyData> Parties => _parties;
-
     public IReadOnlyList<RankUpApplicationData> PendingRankUpApplications
     {
         get
@@ -79,6 +78,7 @@ public class AdventurerManager : MonoBehaviour
     {
         if (TimeManager.Instance)
         {
+            Debug.Log("Enabled");
             TimeManager.Instance.OnHourChanged += HandleHourChanged;
             TimeManager.Instance.OnDayChanged += HandleDayChanged;
         }
@@ -90,6 +90,7 @@ public class AdventurerManager : MonoBehaviour
     {
         if (TimeManager.Instance)
         {
+            Debug.Log("Disabled");
             TimeManager.Instance.OnHourChanged -= HandleHourChanged;
             TimeManager.Instance.OnDayChanged -= HandleDayChanged;
         }
@@ -117,8 +118,9 @@ public class AdventurerManager : MonoBehaviour
     #region Time Event Handlers
     private void HandleHourChanged(int hour)
     {
+        Debug.Log("HOUR CHANGED");
         var currentHour = GetCurrentGameHours();
-        CheckFactoryTime(currentHour);
+        CheckFactoryTime(0f);
         CheckEarlyQuestFailures();
         CheckRankUpQuestCompletions(currentHour);
         CheckRankUpReapplyEligible(currentHour);
@@ -152,9 +154,9 @@ public class AdventurerManager : MonoBehaviour
     #endregion
     
     #region Factory
-
     private void CheckFactoryTime(float currentHour)
     {
+        Debug.Log("SPAWN ADV");
         if (_nextArrivalHour < 0f || currentHour < _nextArrivalHour)
             return;
 

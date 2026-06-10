@@ -173,7 +173,9 @@ public class TimeManager : MonoBehaviour
             _hour = 0;
             AdvanceDay();
         }
-        OnHourChanged?.Invoke(_hour);
+
+        Debug.Log("HOUR ++");
+        OnHourChanged.Invoke(_hour);
     }
 
     private void AdvanceDay()

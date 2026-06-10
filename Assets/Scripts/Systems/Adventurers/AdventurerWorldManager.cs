@@ -8,37 +8,32 @@ using UnityEngine;
 public class AdventurerWorldManager : MonoBehaviour
 {
     #region Identity
-
     [Header("Prefab")]
     [Tooltip("The AdventurerWorldObject prefab instantiated for each arriving adventurer.")]
     [SerializeField]
     private AdventurerWorldObject adventurerPrefab;
 
-    [Tooltip("QuestConfig asset — passed to world objects for rank colour lookup.")] [SerializeField]
-    private QuestConfig questConfig;
+    [Tooltip("QuestConfig asset — passed to world objects for rank colour lookup.")]
+    [SerializeField] private QuestConfig questConfig;
 
     [Header("Spawn Setup")]
     [Tooltip("Parent transform for spawned objects. Keeps the hierarchy clean. " +
              "Leave null to parent to this manager.")]
-    [SerializeField]
-    private Transform spawnParent;
+    [SerializeField] private Transform spawnParent;
 
     [Tooltip("Ordered spawn points. Objects cycle through these as adventurers arrive. " +
              "If empty, objects space out along the X axis using fallback spacing.")]
-    [SerializeField]
-    private Transform[] spawnPoints;
+    [SerializeField] private Transform[] spawnPoints;
 
-    [Tooltip("World-unit spacing between objects when no spawn points are assigned.")] [SerializeField, Min(0.5f)]
-    private float fallbackSpace = 2f;
+    [Tooltip("World-unit spacing between objects when no spawn points are assigned.")]
+    [SerializeField, Min(0.5f)] private float fallbackSpace = 2f;
 
     private readonly Dictionary<string, AdventurerWorldObject> _worldObjects = new();
 
     private int _spawnCounter;
-
     #endregion
 
     #region Lifecycle
-
     private void OnEnable()
     {
         if (!AdventurerManager.Instance)
@@ -56,7 +51,6 @@ public class AdventurerWorldManager : MonoBehaviour
         AdventurerManager.Instance.OnAdventurerLeveledUp -= HandleAdventurerChanged;
         AdventurerManager.Instance.OnAdventurerRankUp -= HandleAdventurerChanged;
     }
-
     #endregion
 
     #region Event Handlers

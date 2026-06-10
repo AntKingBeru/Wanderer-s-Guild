@@ -47,7 +47,9 @@ public class RandomAdventurerFactory : AdventurerFactory
         // Name (placeholder)
         var name = $"Adventurer #{++_nameCounter:D4}";
         // TODO: Replace with a proper random name generator.
-
+        
+        Debug.Log($"Made a new Adventurer");
+        
         return new AdventurerData(GenerateID(), name, classData, rank, level, _config);
     }
 }
