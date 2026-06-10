@@ -131,6 +131,8 @@ MonoBehaviour:
   screenType: 1
   renderers:
   - {fileID: 1472646600822755116}
+  - {fileID: 7159093593467262391}
+  - {fileID: 1483478237613499874}
   highlightColor: {r: 0.3, g: 0.7, b: 1, a: 1}
 --- !u!1 &5410070369096489354
 GameObject:
