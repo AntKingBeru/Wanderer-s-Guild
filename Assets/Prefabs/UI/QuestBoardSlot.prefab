@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2085582817241665335
 RectTransform:
   m_ObjectHideFlags: 0
@@ -499,7 +499,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4689696676599596480
 RectTransform:
   m_ObjectHideFlags: 0
@@ -539,7 +539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2675d370cb1f2bb4d9af9864d393f4ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestCardUI
-  backgroundImage: {fileID: 5313999894959562468}
+  backgroundImage: {fileID: 3453295462897159174}
   nameLabel: {fileID: 5653645495636380414}
   rankLabel: {fileID: 1081888641836624561}
   categoryLabel: {fileID: 2772161581181784066}
@@ -1069,7 +1069,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -75}
-  m_SizeDelta: {x: -30, y: 16.76}
+  m_SizeDelta: {x: -30, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &3354042446173168951
 CanvasRenderer:
