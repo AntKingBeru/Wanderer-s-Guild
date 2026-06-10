@@ -405,7 +405,7 @@ MonoBehaviour:
   questCard: {fileID: 3367168199257369911}
   emptyVisual: {fileID: 1218361461939652251}
   slotBackground: {fileID: 7152762458699055557}
-  emptyColor: {r: 1, g: 1, b: 1, a: 0.05}
+  emptyColor: {r: 1, g: 1, b: 1, a: 0}
   hoverColor: {r: 1, g: 1, b: 1, a: 0.2}
 --- !u!1 &4666282761026519204
 GameObject:
