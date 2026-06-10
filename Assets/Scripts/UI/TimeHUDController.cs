@@ -28,7 +28,7 @@ public class TimeHUDController : MonoBehaviour
     #region Lifecycle
     private void OnEnable()
     {
-        // Guard: TimeManager initializes via DontDestroyOnLoad in Awake, so by the time any OnEnable runs, it should exist.
+        // Guard: TimeManager initializes via DontDestroyOnLoad in Awake, so by the time any OnEnable runs it should exist.
         // This null check handles edge cases like additive scene loads or incorrect script execution order.
         if (!TimeManager.Instance)
         {
@@ -76,7 +76,7 @@ public class TimeHUDController : MonoBehaviour
 
         if (timeOfDayLabel)
         {
-            // TimeOfDay is re-queried (not cached) so it always reflects the current hour, including at the exact moment an hour boundary crosses.
+            // TimeOfDay is re-queried (not cached) so it always reflects the current hur, including at the exact moment an hour boundary crosses.
             var tod = TimeManager.Instance.GetCurrentTimeOfDay().ToString();
             timeOfDayLabel.text = $"{tod}";
         }

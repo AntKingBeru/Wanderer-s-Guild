@@ -27,14 +27,11 @@ public class ReceptionDeskUI : MonoBehaviour
     [Tooltip("The request details popup component.")]
     [SerializeField] private RequestPopupUI requestPopup;
 
-    [Header("Right Panel")]
-    [Tooltip("Vertical layout container inside the application list scroll view's content.")]
-    [SerializeField] private ApplicationDetailUI applicationDetailUI;
-    
+    [Header("Buttons")]
     [Tooltip("Bottom-right of the screen. Closes the Reception Desk.")]
     [SerializeField] private Button closeButton;
 
-    private readonly List<RequestListItemUI> _listItems = new();
+    private readonly List<RequestListItemUI> _listItems = new List<RequestListItemUI>();
 
     #region Lifecycle
     private void Awake()
@@ -101,7 +98,6 @@ public class ReceptionDeskUI : MonoBehaviour
         screenCanvasGroup.alpha = 1f;
         screenCanvasGroup.interactable = true;
         screenCanvasGroup.blocksRaycasts = true;
-        applicationDetailUI?.Hide();
     }
 
     private void HideScreen()

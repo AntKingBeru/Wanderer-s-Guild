@@ -14,7 +14,6 @@ public class QuestApplication
     private string _applicationId;
     // ID of the quest this application targets
     private string _questId;
-    private int _earlyFailureMarks;
     #endregion
     
     #region Party
@@ -81,9 +80,6 @@ public class QuestApplication
     public ApplicationStatus Status => _status;
     public float SubmittedAtHour => _submittedAtHour;
     public int PartySize => _partyMemberIds?.Length ?? 0;
-    public int EarlyFailureMarks => _earlyFailureMarks;
-    public void AddEarlyFailureMark() => _earlyFailureMarks++;
-    public void ResetEarlyFailureMarks() => _earlyFailureMarks = 0;
     #endregion
     
     #region Status Transitions

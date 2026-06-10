@@ -468,8 +468,8 @@ GameObject:
   m_Component:
   - component: {fileID: 291976996532230849}
   - component: {fileID: 3626226933133251503}
-  - component: {fileID: 4576806592158181612}
   - component: {fileID: 1027930275186886584}
+  - component: {fileID: 4576806592158181612}
   m_Layer: 5
   m_Name: UnpostedQuestItem
   m_TagString: Untagged
@@ -511,6 +511,25 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &1027930275186886584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4998972021154196448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c54da65ad89ff845ae4c042fab6b41b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnpostedQuestItemUI
+  nameLabel: {fileID: 3283901232323157035}
+  rankLabel: {fileID: 8252018818088591540}
+  categoryLabel: {fileID: 2621833113700538715}
+  rewardLabel: {fileID: 4320306733000498353}
+  rankColorBar: {fileID: 6468792980106437069}
+  dragAlpha: 0.35
+  canvasGroup: {fileID: 3626226933133251503}
 --- !u!114 &4576806592158181612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -531,25 +550,6 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: 0
   m_LayoutPriority: 1
---- !u!114 &1027930275186886584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4998972021154196448}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c54da65ad89ff845ae4c042fab6b41b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnpostedQuestItemUI
-  nameLabel: {fileID: 3283901232323157035}
-  rankLabel: {fileID: 8252018818088591540}
-  categoryLabel: {fileID: 2621833113700538715}
-  rewardLabel: {fileID: 4320306733000498353}
-  rankColorBar: {fileID: 6468792980106437069}
-  dragAlpha: 0.35
-  canvasGroup: {fileID: 3626226933133251503}
 --- !u!1 &7531370696025023233
 GameObject:
   m_ObjectHideFlags: 0
