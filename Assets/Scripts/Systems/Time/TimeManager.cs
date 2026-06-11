@@ -1,9 +1,8 @@
 // Singleton that drives all in-game time progression.
-// Other systems should subscribe to its events rather than polling it each frame.
-// Input actions are managed individually here.
-// Call actionMap.Disable() externally to suppress all Gameplay input at once.
+// Raises all time events through GameEventRelay instead of direct C# events,
+// guaranteeing subscribers never miss events due to singleton initialization order.
+// Input actions for pause / timescale are managed here.
 
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -31,54 +30,41 @@ public class TimeManager : MonoBehaviour
     [Tooltip("Starting year.")]
     [SerializeField, Min(1)] private int startYear = 1;
 
-    [Tooltip("How many days are in each month. Kept uniform for simplicity.")]
+    [Tooltip("How many days are in each month.")]
     [SerializeField, Min(1)] private int daysPerMonth = 30;
 
-    [Tooltip("How many months are in a year. Should be divisible by 4 to keep seasons even.")]
+    [Tooltip("How many months are in a year. Divisible by 4 keeps seasons even.")]
     [SerializeField, Range(4, 24)] private int monthsPerYear = 12;
     #endregion
     
     #region Time Scale
     [Header("Time Scale")]
-    [Tooltip("Multiplier applied on top of realSecondsPerGameMinute. 1 = normal, 2 = double speed, etc.")]
+    [Tooltip("Multiplier applied on top of realSecondsPerGameMinute.")]
     [SerializeField, Min(0f)] private float timeScale = 1f;
-    
+
     [Tooltip("Maximum time scale reachable through input.")]
     [SerializeField, Min(1f)] private float maxTimeScale = 10f;
-    
+
     [Tooltip("How much each key press increments or decrements the time scale.")]
     [SerializeField, Min(0.5f)] private float timeScaleStep = 1f;
     #endregion
     
     #region Input Actions (Gameplay Map)
     [Header("Input - Gameplay Map")]
-    [Tooltip("Toggles time pause on/off")]
     [SerializeField] private InputActionReference pauseToggleAction;
-    
-    [Tooltip("Increases time scale by one step")]
     [SerializeField] private InputActionReference increaseTimeScaleAction;
-    
-    [Tooltip("Decreases time scale by one step")]
     [SerializeField] private InputActionReference decreaseTimeScaleAction;
     #endregion
     
     #region Internal State
     private int _minute, _hour, _day, _month, _year;
     private bool _isPaused;
-    
+
     // Accumulates fractional minutes between frames so no time is lost at high frame rates.
     private float _minuteAccumulator;
-    #endregion
-    
-    #region Public Events
-    // All events fire after state has fully rolled over, guaranteeing consistent values.
-    public event Action<int, int> OnMinuteChanged; // (minute, hour)
-    public event Action<int> OnHourChanged; // (hour)
-    public event Action<int> OnDayChanged; // (day)
-    public event Action<int> OnMonthChanged; // (month)
-    public event Action<Season> OnSeasonChanged; // (season)
-    public event Action<int> OnYearChanged; // (year)
-    public event Action<bool> OnPauseChanged; // (isPaused)
+
+    // Tracks the season during the previous tick to detect season boundaries.
+    private Season _lastKnownSeason;
     #endregion
     
     #region Public Read-Only Properties
@@ -92,10 +78,8 @@ public class TimeManager : MonoBehaviour
     public bool IsPaused => _isPaused;
     public float TimeScale => timeScale;
     
-    /// <summary>
-    /// Normalized position within the current day: 0.0 = midnight, 0.5 = noon, 1.0 = next day midnight.
-    /// Updated continuously and safe to sample every frame for smooth lighting interpolation.
-    /// </summary>
+    // Normalized position within the current day: 0.0 = midnight, 1.0 = next midnight.
+    // Safe to sample every frame for smooth lighting interpolation.
     public float NormalizedDayTime => (_hour + _minute / 60f) / 24f;
     #endregion
     
@@ -107,15 +91,16 @@ public class TimeManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        
+
         _minute = startMinute;
         _hour = startHour;
         _day = startDay;
         _month = startMonth;
         _year = startYear;
+        _lastKnownSeason = GetCurrentSeason();
+        GameEventRelay.Instance.OnMinuteChanged.Invoke(_hour, _minute);
     }
 
     private void OnEnable()
@@ -136,163 +121,154 @@ public class TimeManager : MonoBehaviour
     {
         if (_isPaused || timeScale <= 0f || realSecondsPerGameMinute <= 0f)
             return;
-        
-        // Accumulate scaled time.
-        // One unit = one game minute.
+
         _minuteAccumulator += Time.deltaTime * timeScale / realSecondsPerGameMinute;
-        
-        // Drain whole minutes from the accumulator, preserving the remainder.
-        // Using a while loop handles the unlikely case where multiple minutes pass in a single frame at extreme scales.
+
+        // Drain whole minutes; while-loop handles multiple minutes in one frame at extreme scale.
         while (_minuteAccumulator >= 1f)
         {
             _minuteAccumulator -= 1f;
-            AdvanceMinute();
+            TickMinute();
         }
     }
     #endregion
     
-    #region Time Advancement
-    // Each Advance method increments its unit, delegates upward if a threshold is crossed,
-    // then fires its event AFTER all corrections are completed.
-    private void AdvanceMinute()
+    #region Tick Logic
+    private void TickMinute()
     {
         _minute++;
+        var hourChanged = false;
+        var dayChanged  = false;
+        var monthChanged = false;
+        var yearChanged  = false;
+
         if (_minute >= 60)
         {
             _minute = 0;
-            AdvanceHour();
+            _hour++;
+            hourChanged = true;
         }
-        OnMinuteChanged?.Invoke(_hour, _minute);
-    }
-
-    private void AdvanceHour()
-    {
-        _hour++;
         if (_hour >= 24)
         {
             _hour = 0;
-            AdvanceDay();
+            _day++;
+            dayChanged = true;
         }
-
-        Debug.Log("HOUR ++");
-        OnHourChanged.Invoke(_hour);
-    }
-
-    private void AdvanceDay()
-    {
-        _day++;
-        if (_day >= daysPerMonth)
+        if (_day > daysPerMonth)
         {
             _day = 1;
-            AdvanceMonth();
+            _month++;
+            monthChanged = true;
         }
-        OnDayChanged?.Invoke(_day);
-    }
-
-    private void AdvanceMonth()
-    {
-        // Capture season before incrementing so we can detect a season boundary crossing.
-        var previousSeason = GetCurrentSeason();
-        _month++;
         if (_month > monthsPerYear)
         {
             _month = 1;
-            AdvanceYear();
+            _year++;
+            yearChanged = true;
         }
 
-        var newSeason = GetCurrentSeason();
-        if (newSeason != previousSeason)
-            OnSeasonChanged?.Invoke(newSeason);
-        
-        OnMonthChanged?.Invoke(_month);
-    }
+        // Guard: relay must exist. It always does because GameEventRelay's Awake
+        // runs before TimeManager's first tick (same frame, earlier script order).
+        if (!GameEventRelay.Instance)
+            return;
 
-    private void AdvanceYear()
-    {
-        _year++;
-        OnYearChanged?.Invoke(_year);
+        // Fire granular events from most specific to least specific so listeners that
+        // unsubscribe in response don't miss earlier events in the same tick.
+        GameEventRelay.Instance.OnMinuteChanged.Invoke(_hour, _minute);
+
+        if (hourChanged)
+            GameEventRelay.Instance.OnHourChanged.Invoke(_hour);
+        if (dayChanged)
+            GameEventRelay.Instance.OnDayChanged.Invoke(_day);
+        if (monthChanged)
+            GameEventRelay.Instance.OnMonthChanged.Invoke(_month);
+        if (yearChanged)
+            GameEventRelay.Instance.OnYearChanged.Invoke(_year);
+
+        // Season check — only fire when the season actually changes.
+        var currentSeason = GetCurrentSeason();
+        if (currentSeason != _lastKnownSeason)
+        {
+            _lastKnownSeason = currentSeason;
+            GameEventRelay.Instance.OnSeasonChanged.Invoke(currentSeason);
+        }
     }
     #endregion
     
-    #region Public Query Methods
-    /// <summary>
-    /// Returns the current season based on the current month.
-    /// Requires monthsPerYear to be divisible by 4 for even season boundaries.
-    /// </summary>
-    public Season GetCurrentSeason()
-    {
-        var monthsPerSeason = Mathf.Max(1, monthsPerYear / 4);
-        var index = Mathf.Clamp((_month - 1) / monthsPerSeason, 0, 3);
-        return (Season)index;
-    }
-    
-    /// <summary>
-    /// Returns the broad time-of-day category for the current hour.
-    /// </summary>
+    #region Public Time Queries
+    // Returns the current time-of-day category based on the hour.
     public TimeOfDay GetCurrentTimeOfDay()
     {
         return _hour switch
         {
-            < 5 => TimeOfDay.Midnight,
-            < 7 => TimeOfDay.Dawn,
-            < 12 => TimeOfDay.Morning,
-            < 13 => TimeOfDay.Noon,
-            < 17 => TimeOfDay.Afternoon,
-            < 19 => TimeOfDay.Evening,
-            < 21 => TimeOfDay.Dusk,
+            >= 0 and < 5 => TimeOfDay.Midnight,
+            >= 5 and < 7 => TimeOfDay.Dawn,
+            >= 7 and < 12 => TimeOfDay.Morning,
+            >= 12 and < 13 => TimeOfDay.Noon,
+            >= 13 and < 17 => TimeOfDay.Afternoon,
+            >= 17 and < 19 => TimeOfDay.Evening,
+            >= 19 and < 21 => TimeOfDay.Dusk,
             _ => TimeOfDay.Night
         };
     }
 
-    /// <summary>
-    /// Returns the current in-game time formatted as "HH:MM".
-    /// </summary>
-    public string GetFormattedTime() => $"{_hour:D2}:{_minute:D2}";
-    
-    /// <summary>
-    /// Returns a readable date string, e.g. "Day 4, Month 3, Year 2".
-    /// </summary>
-    public string GetFormattedDate() => $"Day {_day}, Month {_month}, Year {_year}";
+    // Returns the current season based on the month.
+    public Season GetCurrentSeason()
+    {
+        var seasonIndex = ((_month - 1) / (monthsPerYear / 4)) % 4;
+        return (Season)seasonIndex;
+    }
+
+    // Human-readable date string for UI display.
+    public string GetFormattedDate()
+        => $"Day {_day}, Month {_month}, Year {_year}";
+
+    // Total elapsed in-game hours from Year 1 / Month 1 / Day 1 / 00:00.
+    // Used by all managers for deadline and timer arithmetic. Centralised here
+    // to eliminate the duplicated helper that previously lived in each manager.
+    public float GetTotalGameHours()
+        => (_year - 1) * monthsPerYear * daysPerMonth * 24f
+           + (_month - 1) * daysPerMonth  * 24f
+           + (_day - 1) * 24f
+           + _hour
+           + _minute / 60f;
     #endregion
     
-    #region Public Control Methods
+    #region Pause & Timescale
+    // Toggles the paused state and broadcasts the change through the relay.
     public void SetPaused(bool paused)
     {
         _isPaused = paused;
-        OnPauseChanged?.Invoke(_isPaused);
+        GameEventRelay.Instance?.OnPauseChanged.Invoke(_isPaused);
     }
 
     public void SetTimeScale(float scale)
-    {
-        timeScale = Mathf.Clamp(scale, 0f, maxTimeScale);
-    }
+        => timeScale = Mathf.Clamp(scale, 0f, maxTimeScale);
     #endregion
     
-    #region Input Callbacks
-    private void OnPauseTogglePerformed(InputAction.CallbackContext context)
+    #region Input Handlers
+    private void OnPauseTogglePerformed(InputAction.CallbackContext _)
         => SetPaused(!_isPaused);
-    
-    private void OnIncreasePerformed(InputAction.CallbackContext context)
-        => SetTimeScale(timeScale + timeScaleStep);
-    
-    private void OnDecreasePerformed(InputAction.CallbackContext context)
-        => SetTimeScale(timeScale - timeScaleStep);
+
+    private void OnIncreasePerformed(InputAction.CallbackContext _)
+        => timeScale = Mathf.Min(timeScale + timeScaleStep, maxTimeScale);
+
+    private void OnDecreasePerformed(InputAction.CallbackContext _)
+        => timeScale = Mathf.Max(timeScale - timeScaleStep, 0f);
     #endregion
     
-    #region Helpers
-    private static void EnableAndSubscribe(InputActionReference actionRef, Action<InputAction.CallbackContext> callback)
+    #region Input Helpers
+    private static void EnableAndSubscribe(InputActionReference actionRef, System.Action<InputAction.CallbackContext> handler)
     {
-        if (actionRef.action == null)
-            return;
+        if (!actionRef) return;
         actionRef.action.Enable();
-        actionRef.action.performed += callback;
+        actionRef.action.performed += handler;
     }
 
-    private static void DisableAndUnsubscribe(InputActionReference actionRef, Action<InputAction.CallbackContext> callback)
+    private static void DisableAndUnsubscribe(InputActionReference actionRef, System.Action<InputAction.CallbackContext> handler)
     {
-        if (actionRef.action == null)
-            return;
-        actionRef.action.performed -= callback;
+        if (!actionRef) return;
+        actionRef.action.performed -= handler;
         actionRef.action.Disable();
     }
     #endregion

@@ -23,32 +23,18 @@ public class ApplicationListUI : MonoBehaviour
     #region Lifecycle
     private void OnEnable()
     {
-        if (QuestManager.Instance)
-        {
-            QuestManager.Instance.OnApplicationSubmitted += HandleApplicationSubmitted;
-            QuestManager.Instance.OnQuestStatusChanged += HandleQuestStatusChanged;
-        }
-
-        if (AdventurerManager.Instance)
-        {
-            AdventurerManager.Instance.OnRankUpApplicationCreated += HandleRankUpCreated;
-            AdventurerManager.Instance.OnRankUpApplicationResolved += HandleRankUpResolved;
-        }
+        GameEventRelay.Instance.OnApplicationSubmitted.AddListener(HandleApplicationSubmitted);
+        GameEventRelay.Instance.OnQuestStatusChanged.AddListener(HandleQuestStatusChanged);
+        GameEventRelay.Instance.OnRankUpApplicationCreated.AddListener(HandleRankUpCreated);
+        GameEventRelay.Instance.OnRankUpApplicationResolved.AddListener(HandleRankUpResolved);
     }
 
     private void OnDisable()
     {
-        if (QuestManager.Instance)
-        {
-            QuestManager.Instance.OnApplicationSubmitted -= HandleApplicationSubmitted;
-            QuestManager.Instance.OnQuestStatusChanged -= HandleQuestStatusChanged;
-        }
-
-        if (AdventurerManager.Instance)
-        {
-            AdventurerManager.Instance.OnRankUpApplicationCreated -= HandleRankUpCreated;
-            AdventurerManager.Instance.OnRankUpApplicationResolved -= HandleRankUpResolved;
-        }
+        GameEventRelay.Instance.OnApplicationSubmitted.RemoveListener(HandleApplicationSubmitted);
+        GameEventRelay.Instance.OnQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
+        GameEventRelay.Instance.OnRankUpApplicationCreated.RemoveListener(HandleRankUpCreated);
+        GameEventRelay.Instance.OnRankUpApplicationResolved.RemoveListener(HandleRankUpResolved);
     }
     #endregion
     

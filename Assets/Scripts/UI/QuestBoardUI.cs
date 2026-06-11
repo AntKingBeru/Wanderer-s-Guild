@@ -56,13 +56,9 @@ public class QuestBoardUI : MonoBehaviour
             InteractionManager.Instance.OnScreenClosed += HandleScreenClosed;
         }
 
-        if (QuestManager.Instance)
-        {
-            QuestManager.Instance.OnUnpostedQuestsChanged += RefreshUnpostedList;
-            QuestManager.Instance.OnBoardChanged += RefreshAllSlots;
-            QuestManager.Instance.OnQuestStatusChanged += HandleQuestStatusChanged;
-        }
-
+        GameEventRelay.Instance.OnUnpostedQuestsChanged.AddListener(RefreshUnpostedList);
+        GameEventRelay.Instance.OnBoardChanged.AddListener(RefreshAllSlots);
+        GameEventRelay.Instance.OnQuestStatusChanged.AddListener(HandleQuestStatusChanged);
         HideScreen();
     }
 
@@ -70,17 +66,15 @@ public class QuestBoardUI : MonoBehaviour
     {
         if (InteractionManager.Instance)
         {
-            InteractionManager.Instance.OnScreenOpened -= HandleScreenOpened;
-            InteractionManager.Instance.OnScreenClosed -= HandleScreenClosed;
+            InteractionManager.Instance.OnScreenOpened -= (HandleScreenOpened);
+            InteractionManager.Instance.OnScreenClosed -= (HandleScreenClosed);
         }
 
-        if (QuestManager.Instance)
-        {
-            QuestManager.Instance.OnUnpostedQuestsChanged -= RefreshUnpostedList;
-            QuestManager.Instance.OnBoardChanged -= RefreshAllSlots;
-            QuestManager.Instance.OnQuestStatusChanged -= HandleQuestStatusChanged;
-        }
+        GameEventRelay.Instance.OnUnpostedQuestsChanged.RemoveListener(RefreshUnpostedList);
+        GameEventRelay.Instance.OnBoardChanged.RemoveListener(RefreshAllSlots);
+        GameEventRelay.Instance.OnQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
     }
+
     #endregion
     
     #region Screen Visibility

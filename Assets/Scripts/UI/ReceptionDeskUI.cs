@@ -54,9 +54,8 @@ public class ReceptionDeskUI : MonoBehaviour
             InteractionManager.Instance.OnScreenOpened += HandleScreenOpened;
             InteractionManager.Instance.OnScreenClosed += HandleScreenClosed;
         }
-
-        if (QuestManager.Instance)
-            QuestManager.Instance.OnAvailableRequestsChanged += RefreshRequestList;
+        
+        GameEventRelay.Instance.OnAvailableRequestsChanged.AddListener(RefreshRequestList);
 
         if (requestPopup)
         {
@@ -78,9 +77,8 @@ public class ReceptionDeskUI : MonoBehaviour
             InteractionManager.Instance.OnScreenOpened -= HandleScreenOpened;
             InteractionManager.Instance.OnScreenClosed -= HandleScreenClosed;
         }
-
-        if (QuestManager.Instance)
-            QuestManager.Instance.OnAvailableRequestsChanged -= RefreshRequestList;
+        
+        GameEventRelay.Instance.OnAvailableRequestsChanged.RemoveListener(RefreshRequestList);
 
         if (requestPopup)
         {
