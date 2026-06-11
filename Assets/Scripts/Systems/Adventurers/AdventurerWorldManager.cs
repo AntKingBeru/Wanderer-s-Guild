@@ -116,7 +116,7 @@ public class AdventurerWorldManager : MonoBehaviour
             Quaternion.identity,
             parent
         );
-        worldObject.Initialize(adventurer, questConfig, patrolCenter);
+        worldObject.Initialize(adventurer, patrolCenter);
         _worldObjects[adventurer.Id] = worldObject;
         _spawnCounter++;
     }

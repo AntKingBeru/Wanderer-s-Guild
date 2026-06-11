@@ -25,21 +25,14 @@ public class AdventurerWorldObject : MonoBehaviour
     [Tooltip("The navigation controller driving this adventurer's movement. " +
              "Assign the NavController component on this prefab.")]
     [SerializeField] private AdventurerNavigationController navController;
-
-    // Cached property ID avoids string lookups each frame.
-    private static readonly int ColorPropertyId = Shader.PropertyToID("_Color");
-
-    private MaterialPropertyBlock _mpb;
+    
     private AdventurerData _adventurer;
-    private QuestConfig _questConfig;
     private Camera _mainCam;
 
     // Called by AdventurerWorldManager immediately after instantiation.
-    public void Initialize(AdventurerData adventurer, QuestConfig questConfig, Transform patrolCenter)
+    public void Initialize(AdventurerData adventurer, Transform patrolCenter)
     {
         _adventurer = adventurer;
-        _questConfig = questConfig;
-        _mpb = new MaterialPropertyBlock();
         _mainCam  = Camera.main;
         Refresh();
         navController?.InitializeNavigation(adventurer, patrolCenter);
@@ -86,15 +79,6 @@ public class AdventurerWorldObject : MonoBehaviour
         var classIndex = (int)_adventurer.Class;
         if (classSprites != null && classIndex < classSprites.Length && classSprites[classIndex])
             spriteRenderer.sprite = classSprites[classIndex];
-
-        // Tint by rank color using a MaterialPropertyBlock to avoid material instancing.
-        if (_questConfig)
-        {
-            var rankColor = _questConfig.GetRankConfig(_adventurer.Rank).CardColor;
-            spriteRenderer.GetPropertyBlock(_mpb);
-            _mpb.SetColor(ColorPropertyId, rankColor);
-            spriteRenderer.SetPropertyBlock(_mpb);
-        }
     }
 
     // Pushes name, level, and HP fraction to the UI billboard.
