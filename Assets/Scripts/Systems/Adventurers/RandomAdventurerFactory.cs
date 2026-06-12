@@ -45,9 +45,8 @@ public class RandomAdventurerFactory : AdventurerFactory
         var level = Random.Range(StartLevelMin[rankIndex], StartLevelMax[rankIndex] + 1);
         level = Mathf.Clamp(level, 1, _config.MaxLevel);
         // Name (placeholder)
-        var name = $"Adventurer #{++_nameCounter:D4}";
+        var name = $"{classData.DisplayName} #{++_nameCounter:D4}";
         // TODO: Replace with a proper random name generator.
-
         return new AdventurerData(GenerateID(), name, classData, rank, level, _config);
     }
 }

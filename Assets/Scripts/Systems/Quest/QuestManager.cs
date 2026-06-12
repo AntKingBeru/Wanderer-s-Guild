@@ -7,7 +7,6 @@
 // Fallback application simulation runs only when AdventurerManager.Instance is null
 // (useful for testing quests without a full adventurer roster in the scene).
 
-using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,21 +53,6 @@ public class QuestManager : MonoBehaviour
 
     private int _guildFunds;
     #endregion
-
-    #region Events
-    // Fired whenever the available request list updates.
-    public event Action OnAvailableRequestsChanged;
-    // Fired whenever the unposted list changes.
-    public event Action OnUnpostedQuestsChanged;
-    // Fired whenever the board slot changes (quest added, dispatched, or expired).
-    public event Action OnBoardChanged;
-    // Fired when a new application is submitted to a posted quest.
-    public event Action<QuestApplication> OnApplicationSubmitted;
-    // Fired on any quest status transition (posted, dispatched, completed, failed, expired).
-    public event Action<QuestData> OnQuestStatusChanged;
-    // Fired whenever the guild treasury balance changes.
-    public event Action<int> OnGuildFundsChanged;
-    #endregion
     
     #region Public Properties
     public int GuildFunds => _guildFunds;
@@ -105,18 +89,14 @@ public class QuestManager : MonoBehaviour
 
     private void OnEnable()
     {
-        if (!TimeManager.Instance)
-            return;
-        TimeManager.Instance.OnDayChanged += HandleDayChanged;
-        TimeManager.Instance.OnHourChanged += HandleHourChanged;
+        GameEventRelay.Instance.OnHourChanged.AddListener(HandleHourChanged);
+        GameEventRelay.Instance.OnDayChanged.AddListener(HandleDayChanged);
     }
 
     private void OnDisable()
     {
-        if (!TimeManager.Instance)
-            return;
-        TimeManager.Instance.OnDayChanged -= HandleDayChanged;
-        TimeManager.Instance.OnHourChanged -= HandleHourChanged;
+        GameEventRelay.Instance.OnHourChanged.RemoveListener(HandleHourChanged);
+        GameEventRelay.Instance.OnDayChanged.RemoveListener(HandleDayChanged);
     }
 
     private void Start()
@@ -159,20 +139,7 @@ public class QuestManager : MonoBehaviour
     // Used as an absolute timestamp for posting, expiry, and resolution comparisons.
     // Recomputed from source each call to avoid floating-point drift from accumulation.
     private float GetCurrentGameHours()
-    {
-        if (!TimeManager.Instance)
-        {
-            Debug.LogError("[QuestManager] TimeManager is null; cannot compute game hours.");
-            return 0f;
-        }
-
-        var tm = TimeManager.Instance;
-        return (tm.Year - 1) * tm.MonthsPerYear * tm.DaysPerMonth * 24f
-               + (tm.Month - 1) * tm.DaysPerMonth  * 24f
-               + (tm.Day - 1) * 24f
-               + tm.Hour
-               + tm.Minute / 60f;
-    }
+        => TimeManager.Instance.GetTotalGameHours();
     #endregion
     
     #region Request Management
@@ -194,7 +161,7 @@ public class QuestManager : MonoBehaviour
         // Fisher-Yates shuffle
         for (var i = indices.Count - 1; i > 0; i--)
         {
-            var j = UnityEngine.Random.Range(0, i+1);
+            var j = Random.Range(0, i+1);
             (indices[i],  indices[j]) = (indices[j], indices[i]);
         }
 
@@ -208,7 +175,7 @@ public class QuestManager : MonoBehaviour
         }
         
         if (drawn > 0)
-            OnAvailableRequestsChanged?.Invoke();
+            GameEventRelay.Instance?.OnAvailableRequestsChanged.Invoke();
     }
     
     // Marks and removes requests that have sat unconverted past their expiry window.
@@ -228,7 +195,7 @@ public class QuestManager : MonoBehaviour
         
         // RemoveAll avoids mutation during the foreach above.
         _availableRequests.RemoveAll(r => r.IsExpired);
-        OnAvailableRequestsChanged?.Invoke();
+        GameEventRelay.Instance?.OnAvailableRequestsChanged.Invoke();
     }
     #endregion
     
@@ -263,9 +230,9 @@ public class QuestManager : MonoBehaviour
         request.MarkConverted();
         _availableRequests.Remove(request);
         _unpostedQuests.Add(quest);
-        
-        OnAvailableRequestsChanged?.Invoke();
-        OnUnpostedQuestsChanged?.Invoke();
+
+        GameEventRelay.Instance?.OnAvailableRequestsChanged.Invoke();
+        GameEventRelay.Instance?.OnUnpostedQuestsChanged.Invoke();
         return quest;
     }
 
@@ -280,7 +247,7 @@ public class QuestManager : MonoBehaviour
             _resolvedQuests.Add(quest);
             quest.Fail();
             ApplyFailurePenalties(quest);
-            OnQuestStatusChanged?.Invoke(quest);
+            GameEventRelay.Instance.OnQuestStatusChanged.Invoke(quest);
             return;
         } 
         Debug.LogWarning($"[QuestManager] ForceFailQuest: '{questId}' not found in InProgress.");
@@ -290,7 +257,8 @@ public class QuestManager : MonoBehaviour
     {
         if (!quest.AddApplication(application))
             return false;
-        OnApplicationSubmitted?.Invoke(application);
+        GameEventRelay.Instance.OnApplicationSubmitted.Invoke(application);
+        Debug.Log("[QuestManager] SubmitApplication called.");
         return true;
     }
     #endregion
@@ -328,9 +296,9 @@ public class QuestManager : MonoBehaviour
         _boardSlots[slotIndex] = quest;
         _unpostedQuests.Remove(quest);
 
-        OnUnpostedQuestsChanged?.Invoke();
-        OnBoardChanged?.Invoke();
-        OnQuestStatusChanged?.Invoke(quest);
+        GameEventRelay.Instance?.OnUnpostedQuestsChanged.Invoke();
+        GameEventRelay.Instance?.OnBoardChanged.Invoke();
+        GameEventRelay.Instance?.OnQuestStatusChanged.Invoke(quest);
         return true;
     }
     // Returns the quest in a given slot or null if the slot is empty or the index is invalid.
@@ -358,7 +326,7 @@ public class QuestManager : MonoBehaviour
         if (slot < 0)
             return;
         _boardSlots[slot] = null;
-        OnBoardChanged?.Invoke();
+        GameEventRelay.Instance?.OnBoardChanged.Invoke();
     }
     // Checks all Posted quests on the board and expires those whose deadline has passed.
     // Iterates by index to allow safe null-assignment mid-loop.
@@ -388,11 +356,11 @@ public class QuestManager : MonoBehaviour
                     ReputationSystem.Instance?.ChangeReputation(-expiryPenalty);
             }
             
-            OnQuestStatusChanged?.Invoke(quest);
+            GameEventRelay.Instance?.OnQuestStatusChanged.Invoke(quest);
         }
 
         if (boardDirty)
-            OnBoardChanged?.Invoke();
+            GameEventRelay.Instance?.OnBoardChanged.Invoke();
     }
     #endregion
     
@@ -431,8 +399,8 @@ public class QuestManager : MonoBehaviour
         FreeBoardSlot(quest);
         _inProgressQuests.Add(quest);
 
-        OnBoardChanged?.Invoke();
-        OnQuestStatusChanged?.Invoke(quest);
+        GameEventRelay.Instance?.OnBoardChanged.Invoke();
+        GameEventRelay.Instance?.OnQuestStatusChanged.Invoke(quest);
         return true;
     }
     // Manually rejects a pending application. The quest stays on the board.
@@ -460,7 +428,7 @@ public class QuestManager : MonoBehaviour
         {
             if (quest is not { Status: QuestStatus.Posted })
                 continue;
-            if (UnityEngine.Random.value < baseApplicationChancePerHour * seasonMod)
+            if (Random.value < baseApplicationChancePerHour * seasonMod)
                 SubmitFallbackApplication(quest);
         }
     }
@@ -468,12 +436,12 @@ public class QuestManager : MonoBehaviour
     private void SubmitFallbackApplication(QuestData quest)
     {
         var threshold = questConfig.GetRankPowerThreshold(quest.Rank);
-        var partyStrength = UnityEngine.Random.Range(threshold * 0.5f, threshold * 1.5f);
-        var partySize = UnityEngine.Random.Range(1, Mathf.Min(quest.PartyLimit, 5) + 1);
+        var partyStrength = Random.Range(threshold * 0.5f, threshold * 1.5f);
+        var partySize = Random.Range(1, Mathf.Min(quest.PartyLimit, 5) + 1);
 
         var memberIds = new string[partySize];
         for (var i = 0; i < partySize; i++)
-            memberIds[i] = $"fallback_adventurer_{UnityEngine.Random.Range(1, 1000)}";
+            memberIds[i] = $"fallback_adventurer_{Random.Range(1, 1000)}";
 
         var leaderId = memberIds[0];
         var isTemp = partySize > 1;
@@ -486,7 +454,7 @@ public class QuestManager : MonoBehaviour
         );
 
         if (quest.AddApplication(application))
-            OnApplicationSubmitted?.Invoke(application);
+            GameEventRelay.Instance?.OnApplicationSubmitted.Invoke(application);
     }
     
     private float GetSeasonApplicationModifier()
@@ -539,7 +507,7 @@ public class QuestManager : MonoBehaviour
         
         var rawHours = remainingHours * completionRatio;
         var variance = rawHours * questConfig.CompletionTimeVariance;
-        var finalHours = rawHours + UnityEngine.Random.Range(-variance, variance);
+        var finalHours = rawHours + Random.Range(-variance, variance);
         // Clamp: at least a minimal resolution time, at most just under the expiry.
         // Separating the two clamps avoids Mathf.Clamp(x, imn, max) with nim > max when the remainingHours variable is shorter than the minimum floor.
         var safeMin = Mathf.Min(0.1f, remainingHours * 0.5f);
@@ -581,7 +549,7 @@ public class QuestManager : MonoBehaviour
                 ResolveQuestOutcome(quest);
             }
             
-            OnQuestStatusChanged?.Invoke(quest);
+            GameEventRelay.Instance?.OnQuestStatusChanged.Invoke(quest);
         }
     }
     
@@ -590,7 +558,7 @@ public class QuestManager : MonoBehaviour
     {
         var successChance = quest.ApprovedApplication?.SuccessChance ?? 0f;
         
-        if (UnityEngine.Random.value <= successChance)
+        if (Random.value <= successChance)
         {
             quest.Complete();
             DistributeRewards(quest);
@@ -658,7 +626,7 @@ public class QuestManager : MonoBehaviour
             return;
         }
         _guildFunds += amount;
-        OnGuildFundsChanged?.Invoke(_guildFunds);
+        GameEventRelay.Instance?.OnGuildFundsChanged.Invoke(_guildFunds);
     }
     
     // Attempts to spend guild funds. Returns false without modifying state if insufficient.
@@ -675,7 +643,7 @@ public class QuestManager : MonoBehaviour
             return false;
         }
         _guildFunds -= amount;
-        OnGuildFundsChanged?.Invoke(_guildFunds);
+        GameEventRelay.Instance?.OnGuildFundsChanged.Invoke(_guildFunds);
         return true;
     }
     #endregion

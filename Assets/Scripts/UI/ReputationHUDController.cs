@@ -1,6 +1,5 @@
-// Drives the reputation bar and level label in the HUD.
-// Attach to ReputationBarPanel (child of HUD_Root).
-// Subscribes to ReputationSystem events — no polling, no Update loop.
+// Listens to reputation events through GameEventRelay and updates the HUD bar and label.
+// Replaces direct ReputationSystem event subscriptions.
 
 using TMPro;
 using UnityEngine;
@@ -8,88 +7,54 @@ using UnityEngine.UI;
 
 public class ReputationHUDController : MonoBehaviour
 {
-    #region Inspector
-    [Header("Bar")]
-    [Tooltip("Filled Image (Fill Method: Vertical, Fill Origin: Bottom). " +
-             "fillAmount 0 = MinReputation, 1 = MaxReputation.")]
-    [SerializeField] private Image barFill;
+    [Header("UI References")]
+    [Tooltip("The fill image of the reputation bar.")]
+    [SerializeField] private Image reputationBar;
 
-    [Header("Label")]
-    [Tooltip("Displays the current ReputationLevel tier name.")]
-    [SerializeField] private TMP_Text levelLabel;
+    [Tooltip("Optional label showing the numeric reputation value.")]
+    [SerializeField] private TextMeshProUGUI reputationLabel;
 
-    [Header("Bar Colours by Tier")]
-    [SerializeField] private Color colorExtremelyLow = new(0.55f, 0.08f, 0.08f);
-    [SerializeField] private Color colorLow = new(0.80f, 0.35f, 0.08f);
-    [SerializeField] private Color colorAverage = new(0.85f, 0.76f, 0.10f);
-    [SerializeField] private Color colorHigh = new(0.18f, 0.75f, 0.32f);
-    #endregion
+    [Tooltip("Optional label showing the reputation tier name.")]
+    [SerializeField] private TextMeshProUGUI reputationLevelLabel;
     
-    #region Display Names
-    // Matches the enum names the user requested, formatted for display.
-    // Replace with a localization lookup when i18n is added.
-    private static readonly System.Collections.Generic.Dictionary<ReputationLevel, string>
-        DisplayNames = new()
-        {
-            { ReputationLevel.ExtremelyLow, "Extremely Low" },
-            { ReputationLevel.Low, "Low" },
-            { ReputationLevel.Average, "Average" },
-            { ReputationLevel.High, "High" }
-        };
-    #endregion
-    
-    #region Lifecycle
     private void OnEnable()
     {
-        ReputationSystem.OnReputationChanged += HandleValueChanged;
-        ReputationSystem.OnReputationLevelChanged += HandleLevelChanged;
+        if (!GameEventRelay.Instance)
+            return;
+        GameEventRelay.Instance.OnReputationChanged.AddListener(HandleReputationChanged);
+        GameEventRelay.Instance.OnReputationLevelChanged.AddListener(HandleReputationLevelChanged);
+
+        // Populate immediately from current state.
+        if (ReputationSystem.Instance)
+        {
+            HandleReputationChanged(ReputationSystem.Instance.CurrentReputation);
+            HandleReputationLevelChanged(ReputationSystem.Instance.CurrentLevel);
+        }
     }
 
     private void OnDisable()
     {
-        ReputationSystem.OnReputationChanged -= HandleValueChanged;
-        ReputationSystem.OnReputationLevelChanged -= HandleLevelChanged;
+        if (!GameEventRelay.Instance)
+            return;
+        GameEventRelay.Instance.OnReputationChanged.RemoveListener(HandleReputationChanged);
+        GameEventRelay.Instance.OnReputationLevelChanged.RemoveListener(HandleReputationLevelChanged);
     }
 
-    private void Start()
+    // Updates bar fill as a 0–1 normalized value across the full -100 to +100 range.
+    private void HandleReputationChanged(int value)
     {
-        // If ReputationSystem already initialized before this controller awoke, pull its current state so the HUD is never blank on first frame.
-        if (!ReputationSystem.Instance)
-            return;
-        HandleValueChanged(ReputationSystem.Instance.CurrentReputation);
-        HandleLevelChanged(ReputationSystem.Instance.CurrentLevel);
-    }
-    #endregion
-    
-    #region Event Handlers
-    private void HandleValueChanged(int reputation)
-    {
-        if (!barFill)
-            return;
-        // Map [-100, 100] → [0, 1] for fillAmount;
-        const float range = ReputationSystem.MaxReputation - ReputationSystem.MinReputation;
-        barFill.fillAmount = (reputation - ReputationSystem.MinReputation) / range;
+        if (reputationBar)
+        {
+            var normalised = Mathf.InverseLerp(ReputationSystem.MinReputation, ReputationSystem.MaxReputation, value);
+            reputationBar.fillAmount = normalised;
+        }
+        if (reputationLabel)
+            reputationLabel.text = value.ToString();
     }
 
-    private void HandleLevelChanged(ReputationLevel level)
+    private void HandleReputationLevelChanged(ReputationLevel level)
     {
-        if (levelLabel)
-            levelLabel.text = DisplayNames.TryGetValue(level, out var levelName)
-                ? levelName
-                : level.ToString();
-        if (barFill)
-            barFill.color = TierToColor(level);
+        if (reputationLevelLabel)
+            reputationLevelLabel.text = level.ToString();
     }
-    #endregion
-    
-    #region Helpers
-    private Color TierToColor(ReputationLevel level) => level switch
-    {
-        ReputationLevel.ExtremelyLow => colorExtremelyLow,
-        ReputationLevel.Low => colorLow,
-        ReputationLevel.Average => colorAverage,
-        ReputationLevel.High => colorHigh,
-        _ => colorAverage
-    };
-    #endregion
 }

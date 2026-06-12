@@ -150,6 +150,18 @@ public enum PartyChangeReason
     Disbanded, // The party was fully dissolved; all members become solo
     TemporaryMadePermanent // A temporary per-quest grouping became a registered party
 }
+
+// All possible movement/behavior states an in-world adventurer object can be in.
+// AdventurerNavigationController transitions between these in response to game events from GameEventRelay.
+public enum AdventurerBehaviorState
+{
+    Idle, // Wandering the designated patrol area
+    Arriving, // Walking to a reception desk prop on first spawn
+    Browsing, // Walking to a guild board prop to browse quests
+    Departing, // Walking to the exit/spawn point before going on a quest
+    OnQuest, // Hidden from the world; quest is in progress
+    Returning // Walking from the exit/spawn point back to idle area
+}
 #endregion
 
 #region World Interaction
@@ -159,6 +171,13 @@ public enum ScreenType
 {
     ReceptionDesk,
     QuestBoard
+}
+
+public enum GuildPointType
+{
+    ReceptionDesk, // Where adventurers walk on first arrival
+    QuestBoard, // Where adventurers walk when browsing for quests
+    Exit // Where adventurers walk before departing on a quest / after returning
 }
 #endregion
 
