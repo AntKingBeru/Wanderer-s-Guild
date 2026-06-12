@@ -3638,7 +3638,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TimeManager
   realSecondsPerGameMinute: 1
   startHour: 6
-  startMinute: 0
+  startMinute: 45
   startDay: 1
   startMonth: 1
   startYear: 1
