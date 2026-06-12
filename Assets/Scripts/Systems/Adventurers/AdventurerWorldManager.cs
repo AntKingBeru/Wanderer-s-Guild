@@ -1,6 +1,8 @@
-// Spawns and despawns AdventurerWorldObject instances in response to AdventurerManager events.
-// Uses an ordered list of Transform spawn points; cycles through them when more adventurers arrive than there are points.
-// Falls back to X-axis spacing if none are assigned.
+// Spawns and despawns AdventurerWorldObject instances.
+// Spawns 2 starter adventurers on Day 1 at the configured start hour (before the regular factory cycle takes over).
+// Each spawned object receives a patrol center from the designated wander area.
+// Bridges SoloAdventurerManager's OnApplicationSubmitted relay event to the
+// relevant world object so it walks to the board.
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,58 +10,96 @@ using UnityEngine;
 public class AdventurerWorldManager : MonoBehaviour
 {
     #region Identity
-
     [Header("Prefab")]
     [Tooltip("The AdventurerWorldObject prefab instantiated for each arriving adventurer.")]
-    [SerializeField]
-    private AdventurerWorldObject adventurerPrefab;
+    [SerializeField] private AdventurerWorldObject adventurerPrefab;
 
-    [Tooltip("QuestConfig asset — passed to world objects for rank colour lookup.")] [SerializeField]
-    private QuestConfig questConfig;
+    [Tooltip("QuestConfig asset — passed to world objects for rank colour lookup.")]
+    [SerializeField] private QuestConfig questConfig;
 
     [Header("Spawn Setup")]
     [Tooltip("Parent transform for spawned objects. Keeps the hierarchy clean. " +
              "Leave null to parent to this manager.")]
-    [SerializeField]
-    private Transform spawnParent;
+    [SerializeField] private Transform spawnParent;
 
     [Tooltip("Ordered spawn points. Objects cycle through these as adventurers arrive. " +
              "If empty, objects space out along the X axis using fallback spacing.")]
-    [SerializeField]
-    private Transform[] spawnPoints;
+    [SerializeField] private Transform[] spawnPoints;
 
-    [Tooltip("World-unit spacing between objects when no spawn points are assigned.")] [SerializeField, Min(0.5f)]
-    private float fallbackSpace = 2f;
+    [Tooltip("World-unit spacing between objects when no spawn points are assigned.")]
+    [SerializeField, Min(0.5f)] private float fallbackSpace = 2f;
+    
+    [Header("Patrol Area")]
+    [Tooltip("Centre of the area adventurers wander when idle. " +
+             "All adventurers share this center; radius is set on AdventurerNavigationController.")]
+    [SerializeField] private Transform patrolCenter;
 
+    [Header("Starter Adventurers")]
+    [Tooltip("In-game hour on Day 1 at which the two starter adventurers are spawned. " +
+             "Should fall within the application window (default 7).")]
+    [SerializeField, Range(0, 23)] private int starterSpawnHour = 7;
+
+    // Whether the two starter adventurers have already been spawned this session.
+    private bool _startersSpawned;
     private readonly Dictionary<string, AdventurerWorldObject> _worldObjects = new();
-
     private int _spawnCounter;
-
     #endregion
 
     #region Lifecycle
-
     private void OnEnable()
     {
         if (!AdventurerManager.Instance)
             return;
-        AdventurerManager.Instance.OnAdventurerArrived += HandleAdventurerArrived;
-        AdventurerManager.Instance.OnAdventurerLeveledUp += HandleAdventurerChanged;
-        AdventurerManager.Instance.OnAdventurerRankUp += HandleAdventurerChanged;
+        GameEventRelay.Instance.OnAdventurerArrived.AddListener(HandleAdventurerArrived);
+        GameEventRelay.Instance.OnAdventurerLeveledUp.AddListener(HandleAdventurerChanged);
+        GameEventRelay.Instance.OnAdventurerRankUp.AddListener(HandleAdventurerChanged);
+        // Listen for hour ticks to trigger starter spawns at the right moment.
+        GameEventRelay.Instance.OnHourChanged.AddListener(HandleHourChanged);
+        GameEventRelay.Instance.OnAdventurerApplicationSubmitted.AddListener(NotifyApplicationSubmitted);
     }
 
     private void OnDisable()
     {
         if (!AdventurerManager.Instance)
             return;
-        AdventurerManager.Instance.OnAdventurerArrived -= HandleAdventurerArrived;
-        AdventurerManager.Instance.OnAdventurerLeveledUp -= HandleAdventurerChanged;
-        AdventurerManager.Instance.OnAdventurerRankUp -= HandleAdventurerChanged;
+        GameEventRelay.Instance.OnAdventurerArrived.RemoveListener(HandleAdventurerArrived);
+        GameEventRelay.Instance.OnAdventurerLeveledUp.RemoveListener(HandleAdventurerChanged);
+        GameEventRelay.Instance.OnAdventurerRankUp.RemoveListener(HandleAdventurerChanged);
+        GameEventRelay.Instance.OnHourChanged.RemoveListener(HandleHourChanged);
+        GameEventRelay.Instance.OnAdventurerApplicationSubmitted.RemoveListener(NotifyApplicationSubmitted);
     }
-
     #endregion
 
     #region Event Handlers
+    // On Day 1 at the configured hour, force-spawn 2 adventurers through the normal factory.
+    // After that, the regular interval-based factory takes over.
+    private void HandleHourChanged(int hour)
+    {
+        if (_startersSpawned)
+            return;
+        if (!TimeManager.Instance)
+            return;
+        if (TimeManager.Instance.Day != 1)
+            return;
+        if (hour < starterSpawnHour)
+            return;
+
+        _startersSpawned = true;
+
+        var sam = SoloAdventurerManager.Instance;
+        if (!sam)
+        {
+            Debug.LogWarning("[AdventurerWorldManager] SoloAdventurerManager not found; " +
+                             "cannot spawn starter adventurers.");
+            return;
+        }
+
+        // Spawn 2 adventurers immediately via the factory.
+        // SpawnStarterAdventurer is a new public method added to SoloAdventurerManager (see note below).
+        sam.SpawnStarterAdventurer();
+        sam.SpawnStarterAdventurer();
+    }
+    
     private void HandleAdventurerArrived(AdventurerData adventurer)
     {
         if (!adventurerPrefab)
@@ -76,7 +116,7 @@ public class AdventurerWorldManager : MonoBehaviour
             Quaternion.identity,
             parent
         );
-        worldObject.Initialize(adventurer, questConfig);
+        worldObject.Initialize(adventurer, patrolCenter);
         _worldObjects[adventurer.Id] = worldObject;
         _spawnCounter++;
     }
@@ -85,6 +125,14 @@ public class AdventurerWorldManager : MonoBehaviour
     {
         if (_worldObjects.TryGetValue(adventurer.Id, out var worldObject))
             worldObject.Refresh();
+    }
+    
+    // Called by SoloAdventurerManager (bridged through GameEventRelay) when an
+    // application is submitted so the relevant world object walks to the board.
+    public void NotifyApplicationSubmitted(string adventurerId)
+    {
+        if (_worldObjects.TryGetValue(adventurerId, out var obj))
+            obj.NotifyApplicationSubmitted();
     }
     #endregion
     

@@ -73,6 +73,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8017237152470024103}
+  - component: {fileID: 7105787555594170414}
+  - component: {fileID: 5844953130262689041}
   - component: {fileID: 8946116357851537473}
   m_Layer: 0
   m_Name: AdventurerWorldObject
@@ -98,6 +100,45 @@ Transform:
   - {fileID: 5322927153538421524}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!195 &7105787555594170414
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2398873108575098928}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.25
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1.8
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &5844953130262689041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2398873108575098928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc9ee6ea7dda63747be0fdd739ade671, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdventurerNavigationController
+  agent: {fileID: 7105787555594170414}
+  patrolCenter: {fileID: 0}
+  patrolRadius: 5
+  wanderWaitTime: 3
+  arrivalDistance: 0.5
 --- !u!114 &8946116357851537473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,8 +151,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1007a3d29ab7c8458697800887da59c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdventurerWorldObject
-  capsuleRenderer: {fileID: 6563735882472487797}
+  spriteRenderer: {fileID: 5228963774438767812}
+  classSprites:
+  - {fileID: 10663635, guid: a334cf4cccedce14f9199b59d2f016c4, type: 3}
+  - {fileID: -802454920, guid: a334cf4cccedce14f9199b59d2f016c4, type: 3}
   billboard: {fileID: 3207808659549608166}
+  navController: {fileID: 5844953130262689041}
 --- !u!1 &3864911002718767616
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,11 +166,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2777418362343533745}
-  - component: {fileID: 2468714687355314607}
-  - component: {fileID: 6563735882472487797}
-  - component: {fileID: 9053199636684143640}
+  - component: {fileID: 5228963774438767812}
   m_Layer: 0
-  m_Name: Capsule
+  m_Name: AdventurerSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -146,30 +189,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8017237152470024103}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2468714687355314607
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3864911002718767616}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &6563735882472487797
-MeshRenderer:
+--- !u!212 &5228963774438767812
+SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3864911002718767616}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
+  m_RayTracingMode: 0
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
@@ -179,7 +215,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -192,7 +228,7 @@ MeshRenderer:
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
   m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
+  m_SelectedEditorRenderState: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -202,30 +238,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &9053199636684143640
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3864911002718767616}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Sprite: {fileID: 1144062369, guid: a334cf4cccedce14f9199b59d2f016c4, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1.28125, y: 1.78125}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
 --- !u!1 &4061269238224550384
 GameObject:
   m_ObjectHideFlags: 0

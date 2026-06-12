@@ -1,5 +1,5 @@
-// Listens to TimeManager events and pushed updated string to the HUD text elements.
-// Intentionally subscribes to only 3 events to keep the update surface minimal.
+// Listens to time events through GameEventRelay and updates the HUD text elements.
+// Subscribes in OnEnable and unsubscribes in OnDisable; safe across scene loads.
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,59 +8,59 @@ using TMPro;
 public class TimeHUDController : MonoBehaviour
 {
     [Header("Time Display")]
-    [Tooltip("Shows current time as HH:MM. Assign the TimLabel.")]
+    [Tooltip("Shows current time as HH:MM.")]
     [SerializeField] private TextMeshProUGUI timeLabel;
-    
-    [Tooltip("Shows time-of-day category in parentheses, e.g. '(Dawn)'. Assign TimeOfDayLabel.")]
+
+    [Tooltip("Shows time-of-day category, e.g. '(Dawn)'.")]
     [SerializeField] private TextMeshProUGUI timeOfDayLabel;
-    
+
     [Header("Date Display")]
-    [Tooltip("Shows 'Day X, Month Y, Year Z'. Assign the DateLabel TextMeshProUGUI.")]
+    [Tooltip("Shows 'Day X, Month Y, Year Z'.")]
     [SerializeField] private TextMeshProUGUI dateLabel;
 
-    [Tooltip("Displays the season sprite. Assign the SeasonIcon Image component.")]
+    [Tooltip("Displays the current season sprite.")]
     [SerializeField] private Image seasonIconImage;
 
-    [Tooltip("Four sprites indexed by the Season enum order: 0=Spring, 1=Summer, 2=Autumn, 3=Winter. " +
-             "Array length must be exactly 4.")]
+    [Tooltip("Four sprites indexed by Season enum: 0=Spring, 1=Summer, 2=Autumn, 3=Winter.")]
     [SerializeField] private Sprite[] seasonSprites;
     
     #region Lifecycle
     private void OnEnable()
     {
-        // Guard: TimeManager initializes via DontDestroyOnLoad in Awake, so by the time any OnEnable runs, it should exist.
-        // This null check handles edge cases like additive scene loads or incorrect script execution order.
-        if (!TimeManager.Instance)
+        if (!GameEventRelay.Instance)
         {
-            Debug.LogWarning("[TimeHUDController]: TimeManager not found during OnEnable. " +
-                             "Verify TimeManager is in the first loaded scene.");
+            Debug.LogWarning("[TimeHUDController] GameEventRelay not found during OnEnable.");
             return;
         }
+        // Subscribe through the relay; guaranteed to exist before any OnEnable fires.
+        GameEventRelay.Instance.OnMinuteChanged.AddListener(HandleMinuteChanged);
+        GameEventRelay.Instance.OnDayChanged.AddListener(HandleDayChanged);
+        GameEventRelay.Instance.OnSeasonChanged.AddListener(HandleSeasonChanged);
 
-        TimeManager.Instance.OnMinuteChanged += HandleMinuteChanged;
-        TimeManager.Instance.OnDayChanged += HandleDayChanged;
-        TimeManager.Instance.OnSeasonChanged += HandleSeasonChanged;
+        // Populate immediately so nothing shows empty on the first frame.
+        if (TimeManager.Instance)
+        {
+            RefreshTime(TimeManager.Instance.Hour, TimeManager.Instance.Minute);
+            RefreshDate();
+            RefreshSeasonIcon(TimeManager.Instance.GetCurrentSeason());
+        }
     }
 
     private void OnDisable()
     {
-        // Populate all fields immediately so nothing shows empty on the first frame.
-        if (!TimeManager.Instance)
-            return;
-        
-        RefreshTime(TimeManager.Instance.Hour, TimeManager.Instance.Minute);
-        RefreshDate();
-        RefreshSeasonIcon(TimeManager.Instance.GetCurrentSeason());
+        if (!GameEventRelay.Instance) return;
+        GameEventRelay.Instance.OnMinuteChanged.RemoveListener(HandleMinuteChanged);
+        GameEventRelay.Instance.OnDayChanged.RemoveListener(HandleDayChanged);
+        GameEventRelay.Instance.OnSeasonChanged.RemoveListener(HandleSeasonChanged);
     }
     #endregion
     
     #region Event Handlers
-    // Fires every in-game minute, which also covers hour changes (hour is already updated by the time this fires, so GetCurrentTimeOfDay() returns the new value).
+    // Fires every in-game minute; hour is already updated when this fires.
     private void HandleMinuteChanged(int hour, int minute)
         => RefreshTime(hour, minute);
-    
-    // Fires once per in-game day, AFTER month and year rollovers are already applied.
-    // Subscribing only here - rather than to all three date events - avoids three redundant string builds on a year rollover.
+
+    // Fires once per day after all rollovers; one subscription covers month and year changes too.
     private void HandleDayChanged(int day)
         => RefreshDate();
 
@@ -74,37 +74,26 @@ public class TimeHUDController : MonoBehaviour
         if (timeLabel)
             timeLabel.text = $"{hour:D2}:{minute:D2}";
 
-        if (timeOfDayLabel)
-        {
-            // TimeOfDay is re-queried (not cached) so it always reflects the current hour, including at the exact moment an hour boundary crosses.
-            var tod = TimeManager.Instance.GetCurrentTimeOfDay().ToString();
-            timeOfDayLabel.text = $"{tod}";
-        }
+        if (timeOfDayLabel && TimeManager.Instance)
+            timeOfDayLabel.text = TimeManager.Instance.GetCurrentTimeOfDay().ToString();
     }
 
     private void RefreshDate()
     {
-        if (!dateLabel || !TimeManager.Instance)
-            return;
-
-        dateLabel.text = TimeManager.Instance.GetFormattedDate();
+        if (dateLabel && TimeManager.Instance)
+            dateLabel.text = TimeManager.Instance.GetFormattedDate();
     }
 
     private void RefreshSeasonIcon(Season season)
     {
         if (!seasonIconImage)
             return;
-        
         var index = (int)season;
-        
-        // Bounds check guards against an unfinished seasonSprites array in the inspector.
         if (seasonSprites == null || index >= seasonSprites.Length || !seasonSprites[index])
         {
-            Debug.LogWarning($"[TimeHUDController] No sprite assigned for Season index {index} " +
-                             $"({season}). Assign all 4 sprites in the inspector.");
+            Debug.LogWarning($"[TimeHUDController] No sprite for Season index {index} ({season}).");
             return;
         }
-        
         seasonIconImage.sprite = seasonSprites[index];
     }
     #endregion
