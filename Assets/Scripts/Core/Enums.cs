@@ -164,6 +164,14 @@ public enum AdventurerBehaviorState
 }
 #endregion
 
+#region Build
+public enum RoomState
+{
+    UnderConstruction,
+    Built
+}
+#endregion
+
 #region World Interaction
 // Identifies which UI screen a world-space interactable prop opens when clicked.
 // Add entries here as new screen are introduced.

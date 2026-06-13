@@ -684,6 +684,23 @@ public class SoloAdventurerManager : MonoBehaviour
             adv.ResetFood();
         }
     }
+    
+    // Called by BuildManager when a room with stat boosts finishes construction.
+    // Recalculates every adventurer's effective stats using the new cumulative boosts.
+    public void RecalculateAllStatBoosts()
+    {
+        // TODO: iterate all adventurers, re-apply BuildManager.Instance.GetTotalStatBoosts()
+        // on top of base ClassData stats. Implement fully when stat-boost UI is built.
+        Debug.Log("[AdventurerManager] RecalculateAllStatBoosts called — stub pending full implementation.");
+    }
+
+    // Called by BuildManager when new bed slots become available.
+    // Assigns homeless (LodgingState.Nowhere) adventurers to in-guild lodging.
+    public void OnBedsAdded(int newBeds)
+    {
+        // TODO: sort Nowhere adventurers by seniority or rank and assign beds up to the new cap.
+        Debug.Log($"[AdventurerManager] OnBedsAdded({newBeds}) called — stub pending bed-assignment logic.");
+    }
     #endregion
 
     #region Success Chance Calculation
