@@ -180,10 +180,10 @@ GameObject:
   - component: {fileID: 7159093593467262391}
   m_Layer: 6
   m_Name: Paper1
-  m_TagString: Untagged
+  m_TagString: Interactable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &9136103609498016212
 Transform:
@@ -268,10 +268,10 @@ GameObject:
   - component: {fileID: 5219413799484404949}
   m_Layer: 6
   m_Name: StandPoint
-  m_TagString: Untagged
+  m_TagString: Interactable
   m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &5219413799484404949
 Transform:
@@ -302,10 +302,10 @@ GameObject:
   - component: {fileID: 6261520831368858866}
   m_Layer: 6
   m_Name: Paper2
-  m_TagString: Untagged
+  m_TagString: Interactable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &9204803959197234051
 Transform:
