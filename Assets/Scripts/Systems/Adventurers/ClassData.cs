@@ -57,11 +57,11 @@ public class ClassData : ScriptableObject
     #region Helpers
     // Stat values for a given level. Level is clamped to 1 so negatives are safe.
     public float GetHp(int level) 
-        => baseHp * hpPerLevel * (Mathf.Max(1, level) - 1);
+        => baseHp + hpPerLevel * (Mathf.Max(1, level) - 1);
     public float GetDamage(int level) 
-        => baseDamage * damagePerLevel * (Mathf.Max(1, level) - 1);
+        => baseDamage + damagePerLevel * (Mathf.Max(1, level) - 1);
     public float GetSpeed(int level) 
-        => baseSpeed * speedPerLevel * (Mathf.Max(1, level) - 1);
+        => baseSpeed + speedPerLevel * (Mathf.Max(1, level) - 1);
 
     // Returns this class's affinity for a given quest category
     public CategoryAffinity GetAffinity(QuestCategory category) 

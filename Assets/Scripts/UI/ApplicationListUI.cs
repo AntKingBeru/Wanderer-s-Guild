@@ -24,6 +24,7 @@ public class ApplicationListUI : MonoBehaviour
     private void OnEnable()
     {
         GameEventRelay.Instance.OnApplicationSubmitted.AddListener(HandleApplicationSubmitted);
+        GameEventRelay.Instance.OnApplicationRejected.AddListener(HandleApplicationRejected);
         GameEventRelay.Instance.OnQuestStatusChanged.AddListener(HandleQuestStatusChanged);
         GameEventRelay.Instance.OnRankUpApplicationCreated.AddListener(HandleRankUpCreated);
         GameEventRelay.Instance.OnRankUpApplicationResolved.AddListener(HandleRankUpResolved);
@@ -32,6 +33,7 @@ public class ApplicationListUI : MonoBehaviour
     private void OnDisable()
     {
         GameEventRelay.Instance.OnApplicationSubmitted.RemoveListener(HandleApplicationSubmitted);
+        GameEventRelay.Instance.OnApplicationRejected.RemoveListener(HandleApplicationRejected);
         GameEventRelay.Instance.OnQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
         GameEventRelay.Instance.OnRankUpApplicationCreated.RemoveListener(HandleRankUpCreated);
         GameEventRelay.Instance.OnRankUpApplicationResolved.RemoveListener(HandleRankUpResolved);
@@ -46,6 +48,19 @@ public class ApplicationListUI : MonoBehaviour
             return;
         SpawnItem(item => item.InitializeRegular(application, quest, questConfig));
     }
+    
+    private void HandleApplicationRejected(QuestApplication application)
+    {
+        for (var i = _items.Count - 1; i >= 0; i--)
+        {
+            var item = _items[i];
+            if (!item.IsRankUp && item.RegularApplication?.ApplicationId == application.ApplicationId)
+            {
+                DestroyItem(i);
+                return;
+            }
+        }
+    }
 
     private void HandleRankUpCreated(RankUpApplicationData application)
     {
@@ -59,7 +74,8 @@ public class ApplicationListUI : MonoBehaviour
             RemoveItemForQuest(quest.QuestId);
     }
     
-    private void HandleRankUpResolved(RankUpApplicationData application) => RemoveRankUpItem(application.AdventurerId);
+    private void HandleRankUpResolved(RankUpApplicationData application)
+        => RemoveRankUpItem(application.ApplicationId);
     #endregion
     
     #region Item Click Handling

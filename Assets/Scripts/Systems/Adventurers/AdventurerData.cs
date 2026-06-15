@@ -201,7 +201,7 @@ public class AdventurerData
 
     public bool DispatchToRankUpQuest(float startHour, float endHour)
     {
-        if (_status == AdventurerStatus.OnQuest || _status == AdventurerStatus.OnRankUpQuest)
+        if (_status != AdventurerStatus.Idle && _status != AdventurerStatus.AppliedToQuest)
         {
             Debug.LogWarning($"[AdventurerData] '{_name}' cannot start rank-up quest - currently {_status}.");
             return false;
@@ -210,8 +210,6 @@ public class AdventurerData
         _status = AdventurerStatus.OnRankUpQuest;
         _rankUpQuestStartHour = startHour;
         _rankUpQuestEndHour = endHour;
-        _rankApplicationId = null;
-        _rankUpEligible = false;
         return true;
     }
 
@@ -323,7 +321,7 @@ public class AdventurerData
     public void SetLodging(LodgingState state, string roomId = null)
     {
         _lodgingState = state;
-        _lodgingRoomId = (state == global::LodgingState.InGuild) ? roomId : null;
+        _lodgingRoomId = (state == LodgingState.InGuild) ? roomId : null;
     }
     #endregion
     

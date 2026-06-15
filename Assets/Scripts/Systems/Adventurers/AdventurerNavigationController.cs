@@ -2,7 +2,7 @@
 // Implements a State Machine pattern: each AdventurerBehaviourState maps to a
 // distinct enter/tick/exit behavior.
 // Listens to GameEventRelay events to know when to transition states
-// (e.g. quest dispatched → Departing, quest resolved → Returning).
+// (e.g., a quest dispatched → Departing, a quest resolved → Returning).
 // AdventurerWorldManager owns this component and calls Initialize() after spawn.
 
 using System.Linq;
@@ -50,6 +50,9 @@ public class AdventurerNavigationController : MonoBehaviour
         if (GameEventRelay.Instance)
         {
             GameEventRelay.Instance.OnQuestStatusChanged.AddListener(HandleQuestStatusChanged);
+            GameEventRelay.Instance.OnRankUpApplicationResolved.AddListener(HandleRankUpResolved);
+            GameEventRelay.Instance.OnAdventurerRankUp.AddListener(HandleRankUpFinished);
+            GameEventRelay.Instance.OnAdventurerRankUpFailed.AddListener(HandleRankUpFinished);
         }
 
         // First action after spawn: walk to a reception desk.
@@ -59,7 +62,12 @@ public class AdventurerNavigationController : MonoBehaviour
     private void OnDestroy()
     {
         if (GameEventRelay.Instance)
+        {
             GameEventRelay.Instance.OnQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
+            GameEventRelay.Instance.OnRankUpApplicationResolved.RemoveListener(HandleRankUpResolved);
+            GameEventRelay.Instance.OnAdventurerRankUp.RemoveListener(HandleRankUpFinished);
+            GameEventRelay.Instance.OnAdventurerRankUpFailed.RemoveListener(HandleRankUpFinished);
+        }
     }
     
     private void Update()
@@ -204,6 +212,31 @@ public class AdventurerNavigationController : MonoBehaviour
                     EnterState(AdventurerBehaviorState.Returning);
                 break;
         }
+    }
+    
+    private void HandleRankUpResolved(RankUpApplicationData application)
+    {
+        if (_adventurer == null) return;
+        if (application.AdventurerId != _adventurer.Id) return;
+
+        switch (application.Status)
+        {
+            case ApplicationStatus.Approved:
+                // Adventurer was dispatched on their rank-up quest — head for the exit.
+                EnterState(AdventurerBehaviorState.Departing);
+                break;
+            case ApplicationStatus.Rejected:
+                // Rejected by the player — no movement change needed, stay idle.
+                break;
+        }
+    }
+    
+    private void HandleRankUpFinished(AdventurerData adventurer)
+    {
+        if (_adventurer == null || adventurer.Id != _adventurer.Id)
+            return;
+        // Rank-up quest resolved — reappear at the exit and walk back in.
+        EnterState(AdventurerBehaviorState.Returning);
     }
     #endregion
     

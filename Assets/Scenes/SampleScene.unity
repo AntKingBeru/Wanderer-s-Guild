@@ -1663,7 +1663,7 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
-  interactionRange: 35
+  interactionRange: 50
   hoverCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
 --- !u!114 &1744095572
@@ -2171,7 +2171,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3065404182902887193, guid: 313669402a75e1a479f22dca36040d62, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -30.00003
+      value: -30
       objectReference: {fileID: 0}
     - target: {fileID: 3080941151782537604, guid: 313669402a75e1a479f22dca36040d62, type: 3}
       propertyPath: m_AnchorMax.y

@@ -106,6 +106,12 @@ public class ApplicationDetailUI : MonoBehaviour
         if (regularSuccessChanceLabel && application != null)
             regularSuccessChanceLabel.text = $"Success Chance: {application.SuccessChance * 100f:F0}%";
         
+        var isPending = application?.Status == ApplicationStatus.Pending;
+        if (approveButton)
+            approveButton.interactable = isPending;
+        if (declineButton)
+            declineButton.interactable = isPending;
+        
         SetVisible(true);
     }
 
@@ -146,6 +152,15 @@ public class ApplicationDetailUI : MonoBehaviour
         if (rankUpSuccessChanceLabel)
             rankUpSuccessChanceLabel.text = $"Success Chance: {application.SuccessChance * 100f:F0}%";
 
+        var isPending = application.Status == ApplicationStatus.Pending;
+        if (approveButton)
+            approveButton.interactable = isPending;
+        if (declineButton)
+            declineButton.interactable = isPending;
+        
+        if (panelTitleLabel && !isPending)
+            panelTitleLabel.text = $"Rank-Up Application ({application.Status})";
+
         SetVisible(true);
     }
     
@@ -160,8 +175,7 @@ public class ApplicationDetailUI : MonoBehaviour
         {
             success = _currentRankUpApplication != null
                       && AdventurerManager.Instance
-                      && AdventurerManager.Instance.ApproveRankUpApplication(
-                          _currentRankUpApplication.ApplicationId);
+                      && AdventurerManager.Instance.ApproveRankUpApplication(_currentRankUpApplication.ApplicationId);
         }
         else
         {
