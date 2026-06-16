@@ -2629,8 +2629,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 11
-  m_fontSizeBase: 11
+  m_fontSize: 14
+  m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3539,10 +3539,10 @@ RectTransform:
   - {fileID: 2214763558874270745}
   m_Father: {fileID: 4200187147005682688}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -4}
-  m_SizeDelta: {x: -8, y: 220}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 48, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &8611543393912863289
 CanvasRenderer:
@@ -4995,10 +4995,10 @@ RectTransform:
   - {fileID: 8135696164015061407}
   m_Father: {fileID: 582581239606542195}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 12, y: -92}
-  m_SizeDelta: {x: 56, y: 244}
+  m_AnchoredPosition: {x: -66, y: -92}
+  m_SizeDelta: {x: 48, y: -184}
   m_Pivot: {x: 0, y: 1}
 --- !u!225 &8476262252800602164
 CanvasGroup:
@@ -5024,9 +5024,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 743c3f2aab1b325419819167b8ffa597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReputationHUDController
-  reputationBar: {fileID: 0}
-  reputationLabel: {fileID: 0}
-  reputationLevelLabel: {fileID: 0}
+  reputationBar: {fileID: 971048593883991082}
+  reputationLabel: {fileID: 6100612481031720765}
+  reputationLevelLabel: {fileID: 5246568201056299452}
 --- !u!1 &3017285439078437277
 GameObject:
   m_ObjectHideFlags: 0
@@ -5304,7 +5304,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.332, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -30, y: -29.99997}
+  m_AnchoredPosition: {x: -30, y: -30.00003}
   m_SizeDelta: {x: -60, y: -60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3449919627656148900
@@ -12923,7 +12923,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -16}
   m_SizeDelta: {x: 0, y: 16}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &8004885859415536137
@@ -12981,8 +12981,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 11
-  m_fontSizeBase: 11
+  m_fontSize: 14
+  m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
