@@ -449,9 +449,11 @@ MonoBehaviour:
   rotateButtonAction: {fileID: 7439415754297113158, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
   zoomAction: {fileID: 5766174040180321490, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
   panSpeed: 0.02
+  panBoundsOffset: 25
+  defaultBoundsHalfExtent: 25
   rotateSpeed: 0.3
   minPitch: -45
-  maxPitch: 22.5
+  maxPitch: 0
   zoomSpeed: 2
   minZoomDistance: 3
   maxZoomDistance: 40
