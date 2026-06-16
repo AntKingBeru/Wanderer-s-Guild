@@ -162,6 +162,7 @@ public class SoloAdventurerManager : MonoBehaviour
     {
         var context = new AdventurerCreationContext
         {
+            // Use live guild rank from ProgressionSystem; fall back to config for editor scenes.
             GuildRankCap = config.GuildRankCap,
             TotalAdventurerCount = _adventurers.Count
         };
@@ -757,15 +758,33 @@ public class SoloAdventurerManager : MonoBehaviour
         return CalculateSuccessChance(quest, members);
     }
 
+    // Adventurer XP formula:
+//   base = questConfig.GetCategoryBaseXp(category) × rankXpMultiplier
+//   where rankXpMultiplier = questRankBaseXp / F-rank reference XP
+//   then scaled by power efficiency (0.5×–1.5×) and class affinity (+10% if Preferred).
     private int CalculateQuestXp(QuestData quest, AdventurerData adv, ClassData classData)
     {
-        var baseXp = questConfig.GetRankBaseXp(quest.Rank);
+        // Category base × rank scaling: higher-rank quests of the same category pay more.
+        var categoryBase = questConfig.GetCategoryBaseXp(quest.Category);
+        // Rank XP from config acts as the rank multiplier anchor.
+        var rankXp = questConfig.GetRankBaseXp(quest.Rank);
+        // Reference rank (F) XP — used to normalize the multiplier so F quests give ~1× category base.
+        var fRankXp = Mathf.Max(1, questConfig.GetRankBaseXp(QuestRank.F));
+        var rankMultiplier = rankXp / (float)fRankXp;
+        var baseXp = categoryBase * rankMultiplier;
+
+        // Efficiency modifier: adventurer near the quest's power threshold gets 1×;
+        // weaker adventurers get up to 1.5× (challenge bonus), stronger get down to 0.5×.
         var threshold = Mathf.Max(1f, questConfig.GetRankPowerThreshold(quest.Rank));
         var efficiency = Mathf.Clamp(adv.CalculatePower(config) / threshold, 0.5f, 2f);
-        var modifier = Mathf.Lerp(1.5f, 0.5f, (efficiency - 0.5f) / 1.5f);
+        var efficiencyModifier = Mathf.Lerp(1.5f, 0.5f, (efficiency - 0.5f) / 1.5f);
+
+        // Class affinity bonus for preferred categories.
+        var affinityModifier = 1f;
         if (classData && classData.GetAffinity(quest.Category) == CategoryAffinity.Preferred)
-            modifier *= 1.1f;
-        return Mathf.Max(1, Mathf.RoundToInt(baseXp * modifier));
+            affinityModifier = 1.1f;
+
+        return Mathf.Max(1, Mathf.RoundToInt(baseXp * efficiencyModifier * affinityModifier));
     }
 
     private int CalculateQuestRankPoints(QuestData quest)
@@ -794,7 +813,13 @@ public class SoloAdventurerManager : MonoBehaviour
     {
         var posted = new List<QuestData>();
         if (!QuestManager.Instance) return posted;
-        for (var i = 0; i < questConfig.MaxBoardSlots; i++)
+
+        // Only iterate slots that are currently unlocked.
+        var activeSlots = ProgressionSystem.Instance != null
+            ? ProgressionSystem.Instance.ActiveBoardSlots
+            : questConfig.MaxBoardSlots;
+
+        for (var i = 0; i < activeSlots; i++)
         {
             var quest = QuestManager.Instance.GetBoardSlot(i);
             if (quest is { Status: QuestStatus.Posted })

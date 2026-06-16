@@ -17,10 +17,10 @@ public class AdventurerConfig : ScriptableObject
     #endregion
 
     #region Guild Rank Cap
-    [Header("Guild Rank Cap - Temporary")]
-    [Tooltip("The highest rank any adventurer in this guild can currently hold. " +
-             "Set to C for the starting guild; updated when the guild rank system is added.")]
-    [SerializeField] private QuestRank guildRankCap = QuestRank.C;
+    [Header("Guild Rank Cap — Editor Fallback")]
+    [Tooltip("Used ONLY when ProgressionSystem is not present in the scene (editor testing). " +
+             "At runtime this is always overridden by ProgressionSystem.GuildRank.")]
+    [SerializeField] private QuestRank guildRankCapFallback = QuestRank.C;
     #endregion
     
     #region Power Formula
@@ -177,7 +177,10 @@ public class AdventurerConfig : ScriptableObject
 
     #region Public Accessors
     public ClassData[] ClassPool => classPool;
-    public QuestRank GuildRankCap => guildRankCap;
+    public QuestRank GuildRankCap
+        => ProgressionSystem.Instance
+            ? ProgressionSystem.Instance.GuildRank
+            : guildRankCapFallback;
     public float HpWeight => hpWeight;
     public float DamageWeight => damageWeight;
     public float SpeedWeight => speedWeight;
@@ -270,22 +273,26 @@ public class AdventurerConfig : ScriptableObject
         if (startingRankWeights == null || startingRankWeights.Length == 0)
             return QuestRank.F;
 
-        var total = startingRankWeights.Sum();
+        var total = 0f;
+        // Only sum weights up to and including the allowed arrival cap.
+        var arrivalCap = ProgressionSystem.Instance
+            ? (int)ProgressionSystem.Instance.MaxAdventurerArrivalRank
+            : (int)guildRankCapFallback;
+
+        for (var i = 0; i <= arrivalCap && i < startingRankWeights.Length; i++)
+            total += startingRankWeights[i];
+
         if (total <= 0f)
             return QuestRank.F;
+
         var roll = Random.Range(0f, total);
         var cumulative = 0f;
-        
-        for (var i = 0; i < startingRankWeights.Length; i++)
+        for (var i = 0; i <= arrivalCap && i < startingRankWeights.Length; i++)
         {
             cumulative += startingRankWeights[i];
             if (roll <= cumulative)
-            {
-                var maxIndex = Mathf.Min((int)guildRankCap + 1, Enum.GetValues(typeof(QuestRank)).Length);
-                return (QuestRank)Mathf.Min(i, maxIndex);
-            }
+                return (QuestRank)i;
         }
-
         return QuestRank.F;
     }
     

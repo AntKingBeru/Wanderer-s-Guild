@@ -78,6 +78,7 @@ public class QuestManager : MonoBehaviour
             Debug.LogError("[QuestManager] QuestConfig is not assigned in the inspector.");
 
         var boardSize = questConfig ? questConfig.MaxBoardSlots : 10;
+        _boardSlots = new QuestData[boardSize];
 
         _availableRequests = new List<QuestRequest>();
         _unpostedQuests = new List<QuestData>();
@@ -153,16 +154,15 @@ public class QuestManager : MonoBehaviour
                              "Assign QuestRequestData assets in the inspector.");
             return;
         }
-        // Collect valid pool indices.
+        // Collect valid pool indices: non-null AND base rank ≤ guild's current max request rank.
+        var maxRank = ProgressionSystem.Instance
+            ? ProgressionSystem.Instance.MaxRequestRank
+            : QuestRank.S; // fallback: allow everything up to S in editor/test
         var indices = new List<int>(requestPool.Length);
         for (var i = 0; i < requestPool.Length; i++)
-            if (requestPool[i])
-                indices.Add(i);
-        // Fisher-Yates shuffle
-        for (var i = indices.Count - 1; i > 0; i--)
         {
-            var j = Random.Range(0, i+1);
-            (indices[i],  indices[j]) = (indices[j], indices[i]);
+            if (requestPool[i] && requestPool[i].BaseRank <= maxRank)
+                indices.Add(i);
         }
 
         var drawCount = questConfig ? questConfig.RequestsPerDay : 1;
@@ -273,18 +273,31 @@ public class QuestManager : MonoBehaviour
             Debug.LogWarning("[QuestManager] PostQuestToSlot received a null quest.");
             return false;
         }
+        
         if (quest.Status != QuestStatus.Unposted)
         {
             Debug.LogWarning($"[QuestManager] '{quest.QuestName}' cannot be posted " +
                              $"— status is {quest.Status}.");
             return false;
         }
+        
         if (slotIndex < 0 || slotIndex >= _boardSlots.Length)
         {
             Debug.LogWarning($"[QuestManager] Slot index {slotIndex} is out of range " +
                              $"(board size: {_boardSlots.Length}).");
             return false;
         }
+        // Guard: slots beyond the guild's current active slot count are locked.
+        var activeSlots = ProgressionSystem.Instance
+            ? ProgressionSystem.Instance.ActiveBoardSlots
+            : _boardSlots.Length;
+        if (slotIndex >= activeSlots)
+        {
+            Debug.LogWarning($"[QuestManager] Slot {slotIndex} is locked " +
+                             $"(guild rank only unlocks {activeSlots} slots).");
+            return false;
+        }
+        
         if (_boardSlots[slotIndex] != null)
         {
             Debug.LogWarning($"[QuestManager] Board slot {slotIndex} is occupied.");
@@ -581,6 +594,12 @@ public class QuestManager : MonoBehaviour
             var repGain = questConfig.GetRankConfig(quest.Rank).reputationReward;
             if (repGain > 0)
                 ReputationSystem.Instance?.ChangeReputation(repGain);
+        }
+        
+        if (questConfig && ProgressionSystem.Instance)
+        {
+            var guildXp = questConfig.GetRankBaseXp(quest.Rank);
+            ProgressionSystem.Instance.GainXp(guildXp);
         }
 
         var partySize = quest.ApprovedApplication?.PartySize ?? 1;

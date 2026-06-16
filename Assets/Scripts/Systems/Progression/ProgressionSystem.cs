@@ -1,41 +1,61 @@
-// Singleton data manager for guild progression.
-// range: There are 7 levels, we start at level 1
-// Fires two events:
-//   OnProgressionXpChanged — every xp change
-//   OnProgressionRankChanged — only when rank level changed
-// UI is handled entirely by ProgressionHUDController.
-// Integration: Please fill me
+// Singleton that tracks guild XP and rank (F → National, internally 0–7).
+// Fires two events via GameEventRelay:
+//   onProgressionXpChanged  — every XP change (xp, threshold)
+//   onProgressionRankChanged — only when the rank level changes
+// Exposes derived board/quest/adventurer cap helpers consumed by other managers.
 
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ProgressionSystem : MonoBehaviour
 {
+    // Rank indices: 0=F, 1=E, 2=D, 3=C, 4=B, 5=A, 6=S, 7=National(max)
     private const int MaxProgressionRank = 7;
     
     // Making this class singleton
     public static ProgressionSystem Instance { get; private set; }
-
-    // Current rank from 0 to 7
+    
     private int _currentRank;
     private int _currentXp;
     
-    public int CurrentRank => _currentRank;
-    public int CurrentXp => _currentXp;
-    public int CurrentThreshold => _rankThreshold[_currentRank + 1];
-    
-    private readonly Dictionary<int, int> _rankThreshold = new()
+    // XP threshold for each rank transition: index = current rank (0=F→E … 6=S→National).
+    // Rank 7 (National/max) has no threshold; that key is intentionally absent.
+    private readonly Dictionary<int, int> _rankThresholds = new()
     {
-        {1, 100},
-        {2, 200},
-        {3, 300},
-        {4, 400},
-        {5, 500},
-        {6, 600},
-        {7, 700},
+        { 0, 100 },   // F → E
+        { 1, 200 },   // E → D
+        { 2, 350 },   // D → C
+        { 3, 550 },   // C → B
+        { 4, 800 },   // B → A
+        { 5, 1200 },  // A → S
+        { 6, 2000 },  // S → National
     };
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    #region Public Accessors
+    public int CurrentRank => _currentRank;
+    public int CurrentXp => _currentXp;
+    
+    // XP threshold to reach the NEXT rank. Returns 0 at max rank (no more thresholds).
+    public int CurrentThreshold
+        => IsHighestRank() ? 0 : _rankThresholds[_currentRank];
+    
+    // Guild rank as a QuestRank enum — used by adventurer/quest systems.
+    public QuestRank GuildRank
+        => (QuestRank)_currentRank;
+    
+    // Max rank a newly-arriving adventurer may have (= guild rank, capped at Special).
+    public QuestRank MaxAdventurerArrivalRank
+        => (QuestRank)Mathf.Min(_currentRank, (int)QuestRank.S);
+    
+    // Max quest base-rank that may appear in the daily request draw.
+    public QuestRank MaxRequestRank => GuildRank;
+    
+    // Active board slots: rank + 3, minimum 3, maximum 10 (all slots open at National rank).
+    // Formula: F=3, E=4, D=5, C=6, B=7, A=8, S=9, National=10
+    public int ActiveBoardSlots
+        => Mathf.Clamp(_currentRank + 3, 3, 10);
+    #endregion
+    
     private void Awake()
     {
         if (Instance && Instance != this)
@@ -43,61 +63,65 @@ public class ProgressionSystem : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        
-        RankUp();
+
+        // Broadcast initial state so listeners that register early get a valid baseline.
+        BroadcastXp();
     }
     
+    #region Public API
     public void GainXp(int xp)
     {
-        if (IsHighestRank())
-        {
+        if (IsHighestRank() || xp <= 0)
             return;
-        }
         _currentXp += xp;
-        RankUp();
+        ProcessRankUps();
     }
-
-    /**
-     * Checks recursively for rank up based on the amount of xp obtained
-     */
-    private void RankUp()
-    {
-        if (IsHighestRank())
-        {
-            return;
-        }
-            
-        var currentThreshold = _rankThreshold[_currentRank + 1];
-        var lastRank = _currentRank; // Saving to check if we need to trigger event
     
-        // Adding xp till we highest level of we used all the xp
-        while (_currentXp >= currentThreshold && !IsHighestRank())
+    // Returns the maximum rank an adventurer may rank up TO, given the guild rank.
+    // Rules:
+    //   - A-rank and above → can only rank up to the guild's current rank (not above).
+    //   - Below A-rank → can rank up to guild rank + 1.
+    public QuestRank GetMaxAdventurerRankUpTarget(QuestRank currentAdventurerRank)
+    {
+        var isHighRank = (int)currentAdventurerRank >= (int)QuestRank.A;
+        var cap = isHighRank ? _currentRank : _currentRank + 1;
+        // Never exceed the absolute max rank (National/Special).
+        cap = Mathf.Min(cap, MaxProgressionRank);
+        return (QuestRank)cap;
+    }
+    #endregion
+    
+    #region Private Helpers
+    // Drains XP across as many rank-up thresholds as available, then broadcasts.
+    private void ProcessRankUps()
+    {
+        var lastRank = _currentRank;
+
+        while (!IsHighestRank() && _currentXp >= _rankThresholds[_currentRank])
         {
-            _currentXp -= currentThreshold;
-            _currentRank += 1;
-            if (IsHighestRank())
-            { 
-                break;
-            }
-            
-            currentThreshold = _rankThreshold[_currentRank + 1];
+            _currentXp -= _rankThresholds[_currentRank];
+            _currentRank++;
         }
-        
-        // No need to continue
-        if (lastRank != _currentRank)
-        {
-            GameEventRelay.Instance.onProgressionRankChanged.Invoke(_currentRank);
-        }
-        
-        GameEventRelay.Instance.onProgressionXpChanged.Invoke(_currentXp, currentThreshold);
+
+        // Clamp leftover XP at max rank — no reason to store excess.
+        if (IsHighestRank())
+            _currentXp = 0;
+
+        if (_currentRank != lastRank)
+            GameEventRelay.Instance?.onProgressionRankChanged.Invoke(_currentRank);
+
+        BroadcastXp();
     }
 
-    // Checks If I am highest rank to avoid excess code
-    private bool IsHighestRank()
+    private void BroadcastXp()
     {
-        return _currentRank >= MaxProgressionRank;
+        var threshold = IsHighestRank() ? 1 : _rankThresholds[_currentRank];
+        GameEventRelay.Instance?.onProgressionXpChanged.Invoke(_currentXp, threshold);
     }
+
+    private bool IsHighestRank()
+        => _currentRank >= MaxProgressionRank;
+    #endregion
 }

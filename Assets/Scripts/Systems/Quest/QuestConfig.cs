@@ -14,6 +14,22 @@ public class QuestConfig : ScriptableObject
              "Must contain EXACTLY 8 entries. Created with defaults via Reset()")]
     [SerializeField] private RankConfig[] rankConfigs = new RankConfig[8];
     
+    [Header("Category Base XP")]
+    [Tooltip("Base adventurer XP for each quest category, BEFORE the rank multiplier is applied. " +
+             "The final XP = categoryBaseXp × questRankXpMultiplier (configured per rank above). " +
+             "Index matches QuestCategory enum order.")]
+    [SerializeField] private int[] categoryBaseXp =
+    {
+        80,   // Combat
+        50,   // Gathering
+        70,   // Escort
+        45,   // Delivery
+        90,   // Subjugation
+        65,   // Exploration
+        60,   // Investigation
+        120,  // Dungeon
+    };
+    
     [Header("Board Settings")]
     [Tooltip("Total quest slots on the guild board. Layout is always up to 2 rows of up to 5 slots.")]
     [SerializeField, Min(1)] private int maxBoardSlots = 10;
@@ -80,6 +96,20 @@ public class QuestConfig : ScriptableObject
         return rankConfigs[index];
     }
     
+    // Returns the base XP for a quest category, used as the base of the XP formula:
+    // finalXp = GetCategoryBaseXp(category) × (rankBaseXp / referenceRankXp).
+    // Falls back to 50 if the category index is out of range.
+    public int GetCategoryBaseXp(QuestCategory category)
+    {
+        var index = (int)category;
+        if (categoryBaseXp == null || index < 0 || index >= categoryBaseXp.Length)
+        {
+            Debug.LogWarning($"[QuestConfig] No category base XP for {category}. Returning 50.");
+            return 50;
+        }
+        return categoryBaseXp[index];
+    }
+    
     public string GetRankDisplayName(QuestRank rank) => GetRankConfig(rank).DisplayName;
     public Color GetRankColor(QuestRank rank) => GetRankConfig(rank).CardColor;
     public float GetRankPowerThreshold(QuestRank rank) => GetRankConfig(rank).BasePowerThreshold;
@@ -102,6 +132,18 @@ public class QuestConfig : ScriptableObject
             new RankConfig("A", new Color(1.000f, 0.753f, 0.027f, 1f), 110f, 1200, 18, 10, 4),
             new RankConfig("S", new Color(0.937f, 0.325f, 0.314f, 1f), 150f, 2000, 25, 14, 5),
             new RankConfig("Special", new Color(0.149f, 0.776f, 0.855f, 1f), 200f, 5000, 35, 20, 7),
+        };
+        
+        categoryBaseXp = new[]
+        {
+            80,
+            50,
+            70,
+            45,
+            90,
+            65,
+            60,
+            120
         };
     }
     #endregion

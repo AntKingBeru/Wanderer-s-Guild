@@ -237,14 +237,34 @@ public class AdventurerData
     #endregion
     
     #region Progress
+    // Adds rank points and checks whether this adventurer is now eligible for a rank-up quest.
+    // Returns true the first time eligibility is gained (so the manager can create the application).
+    // Rank-up eligibility cap rules (via ProgressionSystem):
+    //   - A-rank and above → can only rank up TO the guild's current rank.
+    //   - Below A-rank → can rank up to guild rank + 1.
     public bool AddRankPoints(int amount, AdventurerConfig config)
     {
         _rankPoints += amount;
         if (_rankUpEligible)
             return false;
-        var nextRankInex = (int)_rank + 1;
-        if (nextRankInex > (int)config.GuildRankCap)
+
+        // Determine the highest rank this adventurer is currently allowed to reach.
+        QuestRank maxTarget;
+        if (ProgressionSystem.Instance)
+        {
+            maxTarget = ProgressionSystem.Instance.GetMaxAdventurerRankUpTarget(_rank);
+        }
+        else
+        {
+            // Fallback: use the config cap (editor / testing scenes without ProgressionSystem).
+            var nextIndex = (int)_rank + 1;
+            maxTarget = (QuestRank)Mathf.Min(nextIndex, (int)config.GuildRankCap);
+        }
+
+        // Cannot rank up if already at or above the allowed ceiling.
+        if ((int)_rank >= (int)maxTarget)
             return false;
+
         if (_rankPoints >= config.GetRankPointThreshold(_rank))
         {
             _rankUpEligible = true;

@@ -59,6 +59,7 @@ public class QuestBoardUI : MonoBehaviour
         GameEventRelay.Instance.onUnpostedQuestsChanged.AddListener(RefreshUnpostedList);
         GameEventRelay.Instance.onBoardChanged.AddListener(RefreshAllSlots);
         GameEventRelay.Instance.onQuestStatusChanged.AddListener(HandleQuestStatusChanged);
+        GameEventRelay.Instance.onProgressionRankChanged.AddListener(HandleRankChanged);
         HideScreen();
     }
 
@@ -73,8 +74,39 @@ public class QuestBoardUI : MonoBehaviour
         GameEventRelay.Instance.onUnpostedQuestsChanged.RemoveListener(RefreshUnpostedList);
         GameEventRelay.Instance.onBoardChanged.RemoveListener(RefreshAllSlots);
         GameEventRelay.Instance.onQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
+        GameEventRelay.Instance.onProgressionRankChanged.RemoveListener(HandleRankChanged);
     }
 
+    private void Start()
+    {
+        RefreshSlotLockState();
+    }
+    #endregion
+    
+    #region Event Handlers
+    // Called when the guild ranks up — refresh which slots are open.
+    private void HandleRankChanged(int newRank)
+    {
+        RefreshSlotLockState();
+        RefreshAllSlots();
+    }
+    
+    // Enables slots up to ActiveBoardSlots and disables (locks) the rest.
+    private void RefreshSlotLockState()
+    {
+        if (boardSlots == null)
+            return;
+        var activeSlots = ProgressionSystem.Instance
+            ? ProgressionSystem.Instance.ActiveBoardSlots
+            : boardSlots.Length;
+        for (var i = 0; i < boardSlots.Length; i++)
+        {
+            if (!boardSlots[i])
+                continue;
+            // Slots below activeSlots are unlocked; at or above are locked.
+            boardSlots[i].SetLocked(i >= activeSlots);
+        }
+    }
     #endregion
     
     #region Screen Visibility

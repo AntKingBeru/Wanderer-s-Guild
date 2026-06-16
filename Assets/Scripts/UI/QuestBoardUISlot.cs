@@ -22,10 +22,19 @@ public class QuestBoardUISlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
 
     [Tooltip("Background color while a drag is hovering over this empty slot.")] [SerializeField]
     private Color hoverColor = new Color(1f, 1f, 1f, 0.20f);
+    
+    [Header("Lock State")]
+    [Tooltip("Overlay shown when this slot is locked (guild rank too low). " +
+             "Assign a dark semi-transparent Image child.")]
+    [SerializeField] private GameObject lockedOverlay;
 
     // Zero-based index in the board's slot array, assigned by QuestBoardUI.
     public int SlotIndex { get; private set; }
     public QuestData OccupiedQuest { get; private set; }
+    
+    // True when this slot is above the guild's current active slot count.
+    private bool _isLocked;
+    public bool IsLocked => _isLocked;
 
     #region Initialization
     public void Initialize(int slotIndex)
@@ -39,6 +48,8 @@ public class QuestBoardUISlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
     #region Drop Handler
     public void OnDrop(PointerEventData eventData)
     {
+        if (_isLocked)
+            return;
         if (OccupiedQuest != null)
             return;
         var dragged = eventData.pointerDrag
@@ -73,6 +84,13 @@ public class QuestBoardUISlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
     #endregion
 
     #region State
+    public void SetLocked(bool locked)
+    {
+        _isLocked = locked;
+        if (lockedOverlay)
+            lockedOverlay.SetActive(locked);
+    }
+    
     public void SetOccupied(QuestData quest)
     {
         OccupiedQuest = quest;
