@@ -8,7 +8,6 @@ using UnityEngine.UI;
 
 public class ProgressionHUDController : MonoBehaviour
 {
-    
     #region Inspector
     [Header("Bar")]
     [Tooltip("Filled Image (Fill Method: Vertical, Fill Origin: Bottom). " +
@@ -17,7 +16,9 @@ public class ProgressionHUDController : MonoBehaviour
     
     [Header("Label")]
     [Tooltip("Displays the current ProgressRank")]
-    [SerializeField] private TMP_Text rankLabel;
+    [SerializeField] private TMP_Text currentRankLabel;
+    [Tooltip("Displays the next ProgressRank")]
+    [SerializeField] private TMP_Text nextRankLabel;
     #endregion
     
     #region Display Names
@@ -26,14 +27,14 @@ public class ProgressionHUDController : MonoBehaviour
     private static readonly System.Collections.Generic.Dictionary<int, string> 
         DisplayNames = new()
     {
-        {0, "0"},
-        {1, "1"},
-        {2, "2"},
-        {3, "3"},
-        {4, "4"},
-        {5, "5"},
-        {6, "6"},
-        {7, "7"},
+        {0, "F"},
+        {1, "E"},
+        {2, "D"},
+        {3, "C"},
+        {4, "B"},
+        {5, "A"},
+        {6, "S"},
+        {7, "National"},
     };
     #endregion
 
@@ -65,14 +66,15 @@ public class ProgressionHUDController : MonoBehaviour
     {
         if (!barFill)
             return;
-        barFill.fillAmount = (float)xp / (float)threshold;
+        barFill.fillAmount = xp / (float)threshold;
     }
 
     private void HandleRankChanged(int rank)
     {
-        if (!rankLabel)
+        if (!currentRankLabel)
             return;
-        rankLabel.text = DisplayNames[rank];
+        currentRankLabel.text = DisplayNames[rank];
+        nextRankLabel.text = rank < 7 ? DisplayNames[rank + 1] : DisplayNames[7];
     }
     #endregion
 }

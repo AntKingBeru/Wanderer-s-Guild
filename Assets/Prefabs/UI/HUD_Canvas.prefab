@@ -9265,6 +9265,7 @@ GameObject:
   - component: {fileID: 2859614467511164584}
   - component: {fileID: 7393700337386787036}
   - component: {fileID: 2305309349758635199}
+  - component: {fileID: 1781039655088958506}
   m_Layer: 5
   m_Name: BottomBar
   m_TagString: Untagged
@@ -9345,6 +9346,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &1781039655088958506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5796088890376141242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d12a2a07a7f534445ad7752f2f2aeb20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProgressionHUDController
+  barFill: {fileID: 5130714787517613440}
+  currentRankLabel: {fileID: 3286639318094228224}
+  nextRankLabel: {fileID: 649759805164734882}
 --- !u!1 &5859669785326877184
 GameObject:
   m_ObjectHideFlags: 0

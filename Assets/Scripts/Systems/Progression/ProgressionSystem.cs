@@ -26,8 +26,8 @@ public class ProgressionSystem : MonoBehaviour
     public static event Action<int, int> OnProgressionXpChanged;
 
     // Current rank from 0 to 7
-    private int _currentRank = 0;
-    private int _currentXp = 0;
+    private int _currentRank;
+    private int _currentXp;
     
     public int CurrentRank => _currentRank;
     public int CurrentXp => _currentXp;
@@ -72,7 +72,7 @@ public class ProgressionSystem : MonoBehaviour
     }
 
     /**
-     * Checks recursively for rank up based on amount of xp obtained
+     * Checks recursively for rank up based on the amount of xp obtained
      */
     private void RankUp()
     {
