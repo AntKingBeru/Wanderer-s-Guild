@@ -6,9 +6,9 @@
 //   Normal ──[B key / toggle]──► BuildMode.
 //   BuildMode ──[B key / toggle or Escape while no popup open]──► Normal.
 // Pattern notes:
-//   - Singleton : single authoritative source of build state.
-//   - Observer : events let UI react without coupling to this manager.
-//   - State : explicit BuildModeActive flag drives which input is live.
+//   - Singleton: single authoritative source of build state.
+//   - Observer: events let UI react without coupling to this manager.
+//   - State: an explicit BuildModeActive flag drives which input is live.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +28,7 @@ public class BuildManager : MonoBehaviour
     [Tooltip("Action that toggles build mode. Bind to B in the Gameplay map.")]
     [SerializeField] private InputActionReference toggleBuildModeAction;
 
-    [Tooltip("The 'Building' action map from GameInput.inputactions. " +
+    [Tooltip("The 'Building' action map from GameInput.input-actions. " +
              "Enabled while build mode is active.")]
     [SerializeField] private InputActionAsset inputActionAsset;
     #endregion
@@ -75,7 +75,10 @@ public class BuildManager : MonoBehaviour
     private void OnEnable()
     {
         if (toggleBuildModeAction?.action != null)
+        {
+            toggleBuildModeAction.action.Enable();
             toggleBuildModeAction.action.performed += HandleToggleBuildMode;
+        }
         
         GameEventRelay.Instance.OnHourChanged.AddListener(HandleHourChanged);
     }
@@ -83,7 +86,10 @@ public class BuildManager : MonoBehaviour
     private void OnDisable()
     {
         if (toggleBuildModeAction?.action != null)
+        {
             toggleBuildModeAction.action.performed -= HandleToggleBuildMode;
+            toggleBuildModeAction.action.Disable();
+        }
         
         GameEventRelay.Instance.OnHourChanged.RemoveListener(HandleHourChanged);
     }
@@ -159,7 +165,7 @@ public class BuildManager : MonoBehaviour
         TickConstruction(currentHour);
     }
 
-    // Advances all under-construction rooms by one hour tick.
+    // Advances all under-construction rooms by one-hour tick.
     private void TickConstruction(float currentHour)
     {
         foreach (var room in _rooms)

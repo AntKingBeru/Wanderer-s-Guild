@@ -51,6 +51,8 @@ public class GameEventRelay : MonoBehaviour
     public readonly UnityEvent OnBoardChanged = new();
     // (application) — fires when a new application is submitted to a posted quest.
     public readonly UnityEvent<QuestApplication> OnApplicationSubmitted = new();
+    // (application) — fires when a single application is manually rejected by the player.
+    public readonly UnityEvent<QuestApplication> OnApplicationRejected = new();
     // (quest) — fires on any quest status transition.
     public readonly UnityEvent<QuestData> OnQuestStatusChanged = new();
     // (newFunds) — fires whenever the guild treasury balance changes.

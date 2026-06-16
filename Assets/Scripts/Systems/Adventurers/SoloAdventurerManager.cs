@@ -65,7 +65,7 @@ public class SoloAdventurerManager : MonoBehaviour
     {
         if (!GameEventRelay.Instance)
             return;
-        // Subscribe to time ticks through the relay — never miss a tick regardless of enable order.
+        // Subscribe to time ticks through the relay — never miss a tick regardless of enabling order.
         GameEventRelay.Instance.OnHourChanged.AddListener(HandleHourChanged);
         GameEventRelay.Instance.OnDayChanged.AddListener(HandleDayChanged);
         // React to quest state transitions to update adventurer statuses and reward members.
@@ -118,7 +118,7 @@ public class SoloAdventurerManager : MonoBehaviour
     #endregion
     
     #region Game-Time Helper
-    // Centralized now on TimeManager; this is a thin pass-through kept here
+    // Centralized now on TimeManager; this is a thin pass-through kept here,
     // so callers inside this file remain readable.
     private static float GetCurrentGameHours()
         => TimeManager.Instance ? TimeManager.Instance.GetTotalGameHours() : 0f;
@@ -368,6 +368,8 @@ public class SoloAdventurerManager : MonoBehaviour
             if (adv?.CurrentApplicationId == application.ApplicationId)
                 adv?.CancelQuestApplication();
         }
+        
+        GameEventRelay.Instance?.OnApplicationRejected.Invoke(application);
         return true;
     }
     #endregion
@@ -465,7 +467,7 @@ public class SoloAdventurerManager : MonoBehaviour
         }
     }
 
-    // Returns all adventurers who were dispatched on this quest.
+    // Returns all adventurers dispatched on this quest.
     private List<AdventurerData> GetQuestMembers(QuestData quest)
     {
         var members = new List<AdventurerData>();
@@ -519,7 +521,7 @@ public class SoloAdventurerManager : MonoBehaviour
     
     #region Early Quest Failure
     // Each hour, in-progress quests have a chance to accumulate failure marks.
-    // Too many marks forces an immediate failure.
+    // Too many marks force an immediate failure.
     private void CheckEarlyQuestFailures()
     {
         if (!QuestManager.Instance) return;

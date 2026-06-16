@@ -13,6 +13,14 @@ public class IsoCamController : MonoBehaviour
     [Header("Pan Settings")]
     [SerializeField] private float panSpeed = 0.02f;
     
+    [Tooltip("World-unit padding added to each side of the combined room footprint. " +
+             "The rig pivot is clamped so the camera can never pan beyond rooms + this offset.")]
+    [SerializeField, Min(0f)] private float panBoundsOffset = 25f;
+    
+    [Tooltip("Minimum half-extent of the pan bounds on each axis when no rooms exist yet. " +
+             "Keeps the camera from being locked to origin before any room is placed.")]
+    [SerializeField, Min(1f)] private float defaultBoundsHalfExtent = 25f;
+    
     [Header("Rotation Settings")]
     [SerializeField] private float rotateSpeed = 0.3f;
     [SerializeField] private float minPitch = 10f;
@@ -35,6 +43,9 @@ public class IsoCamController : MonoBehaviour
     private float _targetZoomDistance;
     private float _zoomVelocity;
     
+    // Computed pan bounds on the XZ plane; updated when rooms change.
+    private float _minX, _maxX, _minZ, _maxZ;
+    
     #region Setup
     private void Awake()
     {
@@ -49,24 +60,34 @@ public class IsoCamController : MonoBehaviour
         
         // Seed zoom from the camera's current local position magnitude
         _targetZoomDistance = transform.localPosition.magnitude;
+        
+        // Start with default bounds so the camera is usable before any rooms are placed.
+        ApplyDefaultBounds();
     }
 
     private void OnEnable()
     {
-        panAction.action.Enable();
-        panButtonAction.action.Enable();
-        rotateAction.action.Enable();
-        rotateButtonAction.action.Enable();
-        zoomAction.action.Enable();
+        EnableAction(panAction);
+        EnableAction(panButtonAction);
+        EnableAction(rotateAction);
+        EnableAction(rotateButtonAction);
+        EnableAction(zoomAction);
+        
+        // Recompute bounds whenever a room is added, removed, or completed.
+        if (GameEventRelay.Instance)
+            GameEventRelay.Instance.OnRoomsChanged.AddListener(RefreshBounds);
     }
     
     private void OnDisable()
     {
-        panAction.action.Disable();
-        panButtonAction.action.Disable();
-        rotateAction.action.Disable();
-        rotateButtonAction.action.Disable();
-        zoomAction.action.Disable();
+        DisableAction(panAction);
+        DisableAction(panButtonAction);
+        DisableAction(rotateAction);
+        DisableAction(rotateButtonAction);
+        DisableAction(zoomAction);
+
+        if (GameEventRelay.Instance)
+            GameEventRelay.Instance.OnRoomsChanged.RemoveListener(RefreshBounds);
     }
     #endregion
 
@@ -80,43 +101,39 @@ public class IsoCamController : MonoBehaviour
     #region Pan
     private void HandlePan()
     {
-        if (!panButtonAction.action.IsPressed())
-            return;
-        
+        if (!panButtonAction.action.IsPressed()) return;
+
         var delta = panAction.action.ReadValue<Vector2>();
-        if (delta == Vector2.zero)
-            return;
-        
-        // Build a pan vector on the rig's local XZ plane.
-        // Mouse moving right -> scene moves right -> camera moves LEFT (negate X)
-        // Mouse moving up -> scene moves up -> camera moves DOWN (negate Y->Z)
+        if (delta == Vector2.zero) return;
+
         var move = new Vector3(-delta.x, 0f, -delta.y);
-        
-        // Scale by distance so panning feels consistent at any zoom level
         var distanceFactor = transform.localPosition.magnitude / 10f;
         move *= panSpeed * distanceFactor;
-        
-        // Transform from rig-local space to world space (ignore rig pitch so panning always stays on the ground plane)
         move = Quaternion.Euler(0f, _rig.eulerAngles.y, 0f) * move;
-        
-        _rig.position += move;
+
+        var newPos = _rig.position + move;
+
+        // Clamp to the computed room bounds on the XZ plane; Y stays at 0.
+        newPos.x = Mathf.Clamp(newPos.x, _minX, _maxX);
+        newPos.z = Mathf.Clamp(newPos.z, _minZ, _maxZ);
+        newPos.y = 0f;
+
+        _rig.position = newPos;
     }
     #endregion
     
     #region Orbit
     private void HandleRotation()
     {
-        if (!rotateButtonAction.action.IsPressed())
-            return;
-        
+        if (!rotateButtonAction.action.IsPressed()) return;
+
         var delta = rotateAction.action.ReadValue<Vector2>();
-        if (delta == Vector2.zero)
-            return;
-        
-        _yaw += delta.x * rotateSpeed;
+        if (delta == Vector2.zero) return;
+
+        _yaw   += delta.x * rotateSpeed;
         _pitch -= delta.y * rotateSpeed;
-        _pitch = Mathf.Clamp(_pitch, minPitch, maxPitch);
-        
+        _pitch  = Mathf.Clamp(_pitch, minPitch, maxPitch);
+
         _rig.rotation = Quaternion.Euler(_pitch, _yaw, 0f);
     }
     #endregion
@@ -125,21 +142,60 @@ public class IsoCamController : MonoBehaviour
     private void HandleZoom()
     {
         var scroll = zoomAction.action.ReadValue<float>();
-
         if (Mathf.Abs(scroll) > 0.01f)
         {
-            // scroll > 0 -> zoom in -> reduce distance
             _targetZoomDistance -= scroll * zoomSpeed;
             _targetZoomDistance = Mathf.Clamp(_targetZoomDistance, minZoomDistance, maxZoomDistance);
         }
-        
-        // Smooth damp towards target distance along local -Z (camera looks down -Z)
+
         var currentDistance = transform.localPosition.magnitude;
         var smoothedDistance = Mathf.SmoothDamp(
             currentDistance, _targetZoomDistance, ref _zoomVelocity, zoomSmoothTime);
-        
-        // Preserve local direction, only change magnitude
         transform.localPosition = transform.localPosition.normalized * smoothedDistance;
+    }
+    #endregion
+    
+    #region Pan Bounds
+    // Called automatically via OnRoomsChanged; also safe to call manually from editor tooling.
+    public void RefreshBounds()
+    {
+        if (!BuildManager.Instance || BuildManager.Instance.Rooms.Count == 0)
+        {
+            ApplyDefaultBounds();
+            return;
+        }
+
+        // Rooms have no world-space transform yet (build system places them as data only).
+        // Expand the bounds by panBoundsOffset for each room beyond the first, so the camera
+        // can reach progressively further as the guild grows.
+        // TODO: replace with actual room footprint once rooms have world-space GameObjects.
+        var roomCount = BuildManager.Instance.Rooms.Count;
+        var expansion = panBoundsOffset + (roomCount - 1) * 10f;
+
+        _minX = -expansion;
+        _maxX = expansion;
+        _minZ = -expansion;
+        _maxZ = expansion;
+    }
+
+    private void ApplyDefaultBounds()
+    {
+        _minX = -defaultBoundsHalfExtent;
+        _maxX = defaultBoundsHalfExtent;
+        _minZ = -defaultBoundsHalfExtent;
+        _maxZ = defaultBoundsHalfExtent;
+    }
+
+    private static void EnableAction(InputActionReference r)
+    {
+        if (r)
+            r.action.Enable();
+    }
+
+    private static void DisableAction(InputActionReference r)
+    {
+        if (r)
+            r.action.Disable();
     }
     #endregion
 }
