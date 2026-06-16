@@ -36,11 +36,17 @@ public class QuestBoardUI : MonoBehaviour
     private void Awake()
     {
         closeButton?.onClick.AddListener(HandleClose);
-        
+
         // Assign each slot its index so drop events know which slot was targeted.
         if (boardSlots != null)
             for (var i = 0; i < boardSlots.Length; i++)
                 boardSlots[i]?.Initialize(i);
+    }
+
+    private void Start()
+    {
+        // Apply initial slot visibility based on the guild's starting rank.
+        RefreshSlotVisibility();
     }
 
     private void OnDestroy()
@@ -59,6 +65,7 @@ public class QuestBoardUI : MonoBehaviour
         GameEventRelay.Instance.onUnpostedQuestsChanged.AddListener(RefreshUnpostedList);
         GameEventRelay.Instance.onBoardChanged.AddListener(RefreshAllSlots);
         GameEventRelay.Instance.onQuestStatusChanged.AddListener(HandleQuestStatusChanged);
+        // Reveal newly unlocked slots whenever the guild ranks up.
         GameEventRelay.Instance.onProgressionRankChanged.AddListener(HandleRankChanged);
         HideScreen();
     }
@@ -67,45 +74,14 @@ public class QuestBoardUI : MonoBehaviour
     {
         if (InteractionManager.Instance)
         {
-            InteractionManager.Instance.OnScreenOpened -= (HandleScreenOpened);
-            InteractionManager.Instance.OnScreenClosed -= (HandleScreenClosed);
+            InteractionManager.Instance.OnScreenOpened -= HandleScreenOpened;
+            InteractionManager.Instance.OnScreenClosed -= HandleScreenClosed;
         }
 
         GameEventRelay.Instance.onUnpostedQuestsChanged.RemoveListener(RefreshUnpostedList);
         GameEventRelay.Instance.onBoardChanged.RemoveListener(RefreshAllSlots);
         GameEventRelay.Instance.onQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
         GameEventRelay.Instance.onProgressionRankChanged.RemoveListener(HandleRankChanged);
-    }
-
-    private void Start()
-    {
-        RefreshSlotLockState();
-    }
-    #endregion
-    
-    #region Event Handlers
-    // Called when the guild ranks up — refresh which slots are open.
-    private void HandleRankChanged(int newRank)
-    {
-        RefreshSlotLockState();
-        RefreshAllSlots();
-    }
-    
-    // Enables slots up to ActiveBoardSlots and disables (locks) the rest.
-    private void RefreshSlotLockState()
-    {
-        if (boardSlots == null)
-            return;
-        var activeSlots = ProgressionSystem.Instance
-            ? ProgressionSystem.Instance.ActiveBoardSlots
-            : boardSlots.Length;
-        for (var i = 0; i < boardSlots.Length; i++)
-        {
-            if (!boardSlots[i])
-                continue;
-            // Slots below activeSlots are unlocked; at or above are locked.
-            boardSlots[i].SetLocked(i >= activeSlots);
-        }
     }
     #endregion
     
@@ -127,7 +103,7 @@ public class QuestBoardUI : MonoBehaviour
         screenCanvasGroup.interactable = false;
         screenCanvasGroup.blocksRaycasts = false;
     }
-    
+
     private void HandleScreenOpened(ScreenType type)
     {
         if (type != ScreenType.QuestBoard)
@@ -148,6 +124,34 @@ public class QuestBoardUI : MonoBehaviour
         => InteractionManager.Instance?.CloseScreen();
     #endregion
     
+    #region Rank Change
+    // Called when the guild ranks up. Shows any newly unlocked slots then refreshes their content.
+    private void HandleRankChanged(int newRank)
+    {
+        RefreshSlotVisibility();
+        RefreshAllSlots();
+    }
+
+    // Shows slots up to ActiveBoardSlots and hides the rest entirely.
+    private void RefreshSlotVisibility()
+    {
+        if (boardSlots == null)
+            return;
+
+        var activeSlots = ProgressionSystem.Instance
+            ? ProgressionSystem.Instance.ActiveBoardSlots
+            : boardSlots.Length;
+
+        for (var i = 0; i < boardSlots.Length; i++)
+        {
+            if (!boardSlots[i])
+                continue;
+            // Slots at index < activeSlots are visible; the rest are hidden.
+            boardSlots[i].SetVisible(i < activeSlots);
+        }
+    }
+    #endregion
+    
     #region Left Panel
     private void RefreshUnpostedList()
     {
@@ -166,14 +170,15 @@ public class QuestBoardUI : MonoBehaviour
     #endregion
     
     #region Right Panel
-    // Full sync of all slots against QuestManager's board state.
+    // Full sync of all visible slots against QuestManager's board state.
     private void RefreshAllSlots()
     {
         if (!QuestManager.Instance || boardSlots == null)
             return;
         for (var i = 0; i < boardSlots.Length; i++)
         {
-            if (!boardSlots[i])
+            // Skip hidden slots — they have no content to sync.
+            if (!boardSlots[i] || !boardSlots[i].IsVisible)
                 continue;
             var slotQuest = QuestManager.Instance.GetBoardSlot(i);
             if (slotQuest != null)
@@ -182,8 +187,8 @@ public class QuestBoardUI : MonoBehaviour
                 boardSlots[i].SetEmpty();
         }
     }
-    
-    // Targeted Refresh: find the slot displaying this quest and update it.
+
+    // Targeted refresh: find the slot displaying this quest and update it.
     // Falls back to a full refresh if the quest was removed from the board.
     private void HandleQuestStatusChanged(QuestData quest)
     {
@@ -191,13 +196,13 @@ public class QuestBoardUI : MonoBehaviour
             return;
         foreach (var slot in boardSlots)
         {
-            if (slot.OccupiedQuest != quest)
+            if (!slot || !slot.IsVisible || slot.OccupiedQuest != quest)
                 continue;
             slot.Refresh();
             return;
         }
-        
-        // Quest not found in any slot - it may have been removed. Full refresh.
+
+        // Quest not found in any visible slot — it may have been removed. Full refresh.
         RefreshAllSlots();
     }
     #endregion

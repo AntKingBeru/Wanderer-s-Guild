@@ -8,20 +8,20 @@ using UnityEngine.EventSystems;
 
 public class QuestBoardUISlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    [Header("References")] [Tooltip("Card component shown when this slot is occupied by a quest.")] [SerializeField]
-    private QuestCardUI questCard;
+    [Header("References")] [Tooltip("Card component shown when this slot is occupied by a quest.")]
+    [SerializeField] private QuestCardUI questCard;
 
-    [Tooltip("Visual shown when this slot it empty (border, placeholder icon, etc.).")] [SerializeField]
-    private GameObject emptyVisual;
+    [Tooltip("Visual shown when this slot it empty (border, placeholder icon, etc.).")]
+    [SerializeField] private GameObject emptyVisual;
 
-    [Tooltip("Image used to tint the slot background on hover to indicate it accepts drops.")] [SerializeField]
-    private Image slotBackground;
+    [Tooltip("Image used to tint the slot background on hover to indicate it accepts drops.")]
+    [SerializeField] private Image slotBackground;
 
-    [Header("Colors")] [Tooltip("Normal background color when empty and not hovered.")] [SerializeField]
-    private Color emptyColor = new Color(1f, 1f, 1f, 0.05f);
+    [Header("Colors")] [Tooltip("Normal background color when empty and not hovered.")]
+    [SerializeField] private Color emptyColor = new(1f, 1f, 1f, 0.05f);
 
-    [Tooltip("Background color while a drag is hovering over this empty slot.")] [SerializeField]
-    private Color hoverColor = new Color(1f, 1f, 1f, 0.20f);
+    [Tooltip("Background color while a drag is hovering over this empty slot.")]
+    [SerializeField] private Color hoverColor = new(1f, 1f, 1f, 0.20f);
     
     [Header("Lock State")]
     [Tooltip("Overlay shown when this slot is locked (guild rank too low). " +
@@ -32,9 +32,8 @@ public class QuestBoardUISlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
     public int SlotIndex { get; private set; }
     public QuestData OccupiedQuest { get; private set; }
     
-    // True when this slot is above the guild's current active slot count.
-    private bool _isLocked;
-    public bool IsLocked => _isLocked;
+    // Whether this slot is currently visible (i.e. within the guild's active slot count).
+    public bool IsVisible { get; private set; } = true;
 
     #region Initialization
     public void Initialize(int slotIndex)
@@ -44,13 +43,22 @@ public class QuestBoardUISlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
     }
 
     #endregion
+    
+    #region Visibility
+    // Shows or hides the entire slot GameObject.
+    // Hidden slots are invisible and do not accept drops.
+    public void SetVisible(bool visible)
+    {
+        IsVisible = visible;
+        gameObject.SetActive(visible);
+    }
+    #endregion
 
     #region Drop Handler
     public void OnDrop(PointerEventData eventData)
     {
-        if (_isLocked)
-            return;
-        if (OccupiedQuest != null)
+        // Hidden slots should never receive drops, but guard defensively.
+        if (!IsVisible || OccupiedQuest != null)
             return;
         var dragged = eventData.pointerDrag
             ? eventData.pointerDrag.GetComponent<UnpostedQuestItemUI>()
@@ -64,7 +72,6 @@ public class QuestBoardUISlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
             ResetHoverColor();
         }
     }
-
     #endregion
 
     #region Hover Feedback
@@ -80,17 +87,9 @@ public class QuestBoardUISlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
     {
         ResetHoverColor();
     }
-
     #endregion
 
     #region State
-    public void SetLocked(bool locked)
-    {
-        _isLocked = locked;
-        if (lockedOverlay)
-            lockedOverlay.SetActive(locked);
-    }
-    
     public void SetOccupied(QuestData quest)
     {
         OccupiedQuest = quest;
