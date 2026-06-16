@@ -106,4 +106,9 @@ public class GameEventRelay : MonoBehaviour
     // (newLevel) — fires only when the reputation tier changes.
     public readonly UnityEvent<ReputationLevel> OnReputationLevelChanged = new();
     #endregion
+
+    #region SceneChange Events
+    // (new value) - fires on every scene progress change
+    public readonly UnityEvent<float> OnSceneProgressChanged = new();
+    #endregion
 }
