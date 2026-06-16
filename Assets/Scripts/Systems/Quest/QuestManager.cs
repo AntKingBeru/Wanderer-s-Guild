@@ -89,14 +89,14 @@ public class QuestManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEventRelay.Instance.OnHourChanged.AddListener(HandleHourChanged);
-        GameEventRelay.Instance.OnDayChanged.AddListener(HandleDayChanged);
+        GameEventRelay.Instance.onHourChanged.AddListener(HandleHourChanged);
+        GameEventRelay.Instance.onDayChanged.AddListener(HandleDayChanged);
     }
 
     private void OnDisable()
     {
-        GameEventRelay.Instance.OnHourChanged.RemoveListener(HandleHourChanged);
-        GameEventRelay.Instance.OnDayChanged.RemoveListener(HandleDayChanged);
+        GameEventRelay.Instance.onHourChanged.RemoveListener(HandleHourChanged);
+        GameEventRelay.Instance.onDayChanged.RemoveListener(HandleDayChanged);
     }
 
     private void Start()
@@ -175,7 +175,7 @@ public class QuestManager : MonoBehaviour
         }
         
         if (drawn > 0)
-            GameEventRelay.Instance?.OnAvailableRequestsChanged.Invoke();
+            GameEventRelay.Instance?.onAvailableRequestsChanged.Invoke();
     }
     
     // Marks and removes requests that have sat unconverted past their expiry window.
@@ -195,7 +195,7 @@ public class QuestManager : MonoBehaviour
         
         // RemoveAll avoids mutation during the foreach above.
         _availableRequests.RemoveAll(r => r.IsExpired);
-        GameEventRelay.Instance?.OnAvailableRequestsChanged.Invoke();
+        GameEventRelay.Instance?.onAvailableRequestsChanged.Invoke();
     }
     #endregion
     
@@ -231,8 +231,8 @@ public class QuestManager : MonoBehaviour
         _availableRequests.Remove(request);
         _unpostedQuests.Add(quest);
 
-        GameEventRelay.Instance?.OnAvailableRequestsChanged.Invoke();
-        GameEventRelay.Instance?.OnUnpostedQuestsChanged.Invoke();
+        GameEventRelay.Instance?.onAvailableRequestsChanged.Invoke();
+        GameEventRelay.Instance?.onUnpostedQuestsChanged.Invoke();
         return quest;
     }
 
@@ -247,7 +247,7 @@ public class QuestManager : MonoBehaviour
             _resolvedQuests.Add(quest);
             quest.Fail();
             ApplyFailurePenalties(quest);
-            GameEventRelay.Instance.OnQuestStatusChanged.Invoke(quest);
+            GameEventRelay.Instance.onQuestStatusChanged.Invoke(quest);
             return;
         } 
         Debug.LogWarning($"[QuestManager] ForceFailQuest: '{questId}' not found in InProgress.");
@@ -257,7 +257,7 @@ public class QuestManager : MonoBehaviour
     {
         if (!quest.AddApplication(application))
             return false;
-        GameEventRelay.Instance.OnApplicationSubmitted.Invoke(application);
+        GameEventRelay.Instance.onApplicationSubmitted.Invoke(application);
         Debug.Log("[QuestManager] SubmitApplication called.");
         return true;
     }
@@ -296,9 +296,9 @@ public class QuestManager : MonoBehaviour
         _boardSlots[slotIndex] = quest;
         _unpostedQuests.Remove(quest);
 
-        GameEventRelay.Instance?.OnUnpostedQuestsChanged.Invoke();
-        GameEventRelay.Instance?.OnBoardChanged.Invoke();
-        GameEventRelay.Instance?.OnQuestStatusChanged.Invoke(quest);
+        GameEventRelay.Instance?.onUnpostedQuestsChanged.Invoke();
+        GameEventRelay.Instance?.onBoardChanged.Invoke();
+        GameEventRelay.Instance?.onQuestStatusChanged.Invoke(quest);
         return true;
     }
     // Returns the quest in a given slot or null if the slot is empty or the index is invalid.
@@ -326,7 +326,7 @@ public class QuestManager : MonoBehaviour
         if (slot < 0)
             return;
         _boardSlots[slot] = null;
-        GameEventRelay.Instance?.OnBoardChanged.Invoke();
+        GameEventRelay.Instance?.onBoardChanged.Invoke();
     }
     // Checks all Posted quests on the board and expires those whose deadline has passed.
     // Iterates by index to allow safe null-assignment mid-loop.
@@ -356,11 +356,11 @@ public class QuestManager : MonoBehaviour
                     ReputationSystem.Instance?.ChangeReputation(-expiryPenalty);
             }
             
-            GameEventRelay.Instance?.OnQuestStatusChanged.Invoke(quest);
+            GameEventRelay.Instance?.onQuestStatusChanged.Invoke(quest);
         }
 
         if (boardDirty)
-            GameEventRelay.Instance?.OnBoardChanged.Invoke();
+            GameEventRelay.Instance?.onBoardChanged.Invoke();
     }
     #endregion
     
@@ -399,8 +399,8 @@ public class QuestManager : MonoBehaviour
         FreeBoardSlot(quest);
         _inProgressQuests.Add(quest);
 
-        GameEventRelay.Instance?.OnBoardChanged.Invoke();
-        GameEventRelay.Instance?.OnQuestStatusChanged.Invoke(quest);
+        GameEventRelay.Instance?.onBoardChanged.Invoke();
+        GameEventRelay.Instance?.onQuestStatusChanged.Invoke(quest);
         return true;
     }
     // Manually rejects a pending application. The quest stays on the board.
@@ -454,7 +454,7 @@ public class QuestManager : MonoBehaviour
         );
 
         if (quest.AddApplication(application))
-            GameEventRelay.Instance?.OnApplicationSubmitted.Invoke(application);
+            GameEventRelay.Instance?.onApplicationSubmitted.Invoke(application);
     }
     
     private float GetSeasonApplicationModifier()
@@ -549,7 +549,7 @@ public class QuestManager : MonoBehaviour
                 ResolveQuestOutcome(quest);
             }
             
-            GameEventRelay.Instance?.OnQuestStatusChanged.Invoke(quest);
+            GameEventRelay.Instance?.onQuestStatusChanged.Invoke(quest);
         }
     }
     
@@ -626,7 +626,7 @@ public class QuestManager : MonoBehaviour
             return;
         }
         _guildFunds += amount;
-        GameEventRelay.Instance?.OnGuildFundsChanged.Invoke(_guildFunds);
+        GameEventRelay.Instance?.onGuildFundsChanged.Invoke(_guildFunds);
     }
     
     // Attempts to spend guild funds. Returns false without modifying state if insufficient.
@@ -643,7 +643,7 @@ public class QuestManager : MonoBehaviour
             return false;
         }
         _guildFunds -= amount;
-        GameEventRelay.Instance?.OnGuildFundsChanged.Invoke(_guildFunds);
+        GameEventRelay.Instance?.onGuildFundsChanged.Invoke(_guildFunds);
         return true;
     }
     #endregion

@@ -47,14 +47,14 @@ public class ReputationSystem : MonoBehaviour
         if (!GameEventRelay.Instance)
             return;
 
-        GameEventRelay.Instance.OnReputationChanged.Invoke(_currentReputation);
+        GameEventRelay.Instance.onReputationChanged.Invoke(_currentReputation);
 
         var newLevel = ComputeLevel(_currentReputation);
         if (newLevel == _currentLevel)
             return;
 
         _currentLevel = newLevel;
-        GameEventRelay.Instance.OnReputationLevelChanged.Invoke(_currentLevel);
+        GameEventRelay.Instance.onReputationLevelChanged.Invoke(_currentLevel);
     }
 
     // Pure function — maps a raw reputation value to its ReputationLevel tier.

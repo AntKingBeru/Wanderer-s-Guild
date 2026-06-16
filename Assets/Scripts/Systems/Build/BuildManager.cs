@@ -80,7 +80,7 @@ public class BuildManager : MonoBehaviour
             toggleBuildModeAction.action.performed += HandleToggleBuildMode;
         }
         
-        GameEventRelay.Instance.OnHourChanged.AddListener(HandleHourChanged);
+        GameEventRelay.Instance.onHourChanged.AddListener(HandleHourChanged);
     }
 
     private void OnDisable()
@@ -91,7 +91,7 @@ public class BuildManager : MonoBehaviour
             toggleBuildModeAction.action.Disable();
         }
         
-        GameEventRelay.Instance.OnHourChanged.RemoveListener(HandleHourChanged);
+        GameEventRelay.Instance.onHourChanged.RemoveListener(HandleHourChanged);
     }
     #endregion
     
@@ -119,7 +119,7 @@ public class BuildManager : MonoBehaviour
         else
             _buildingActionMap?.Disable();
 
-        GameEventRelay.Instance.OnBuildModeChanged?.Invoke(active);
+        GameEventRelay.Instance.onBuildModeChanged?.Invoke(active);
     }
 
     private void HandleToggleBuildMode(InputAction.CallbackContext ctx)
@@ -154,8 +154,8 @@ public class BuildManager : MonoBehaviour
         _rooms.Add(instance);
         _roomStartHours[instance.InstanceId] = startHour;
 
-        GameEventRelay.Instance.OnRoomQueued?.Invoke(instance);
-        GameEventRelay.Instance.OnRoomsChanged?.Invoke();
+        GameEventRelay.Instance.onRoomQueued?.Invoke(instance);
+        GameEventRelay.Instance.onRoomsChanged?.Invoke();
         return true;
     }
 
@@ -178,15 +178,15 @@ public class BuildManager : MonoBehaviour
             if (justCompleted)
             {
                 ApplyRoomCapabilities(room);
-                GameEventRelay.Instance.OnRoomCompleted?.Invoke(room);
+                GameEventRelay.Instance.onRoomCompleted?.Invoke(room);
             }
             else
             {
-                GameEventRelay.Instance.OnRoomProgressUpdated?.Invoke(room);
+                GameEventRelay.Instance.onRoomProgressUpdated?.Invoke(room);
             }
         }
 
-        GameEventRelay.Instance.OnRoomsChanged?.Invoke();
+        GameEventRelay.Instance.onRoomsChanged?.Invoke();
     }
     #endregion
     

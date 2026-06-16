@@ -33,9 +33,9 @@ public class TimeHUDController : MonoBehaviour
             return;
         }
         // Subscribe through the relay; guaranteed to exist before any OnEnable fires.
-        GameEventRelay.Instance.OnMinuteChanged.AddListener(HandleMinuteChanged);
-        GameEventRelay.Instance.OnDayChanged.AddListener(HandleDayChanged);
-        GameEventRelay.Instance.OnSeasonChanged.AddListener(HandleSeasonChanged);
+        GameEventRelay.Instance.onMinuteChanged.AddListener(HandleMinuteChanged);
+        GameEventRelay.Instance.onDayChanged.AddListener(HandleDayChanged);
+        GameEventRelay.Instance.onSeasonChanged.AddListener(HandleSeasonChanged);
 
         // Populate immediately so nothing shows empty on the first frame.
         if (TimeManager.Instance)
@@ -49,9 +49,9 @@ public class TimeHUDController : MonoBehaviour
     private void OnDisable()
     {
         if (!GameEventRelay.Instance) return;
-        GameEventRelay.Instance.OnMinuteChanged.RemoveListener(HandleMinuteChanged);
-        GameEventRelay.Instance.OnDayChanged.RemoveListener(HandleDayChanged);
-        GameEventRelay.Instance.OnSeasonChanged.RemoveListener(HandleSeasonChanged);
+        GameEventRelay.Instance.onMinuteChanged.RemoveListener(HandleMinuteChanged);
+        GameEventRelay.Instance.onDayChanged.RemoveListener(HandleDayChanged);
+        GameEventRelay.Instance.onSeasonChanged.RemoveListener(HandleSeasonChanged);
     }
     #endregion
     

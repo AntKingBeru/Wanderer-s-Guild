@@ -55,7 +55,7 @@ public class ReceptionDeskUI : MonoBehaviour
             InteractionManager.Instance.OnScreenClosed += HandleScreenClosed;
         }
         
-        GameEventRelay.Instance.OnAvailableRequestsChanged.AddListener(RefreshRequestList);
+        GameEventRelay.Instance.onAvailableRequestsChanged.AddListener(RefreshRequestList);
 
         if (requestPopup)
         {
@@ -78,7 +78,7 @@ public class ReceptionDeskUI : MonoBehaviour
             InteractionManager.Instance.OnScreenClosed -= HandleScreenClosed;
         }
         
-        GameEventRelay.Instance.OnAvailableRequestsChanged.RemoveListener(RefreshRequestList);
+        GameEventRelay.Instance.onAvailableRequestsChanged.RemoveListener(RefreshRequestList);
 
         if (requestPopup)
         {

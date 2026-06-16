@@ -6,24 +6,15 @@
 // UI is handled entirely by ProgressionHUDController.
 // Integration: Please fill me
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ProgressionSystem : MonoBehaviour
 {
-
+    private const int MaxProgressionRank = 7;
+    
     // Making this class singleton
     public static ProgressionSystem Instance { get; private set; }
-    
-    // Fires only when the rank changes.
-    // Subscribe wherever progression rank tier matters (adventurer morale, factory rate, etc.)
-    public static event Action<int> OnProgressionRankChanged;
-    
-    // Fires on every xp value change.
-    // Subscribe in ProgressionHUDController to keep the bar fill current.
-    // Sending threshold too for calculations
-    public static event Action<int, int> OnProgressionXpChanged;
 
     // Current rank from 0 to 7
     private int _currentRank;
@@ -54,7 +45,6 @@ public class ProgressionSystem : MonoBehaviour
         }
 
         Instance = this;
-        // Cross-Scene singleton
         DontDestroyOnLoad(gameObject);
         
         RankUp();
@@ -68,7 +58,6 @@ public class ProgressionSystem : MonoBehaviour
         }
         _currentXp += xp;
         RankUp();
-        
     }
 
     /**
@@ -100,15 +89,15 @@ public class ProgressionSystem : MonoBehaviour
         // No need to continue
         if (lastRank != _currentRank)
         {
-            OnProgressionRankChanged?.Invoke(_currentRank);
+            GameEventRelay.Instance.onProgressionRankChanged.Invoke(_currentRank);
         }
         
-        OnProgressionXpChanged?.Invoke(_currentXp, currentThreshold);
+        GameEventRelay.Instance.onProgressionXpChanged.Invoke(_currentXp, currentThreshold);
     }
 
     // Checks If I am highest rank to avoid excess code
     private bool IsHighestRank()
     {
-        return _currentRank >= 7;
+        return _currentRank >= MaxProgressionRank;
     }
 }

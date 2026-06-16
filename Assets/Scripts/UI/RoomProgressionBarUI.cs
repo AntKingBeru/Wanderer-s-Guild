@@ -25,14 +25,14 @@ public class RoomProgressionBarUI : MonoBehaviour
     
     private void OnEnable()
     {
-        GameEventRelay.Instance.OnRoomProgressUpdated.AddListener(HandleProgressUpdated);
-        GameEventRelay.Instance.OnRoomCompleted.AddListener(HandleRoomCompleted);
+        GameEventRelay.Instance.onRoomProgressUpdated.AddListener(HandleProgressUpdated);
+        GameEventRelay.Instance.onRoomCompleted.AddListener(HandleRoomCompleted);
     }
 
     private void OnDisable()
     {
-        GameEventRelay.Instance.OnRoomProgressUpdated.RemoveListener(HandleProgressUpdated);
-        GameEventRelay.Instance.OnRoomCompleted.RemoveListener(HandleRoomCompleted);
+        GameEventRelay.Instance.onRoomProgressUpdated.RemoveListener(HandleProgressUpdated);
+        GameEventRelay.Instance.onRoomCompleted.RemoveListener(HandleRoomCompleted);
     }
     
     // Call this immediately after the room is queued to bind this bar to its instance.

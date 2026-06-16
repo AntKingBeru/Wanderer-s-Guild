@@ -23,20 +23,20 @@ public class ApplicationListUI : MonoBehaviour
     #region Lifecycle
     private void OnEnable()
     {
-        GameEventRelay.Instance.OnApplicationSubmitted.AddListener(HandleApplicationSubmitted);
-        GameEventRelay.Instance.OnApplicationRejected.AddListener(HandleApplicationRejected);
-        GameEventRelay.Instance.OnQuestStatusChanged.AddListener(HandleQuestStatusChanged);
-        GameEventRelay.Instance.OnRankUpApplicationCreated.AddListener(HandleRankUpCreated);
-        GameEventRelay.Instance.OnRankUpApplicationResolved.AddListener(HandleRankUpResolved);
+        GameEventRelay.Instance.onApplicationSubmitted.AddListener(HandleApplicationSubmitted);
+        GameEventRelay.Instance.onApplicationRejected.AddListener(HandleApplicationRejected);
+        GameEventRelay.Instance.onQuestStatusChanged.AddListener(HandleQuestStatusChanged);
+        GameEventRelay.Instance.onRankUpApplicationCreated.AddListener(HandleRankUpCreated);
+        GameEventRelay.Instance.onRankUpApplicationResolved.AddListener(HandleRankUpResolved);
     }
 
     private void OnDisable()
     {
-        GameEventRelay.Instance.OnApplicationSubmitted.RemoveListener(HandleApplicationSubmitted);
-        GameEventRelay.Instance.OnApplicationRejected.RemoveListener(HandleApplicationRejected);
-        GameEventRelay.Instance.OnQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
-        GameEventRelay.Instance.OnRankUpApplicationCreated.RemoveListener(HandleRankUpCreated);
-        GameEventRelay.Instance.OnRankUpApplicationResolved.RemoveListener(HandleRankUpResolved);
+        GameEventRelay.Instance.onApplicationSubmitted.RemoveListener(HandleApplicationSubmitted);
+        GameEventRelay.Instance.onApplicationRejected.RemoveListener(HandleApplicationRejected);
+        GameEventRelay.Instance.onQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
+        GameEventRelay.Instance.onRankUpApplicationCreated.RemoveListener(HandleRankUpCreated);
+        GameEventRelay.Instance.onRankUpApplicationResolved.RemoveListener(HandleRankUpResolved);
     }
     #endregion
     

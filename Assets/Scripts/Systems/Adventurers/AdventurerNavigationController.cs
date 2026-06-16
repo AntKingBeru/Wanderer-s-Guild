@@ -49,10 +49,10 @@ public class AdventurerNavigationController : MonoBehaviour
         // Subscribe to relay events that drive state transitions.
         if (GameEventRelay.Instance)
         {
-            GameEventRelay.Instance.OnQuestStatusChanged.AddListener(HandleQuestStatusChanged);
-            GameEventRelay.Instance.OnRankUpApplicationResolved.AddListener(HandleRankUpResolved);
-            GameEventRelay.Instance.OnAdventurerRankUp.AddListener(HandleRankUpFinished);
-            GameEventRelay.Instance.OnAdventurerRankUpFailed.AddListener(HandleRankUpFinished);
+            GameEventRelay.Instance.onQuestStatusChanged.AddListener(HandleQuestStatusChanged);
+            GameEventRelay.Instance.onRankUpApplicationResolved.AddListener(HandleRankUpResolved);
+            GameEventRelay.Instance.onAdventurerRankUp.AddListener(HandleRankUpFinished);
+            GameEventRelay.Instance.onAdventurerRankUpFailed.AddListener(HandleRankUpFinished);
         }
 
         // First action after spawn: walk to a reception desk.
@@ -63,10 +63,10 @@ public class AdventurerNavigationController : MonoBehaviour
     {
         if (GameEventRelay.Instance)
         {
-            GameEventRelay.Instance.OnQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
-            GameEventRelay.Instance.OnRankUpApplicationResolved.RemoveListener(HandleRankUpResolved);
-            GameEventRelay.Instance.OnAdventurerRankUp.RemoveListener(HandleRankUpFinished);
-            GameEventRelay.Instance.OnAdventurerRankUpFailed.RemoveListener(HandleRankUpFinished);
+            GameEventRelay.Instance.onQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
+            GameEventRelay.Instance.onRankUpApplicationResolved.RemoveListener(HandleRankUpResolved);
+            GameEventRelay.Instance.onAdventurerRankUp.RemoveListener(HandleRankUpFinished);
+            GameEventRelay.Instance.onAdventurerRankUpFailed.RemoveListener(HandleRankUpFinished);
         }
     }
     

@@ -46,7 +46,7 @@ public class SceneChangerManager : MonoBehaviour
         operation.allowSceneActivation = false;
         
         // Fires to let everyone know we started the scene change
-        GameEventRelay.Instance.OnSceneProgressChanged?.Invoke(0f);
+        GameEventRelay.Instance.onSceneProgressChanged?.Invoke(0f);
 
         while (!operation.isDone)
         {
@@ -54,7 +54,7 @@ public class SceneChangerManager : MonoBehaviour
             // Dividing by 0.9 normalizes this value to a clean 0.0 - 1.0 range.
             float progressValue = Mathf.Clamp01(operation.progress / 0.9f);
             
-            GameEventRelay.Instance.OnSceneProgressChanged?.Invoke(progressValue);
+            GameEventRelay.Instance.onSceneProgressChanged?.Invoke(progressValue);
             
             yield return null;
         }

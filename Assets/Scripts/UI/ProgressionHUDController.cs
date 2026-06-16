@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class ProgressionHUDController : MonoBehaviour
 {
+    private const int MaxProgressionRank = 7;
+    
     #region Inspector
     [Header("Bar")]
     [Tooltip("Filled Image (Fill Method: Vertical, Fill Origin: Bottom). " +
@@ -41,21 +43,18 @@ public class ProgressionHUDController : MonoBehaviour
     #region Lifecycle
     private void OnEnable()
     {
-        ProgressionSystem.OnProgressionXpChanged += HandleXpChanged;
-        ProgressionSystem.OnProgressionRankChanged += HandleRankChanged;
+        GameEventRelay.Instance.onProgressionXpChanged.AddListener(HandleXpChanged);
+        GameEventRelay.Instance.onProgressionRankChanged.AddListener(HandleRankChanged);
     }
 
     private void OnDisable()
     {
-        ProgressionSystem.OnProgressionXpChanged -= HandleXpChanged;
-        ProgressionSystem.OnProgressionRankChanged -= HandleRankChanged;
+        GameEventRelay.Instance.onProgressionXpChanged.RemoveListener(HandleXpChanged);
+        GameEventRelay.Instance.onProgressionRankChanged.RemoveListener(HandleRankChanged);
     }
     
     private void Start()
     {
-        // If ProgressionSystem already initialized before this controller awoke, pull its current state so the HUD is never blank on first frame.
-        if (!ProgressionSystem.Instance)
-            return;
         HandleXpChanged(ProgressionSystem.Instance.CurrentXp, ProgressionSystem.Instance.CurrentThreshold);
         HandleRankChanged(ProgressionSystem.Instance.CurrentRank);
     }
@@ -74,7 +73,7 @@ public class ProgressionHUDController : MonoBehaviour
         if (!currentRankLabel)
             return;
         currentRankLabel.text = DisplayNames[rank];
-        nextRankLabel.text = rank < 7 ? DisplayNames[rank + 1] : DisplayNames[7];
+        nextRankLabel.text = rank < MaxProgressionRank ? DisplayNames[rank + 1] : DisplayNames[MaxProgressionRank];
     }
     #endregion
 }

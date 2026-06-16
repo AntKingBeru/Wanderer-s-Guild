@@ -21,8 +21,8 @@ public class ReputationHUDController : MonoBehaviour
     {
         if (!GameEventRelay.Instance)
             return;
-        GameEventRelay.Instance.OnReputationChanged.AddListener(HandleReputationChanged);
-        GameEventRelay.Instance.OnReputationLevelChanged.AddListener(HandleReputationLevelChanged);
+        GameEventRelay.Instance.onReputationChanged.AddListener(HandleReputationChanged);
+        GameEventRelay.Instance.onReputationLevelChanged.AddListener(HandleReputationLevelChanged);
 
         // Populate immediately from current state.
         if (ReputationSystem.Instance)
@@ -36,8 +36,8 @@ public class ReputationHUDController : MonoBehaviour
     {
         if (!GameEventRelay.Instance)
             return;
-        GameEventRelay.Instance.OnReputationChanged.RemoveListener(HandleReputationChanged);
-        GameEventRelay.Instance.OnReputationLevelChanged.RemoveListener(HandleReputationLevelChanged);
+        GameEventRelay.Instance.onReputationChanged.RemoveListener(HandleReputationChanged);
+        GameEventRelay.Instance.onReputationLevelChanged.RemoveListener(HandleReputationLevelChanged);
     }
 
     // Updates bar fill as a 0–1 normalized value across the full -100 to +100 range.

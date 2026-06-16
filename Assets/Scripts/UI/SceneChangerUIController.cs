@@ -21,14 +21,14 @@ public class SceneChangerUIController : MonoBehaviour
     {
         if (!GameEventRelay.Instance)
             return;
-        GameEventRelay.Instance.OnSceneProgressChanged.AddListener(HandleSceneProgressChanged);
+        GameEventRelay.Instance.onSceneProgressChanged.AddListener(HandleSceneProgressChanged);
     }
 
     private void OnDisable()
     {
         if (!GameEventRelay.Instance)
             return;
-        GameEventRelay.Instance.OnSceneProgressChanged.RemoveListener(HandleSceneProgressChanged); 
+        GameEventRelay.Instance.onSceneProgressChanged.RemoveListener(HandleSceneProgressChanged); 
     }
 
     private void HandleSceneProgressChanged(float value)

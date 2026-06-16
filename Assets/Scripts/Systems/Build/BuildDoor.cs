@@ -107,7 +107,7 @@ public class BuildDoor : MonoBehaviour
         var screenPos = Mouse.current != null
             ? Mouse.current.position.ReadValue()
             : new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-        GameEventRelay.Instance.OnDoorClicked?.Invoke(this, screenPos);
+        GameEventRelay.Instance.onDoorClicked?.Invoke(this, screenPos);
     }
     #endregion
     

@@ -164,8 +164,8 @@ public class PartyManager : MonoBehaviour
     {
         if (!GameEventRelay.Instance)
             return;
-        GameEventRelay.Instance.OnPartyChanged.Invoke(party, reason);
-        GameEventRelay.Instance.OnRosterChanged.Invoke();
+        GameEventRelay.Instance.onPartyChanged.Invoke(party, reason);
+        GameEventRelay.Instance.onRosterChanged.Invoke();
     }
     #endregion
 }

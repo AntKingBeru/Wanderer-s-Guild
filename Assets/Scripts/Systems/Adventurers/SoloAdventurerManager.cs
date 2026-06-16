@@ -66,19 +66,19 @@ public class SoloAdventurerManager : MonoBehaviour
         if (!GameEventRelay.Instance)
             return;
         // Subscribe to time ticks through the relay — never miss a tick regardless of enabling order.
-        GameEventRelay.Instance.OnHourChanged.AddListener(HandleHourChanged);
-        GameEventRelay.Instance.OnDayChanged.AddListener(HandleDayChanged);
+        GameEventRelay.Instance.onHourChanged.AddListener(HandleHourChanged);
+        GameEventRelay.Instance.onDayChanged.AddListener(HandleDayChanged);
         // React to quest state transitions to update adventurer statuses and reward members.
-        GameEventRelay.Instance.OnQuestStatusChanged.AddListener(HandleQuestStatusChanged);
+        GameEventRelay.Instance.onQuestStatusChanged.AddListener(HandleQuestStatusChanged);
     }
 
     private void OnDisable()
     {
         if (!GameEventRelay.Instance)
             return;
-        GameEventRelay.Instance.OnHourChanged.RemoveListener(HandleHourChanged);
-        GameEventRelay.Instance.OnDayChanged.RemoveListener(HandleDayChanged);
-        GameEventRelay.Instance.OnQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
+        GameEventRelay.Instance.onHourChanged.RemoveListener(HandleHourChanged);
+        GameEventRelay.Instance.onDayChanged.RemoveListener(HandleDayChanged);
+        GameEventRelay.Instance.onQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
     }
 
     private void Start()
@@ -181,8 +181,8 @@ public class SoloAdventurerManager : MonoBehaviour
         _adventurers.Add(adventurer);
         if (GameEventRelay.Instance)
         {
-            GameEventRelay.Instance.OnAdventurerArrived.Invoke(adventurer);
-            GameEventRelay.Instance.OnRosterChanged.Invoke();
+            GameEventRelay.Instance.onAdventurerArrived.Invoke(adventurer);
+            GameEventRelay.Instance.onRosterChanged.Invoke();
         }
     }
     #endregion
@@ -250,7 +250,7 @@ public class SoloAdventurerManager : MonoBehaviour
             return false;
         adventurer.ApplyToQuest(application.ApplicationId);
         // Notify the world layer so the adventurer walks to the board visually.
-        GameEventRelay.Instance.OnAdventurerApplicationSubmitted.Invoke(adventurer.Id);
+        GameEventRelay.Instance.onAdventurerApplicationSubmitted.Invoke(adventurer.Id);
         return true;
     }
 
@@ -297,7 +297,7 @@ public class SoloAdventurerManager : MonoBehaviour
         foreach (var m in members)
         {
             m.ApplyToQuest(application.ApplicationId);
-            GameEventRelay.Instance.OnAdventurerApplicationSubmitted.Invoke(m.Id);
+            GameEventRelay.Instance.onAdventurerApplicationSubmitted.Invoke(m.Id);
         }
             
     }
@@ -369,7 +369,7 @@ public class SoloAdventurerManager : MonoBehaviour
                 adv?.CancelQuestApplication();
         }
         
-        GameEventRelay.Instance?.OnApplicationRejected.Invoke(application);
+        GameEventRelay.Instance?.onApplicationRejected.Invoke(application);
         return true;
     }
     #endregion
@@ -431,7 +431,7 @@ public class SoloAdventurerManager : MonoBehaviour
                 m.OnRegularQuestSucceeded();
         }
 
-        GameEventRelay.Instance?.OnRosterChanged.Invoke();
+        GameEventRelay.Instance?.onRosterChanged.Invoke();
     }
 
     private void OnQuestFailed(QuestData quest)
@@ -448,7 +448,7 @@ public class SoloAdventurerManager : MonoBehaviour
             PartyManager.Instance?.CheckPartyDeterioration(party, false);
         }
 
-        GameEventRelay.Instance?.OnRosterChanged.Invoke();
+        GameEventRelay.Instance?.onRosterChanged.Invoke();
     }
 
     // Cancels pending applications from all members of an expired quest.
@@ -506,13 +506,13 @@ public class SoloAdventurerManager : MonoBehaviour
             var leveledUp = classData && m.AddExperience(xp, classData, config);
 
             if (leveledUp)
-                GameEventRelay.Instance?.OnAdventurerLeveledUp.Invoke(m);
+                GameEventRelay.Instance?.onAdventurerLeveledUp.Invoke(m);
 
             var becameEligible = m.AddRankPoints(rankPoints, config);
             if (becameEligible)
             {
                 CreateRankUpApplication(m, GetCurrentGameHours());
-                GameEventRelay.Instance?.OnRankUpEligibilityGained.Invoke(m);
+                GameEventRelay.Instance?.onRankUpEligibilityGained.Invoke(m);
             }
             m.OnRegularQuestSucceeded();
         }
@@ -555,7 +555,7 @@ public class SoloAdventurerManager : MonoBehaviour
         );
         _rankUpApplications.Add(application);
         adventurer.SetRankUpApplication(application.ApplicationId);
-        GameEventRelay.Instance?.OnRankUpApplicationCreated.Invoke(application);
+        GameEventRelay.Instance?.onRankUpApplicationCreated.Invoke(application);
     }
 
     // Player approves a rank-up application; dispatches the adventurer to their quest.
@@ -573,7 +573,7 @@ public class SoloAdventurerManager : MonoBehaviour
             return false;
 
         adventurer.DispatchToRankUpQuest(application.StartHour, application.EndHour);
-        GameEventRelay.Instance?.OnRankUpApplicationResolved.Invoke(application);
+        GameEventRelay.Instance?.onRankUpApplicationResolved.Invoke(application);
         return true;
     }
 
@@ -588,7 +588,7 @@ public class SoloAdventurerManager : MonoBehaviour
 
         GetAdventurer(application.AdventurerId)?.ClearRankUpApplication();
         _rankUpApplications.Remove(application);
-        GameEventRelay.Instance?.OnRankUpApplicationResolved.Invoke(application);
+        GameEventRelay.Instance?.onRankUpApplicationResolved.Invoke(application);
         return true;
     }
 
@@ -614,9 +614,9 @@ public class SoloAdventurerManager : MonoBehaviour
                     var xp = questConfig.GetRankBaseXp(targetRank);
                     var levelUp = adv.AddExperience(xp, classData, config);
                     if (levelUp)
-                        GameEventRelay.Instance?.OnAdventurerLeveledUp.Invoke(adv);
+                        GameEventRelay.Instance?.onAdventurerLeveledUp.Invoke(adv);
                 }
-                GameEventRelay.Instance?.OnAdventurerRankUp.Invoke(adv);
+                GameEventRelay.Instance?.onAdventurerRankUp.Invoke(adv);
                 Debug.Log($"[SoloAdventurerManager] {adv.Name} ranked up to {adv.Rank}!");
             }
             else
@@ -625,10 +625,10 @@ public class SoloAdventurerManager : MonoBehaviour
                     ? TimeManager.Instance.DaysPerMonth * config.RankUpRetryCooldownMonthFraction
                     : 15f;
                 adv.FailRankUpQuest(currentHour + cooldownDays * 24f, config);
-                GameEventRelay.Instance?.OnAdventurerRankUpFailed.Invoke(adv);
+                GameEventRelay.Instance?.onAdventurerRankUpFailed.Invoke(adv);
                 Debug.Log($"[SoloAdventurerManager] {adv.Name} failed their rank-up quest.");
             }
-            GameEventRelay.Instance?.OnRosterChanged.Invoke();
+            GameEventRelay.Instance?.onRosterChanged.Invoke();
         }
     }
 
@@ -641,7 +641,7 @@ public class SoloAdventurerManager : MonoBehaviour
         {
             adv.SetRankUpEligible(true);
             CreateRankUpApplication(adv, currentHour);
-            GameEventRelay.Instance?.OnRankUpEligibilityGained.Invoke(adv);
+            GameEventRelay.Instance?.onRankUpEligibilityGained.Invoke(adv);
         }
     }
 

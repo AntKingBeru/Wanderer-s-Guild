@@ -75,7 +75,7 @@ public class IsoCamController : MonoBehaviour
         
         // Recompute bounds whenever a room is added, removed, or completed.
         if (GameEventRelay.Instance)
-            GameEventRelay.Instance.OnRoomsChanged.AddListener(RefreshBounds);
+            GameEventRelay.Instance.onRoomsChanged.AddListener(RefreshBounds);
     }
     
     private void OnDisable()
@@ -87,7 +87,7 @@ public class IsoCamController : MonoBehaviour
         DisableAction(zoomAction);
 
         if (GameEventRelay.Instance)
-            GameEventRelay.Instance.OnRoomsChanged.RemoveListener(RefreshBounds);
+            GameEventRelay.Instance.onRoomsChanged.RemoveListener(RefreshBounds);
     }
     #endregion
 

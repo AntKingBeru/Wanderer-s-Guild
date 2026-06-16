@@ -50,23 +50,23 @@ public class AdventurerWorldManager : MonoBehaviour
     {
         if (!AdventurerManager.Instance)
             return;
-        GameEventRelay.Instance.OnAdventurerArrived.AddListener(HandleAdventurerArrived);
-        GameEventRelay.Instance.OnAdventurerLeveledUp.AddListener(HandleAdventurerChanged);
-        GameEventRelay.Instance.OnAdventurerRankUp.AddListener(HandleAdventurerChanged);
+        GameEventRelay.Instance.onAdventurerArrived.AddListener(HandleAdventurerArrived);
+        GameEventRelay.Instance.onAdventurerLeveledUp.AddListener(HandleAdventurerChanged);
+        GameEventRelay.Instance.onAdventurerRankUp.AddListener(HandleAdventurerChanged);
         // Listen for hour ticks to trigger starter spawns at the right moment.
-        GameEventRelay.Instance.OnHourChanged.AddListener(HandleHourChanged);
-        GameEventRelay.Instance.OnAdventurerApplicationSubmitted.AddListener(NotifyApplicationSubmitted);
+        GameEventRelay.Instance.onHourChanged.AddListener(HandleHourChanged);
+        GameEventRelay.Instance.onAdventurerApplicationSubmitted.AddListener(NotifyApplicationSubmitted);
     }
 
     private void OnDisable()
     {
         if (!AdventurerManager.Instance)
             return;
-        GameEventRelay.Instance.OnAdventurerArrived.RemoveListener(HandleAdventurerArrived);
-        GameEventRelay.Instance.OnAdventurerLeveledUp.RemoveListener(HandleAdventurerChanged);
-        GameEventRelay.Instance.OnAdventurerRankUp.RemoveListener(HandleAdventurerChanged);
-        GameEventRelay.Instance.OnHourChanged.RemoveListener(HandleHourChanged);
-        GameEventRelay.Instance.OnAdventurerApplicationSubmitted.RemoveListener(NotifyApplicationSubmitted);
+        GameEventRelay.Instance.onAdventurerArrived.RemoveListener(HandleAdventurerArrived);
+        GameEventRelay.Instance.onAdventurerLeveledUp.RemoveListener(HandleAdventurerChanged);
+        GameEventRelay.Instance.onAdventurerRankUp.RemoveListener(HandleAdventurerChanged);
+        GameEventRelay.Instance.onHourChanged.RemoveListener(HandleHourChanged);
+        GameEventRelay.Instance.onAdventurerApplicationSubmitted.RemoveListener(NotifyApplicationSubmitted);
     }
     #endregion
 

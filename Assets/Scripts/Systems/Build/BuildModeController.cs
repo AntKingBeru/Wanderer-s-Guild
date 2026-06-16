@@ -20,10 +20,10 @@ public class BuildModeController : MonoBehaviour
     }
 
     private void OnEnable()
-        => GameEventRelay.Instance.OnBuildModeChanged.AddListener(HandleBuildModeChanged);
+        => GameEventRelay.Instance.onBuildModeChanged.AddListener(HandleBuildModeChanged);
 
     private void OnDisable()
-        => GameEventRelay.Instance.OnBuildModeChanged.RemoveListener(HandleBuildModeChanged);
+        => GameEventRelay.Instance.onBuildModeChanged.RemoveListener(HandleBuildModeChanged);
 
     private void Update()
     {

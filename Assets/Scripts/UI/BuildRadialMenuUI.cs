@@ -43,12 +43,12 @@ public class BuildRadialMenuUI : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEventRelay.Instance.OnDoorClicked.AddListener(HandleDoorClicked);
+        GameEventRelay.Instance.onDoorClicked.AddListener(HandleDoorClicked);
     }
 
     private void OnDisable()
     {
-        GameEventRelay.Instance.OnDoorClicked.RemoveListener(HandleDoorClicked);
+        GameEventRelay.Instance.onDoorClicked.RemoveListener(HandleDoorClicked);
     }
     #endregion
     

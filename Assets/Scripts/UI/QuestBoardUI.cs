@@ -56,9 +56,9 @@ public class QuestBoardUI : MonoBehaviour
             InteractionManager.Instance.OnScreenClosed += HandleScreenClosed;
         }
 
-        GameEventRelay.Instance.OnUnpostedQuestsChanged.AddListener(RefreshUnpostedList);
-        GameEventRelay.Instance.OnBoardChanged.AddListener(RefreshAllSlots);
-        GameEventRelay.Instance.OnQuestStatusChanged.AddListener(HandleQuestStatusChanged);
+        GameEventRelay.Instance.onUnpostedQuestsChanged.AddListener(RefreshUnpostedList);
+        GameEventRelay.Instance.onBoardChanged.AddListener(RefreshAllSlots);
+        GameEventRelay.Instance.onQuestStatusChanged.AddListener(HandleQuestStatusChanged);
         HideScreen();
     }
 
@@ -70,9 +70,9 @@ public class QuestBoardUI : MonoBehaviour
             InteractionManager.Instance.OnScreenClosed -= (HandleScreenClosed);
         }
 
-        GameEventRelay.Instance.OnUnpostedQuestsChanged.RemoveListener(RefreshUnpostedList);
-        GameEventRelay.Instance.OnBoardChanged.RemoveListener(RefreshAllSlots);
-        GameEventRelay.Instance.OnQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
+        GameEventRelay.Instance.onUnpostedQuestsChanged.RemoveListener(RefreshUnpostedList);
+        GameEventRelay.Instance.onBoardChanged.RemoveListener(RefreshAllSlots);
+        GameEventRelay.Instance.onQuestStatusChanged.RemoveListener(HandleQuestStatusChanged);
     }
 
     #endregion
