@@ -31,6 +31,8 @@ public class QuestData
     private int _partyReward;
     // Remainder that goes to guild funds on success. = maxReward - partyReward.
     private int _guildReward;
+    // Min party size for this quest (1-5)
+    private int _partyMin;
     // Max party size for this quest (1-5)
     private int _partyLimit;
     // Shared deadline: expiry if not dispatched, deadline if dispatched
@@ -82,6 +84,7 @@ public class QuestData
         _partyReward = Mathf.Clamp(partyReward, 0, source.MaxReward);
         _guildReward = source.MaxReward - _partyReward;
 
+        _partyMin = source.PartyMin;
         _partyLimit = source.PartyLimit;
         _timeLimitHours =  source.TimeLimitHours;
         _hiddenTags = source.GetHiddenTagsCopy();
@@ -107,6 +110,7 @@ public class QuestData
     public QuestRank Rank => _rank;
     public int PartyReward => _partyReward;
     public int GuildReward => _guildReward;
+    public int PartyMin => _partyMin;
     public int PartyLimit => _partyLimit;
     public int TimeLimitHours => _timeLimitHours;
     public QuestStatus Status => _status;
@@ -215,7 +219,9 @@ public class QuestData
     
     #region Application Management
     // Registers a new application.
-    // Only accepted while the quest is Posted.
+    // Only accepted while the quest is Posted, and only if the applying party's size
+    // falls within [_partyMin, _partyLimit]. This is the single runtime gate every
+    // application path (solo, party, fallback simulator, future UI) must pass through.
     public bool AddApplication(QuestApplication application)
     {
         if (_status != QuestStatus.Posted)
@@ -227,6 +233,12 @@ public class QuestData
         if (application == null)
         {
             Debug.LogError($"[QuestData] Null application passed to '{_questName}'.");
+            return false;
+        }
+        if (application.PartySize < _partyMin || application.PartySize > _partyLimit)
+        {
+            Debug.LogWarning($"[QuestData] '{_questName}' rejected an application with party size " +
+                             $"{application.PartySize} (allowed: {_partyMin}-{_partyLimit}).");
             return false;
         }
         _applications.Add(application);

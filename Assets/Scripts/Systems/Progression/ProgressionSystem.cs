@@ -22,13 +22,13 @@ public class ProgressionSystem : MonoBehaviour
     // Rank 7 (National/max) has no threshold; that key is intentionally absent.
     private readonly Dictionary<int, int> _rankThresholds = new()
     {
-        { 0, 100 },   // F → E
-        { 1, 200 },   // E → D
-        { 2, 350 },   // D → C
-        { 3, 550 },   // C → B
-        { 4, 800 },   // B → A
-        { 5, 1200 },  // A → S
-        { 6, 2000 },  // S → National
+        { 0, 500 },    // F → E
+        { 1, 1000 },   // E → D
+        { 2, 1750 },   // D → C
+        { 3, 2750 },   // C → B
+        { 4, 4000 },   // B → A
+        { 5, 6000 },   // A → S
+        { 6, 10000 },  // S → National
     };
     
     #region Public Accessors

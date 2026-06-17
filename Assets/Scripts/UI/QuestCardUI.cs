@@ -48,7 +48,9 @@ public class QuestCardUI : MonoBehaviour
         nameLabel.text = quest.QuestName;
         categoryLabel.text = quest.Category.ToString();
         rewardLabel.text = $"{quest.PartyReward}g";
-        partySizeLabel.text = $"Party: 1-{quest.PartyLimit}";
+        partySizeLabel.text = quest.PartyMin == quest.PartyLimit
+            ? $"Party Size: {quest.PartyLimit}"
+            : $"Party Size: {quest.PartyMin}-{quest.PartyLimit}";
         timeLimitLabel.text = $"{quest.TimeLimitHours}h";
         statusLabel.text = quest.Status.ToString();
 

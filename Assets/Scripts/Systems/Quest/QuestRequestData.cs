@@ -43,6 +43,10 @@ public class QuestRequestData : ScriptableObject
              "Any remainder above the chosen reward goes to the guild's funds on success.")]
     [SerializeField, Min(0)] private int maxReward = 100;
 
+    [Tooltip("Minimum number of adventurers permitted on this quest. " +
+             "1 = solo only. 2–5 = up to this many adventurers (solo or party applicants).")]
+    [SerializeField, Range(1, 5)] private int partyMin = 1;
+    
     [Tooltip("Maximum number of adventurers permitted on this quest. " +
              "1 = solo only. 2–5 = up to this many adventurers (solo or party applicants).")]
     [SerializeField, Range(1, 5)] private int partyLimit = 3;
@@ -66,6 +70,7 @@ public class QuestRequestData : ScriptableObject
     public QuestCategory Category => category;
     public QuestRank BaseRank => baseRank;
     public int MaxReward => maxReward;
+    public int PartyMin => partyMin;
     public int PartyLimit => partyLimit;
     public int TimeLimitHours => timeLimitHours;
     #endregion
@@ -107,6 +112,15 @@ public class QuestRequestData : ScriptableObject
         if (string.IsNullOrWhiteSpace(requestId))
             Debug.LogWarning($"[QuestRequestData] '{name}' has no Request ID set. " +
                              $"Use the Inspector Reset button to auto-generate one.");
+
+        // Guard against an impossible party-size window (e.g. min 4, max 2) -
+        // such a quest could never receive a valid application.
+        if (partyMin > partyLimit)
+        {
+            Debug.LogWarning($"[QuestRequestData] '{name}' has PartyMin ({partyMin}) greater than " +
+                             $"PartyLimit ({partyLimit}). Clamping PartyMin down to match.");
+            partyMin = partyLimit;
+        }
     }
 #endif
 }

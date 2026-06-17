@@ -15,11 +15,12 @@ MonoBehaviour:
   requestId: cbda958b-1e29-4d57-8c04-2498e6dec78e
   requestName: Gather Flowers
   description: 'I need some roses for a medicine I''m making so if you would be a
-    petal and get me some I would appreciate it  '
+    petal and get me some I would appreciate it . '
   location: The cave of never ending agony
   category: 1
-  baseRank: 1
+  baseRank: 2
   maxReward: 200
+  partyMin: 1
   partyLimit: 3
   timeLimitHours: 64
   hiddenTags: []

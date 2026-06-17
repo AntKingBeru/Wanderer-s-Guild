@@ -14,13 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestRequestData
   requestId: b3d2f0e8-74e7-4ed3-b03a-3e4a441424fe
   requestName: Investigate Disappearing Grandma
-  description: 'Help!   I sent my daughter to hand my mother a "basket of goods"
-    but I didn''t get my "thank you" check she always sends!   please check if my
-    mother is alright '
+  description: 'Help! I sent my daughter to hand my mother a "basket of goods" but
+    I didn''t get my "thank you" check she always sends! please check if my mother
+    is alright. '
   location: Wolf-ridden Forest
   category: 6
   baseRank: 0
-  maxReward: 20
+  maxReward: 60
+  partyMin: 3
   partyLimit: 5
   timeLimitHours: 78
   hiddenTags: []

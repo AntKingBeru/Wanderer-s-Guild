@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 523021102488438819}
   - component: {fileID: 1472646600822755116}
   - component: {fileID: 7478518057143819782}
+  - component: {fileID: -4354345115407966001}
   - component: {fileID: 2232219838690936087}
   - component: {fileID: 4185742980401086227}
-  - component: {fileID: -4354345115407966001}
   m_Layer: 6
   m_Name: QuestBoard_Prop
   m_TagString: Interactable
@@ -119,6 +119,22 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -5353424318250742468, guid: 131ad7180115dbc40b33df81bf929efa, type: 3}
+--- !u!208 &-4354345115407966001
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2356904549053691197}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.6, y: 0.15, z: 1}
+  m_MoveThreshold: 0
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: -0.05, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!114 &2232219838690936087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,22 +167,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GuildPointMarker
   type: 1
   standPoint: {fileID: 5219413799484404949}
---- !u!208 &-4354345115407966001
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2356904549053691197}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 1.6, y: 0.15, z: 1}
-  m_MoveThreshold: 0
-  m_Carve: 1
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: -0.05, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!1 &5410070369096489354
 GameObject:
   m_ObjectHideFlags: 0

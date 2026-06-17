@@ -318,7 +318,7 @@ public class SoloAdventurerManager : MonoBehaviour
                 continue;
             if (quest.ApprovedApplication != null)
                 continue;
-            if (partySize > quest.PartyLimit)
+            if (partySize < quest.PartyMin || partySize > quest.PartyLimit)
                 continue;
 
             var weight = 1f;

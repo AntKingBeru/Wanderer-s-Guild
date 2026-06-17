@@ -47,6 +47,7 @@ public class QuestRequest
     public QuestCategory Category => _sourceData?.Category ?? QuestCategory.Combat;
     public QuestRank BaseRank => _sourceData?.BaseRank ?? QuestRank.F;
     public int MaxReward => _sourceData?.MaxReward ?? 0;
+    public int PartyMin => _sourceData?.PartyMin ?? 1;
     public int PartyLimit => _sourceData?.PartyLimit ?? 1;
     public int TimeLimitHours => _sourceData?.TimeLimitHours ?? 24;
 

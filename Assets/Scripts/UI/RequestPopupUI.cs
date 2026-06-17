@@ -56,7 +56,9 @@ public class RequestPopupUI : MonoBehaviour
         categoryLabel.text = $"Category: {request.Category}";
         descriptionLabel.text = request.Description;
         maxRewardLabel.text = $"Max Reward: {request.MaxReward}g";
-        partyLimitLabel.text = $"Party Limit: {request.PartyLimit}";
+        partyLimitLabel.text = request.PartyMin == request.PartyLimit
+            ? $"Party Size: {request.PartyLimit}"
+            : $"Party Size: {request.PartyMin}-{request.PartyLimit}";
         timeLimitLabel.text = $"Time Limit: {request.TimeLimitHours}h";
         
         // Build the rank range string from QuestConfig display names.

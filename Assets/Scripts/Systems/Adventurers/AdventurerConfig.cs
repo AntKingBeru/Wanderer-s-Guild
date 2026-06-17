@@ -57,11 +57,10 @@ public class AdventurerConfig : ScriptableObject
 
     [Tooltip("XP cost brackets. For each bracket, XP to level up = xpPerLevelMultiplier × currentLevel. " +
              "Brackets must cover levels 1 through maxLevel with no gaps or overlaps.")]
-    [SerializeField] private XpBracket[] xpBrackets = new XpBracket[]
-    {
-        new XpBracket { minLevel = 1, maxLevel = 10, xpPerLevelMultiplier = 100 },
-        new XpBracket { minLevel = 11, maxLevel = 25, xpPerLevelMultiplier = 200 },
-        new XpBracket { minLevel = 26, maxLevel = 50, xpPerLevelMultiplier = 400 },
+    [SerializeField] private XpBracket[] xpBrackets = {
+        new() { minLevel = 1, maxLevel = 10, xpPerLevelMultiplier = 100 },
+        new() { minLevel = 11, maxLevel = 25, xpPerLevelMultiplier = 200 },
+        new() { minLevel = 26, maxLevel = 50, xpPerLevelMultiplier = 400 },
     };
     #endregion
     
@@ -71,7 +70,7 @@ public class AdventurerConfig : ScriptableObject
              "QuestRank (0=F→E … 6=S→Special). The last entry (Special) is unused " +
              "since Special is the highest rank.")]
     [SerializeField] private int[] rankPointThresholds =
-        { 100, 300, 700, 1500, 3000, 6000, 12000, 0 };
+        { 500, 1500, 3500, 7500, 15000, 30000, 60000, 0 };
     #endregion
     
     #region Adenturer Factory
@@ -326,7 +325,7 @@ public class AdventurerConfig : ScriptableObject
     {
         rankMultipliers = new[] { 1f, 1.5f, 2.25f, 3.5f, 5f, 7f, 10f, 15f };
         startingRankWeights = new[] { 65f, 25f, 8f, 2f, 0f, 0f, 0f, 0f };
-        rankPointThresholds = new[] { 100, 300, 700, 1500, 3000, 6000, 12000, 0 };
+        rankPointThresholds = new[] { 500, 1500, 35700, 7500, 15000, 30000, 60000, 0 };
         sleepMissedPenalties = new[] { 0f, 0.05f, 0.12f, 0.2f };
         foodDeprivedPenalties = new[] { 0f, 0f, 0.08f, 0.2f };
         xpBrackets = new[]

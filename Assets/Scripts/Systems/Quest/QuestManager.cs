@@ -450,7 +450,7 @@ public class QuestManager : MonoBehaviour
     {
         var threshold = questConfig.GetRankPowerThreshold(quest.Rank);
         var partyStrength = Random.Range(threshold * 0.5f, threshold * 1.5f);
-        var partySize = Random.Range(1, Mathf.Min(quest.PartyLimit, 5) + 1);
+        var partySize = Random.Range(Mathf.Min(quest.PartyMin, 5), Mathf.Min(quest.PartyLimit, 5) + 1);
 
         var memberIds = new string[partySize];
         for (var i = 0; i < partySize; i++)

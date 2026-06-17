@@ -80,7 +80,9 @@ public class QuestFormUI : MonoBehaviour
         nameLabel.text = request.RequestName;
         categoryLabel.text = request.Category.ToString();
         descriptionLabel.text = request.Description;
-        partySizeLabel.text = $"Max Party: {request.PartyLimit}";
+        partySizeLabel.text = request.PartyMin == request.PartyLimit
+            ? $"Party Size: {request.PartyLimit}"
+            : $"Party Size: {request.PartyMin}-{request.PartyLimit}";
         // Rank slider: integer steps within the allowed ±1 window.
         rankSlider.wholeNumbers = true;
         rankSlider.minValue = (int)request.GetMinAllowedRank();

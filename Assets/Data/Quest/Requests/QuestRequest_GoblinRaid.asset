@@ -22,6 +22,7 @@ MonoBehaviour:
   category: 0
   baseRank: 0
   maxReward: 80
+  partyMin: 2
   partyLimit: 3
   timeLimitHours: 48
   hiddenTags: []

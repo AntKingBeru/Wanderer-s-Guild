@@ -69,6 +69,7 @@ MonoBehaviour:
     reputationReward: 35
     reputationFailurePenalty: 20
     reputationExpiryPenalty: 7
+  categoryBaseXp: 5000000032000000460000002d0000005a000000410000003c00000078000000
   maxBoardSlots: 10
   requestsPerDay: 3
   requestExpiryDays: 3
