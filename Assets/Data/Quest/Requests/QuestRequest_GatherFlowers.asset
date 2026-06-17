@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f722fe2c43aa2246a84eb23c3ba1478, type: 3}
+  m_Name: QuestRequest_GatherFlowers
+  m_EditorClassIdentifier: Assembly-CSharp::QuestRequestData
+  requestId: cbda958b-1e29-4d57-8c04-2498e6dec78e
+  requestName: Gather Flowers
+  description: 'I need some roses for a medicine I''m making so if you would be a
+    petal and get me some I would appreciate it  '
+  location: The cave of never ending agony
+  category: 1
+  baseRank: 1
+  maxReward: 200
+  partyLimit: 3
+  timeLimitHours: 64
+  hiddenTags: []

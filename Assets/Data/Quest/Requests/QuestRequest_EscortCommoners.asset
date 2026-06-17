@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f722fe2c43aa2246a84eb23c3ba1478, type: 3}
+  m_Name: QuestRequest_EscortCommoners
+  m_EditorClassIdentifier: Assembly-CSharp::QuestRequestData
+  requestId: 55f4782c-e5f7-4eb8-9ceb-3ecaf7b73c69
+  requestName: 'Escort Commoners '
+  description: We want to go to Verasia to trade our livestock but we need someone
+    to defend us on our way.
+  location: Verasia kingdom
+  category: 2
+  baseRank: 1
+  maxReward: 150
+  partyLimit: 3
+  timeLimitHours: 48
+  hiddenTags: []
