@@ -42,6 +42,10 @@ public class TimeManager : MonoBehaviour
     [Tooltip("Multiplier applied on top of realSecondsPerGameMinute.")]
     [SerializeField, Min(0f)] private float timeScale = 1f;
 
+    [Tooltip("Minimum time scale reachable through input. Must be smaller than maxTimeScale. " +
+             "This only floors how slow time can run while unpaused — use SetPaused(true) for a full stop.")]
+    [SerializeField, Min(0f)] private float minTimeScale = 0.1f;
+    
     [Tooltip("Maximum time scale reachable through input.")]
     [SerializeField, Min(1f)] private float maxTimeScale = 10f;
 
@@ -93,6 +97,8 @@ public class TimeManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        
+        timeScale = Mathf.Clamp(timeScale, minTimeScale, maxTimeScale);
 
         _minute = startMinute;
         _hour = startHour;
@@ -100,7 +106,7 @@ public class TimeManager : MonoBehaviour
         _month = startMonth;
         _year = startYear;
         _lastKnownSeason = GetCurrentSeason();
-        GameEventRelay.Instance.onMinuteChanged.Invoke(_hour, _minute);
+        GameEventRelay.Instance.OnMinuteChanged.Invoke(_hour, _minute);
     }
 
     private void OnEnable()
@@ -174,23 +180,23 @@ public class TimeManager : MonoBehaviour
 
         // Fire granular events from most specific to least specific so listeners that
         // unsubscribe in response don't miss earlier events in the same tick.
-        GameEventRelay.Instance.onMinuteChanged.Invoke(_hour, _minute);
+        GameEventRelay.Instance.OnMinuteChanged.Invoke(_hour, _minute);
 
         if (hourChanged)
-            GameEventRelay.Instance.onHourChanged.Invoke(_hour);
+            GameEventRelay.Instance.OnHourChanged.Invoke(_hour);
         if (dayChanged)
-            GameEventRelay.Instance.onDayChanged.Invoke(_day);
+            GameEventRelay.Instance.OnDayChanged.Invoke(_day);
         if (monthChanged)
-            GameEventRelay.Instance.onMonthChanged.Invoke(_month);
+            GameEventRelay.Instance.OnMonthChanged.Invoke(_month);
         if (yearChanged)
-            GameEventRelay.Instance.onYearChanged.Invoke(_year);
+            GameEventRelay.Instance.OnYearChanged.Invoke(_year);
 
         // Season check — only fire when the season actually changes.
         var currentSeason = GetCurrentSeason();
         if (currentSeason != _lastKnownSeason)
         {
             _lastKnownSeason = currentSeason;
-            GameEventRelay.Instance.onSeasonChanged.Invoke(currentSeason);
+            GameEventRelay.Instance.OnSeasonChanged.Invoke(currentSeason);
         }
     }
     #endregion
@@ -239,11 +245,11 @@ public class TimeManager : MonoBehaviour
     public void SetPaused(bool paused)
     {
         _isPaused = paused;
-        GameEventRelay.Instance?.onPauseChanged.Invoke(_isPaused);
+        GameEventRelay.Instance?.OnPauseChanged.Invoke(_isPaused);
     }
 
     public void SetTimeScale(float scale)
-        => timeScale = Mathf.Clamp(scale, 0f, maxTimeScale);
+        => timeScale = Mathf.Clamp(scale, minTimeScale, maxTimeScale);
     #endregion
     
     #region Input Handlers
@@ -254,7 +260,7 @@ public class TimeManager : MonoBehaviour
         => timeScale = Mathf.Min(timeScale + timeScaleStep, maxTimeScale);
 
     private void OnDecreasePerformed(InputAction.CallbackContext _)
-        => timeScale = Mathf.Max(timeScale - timeScaleStep, 0f);
+        => timeScale = Mathf.Max(timeScale - timeScaleStep, minTimeScale);
     #endregion
     
     #region Input Helpers
@@ -272,4 +278,13 @@ public class TimeManager : MonoBehaviour
         actionRef.action.Disable();
     }
     #endregion
+    
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (minTimeScale > maxTimeScale)
+            Debug.LogWarning("[TimeManager] MinTimeScale should not exceed MaxTimeScale.");
+        timeScale = Mathf.Clamp(timeScale, minTimeScale, maxTimeScale);
+    }
+#endif
 }

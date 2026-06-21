@@ -39,6 +39,105 @@ public enum Weekday
 }
 #endregion
 
+#region Adventurer
+// Governs base stats, category affinities, rank-up quest category and duration, and which future advanced class paths are available.
+// Advanced classes (unlocked in training rooms in the build system) will be added here when that system is implemented (DO NOT TOUCH COMMENTED BLOCKS)
+public enum AdventurerClass
+{
+    Fighter, // Melee specialist. High Strength (used for hidden tag check). Preferred: Combat, Subjugation, DungeonDelving.
+    Archer, // Ranged specialist. High Dexterity (used for hidden tag check). Preferred: Gathering, Exploration, Investigation, Subjugation.
+    // Future advanced classes (unlocked in training)
+    // Barbarian, // Fighter → Barbarian path
+    // Paladin, // Fighter → Paladin path (requires Priest)
+    // Ranger, // Archer → Ranger path
+}
+
+// How rare a class is. Currently descriptive only (shown in UI); does not affect roll odds yet.
+public enum ClassRarity
+{
+    Common,
+    Uncommon,
+    Rare,
+    Epic,
+    Legendary
+}
+
+// How a class becomes unlocked. RankUp = automatically once the guild reaches MinimumRank.
+// Training = manually, via a training room (Build system refactor adds the actual hookup).
+public enum ClassUnlockMethod
+{
+    Start,
+    RankUp,
+    Training
+}
+
+// How a quest category relates to a specific adventurer class.
+// Applied per party member when calculation total success chance in AdventurerManager
+public enum CategoryAffinity
+{
+    Preferred, // Positive modifier
+    Neutral, // No modifier
+    Disliked // Negative modifier
+}
+
+// Primary engagement status of an adventurer.
+// This refactors pass of the adventurer system only sets/reads Idle and Dead — the other
+// values are reserved for when the Quest/Party systems are rebuilt against the new AdventurerData.
+public enum AdventurerStatus
+{
+    Idle, // Free / default state
+    AppliedToQuest, // Reserved — Quest system refactor
+    OnQuest, // Reserved — Quest system refactor
+    OnRankUpQuest, // Reserved — Quest system refactor
+    Injured, // Reserved — injury system not yet implemented
+    Dead // Permanently removed from active consideration
+}
+
+// Where an adventurer sleeps each night. Reserved for the Build system refactor — the
+// adventurer system does not assign or read this yet (Bedroom is always null).
+public enum LodgingState
+{
+    InGuild,
+    OutsideGuild,
+    Nowhere
+}
+
+// All possible movement/behavior states an in-world adventurer object can be in.
+// Reserved — World/Navigation system has not been refactored yet.
+public enum AdventurerBehaviorState
+{
+    Idle,
+    Arriving,
+    Browsing,
+    Departing,
+    OnQuest,
+    Returning
+}
+#endregion
+
+#region Party
+// The event that causes a change to a party's composition or status.
+// Used by PartyManager whenever it raises onPartyChanged.
+public enum PartyChangeReason
+{
+    Formed, // Initial party creation
+    MemberJoined, // An adventurer was added to an existing party
+    MemberLeft, // An adventurer voluntarily departed the party
+    MemberDied, // A member was removed from the roster (death) and pulled out of the party
+    Disbanded, // The party was fully dissolved (trial failure, or headcount dropped below the minimum)
+    TemporaryMadePermanent // A temporary party passed its trial and became permanent
+}
+
+// Outcome of feeding one quest result into a temporary party's trial.
+// Computed by PartyData.RecordQuestResult; PartyManager acts on the result.
+public enum PartyTrialResult
+{
+    Continue, // Trial isn't decided yet — keep going
+    Promote, // Trial passed — make the party permanent
+    Disband // Trial failed — disband and apply the cooldown
+}
+#endregion
+
 #region Quest
 // The type of work a quest involves. Determines class affinity modifiers and the pool of applicable adventurer classes.
 // Affinity data is defined per-class in the adventurer system and looked up against this value at success-chance time.
@@ -85,116 +184,5 @@ public enum ApplicationStatus
     Pending, // Submitted by the party; awaiting guild manager review
     Approved, // Guild manager approved; party transitions to InProgress
     Rejected // Guild manager declined the application
-}
-#endregion
-
-#region Adventurer
-// Governs base stats, category affinities, rank-up quest category and duration, and which future advanced class paths are available.
-// Advanced classes (unlocked in training rooms in the build system) will be added here when that system is implemented (DO NOT TOUCH COMMENTED BLOCKS)
-public enum AdventurerClass
-{
-    Fighter, // Melee specialist. High Strength (used for hidden tag check). Preferred: Combat, Subjugation, DungeonDelving.
-    Archer, // Ranged specialist. High Dexterity (used for hidden tag check). Preferred: Gathering, Exploration, Investigation, Subjugation.
-    // Future advanced classes (unlocked in training)
-    // Barbarian, // Fighter → Barbarian path
-    // Paladin, // Fighter → Paladin path (requires Priest)
-    // Ranger, // Archer → Ranger path
-}
-
-// How a quest category relates to a specific adventurer class.
-// Applied per party member when calculation total success chance in AdventurerManager
-public enum CategoryAffinity
-{
-    Preferred, // Positive modifier
-    Neutral, // No modifier
-    Disliked // Negative modifier
-}
-
-// Primary engagement status of an adventurer.
-// Rank-up quest application are tracked in a separate field on AdventurerData so they do not conflict with regular quest state.
-// An adventurer can have a pending rank-up application while simultaneously being Idle, AppliedToQuest, or OnQuest, but cannot be dispatched to both at once.
-public enum AdventurerStatus
-{
-    Idle, // Free to browse posted quests and submit applications
-    AppliedToQuest, // Has a pending regular quest application awaiting player approval
-    OnQuest, // Dispatched on a regular quest; unavailable for other quests
-    OnRankUpQuest, // Dispatched on a rank-up quest; regular quest dispatch blocked
-    // Placeholders (injury and death system not yet implemented)
-    // Set these values in code only when the corresponding system is built.
-    Injured, // Temporarily unable to take quests; recovers over time
-    Dead // Permanently removed from the active roster
-}
-
-// Where an adventurer sleeps each night.
-// Checked at midnight by AdventurerManager.
-// InGuild requires an available bed in a housing room (build system adds this).
-// Nowhere causes sleep maintenance to degrade each night until a bed is assigned.
-public enum LodgingState
-{
-    InGuild, // Assigned to a bed in a guild housing room
-    OutsideGuild, // Has private accommodation; no guild cost; uncommon
-    Nowhere // Unhoused; sleep penalty accumulates nightly
-}
-
-// The event that causes a change to a party's composition or status.
-// Stored on the change event so AdventurerManager and future UI can display history.
-public enum PartyChangeReason
-{
-    Formed, // Initial party creation (permanent or temporary)
-    MemberJoined, // An adventurer was added to an existing party
-    MemberLeft, // An adventurer voluntarily departed the party
-    RankDifference, // Members split off due to a rank gap exceeding the threshold
-    MemberDied, // One or more party members died during a quest
-    ConsecutiveFailures, // Too many consecutive failures caused dissolution
-    LowMorale, // Multiple members returned with critically low HP
-    Disbanded, // The party was fully dissolved; all members become solo
-    TemporaryMadePermanent // A temporary per-quest grouping became a registered party
-}
-
-// All possible movement/behavior states an in-world adventurer object can be in.
-// AdventurerNavigationController transitions between these in response to game events from GameEventRelay.
-public enum AdventurerBehaviorState
-{
-    Idle, // Wandering the designated patrol area
-    Arriving, // Walking to a reception desk prop on first spawn
-    Browsing, // Walking to a guild board prop to browse quests
-    Departing, // Walking to the exit/spawn point before going on a quest
-    OnQuest, // Hidden from the world; quest is in progress
-    Returning // Walking from the exit/spawn point back to idle area
-}
-#endregion
-
-#region Build
-public enum RoomState
-{
-    UnderConstruction,
-    Built
-}
-#endregion
-
-#region World Interaction
-// Identifies which UI screen a world-space interactable prop opens when clicked.
-// Add entries here as new screen are introduced.
-public enum ScreenType
-{
-    ReceptionDesk,
-    QuestBoard
-}
-
-public enum GuildPointType
-{
-    ReceptionDesk, // Where adventurers walk on first arrival
-    QuestBoard, // Where adventurers walk when browsing for quests
-    Exit // Where adventurers walk before departing on a quest / after returning
-}
-#endregion
-
-#region Reputation
-public enum ReputationLevel
-{
-    ExtremelyLow = -51,
-    Low  = -1,
-    Average = 50,
-    High
 }
 #endregion

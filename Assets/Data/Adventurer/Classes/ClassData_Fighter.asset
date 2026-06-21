@@ -9,36 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b7713ca83072444951ba46e75c225d, type: 3}
+  m_Script: {fileID: 11500000, guid: 881b664f553e44b499b740e0faac304f, type: 3}
   m_Name: ClassData_Fighter
   m_EditorClassIdentifier: Assembly-CSharp::ClassData
   adventurerClass: 0
   displayName: Fighter
+  rarity: 0
+  unlockMethod: 0
+  minimumRank: 0
+  minimumLevel: 1
   baseHp: 120
-  baseDamage: 15
-  baseSpeed: 8
+  baseStrength: 12
+  baseDexterity: 8
   hpPerLevel: 8
-  damagePerLevel: 2
-  speedPerLevel: 0.3
-  hpWeight: 0.3
-  damageWeight: 0.5
-  speedWeight: 0.2
-  categoryAffinities:
-    combat: 0
-    gathering: 2
-    escort: 1
-    delivery: 2
-    subjugation: 0
-    exploration: 1
-    investigation: 1
-    dungeon: 0
+  strengthPerLevel: 1.5
+  dexterityPerLevel: 1.5
+  preferredCategories: 000000000400000007000000
+  dislikedCategories: 0100000005000000
   rankUpQuestCategory: 0
-  rankUpDurations:
-    fToE: 24
-    eToD: 36
-    dToC: 48
-    cToB: 72
-    bToA: 96
-    aToS: 120
-    sToSpecial: 144
-  advancedClassPaths: 
