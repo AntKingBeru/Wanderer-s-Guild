@@ -1,0 +1,22 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI_Toolkit/USSs/TimeHud.uss?fileID=7433441132597879392&amp;guid=9b9ace63fa15566429d6282c3951d34f&amp;type=3#TimeHud"/>
+    <ui:VisualElement name="time-hud" class="time-hud">
+        <ui:VisualElement class="time-hud__left">
+            <ui:VisualElement name="season-icon" class="season-icon"/>
+            <ui:VisualElement class="date-block">
+                <ui:Label name="date-label" text="Day 1" class="date-label"/>
+                <ui:Label name="year-label" text="Year 1" class="year-label"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="time-hud__spacer"/>
+        <ui:VisualElement class="time-hud__right">
+            <ui:Label name="speed-badge" text="NORMAL" class="speed-badge"/>
+            <ui:VisualElement class="speed-controls">
+                <ui:Button name="btn-pause" text="II" class="speed-btn"/>
+                <ui:Button name="btn-normal" text="►" class="speed-btn"/>
+                <ui:Button name="btn-fast" text="►►" class="speed-btn"/>
+                <ui:Button name="btn-very-fast" text="►►►" class="speed-btn"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

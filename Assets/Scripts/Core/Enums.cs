@@ -1,22 +1,215 @@
-// Central repository for all game-wide enumerations.
-// Add new enums here as each system is built rather than scattering them across files and them getting lost.
-// When adding a new enum, specify what it should do and what it will use it
-#region Time
-// Broad categorization of the time of day, used by quest availability and adventurer behavior systems.
-public enum TimeOfDay
+// All game enumerations, grouped by system into regions.
+
+#region Guild Rank System
+public enum GuildRank
 {
-    Midnight, // 00:00 - 04:59
-    Dawn, // 05:00 - 06:59
-    Morning, // 07:00 - 11:59
-    Noon, // 12:00 - 12:59
-    Afternoon, // 13:00 - 16:59
-    Evening, // 17:00 - 18:59
-    Dusk, // 19:00 - 20:59
-    Night // 21:00 - 23:59
+    F,
+    E,
+    D,
+    C,
+    B,
+    A,
+    S,
+    National
+}
+#endregion
+
+#region Reputation System
+public enum ReputationChangeReason
+{
+    // Positive
+    QuestSuccess,
+    FacilityBuilt,
+    AdventurerAchievement,
+    // Negative
+    QuestFailure,
+    AdventurerDeath,
+    RequestExpired,
+    AdventurerDismissed,
+    AdventurerDeparted
+}
+#endregion
+
+#region Quest System
+public enum RequestSource
+{
+    Kingdom,
+    Nobility,
+    Merchant,
+    Traveler,
+    Settlement,
+    Organization
 }
 
-// Seasonal cycle driven by month progression in TimeManager.
-// Affects adventurer moral, quest types, and future weather systems (if we decide to add them).
+public enum QuestCategory
+{
+    Combat,
+    Extermination,
+    Gathering,
+    Escort,
+    Delivery,
+    Investigation,
+    Dungeon
+}
+
+public enum QuestDifficulty
+{
+    Trivial,
+    Easy,
+    Moderate,
+    Hard,
+    Severe,
+    Extreme,
+    Deadly,
+    Special
+}
+
+public enum QuestState
+{
+    Draft,
+    Posted,
+    InProgress,
+    Succeeded,
+    Failed,
+    Expired
+}
+#endregion
+
+#region Adventurer System
+public enum AdventurerClass
+{
+    Fighter,
+    Archer
+}
+
+public enum ClassTier
+{
+    Base,
+    Advanced
+}
+
+public enum AdventurerState
+{
+    Idle,
+    Applying,
+    OnQuest,
+    Training,
+    Resting,
+    Promoting,
+    Departing
+}
+
+public enum StatType
+{
+    Strength,
+    Dexterity,
+    Endurance,
+    Wits,
+    Spirit
+}
+
+public enum DepartureReason
+{
+    PoorFacilities,
+    NoOpportunities,
+    LowEarning,
+    Retirement,
+    Death,
+    Dismissed
+}
+#endregion
+
+#region Party System
+public enum PartyState
+{
+    Forming,
+    Idle,
+    OnQuest,
+    Disbanding
+}
+
+public enum RelationshipType
+{
+    Stranger,
+    Acquaintance,
+    Friend,
+    Close,
+    Rival
+}
+#endregion
+
+#region Facility System
+public enum FacilityType
+{
+    GuildHall,
+    Tavern,
+    Bedroom,
+    Armory,
+    Alchemist,
+    Office,
+    Hallway
+}
+
+public enum FacilityState
+{
+    Locked,
+    Available,
+    UnderConstruction,
+    Operational,
+    Upgrading
+}
+#endregion
+
+#region Economy System
+public enum TransactionType
+{
+    // Income
+    QuestReward,
+    AdventurerPurchase,
+    GuildService,
+    // Expense
+    Construction,
+    FacilityUpgrade,
+    OperationalCost
+}
+#endregion
+
+#region Equipment System
+public enum EquipmentSlot
+{
+    Weapon,
+    OffHand,
+    Armor,
+    Artifact
+}
+
+public enum EquipmentType
+{
+    Sword,
+    Axe,
+    Shield,
+    Bow,
+    Leather,
+    HalfPlate
+}
+#endregion
+
+#region Support System
+public enum SupportType
+{
+    Potion
+}
+#endregion
+
+#region Time & Simulation System
+public enum TimeSpeed
+{
+    Pause,
+    Normal,
+    Fast,
+    VeryFast
+}
+
 public enum Season
 {
     Spring,
@@ -25,164 +218,33 @@ public enum Season
     Winter
 }
 
-// Named days of the weak for scheduling guild events and rest days.
-// Named "Weekday" (not DayOfWeek) to avoid ambiguity with System.DayOfWeak in files that import System.
-public enum Weekday
+public enum DayPhase
 {
-    Monday,
-    Tuesday,
-    Wednesday,
-    Thursday,
-    Friday,
-    Saturday,
-    Sunday
+    Dawn,
+    Morning,
+    Midday,
+    Afternoon,
+    Dusk,
+    Evening,
+    Night,
+    Midnight
 }
 #endregion
 
-#region Adventurer
-// Governs base stats, category affinities, rank-up quest category and duration, and which future advanced class paths are available.
-// Advanced classes (unlocked in training rooms in the build system) will be added here when that system is implemented (DO NOT TOUCH COMMENTED BLOCKS)
-public enum AdventurerClass
+#region UI
+public enum ScreenId
 {
-    Fighter, // Melee specialist. High Strength (used for hidden tag check). Preferred: Combat, Subjugation, DungeonDelving.
-    Archer, // Ranged specialist. High Dexterity (used for hidden tag check). Preferred: Gathering, Exploration, Investigation, Subjugation.
-    // Future advanced classes (unlocked in training)
-    // Barbarian, // Fighter → Barbarian path
-    // Paladin, // Fighter → Paladin path (requires Priest)
-    // Ranger, // Archer → Ranger path
-}
-
-// How rare a class is. Currently descriptive only (shown in UI); does not affect roll odds yet.
-public enum ClassRarity
-{
-    Common,
-    Uncommon,
-    Rare,
-    Epic,
-    Legendary
-}
-
-// How a class becomes unlocked. RankUp = automatically once the guild reaches MinimumRank.
-// Training = manually, via a training room (Build system refactor adds the actual hookup).
-public enum ClassUnlockMethod
-{
-    Start,
-    RankUp,
-    Training
-}
-
-// How a quest category relates to a specific adventurer class.
-// Applied per party member when calculation total success chance in AdventurerManager
-public enum CategoryAffinity
-{
-    Preferred, // Positive modifier
-    Neutral, // No modifier
-    Disliked // Negative modifier
-}
-
-// Primary engagement status of an adventurer.
-// This refactors pass of the adventurer system only sets/reads Idle and Dead — the other
-// values are reserved for when the Quest/Party systems are rebuilt against the new AdventurerData.
-public enum AdventurerStatus
-{
-    Idle, // Free / default state
-    AppliedToQuest, // Reserved — Quest system refactor
-    OnQuest, // Reserved — Quest system refactor
-    OnRankUpQuest, // Reserved — Quest system refactor
-    Injured, // Reserved — injury system not yet implemented
-    Dead // Permanently removed from active consideration
-}
-
-// Where an adventurer sleeps each night. Reserved for the Build system refactor — the
-// adventurer system does not assign or read this yet (Bedroom is always null).
-public enum LodgingState
-{
-    InGuild,
-    OutsideGuild,
-    Nowhere
-}
-
-// All possible movement/behavior states an in-world adventurer object can be in.
-// Reserved — World/Navigation system has not been refactored yet.
-public enum AdventurerBehaviorState
-{
-    Idle,
-    Arriving,
-    Browsing,
-    Departing,
-    OnQuest,
-    Returning
+    None,
+    ReceptionDesk,
+    QuestBoard
 }
 #endregion
 
-#region Party
-// The event that causes a change to a party's composition or status.
-// Used by PartyManager whenever it raises onPartyChanged.
-public enum PartyChangeReason
-{
-    Formed, // Initial party creation
-    MemberJoined, // An adventurer was added to an existing party
-    MemberLeft, // An adventurer voluntarily departed the party
-    MemberDied, // A member was removed from the roster (death) and pulled out of the party
-    Disbanded, // The party was fully dissolved (trial failure, or headcount dropped below the minimum)
-    TemporaryMadePermanent // A temporary party passed its trial and became permanent
-}
-
-// Outcome of feeding one quest result into a temporary party's trial.
-// Computed by PartyData.RecordQuestResult; PartyManager acts on the result.
-public enum PartyTrialResult
-{
-    Continue, // Trial isn't decided yet — keep going
-    Promote, // Trial passed — make the party permanent
-    Disband // Trial failed — disband and apply the cooldown
-}
-#endregion
-
-#region Quest
-// The type of work a quest involves. Determines class affinity modifiers and the pool of applicable adventurer classes.
-// Affinity data is defined per-class in the adventurer system and looked up against this value at success-chance time.
-public enum QuestCategory
-{
-    Combat,
-    Gathering,
-    Escort,
-    Delivery,
-    Subjugation,
-    Exploration,
-    Investigation,
-    Dungeon
-}
-
-// Quest difficulty rank. The integer value is used directly in formulas.
-// Display name and color come from QuestConfig so designers can change them without touching code.
-public enum QuestRank
-{
-    F = 0,
-    E = 1,
-    D = 2,
-    C = 3,
-    B = 4,
-    A = 5,
-    S = 6,
-    Special = 7
-}
-
-// Full lifecycle of a quest from the moment it is created to its final resolution.
-public enum QuestStatus
-{
-    Unposted, // Created at the reception desk; sitting in the unposted list
-    Posted, // On the board; time limit countdown is active
-    InProgress, // An application was approved; party is on the quest
-    Completed, // Party returned successfully within the time limit
-    Failed, // Party failed, or the time limit expired while in progress
-    Expired // Time limit elapsed before any application was approved
-}
-
-// Lifecycle of a party's application for a specific posted quest.
+#region Application
 public enum ApplicationStatus
 {
-    Pending, // Submitted by the party; awaiting guild manager review
-    Approved, // Guild manager approved; party transitions to InProgress
-    Rejected // Guild manager declined the application
+    Pending,
+    Approved,
+    Rejected
 }
 #endregion

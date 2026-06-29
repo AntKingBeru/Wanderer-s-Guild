@@ -7,31 +7,13 @@
             "id": "4431cbe4-170c-494f-9bdb-543aed35ceac",
             "actions": [
                 {
-                    "name": "PauseToggle",
-                    "type": "Button",
-                    "id": "839b4769-1c26-4744-b019-353d30f1edee",
-                    "expectedControlType": "",
+                    "name": "PointerPos",
+                    "type": "Value",
+                    "id": "520343a5-1e4e-4632-83b5-d00d6c25d976",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "IncreaseTimeScale",
-                    "type": "Button",
-                    "id": "6225cbd7-c99a-4cbe-95cd-5cb539bedc63",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "DecreaseTimeScale",
-                    "type": "Button",
-                    "id": "df341105-2807-4e39-bd59-62e62dddfc27",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Interact",
@@ -64,61 +46,6 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "aea13ed5-8e82-4753-b995-60577b884250",
-                    "path": "<Keyboard>/p",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "PauseToggle",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f9c1b14a-bbd9-44f5-86db-11cd8198bbf4",
-                    "path": "<Keyboard>/numpadPlus",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "IncreaseTimeScale",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "179cc66c-c5d7-482d-916a-98a671e4570c",
-                    "path": "<Keyboard>/equals",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "IncreaseTimeScale",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "7d8c96b1-5249-4443-b455-c9c81be74b9d",
-                    "path": "<Keyboard>/numpadMinus",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "DecreaseTimeScale",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "5b18859c-ada9-474a-aabe-3741a865afb7",
-                    "path": "<Keyboard>/minus",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "DecreaseTimeScale",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "c006143a-8f74-4532-b2af-639b292ed121",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
@@ -147,6 +74,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "ToggleBuildMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0f1dbaf3-0355-47e9-aa01-921eeefe37b7",
+                    "path": "<Pointer>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PointerPos",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -261,6 +199,54 @@
                     "processors": "",
                     "groups": "",
                     "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Time",
+            "id": "ccbfbed5-fe6f-4cc8-aedd-d28fb2d8714a",
+            "actions": [
+                {
+                    "name": "PauseToggle",
+                    "type": "Button",
+                    "id": "afbeef7b-83c2-48b4-be50-faca3e4d3497",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CycleSpeed",
+                    "type": "Button",
+                    "id": "1bba6860-b42d-455c-8252-656615e88a30",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f50869ac-0cc5-4d04-9cb5-24875e880692",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PauseToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bba20e7a-4211-4125-95bf-38e1cf7268b9",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CycleSpeed",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

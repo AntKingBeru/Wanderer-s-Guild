@@ -9,6 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2482393686775638980}
+  - component: {fileID: 9080301449631269571}
+  - component: {fileID: 2685197066461618626}
+  - component: {fileID: 180960274084444969}
   m_Layer: 6
   m_Name: Quest_Board
   m_TagString: Interactable
@@ -34,6 +37,56 @@ Transform:
   - {fileID: 6821793950305486486}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &9080301449631269571
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246605328616472521}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.15, y: 2, z: 4}
+  m_Center: {x: 0.025, y: 2, z: 0}
+--- !u!114 &2685197066461618626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246605328616472521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 411913c54eaf37a4bbb8c80e753f55ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  color: {r: 0.4, g: 0.8, b: 1, a: 1}
+  width: 0.03
+  includeChildren: 1
+--- !u!114 &180960274084444969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246605328616472521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fc39914376c6b04fae9fa543a0231d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableProp
+  opensScreen: 2
+  outline: {fileID: 2685197066461618626}
 --- !u!1 &509290018717704910
 GameObject:
   m_ObjectHideFlags: 0

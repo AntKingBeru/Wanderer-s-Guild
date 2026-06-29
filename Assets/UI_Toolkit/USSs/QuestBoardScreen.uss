@@ -1,0 +1,126 @@
+.screen {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    flex-direction: row;
+    background-color: rgba(12, 14, 20, 0.92);
+    padding: 16px;
+    padding-top: 64px;
+}
+
+.panel {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 6px;
+    padding: 12px;
+    background-color: rgba(22, 25, 34, 0.95);
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.panel__header {
+    color: rgb(236, 238, 244);
+    font-size: 14px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    margin-bottom: 10px;
+}
+
+.panel__hint {
+    color: rgba(236, 238, 244, 0.5);
+    font-size: 12px;
+    white-space: normal;
+    margin-bottom: 8px;
+}
+
+.panel__spacer { flex-grow: 1; }
+
+.close-button {
+    height: 34px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.06);
+    color: rgb(236, 238, 244);
+    font-size: 13px;
+}
+.close-button:hover { background-color: rgba(255, 255, 255, 0.14); }
+
+.panel--drafts { flex-grow: 0.8; flex-basis: 0; }
+.panel--board  { flex-grow: 2.6; flex-basis: 0; }
+
+.board-error {
+    color: rgb(232, 110, 90);
+    font-size: 12px;
+    white-space: normal;
+    margin-bottom: 8px;
+    display: none;
+}
+
+.slot-grid {
+    flex-grow: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.slot-row {
+    flex-direction: row;
+    justify-content: center;
+}
+
+.board-slot {
+    width: 210px;
+    height: 150px;
+    margin: 10px;
+    padding: 8px;
+    border-radius: 12px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.03);
+    -unity-background-scale-mode: scale-and-crop;
+    align-items: center;
+    justify-content: center;
+}
+.board-slot--filled {
+    background-color: rgba(255, 255, 255, 0.06);
+    align-items: stretch;
+    justify-content: flex-start;
+}
+.board-slot--locked {
+    opacity: 0.45;
+    border-color: rgba(255, 255, 255, 0.06);
+}
+.board-slot__hint {
+    color: rgba(236, 238, 244, 0.4);
+    font-size: 13px;
+    -unity-font-style: bold;
+}
+
+.draft-list { flex-grow: 1; }
+
+.quest-card {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgb(120, 120, 120);
+    background-color: rgba(22, 25, 34, 0.96);
+}
+.quest-card__title {
+    color: rgb(236, 238, 244);
+    font-size: 13px;
+    -unity-font-style: bold;
+    white-space: normal;
+    margin-bottom: 3px;
+}
+.quest-card__meta { color: rgba(236, 238, 244, 0.6); font-size: 11px; }
+
+.quest-card--draft { margin-bottom: 6px; }
+.quest-card--draft:hover { background-color: rgba(34, 39, 52, 0.98); }
+
+.quest-card--ghost { opacity: 0.9; }
+
+.drag-layer {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+}

@@ -1,0 +1,62 @@
+.time-hud {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    flex-direction: row;
+    align-items: center;
+    height: 56px;
+    padding: 0 16px;
+    background-color: rgba(18, 20, 28, 0.92);
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.10);
+}
+
+.time-hud__left { flex-direction: row; align-items: center; }
+.time-hud__right { flex-direction: row; align-items: center; }
+.time-hud__spacer { flex-grow: 1; }
+
+.season-icon {
+    width: 36px;
+    height: 36px;
+    margin-right: 10px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.date-block { }
+
+.date-label {
+    color: rgb(238, 240, 245);
+    font-size: 18px;
+    -unity-font-style: bold;
+}
+.year-label {
+    color: rgba(238, 240, 245, 0.65);
+    font-size: 12px;
+}
+
+.speed-badge {
+    min-width: 78px;
+    margin-right: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: rgb(15, 16, 22);
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.speed-controls { flex-direction: row; }
+
+.speed-btn {
+    width: 32px;
+    height: 30px;
+    margin-left: 3px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-width: 0;
+    border-radius: 6px;
+    color: rgba(238, 240, 245, 0.75);
+}
+.speed-btn:hover { background-color: rgba(255, 255, 255, 0.14); }
+.speed-btn--active {
+    background-color: rgba(255, 255, 255, 0.22);
+    color: rgb(255, 255, 255);
+}
