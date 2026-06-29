@@ -3,100 +3,6 @@
     "name": "GameInput",
     "maps": [
         {
-            "name": "Gameplay",
-            "id": "4431cbe4-170c-494f-9bdb-543aed35ceac",
-            "actions": [
-                {
-                    "name": "PointerPos",
-                    "type": "Value",
-                    "id": "520343a5-1e4e-4632-83b5-d00d6c25d976",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Interact",
-                    "type": "Button",
-                    "id": "70391ffd-3be0-49cc-af4b-5d81b0a90b2f",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "CloseScreen",
-                    "type": "Button",
-                    "id": "3a190fd6-b343-4327-856b-5a69909bf2de",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "ToggleBuildMode",
-                    "type": "Button",
-                    "id": "2688a5cb-94db-4d6d-b49d-40575a6a8887",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "c006143a-8f74-4532-b2af-639b292ed121",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Interact",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "6b6de931-aa91-4dae-9960-69f62874e4f3",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "CloseScreen",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "5c30d469-4fc4-466c-a663-263e93211630",
-                    "path": "<Keyboard>/b",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ToggleBuildMode",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0f1dbaf3-0355-47e9-aa01-921eeefe37b7",
-                    "path": "<Pointer>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "PointerPos",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "Building",
-            "id": "a089d1ff-c620-480b-a39f-c91da5f03912",
-            "actions": [],
-            "bindings": []
-        },
-        {
             "name": "Camera",
             "id": "dbafc4c5-6754-4aae-8c1c-6c36324fad40",
             "actions": [
@@ -205,6 +111,94 @@
             ]
         },
         {
+            "name": "Gameplay",
+            "id": "4431cbe4-170c-494f-9bdb-543aed35ceac",
+            "actions": [
+                {
+                    "name": "PointerPos",
+                    "type": "Value",
+                    "id": "520343a5-1e4e-4632-83b5-d00d6c25d976",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "70391ffd-3be0-49cc-af4b-5d81b0a90b2f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CloseScreen",
+                    "type": "Button",
+                    "id": "3a190fd6-b343-4327-856b-5a69909bf2de",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ToggleBuildMode",
+                    "type": "Button",
+                    "id": "2688a5cb-94db-4d6d-b49d-40575a6a8887",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c006143a-8f74-4532-b2af-639b292ed121",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6b6de931-aa91-4dae-9960-69f62874e4f3",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CloseScreen",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5c30d469-4fc4-466c-a663-263e93211630",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleBuildMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0f1dbaf3-0355-47e9-aa01-921eeefe37b7",
+                    "path": "<Pointer>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PointerPos",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
             "name": "Time",
             "id": "ccbfbed5-fe6f-4cc8-aedd-d28fb2d8714a",
             "actions": [
@@ -251,6 +245,12 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Building",
+            "id": "a089d1ff-c620-480b-a39f-c91da5f03912",
+            "actions": [],
+            "bindings": []
         }
     ],
     "controlSchemes": []

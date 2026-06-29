@@ -38,7 +38,7 @@ public class RequestGenerator : MonoBehaviour
     private void HandleDayAdvanced(GameDate today)
     {
         _dayCredit += 1f;
-        float interval = CurrentInterval();
+        var interval = CurrentInterval();
 
         while (_dayCredit >= interval && HasCapacity())
         {
