@@ -28,6 +28,7 @@ public class QuestBoardScreen : UIScreen
     private QuestCardFactory _cardFactory;
     private DragController _drag;
     private VisualElement[] _slotElements;
+    private SlotAspectFitter _slotFitter;
     
     protected override void OnBuild(VisualElement root)
     {
@@ -38,6 +39,7 @@ public class QuestBoardScreen : UIScreen
 
         _cardFactory = new QuestCardFactory(rankPalette);
         _drag = new DragController(_dragLayer, BuildGhost, HandleDrop);
+        _slotFitter = new SlotAspectFitter(1.4f);
         
         _closeButton = root.Q<Button>("close-screen");
         _closeButton?.RegisterCallback<ClickEvent>(_ => ScreenManager.Instance.Close(Id));
@@ -89,8 +91,10 @@ public class QuestBoardScreen : UIScreen
     
     private void RebuildSlots()
     {
-        if (_slotGrid == null || !QuestBoard.Exists) return;
+        if (_slotGrid == null || !QuestBoard.Exists)
+            return;
         _slotGrid.Clear();
+        _slotFitter.Clear();
 
         var maxSlots = GameConfig.Instance.Guild.MaxBoardSlots;
         var perRow = Mathf.Max(1, slotsPerRow);
@@ -111,6 +115,7 @@ public class QuestBoardScreen : UIScreen
             slot.userData = i;
             _slotElements[i] = slot;
             currentRow?.Add(slot);
+            _slotFitter.Track(slot);
             RenderSlot(i);
         }
     }
