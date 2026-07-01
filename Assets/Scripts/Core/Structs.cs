@@ -233,3 +233,22 @@ public struct LightingSample
         );
 }
 #endregion
+
+#region In-World
+[Serializable]
+public struct BillboardInfo
+{
+    public int level;
+    public string name;
+    public AdventurerClass @class;
+    public GuildRank rank;
+    
+    public BillboardInfo(int level, string name, AdventurerClass @class, GuildRank rank)
+    {
+        this.level = level;
+        this.name = name;
+        this.@class = @class;
+        this.rank = rank;
+    }
+}
+#endregion

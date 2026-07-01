@@ -16,6 +16,7 @@ public class GameConfig : MonoSingleton<GameConfig>
     [SerializeField] private PartyConfig party = new();
     [SerializeField] private GuildConfig guild = new();
     [SerializeField] private ResolutionConfig resolution = new();
+    [SerializeField] private WorldConfig world = new();
     
     public TimeConfig Time => time;
     public EconomyConfig Economy => economy;
@@ -25,6 +26,7 @@ public class GameConfig : MonoSingleton<GameConfig>
     public PartyConfig Party => party;
     public GuildConfig Guild => guild;
     public ResolutionConfig Resolution => resolution;
+    public WorldConfig World => world;
     
     #region Time & Simulation
     [Serializable]
@@ -144,6 +146,30 @@ public class GameConfig : MonoSingleton<GameConfig>
         [Header("Casualty")]
         [Tooltip("Death chance per member on a failure, scaled by how badly the party fell short.")]
         [Range(0f, 1f)] public float baseDeathChanceOnFailure = 0.15f;
+    }
+    #endregion
+    
+    #region World
+    [Serializable]
+    public class WorldConfig
+    {
+        [Header("Movement")]
+        public float agentSpeed = 3.5f;
+        [Tooltip("Distance from destination counted as 'arrived'.")]
+        public float arrivalTolerance = 0.4f;
+        
+        [Header("Reception Queue")]
+        [Tooltip("Negative-Z spacing between adventurers lining up at the desk.")]
+        public float queueSpacing = 1.2f;
+
+        [Header("Patrol")]
+        public float patrolRadius = 8f;
+        public float minPatrolWaitSeconds = 2f;
+        public float maxPatrolWaitSeconds = 6f;
+
+        [Header("Doors")]
+        public float doorOpenAngle = 90f;
+        public float doorSpeed = 4f;
     }
     #endregion
 }

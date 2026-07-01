@@ -117,6 +117,15 @@ public enum DepartureReason
     Death,
     Dismissed
 }
+
+public enum MovementGoal
+{
+    Idle,
+    ToReception,
+    ToBoard,
+    ToExit,
+    Patrol
+}
 #endregion
 
 #region Party System
