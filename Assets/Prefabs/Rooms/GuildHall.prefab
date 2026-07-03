@@ -281,7 +281,7 @@ GameObject:
   - component: {fileID: 1746629638799482317}
   - component: {fileID: 50893467935567067}
   - component: {fileID: 1680828336391722725}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -552,7 +552,7 @@ GameObject:
   - component: {fileID: 7850682792658749297}
   - component: {fileID: 2666701352379410095}
   - component: {fileID: 4320584946622303454}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -912,7 +912,7 @@ GameObject:
   - component: {fileID: 2869137840855211706}
   - component: {fileID: 8663105531465261257}
   - component: {fileID: 4649694883516884472}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1093,7 +1093,7 @@ GameObject:
   - component: {fileID: 2902572955077359441}
   - component: {fileID: 4444545745621927465}
   - component: {fileID: 6625154742160380722}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1363,7 +1363,7 @@ GameObject:
   - component: {fileID: 1668526134312466996}
   - component: {fileID: 7278650325972415254}
   - component: {fileID: 8831031531167548124}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1924,7 +1924,7 @@ GameObject:
   - component: {fileID: 1373286796701263607}
   - component: {fileID: 7363335945183779660}
   - component: {fileID: 7694692333627466008}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2554,7 +2554,7 @@ GameObject:
   - component: {fileID: 7460683066913195540}
   - component: {fileID: 3949493824105058966}
   - component: {fileID: 441116132385787064}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2914,7 +2914,7 @@ GameObject:
   - component: {fileID: 8973174435728214441}
   - component: {fileID: 4627972610989108452}
   - component: {fileID: 1191627883007311751}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3094,7 +3094,7 @@ GameObject:
   - component: {fileID: 7240453731904320176}
   - component: {fileID: 853698680036109922}
   - component: {fileID: 1626626327736015638}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3184,7 +3184,7 @@ GameObject:
   - component: {fileID: 8251192674129784245}
   - component: {fileID: 4609044322710591628}
   - component: {fileID: 3085981313073035597}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3309,7 +3309,7 @@ GameObject:
   - component: {fileID: 272084701302719208}
   - component: {fileID: 2499440789690989434}
   - component: {fileID: 6974835943009597030}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3489,7 +3489,7 @@ GameObject:
   - component: {fileID: 4297943713665781582}
   - component: {fileID: 4601396708414795258}
   - component: {fileID: 4822088083008708348}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3669,7 +3669,7 @@ GameObject:
   - component: {fileID: 900538026174834818}
   - component: {fileID: 8241710316112069552}
   - component: {fileID: 4887852875259801931}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4221,7 +4221,7 @@ GameObject:
   - component: {fileID: 1659828996399825286}
   - component: {fileID: 8272896932409320888}
   - component: {fileID: 8599792184343716913}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4401,7 +4401,7 @@ GameObject:
   - component: {fileID: 6130229806931306724}
   - component: {fileID: 1292403963500705855}
   - component: {fileID: 7820615840519113750}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4491,7 +4491,7 @@ GameObject:
   - component: {fileID: 3217884391739893233}
   - component: {fileID: 6172726340498027349}
   - component: {fileID: 1736079870930629679}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4671,6 +4671,7 @@ GameObject:
   - component: {fileID: 3257268625359881881}
   - component: {fileID: 5230965063054537351}
   - component: {fileID: 271455843789034569}
+  - component: {fileID: 5500733987935626948}
   m_Layer: 0
   m_Name: Bookshelf
   m_TagString: Untagged
@@ -4750,6 +4751,22 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!208 &5500733987935626948
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4381302680822090549}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1, y: 1.5000001, z: 0.275}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1.5000001, z: 0.015000001}
+  m_TimeToStationary: 0.5
 --- !u!1 &4411865781145428653
 GameObject:
   m_ObjectHideFlags: 0
@@ -4885,7 +4902,7 @@ GameObject:
   - component: {fileID: 8443631017857005209}
   - component: {fileID: 5370565041858270985}
   - component: {fileID: 6975008656445584660}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5156,7 +5173,7 @@ GameObject:
   - component: {fileID: 6263781964433511203}
   - component: {fileID: 1840302246141858425}
   - component: {fileID: 4690331969002323161}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5246,7 +5263,7 @@ GameObject:
   - component: {fileID: 1923622395373064093}
   - component: {fileID: 2975625140732318039}
   - component: {fileID: 4614304372806220954}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5734,7 +5751,7 @@ GameObject:
   - component: {fileID: 6370953857822401553}
   - component: {fileID: 4253606981628606003}
   - component: {fileID: 7718363421098888189}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6004,7 +6021,7 @@ GameObject:
   - component: {fileID: 1558306186710388856}
   - component: {fileID: 2469100316646606373}
   - component: {fileID: 7821477096940671811}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6253,7 +6270,7 @@ GameObject:
   - component: {fileID: 7907737537083501325}
   - component: {fileID: 4043636067988659094}
   - component: {fileID: 7728120964429146491}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6343,7 +6360,7 @@ GameObject:
   - component: {fileID: 3977638640928128618}
   - component: {fileID: 7956568383096096665}
   - component: {fileID: 4997072152440052810}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6523,7 +6540,7 @@ GameObject:
   - component: {fileID: 3635276121288361496}
   - component: {fileID: 4825159157204374407}
   - component: {fileID: 7455862584721140725}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Stairs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6793,7 +6810,7 @@ GameObject:
   - component: {fileID: 2768700449999980877}
   - component: {fileID: 6655034548363249810}
   - component: {fileID: 3044121547530697856}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7153,7 +7170,7 @@ GameObject:
   - component: {fileID: 3020367662915178725}
   - component: {fileID: 7369950366176030475}
   - component: {fileID: 665073098479803471}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7243,7 +7260,7 @@ GameObject:
   - component: {fileID: 390089043358069360}
   - component: {fileID: 6316486869011949708}
   - component: {fileID: 2034909171166113881}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7333,7 +7350,7 @@ GameObject:
   - component: {fileID: 3442890362569158602}
   - component: {fileID: 5561082405365503020}
   - component: {fileID: 5331309962315225696}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7579,7 +7596,7 @@ GameObject:
   - component: {fileID: 7475008204620907913}
   - component: {fileID: 7879503451441553673}
   - component: {fileID: 5088539463942846969}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7849,6 +7866,7 @@ GameObject:
   - component: {fileID: 5852974853699321261}
   - component: {fileID: 8709810554846648845}
   - component: {fileID: 2896010399602241442}
+  - component: {fileID: 5071721194724648405}
   m_Layer: 0
   m_Name: Bookshelf
   m_TagString: Untagged
@@ -7928,6 +7946,22 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!208 &5071721194724648405
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7055751428491624103}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1, y: 1.5000001, z: 0.275}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1.5000001, z: 0.015000001}
+  m_TimeToStationary: 0.5
 --- !u!1 &7171529145098976032
 GameObject:
   m_ObjectHideFlags: 0
@@ -8209,7 +8243,7 @@ GameObject:
   - component: {fileID: 700218378800267469}
   - component: {fileID: 3995993907145748643}
   - component: {fileID: 4929324833068850169}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8840,7 +8874,7 @@ GameObject:
   - component: {fileID: 611042230046550244}
   - component: {fileID: 1912368692151852466}
   - component: {fileID: 2428344495500956265}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8930,7 +8964,7 @@ GameObject:
   - component: {fileID: 3934782445756885531}
   - component: {fileID: 3565364893165039879}
   - component: {fileID: 39096817688284321}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9323,7 +9357,7 @@ GameObject:
   - component: {fileID: 4766126586603886234}
   - component: {fileID: 5202854712580965672}
   - component: {fileID: 8534297437968357148}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9593,7 +9627,7 @@ GameObject:
   - component: {fileID: 3996645596239251387}
   - component: {fileID: 2039690178815036934}
   - component: {fileID: 3501160465943352018}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9683,7 +9717,7 @@ GameObject:
   - component: {fileID: 7217909826398568025}
   - component: {fileID: 7605434076593691721}
   - component: {fileID: 8018433107789542058}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9863,7 +9897,7 @@ GameObject:
   - component: {fileID: 642960083426404373}
   - component: {fileID: 7947179256045950047}
   - component: {fileID: 33816416521830784}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10141,6 +10175,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5948296931803955548}
     m_Modifications:
+    - target: {fileID: 1349540007996158543, guid: 4152f3d542080db4188b883e89cac183, type: 3}
+      propertyPath: m_Carve
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5593481718309333375, guid: 4152f3d542080db4188b883e89cac183, type: 3}
+      propertyPath: m_Carve
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6288571509630710166, guid: 4152f3d542080db4188b883e89cac183, type: 3}
       propertyPath: m_Name
       value: Reception_Desk
@@ -10184,6 +10226,10 @@ PrefabInstance:
     - target: {fileID: 7860516695192882608, guid: 4152f3d542080db4188b883e89cac183, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8917084153709139577, guid: 4152f3d542080db4188b883e89cac183, type: 3}
+      propertyPath: m_Carve
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

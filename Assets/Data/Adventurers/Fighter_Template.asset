@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AdventurerClassTemplate
   class: 0
   tier: 0
+  sprite: {fileID: -1427740794, guid: cc2617112342daf42b185a8ba98229bc, type: 3}
   strength: 10
   dexterity: 5
   endurance: 7

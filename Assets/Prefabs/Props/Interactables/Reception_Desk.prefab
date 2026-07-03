@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 9161861375730854412}
   - component: {fileID: 1506344567192466947}
   - component: {fileID: 8136355850381029330}
+  - component: {fileID: 8917084153709139577}
   m_Layer: 6
   m_Name: Reception_Left
   m_TagString: Untagged
@@ -275,6 +276,22 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!208 &8917084153709139577
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2882904579105742815}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.625, y: 0.5, z: 1}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.375, y: 0.5, z: 0.5}
+  m_TimeToStationary: 0.5
 --- !u!1 &3029110913888015683
 GameObject:
   m_ObjectHideFlags: 0
@@ -286,6 +303,7 @@ GameObject:
   - component: {fileID: 4028394934271264379}
   - component: {fileID: 1609275073801991011}
   - component: {fileID: 3884634171512319466}
+  - component: {fileID: 1349540007996158543}
   m_Layer: 6
   m_Name: Reception_Right
   m_TagString: Untagged
@@ -365,6 +383,22 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!208 &1349540007996158543
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3029110913888015683}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.625, y: 0.5, z: 1}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.375, y: 0.5, z: 0.5}
+  m_TimeToStationary: 0.5
 --- !u!1 &4568201245655269104
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,6 +410,7 @@ GameObject:
   - component: {fileID: 3435122900762001590}
   - component: {fileID: 1178484290792197426}
   - component: {fileID: 4179073571082442236}
+  - component: {fileID: 5593481718309333375}
   m_Layer: 6
   m_Name: Reception_Mid
   m_TagString: Untagged
@@ -455,6 +490,22 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!208 &5593481718309333375
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4568201245655269104}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.75, y: 0.5, z: 0.6}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.5, z: 0.1}
+  m_TimeToStationary: 0.5
 --- !u!1 &6288571509630710166
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,6 +8,9 @@ public class AdventurerClassTemplate : ScriptableObject
     [Header("Identity")]
     [SerializeField] private AdventurerClass @class;
     [SerializeField] private ClassTier tier = ClassTier.Base;
+    
+    [Header("Presentation")]
+    [SerializeField] private Sprite sprite;
 
     [Header("Base Stats (level 1)")]
     [SerializeField] private int strength = 5;
@@ -33,6 +36,7 @@ public class AdventurerClassTemplate : ScriptableObject
 
     public AdventurerClass Class => @class;
     public ClassTier Tier => tier;
+    public Sprite Sprite => sprite;
     
     public StatBlock GrowthPerLevel => new(strengthGrowth, dexterityGrowth, enduranceGrowth, witsGrowth, spiritGrowth);
     

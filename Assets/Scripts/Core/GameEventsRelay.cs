@@ -162,9 +162,9 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
     #endregion
     
     #region In-World
-    public MovementArrivedEvent onMovementArrived = new();
+    public MovementArrivedEvent onAdventurerArrived = new();
     
     public void RaiseAdventurerArrived(int id, MovementGoal goal)
-        => onMovementArrived?.Invoke(id, goal);
+        => onAdventurerArrived?.Invoke(id, goal);
     #endregion
 }

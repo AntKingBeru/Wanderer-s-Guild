@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI_Toolkit/USSs/Billboard.uss?fileID=7433441132597879392&amp;guid=3725cd6fec67f9140ac2ecaeac98bc86&amp;type=3#Billboard"/>
+    <ui:VisualElement name="billboard-root" class="billboard">
+        <ui:VisualElement class="info-row">
+            <ui:Label name="info-label" text="1|Name|Fighter" class="info-label"/>
+            <ui:VisualElement name="rank-span" class="rank-span">
+                <ui:Label name="rank-label" text="F" class="rank-label"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="hp-track">
+            <ui:VisualElement name="hp-fill" class="hp-fill"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="class-image" class="class-image"/>
+    </ui:VisualElement>
+</ui:UXML>
