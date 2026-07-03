@@ -18,6 +18,7 @@ public class QuestLifecycleController : MonoSingleton<QuestLifecycleController>
     private readonly Dictionary<int, int> _partyToQuest = new Dictionary<int, int>();
     private readonly Dictionary<int, GameDate> _questResolveOn = new Dictionary<int, GameDate>();
     private readonly Dictionary<int, int> _questToParty = new Dictionary<int, int>();
+    private float _retryTimer;
 
     protected override void OnSingletonAwake()
         => _rng = seed != 0 ? new System.Random(seed) : new System.Random();
@@ -41,13 +42,23 @@ public class QuestLifecycleController : MonoSingleton<QuestLifecycleController>
         relay.onApplicationApproved.RemoveListener(HandleApplicationApproved);
         relay.onDayAdvanced.RemoveListener(HandleDayAdvanced);
     }
+
+    private void Update()
+    {
+        if (!InApplicationWindow())
+            return;
+        _retryTimer -= Time.deltaTime;
+        if (_retryTimer > 0f)
+            return;
+        _retryTimer = 1f;
+        RetryUnfilledQuests();
+    }
     
     private void HandleQuestPosted(int questId)
         => TryFormAndApply(questId);
     
     private void HandleDayAdvanced(GameDate today)
     {
-        RetryUnfilledQuests();
         ResolveDueQuests(today);
     }
     
@@ -65,6 +76,8 @@ public class QuestLifecycleController : MonoSingleton<QuestLifecycleController>
     
     private void TryFormAndApply(int questId)
     {
+        if (!InApplicationWindow())
+            return;
         if (_questToParty.ContainsKey(questId))
             return;
         var quest = FindPostedQuest(questId);
@@ -87,6 +100,15 @@ public class QuestLifecycleController : MonoSingleton<QuestLifecycleController>
 
         GameEventsRelay.Instance.RaisePartyFormed(party.Id);
         ApplicationBoard.Instance.Submit(_partyToQuest[party.Id], party.Id);
+    }
+    
+    private bool InApplicationWindow()
+    {
+        if (!TimeController.Exists)
+            return true;
+        var tod = TimeController.Instance.TimeOfDay;
+        var config = GameConfig.Instance.Adventurer;
+        return tod >= config.applicationWindowStart && tod <= config.applicationWindowEnd;
     }
     
     private void HandleApplicationApproved(int applicationId)

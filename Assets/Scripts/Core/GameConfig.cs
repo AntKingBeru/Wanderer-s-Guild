@@ -73,6 +73,16 @@ public class GameConfig : MonoSingleton<GameConfig>
         public int reputationForMinArrival = 200;
         [Tooltip("Max adventurers the guild can hold (later raised by Bedroom facilities).")]
         public int maxRosterSize = 20;
+        
+        [Header("Registration (office-gated)")]
+        [Tooltip("In-game days a pending registrant waits before leaving if unapproved.")]
+        public int registrationGraceDays = 3;
+
+        [Header("Quest Applications")]
+        [Tooltip("Day-fraction window start when parties may apply (0..1, e.g. 0.25 = ~06:00).")]
+        public float applicationWindowStart = 0.25f;
+        [Tooltip("Day-fraction window end (0..1, e.g. 0.75 = ~18:00).")]
+        public float applicationWindowEnd = 0.75f;
 
         [Header("Progression")]
         public int baseExperiencePerLevel = 100;

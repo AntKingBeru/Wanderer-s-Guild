@@ -85,10 +85,18 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
     #endregion
 
     #region Adventurer System
+    public IntEvent onRegistrationPending = new();
+    public IntEvent onRegistrationApproved = new();
     public IntEvent onAdventurerRecruited = new();
     public IntEvent onAdventurerLeveledUp = new();
     public IntEvent onAdventurerRankedUp = new();
     public DepartureEvent onAdventurerDeparted = new();
+    
+    public void RaiseRegistrationPending(int id)
+        => onRegistrationPending?.Invoke(id);
+    
+    public void RaiseRegistrationApproved(int id)
+        => onRegistrationApproved?.Invoke(id);
 
     public void RaiseAdventurerRecruited(int id)
         => onAdventurerRecruited?.Invoke(id);

@@ -266,4 +266,11 @@ public enum ApplicationStatus
     Approved,
     Rejected
 }
+
+public enum RegistrationStatus
+{
+    Pending,
+    Registered,
+    Rejected
+}
 #endregion
