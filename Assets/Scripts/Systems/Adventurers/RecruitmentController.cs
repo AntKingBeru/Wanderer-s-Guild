@@ -15,7 +15,6 @@ public class RecruitmentController : MonoBehaviour
     private IAdventurerFactory _factory;
     private System.Random _rng;
     private float _dayCredit;
-    private int _nextAdventurerId = 1;
     
     private void Awake()
     {
@@ -54,7 +53,7 @@ public class RecruitmentController : MonoBehaviour
         var template = PickClass();
         if (!template)
             return;
-        AdventurerRoster.Instance.Add(_factory.Create(_nextAdventurerId++, template, RolledArrivalRank()));
+        AdventurerRoster.Instance.Add(_factory.Create(IdService.Instance.Next(IdService.Adventurer), template, RolledArrivalRank()));
     }
 
     private bool HasCapacity() =>
@@ -63,8 +62,9 @@ public class RecruitmentController : MonoBehaviour
     private float CurrentInterval()
     {
         var config = GameConfig.Instance.Adventurer;
-        var t = Mathf.Clamp01((float)CurrentReputation() / Mathf.Max(1, config.reputationForMinArrival));
-        return Mathf.Max(0.05f, Mathf.Lerp(config.baseArrivalIntervalDays, config.minArrivalIntervalDays, t));
+        var mult = ReputationController.Exists ? ReputationController.Instance.Effects.arrivalRateMultiplier : 1f;
+        var scaled = config.baseArrivalIntervalDays / Mathf.Max(0.01f, mult);
+        return Mathf.Max(config.minArrivalIntervalDays, scaled);
     }
     
     private AdventurerClassTemplate PickClass()
@@ -82,16 +82,14 @@ public class RecruitmentController : MonoBehaviour
     private GuildRank RolledArrivalRank()
     {
         var cap = GameConfig.Instance.Adventurer.defaultRankCap;
+        var bonusRolls = ReputationController.Exists ? ReputationController.Instance.Effects.arrivalQualityBonus : 0;
         var rank = GuildRank.F;
-        var bonusRolls = Mathf.Clamp(CurrentReputation() / 100, 0, (int)cap);
         for (var i = 0; i < bonusRolls && rank < cap; i++)
         {
-            if (_rng.NextDouble() < 0.35) rank = (GuildRank)((int)rank + 1);
+            if (_rng.NextDouble() < 0.5)
+                rank = (GuildRank)((int)rank + 1);
             else break;
         }
         return rank;
     }
-    
-    private int CurrentReputation()
-        => GameConfig.Instance.Reputation.startingReputation;
 }

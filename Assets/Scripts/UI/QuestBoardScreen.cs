@@ -176,6 +176,7 @@ public class QuestBoardScreen : UIScreen
     private void HandleDrop(int questId, Vector2 screenPos)
     {
         var slotIndex = SlotIndexAt(screenPos);
+        Debug.Log($"[Drop] pos={screenPos} slot={slotIndex} | slot0 bound={_slotElements[0].worldBound}");
         if (slotIndex < 0)
             return;
 
@@ -196,11 +197,15 @@ public class QuestBoardScreen : UIScreen
     
     private int SlotIndexAt(Vector2 screenPos)
     {
-        if (_slotElements == null)
-            return -1;
+        if (_slotElements == null) return -1;
         for (var i = 0; i < _slotElements.Length; i++)
-            if (_slotElements[i].worldBound.Contains(screenPos))
+        {
+            var slot = _slotElements[i];
+            if (slot == null)
+                continue;
+            if (slot.worldBound.Contains(screenPos))
                 return i;
+        }
         return -1;
     }
     

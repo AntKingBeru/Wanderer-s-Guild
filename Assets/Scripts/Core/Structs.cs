@@ -252,3 +252,34 @@ public struct BillboardInfo
     }
 }
 #endregion
+
+#region Reputation System
+[Serializable]
+public struct ReputationEffects
+{
+    [Tooltip("Multiplier on adventurer arrival rate (1 = normal, >1 = faster).")]
+    public float arrivalRateMultiplier;
+    [Tooltip("Multiplier on request generation rate.")]
+    public float requestRateMultiplier;
+    [Tooltip("Extra rank-up rolls for arriving adventurers (higher = better recruits).")]
+    public int arrivalQualityBonus;
+
+    public ReputationEffects(float arrivalRateMultiplier, float requestRateMultiplier, int arrivalQualityBonus)
+    {
+        this.arrivalRateMultiplier = arrivalRateMultiplier;
+        this.requestRateMultiplier = requestRateMultiplier;
+        this.arrivalQualityBonus = arrivalQualityBonus;
+    }
+}
+
+[Serializable]
+public struct Band
+{
+    public ReputationTier tier;
+    [Tooltip("Inclusive lower bound of this band on the -100..100 scale.")]
+    public int minValue;
+    public float arrivalRateMultiplier;
+    public float requestRateMultiplier;
+    public int arrivalQualityBonus;
+}
+#endregion

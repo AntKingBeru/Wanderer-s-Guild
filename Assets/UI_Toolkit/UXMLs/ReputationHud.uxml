@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI_Toolkit/USSs/ReputationHud.uss?fileID=7433441132597879392&amp;guid=c487087acfcbe3a40888db66820cc59f&amp;type=3#ReputationHud"/>
+    <ui:VisualElement name="reputation-hud" class="rep-hud">
+        <ui:VisualElement name="rep-clip" class="rep-clip">
+            <ui:VisualElement name="rep-bar-container" class="rep-bar-container">
+                <ui:VisualElement name="rep-bar" class="rep-bar"/>
+                <ui:VisualElement name="rep-emoji" class="rep-emoji"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

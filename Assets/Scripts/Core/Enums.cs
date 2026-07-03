@@ -28,6 +28,16 @@ public enum ReputationChangeReason
     AdventurerDismissed,
     AdventurerDeparted
 }
+
+public enum ReputationTier
+{
+    Reviled,
+    Distrusted,
+    Unknown,
+    Recognized,
+    Respected,
+    Renowned
+}
 #endregion
 
 #region Quest System

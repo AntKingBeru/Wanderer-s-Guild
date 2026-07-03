@@ -22,4 +22,12 @@ public class StandardAdventurerFactory : IAdventurerFactory
         return new Adventurer(id, name, template.Class, template.Tier, rank,
             baseStats, template.GrowthPerLevel, gold, _experiencePerLevelBase);
     }
+    
+    public Adventurer CreatePrebuilt(int id, AdventurerClassTemplate template, string name)
+    {
+        StatBlock baseStats = template.BaseStats;
+        var gold = template.RollStartingGold(_rng);
+        return new Adventurer(id, name, template.Class, template.Tier, GuildRank.F,
+            baseStats, template.GrowthPerLevel, gold, _experiencePerLevelBase);
+    }
 }

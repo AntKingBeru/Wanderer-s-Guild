@@ -15,11 +15,10 @@ public class ApplicationBoard : MonoSingleton<ApplicationBoard>
     }
     
     private readonly Dictionary<int, Application> _applications = new Dictionary<int, Application>();
-    private int _nextId = 1;
     
     public int Submit(int questId, int partyId)
     {
-        var app = new Application { Id = _nextId++, QuestId = questId, PartyId = partyId, Status = ApplicationStatus.Pending };
+        var app = new Application { Id = IdService.Instance.Next(IdService.Application), QuestId = questId, PartyId = partyId, Status = ApplicationStatus.Pending };
         _applications.Add(app.Id, app);
         GameEventsRelay.Instance.RaiseApplicationReceived(app.Id);
 

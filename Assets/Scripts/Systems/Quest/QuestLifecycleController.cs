@@ -13,7 +13,6 @@ public class QuestLifecycleController : MonoSingleton<QuestLifecycleController>
     [SerializeField] private int questDurationDays = 3;
 
     private System.Random _rng;
-    private int _nextPartyId = 1;
     
     private readonly Dictionary<int, Party> _parties = new Dictionary<int, Party>();
     private readonly Dictionary<int, int> _partyToQuest = new Dictionary<int, int>();
@@ -76,7 +75,7 @@ public class QuestLifecycleController : MonoSingleton<QuestLifecycleController>
         if (members == null)
             return;
 
-        var party = new Party(_nextPartyId++, members);
+        var party = new Party(IdService.Instance.Next(IdService.Party), members);
         party.SetState(PartyState.Forming);
         _parties.Add(party.Id, party);
 

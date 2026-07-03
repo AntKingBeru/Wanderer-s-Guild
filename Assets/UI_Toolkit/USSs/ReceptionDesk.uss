@@ -4,8 +4,9 @@
     flex-direction: row;
     background-color: rgba(12, 14, 20, 0.92);
     padding-top: 64px;
+    padding-bottom: 72px;
 }
-.reception-desk { padding: 16px; padding-top: 64px; }
+.reception-desk { padding: 16px; padding-top: 64px; padding-bottom: 72px; }
 
 .panel__header {
     color: rgb(236, 238, 244);

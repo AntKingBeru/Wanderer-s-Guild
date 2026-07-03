@@ -11,6 +11,7 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
     #region Event Type Definitions
     [Serializable] public class GuildRankEvent : UnityEvent<GuildRank> { }
     [Serializable] public class ReputationEvent : UnityEvent<int, ReputationChangeReason> { }
+    [Serializable] public class ReputationTierEvent : UnityEvent<ReputationTier> { }
     [Serializable] public class QuestStateEvent : UnityEvent<int, QuestState> { }
     [Serializable] public class QuestResultEvent : UnityEvent<int, bool> { }
     [Serializable] public class QuestOutcomeEvent : UnityEvent<int, QuestOutcome> { }
@@ -27,17 +28,25 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
     #endregion
 
     #region Guild Rank System
+    public IntEvent onGuildRankProgress = new();
     public GuildRankEvent onGuildRankChanged = new();
 
+    public void RaiseGuildRankProgress(int progress)
+        => onGuildRankProgress?.Invoke(progress);
+    
     public void RaiseGuildRankChanged(GuildRank rank)
         => onGuildRankChanged?.Invoke(rank);
     #endregion
 
     #region Reputation System
     public ReputationEvent onReputationChanged = new();
+    public ReputationTierEvent onReputationTierChanged = new();
 
     public void RaiseReputationChanged(int delta, ReputationChangeReason reason)
         => onReputationChanged?.Invoke(delta, reason);
+    
+    public void RaiseReputationTierChanged(ReputationTier tier)
+        => onReputationTierChanged?.Invoke(tier);
     #endregion
 
     #region Quest System

@@ -3,8 +3,8 @@
     top: 0; left: 0; right: 0; bottom: 0;
     flex-direction: row;
     background-color: rgba(12, 14, 20, 0.92);
-    padding: 16px;
     padding-top: 64px;
+    padding-bottom: 72px;
 }
 
 .panel {

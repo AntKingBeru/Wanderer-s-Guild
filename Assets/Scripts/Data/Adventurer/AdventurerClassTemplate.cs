@@ -39,6 +39,7 @@ public class AdventurerClassTemplate : ScriptableObject
     public Sprite Sprite => sprite;
     
     public StatBlock GrowthPerLevel => new(strengthGrowth, dexterityGrowth, enduranceGrowth, witsGrowth, spiritGrowth);
+    public StatBlock BaseStats => new(strength, dexterity, endurance, wits, spirit);
     
     public StatBlock RollBaseStats(System.Random rng)
         => new(Vary(strength, rng), Vary(dexterity, rng), Vary(endurance, rng),

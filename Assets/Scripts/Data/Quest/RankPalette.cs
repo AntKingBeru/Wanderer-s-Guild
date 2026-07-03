@@ -11,7 +11,7 @@ public class RankPalette : ScriptableObject
     public Color GetColor(GuildRank rank)
     {
         var i = (int)rank;
-        return (colors != null && i >= 0 && i < colors.Length)
+        return colors != null && i >= 0 && i < colors.Length
             ? colors[i]
             : Color.white;
     }

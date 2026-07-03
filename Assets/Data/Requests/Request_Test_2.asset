@@ -20,5 +20,5 @@ MonoBehaviour:
   maxDifficulty: 2
   minRewardGold: 70
   maxRewardGold: 180
-  minReputation: 0
+  minReputation: -100
   selectionWeight: 1

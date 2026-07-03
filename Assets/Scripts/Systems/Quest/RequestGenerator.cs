@@ -14,7 +14,6 @@ public class RequestGenerator : MonoBehaviour
     private IRequestFactory _factory;
     private System.Random _rng;
     private float _dayCredit;
-    private int _nextRequestId = 1;
     
     private void Awake()
     {
@@ -55,7 +54,7 @@ public class RequestGenerator : MonoBehaviour
         var template = PickTemplate();
         if (!template)
             return;
-        RequestBoard.Instance.Add(_factory.Create(_nextRequestId++, template, today));
+        RequestBoard.Instance.Add(_factory.Create(IdService.Instance.Next(IdService.Request), template, today));
     }
     
     private bool HasCapacity() =>
@@ -64,8 +63,9 @@ public class RequestGenerator : MonoBehaviour
     private float CurrentInterval()
     {
         var config = GameConfig.Instance.Quest;
-        var t = Mathf.Clamp01((float)CurrentReputation() / Mathf.Max(1, config.reputationForMinInterval));
-        return Mathf.Max(0.05f, Mathf.Lerp(config.baseRequestIntervalDays, config.minRequestIntervalDays, t));
+        var mult = ReputationController.Exists ? ReputationController.Instance.Effects.requestRateMultiplier : 1f;
+        var scaled = config.baseRequestIntervalDays / Mathf.Max(0.01f, mult);
+        return Mathf.Max(config.minRequestIntervalDays, scaled);
     }
     
     private RequestTemplate PickTemplate()
@@ -93,5 +93,5 @@ public class RequestGenerator : MonoBehaviour
     }
     
     private int CurrentReputation()
-        => GameConfig.Instance.Reputation.startingReputation;
+        => ReputationController.Exists ? ReputationController.Instance.Value : GameConfig.Instance.Reputation.startingReputation;
 }

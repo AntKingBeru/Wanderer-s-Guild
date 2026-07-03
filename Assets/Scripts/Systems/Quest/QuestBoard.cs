@@ -9,7 +9,6 @@ public class QuestBoard : MonoSingleton<QuestBoard>
     private readonly Dictionary<int, Quest> _drafts = new Dictionary<int, Quest>();
     private Quest[] _slots;
     private readonly List<int> _expiryScratch = new List<int>();
-    private int _nextQuestId = 1;
 
     public int SlotCount => _slots?.Length ?? 0;
     public int DraftCount => _drafts.Count;
@@ -59,7 +58,7 @@ public class QuestBoard : MonoSingleton<QuestBoard>
             return null;
 
         var now = TimeController.Instance.CurrentDate;
-        var quest = builder.Build(_nextQuestId, now);
+        var quest = builder.Build(IdService.Instance.Next(IdService.Quest), now);
         if (quest == null)
         {
             error = "Quest configuration was invalid.";
@@ -67,7 +66,6 @@ public class QuestBoard : MonoSingleton<QuestBoard>
         }
 
         RequestBoard.Instance.Remove(requestId);
-        _nextQuestId++;
         _drafts.Add(quest.Id, quest);
 
         GameEventsRelay.Instance.RaiseQuestCreated(quest.Id);

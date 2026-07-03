@@ -372,6 +372,76 @@ MonoBehaviour:
   emptyUnlockedSlot: {fileID: 0}
   lockedSlot: {fileID: 0}
   slotsPerRow: 5
+--- !u!1 &578874263
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 578874264}
+  - component: {fileID: 578874266}
+  - component: {fileID: 578874265}
+  m_Layer: 0
+  m_Name: ReputationHud
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &578874264
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 578874263}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 983126841}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &578874265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 578874263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddab137019665c44bbc178e4f2c7e8ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReputationHudController
+  slideDuration: 0.4
+  moveDuration: 0.5
+--- !u!114 &578874266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 578874263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: dc2783bd509c05942a3b0610f7f1845e, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: f25f18e98336f0b4280dcc3a048ef872, type: 3}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1 &640091901
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,8 +566,9 @@ MonoBehaviour:
     dailyOperationCost: 25
   reputation:
     startingReputation: 0
-    arrivalRateThreshold: 50
-    maxArrivalRateMultiplier: 3
+    minReputation: -100
+    maxReputation: 100
+    tierTable: {fileID: 11400000, guid: 7bc6c308ca5115e4d8332aa07ed2694f, type: 2}
   adventurer:
     baseArrivalIntervalDays: 3
     minArrivalIntervalDays: 1
@@ -521,6 +592,8 @@ MonoBehaviour:
       min: 3
       max: 7
   guild:
+    rankExpPerQuestSuccess: 10
+    rankExpPerRank: 100
     startingRank: 0
     boardSlotBase: 3
   resolution:
@@ -854,6 +927,8 @@ Transform:
   m_Children:
   - {fileID: 640091902}
   - {fileID: 362341153}
+  - {fileID: 578874264}
+  - {fileID: 1726791747}
   - {fileID: 1749319778}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1117,10 +1192,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01fbee696fbd91041af0504ff003c2a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameEventsRelay
+  onGuildRankProgress:
+    m_PersistentCalls:
+      m_Calls: []
   onGuildRankChanged:
     m_PersistentCalls:
       m_Calls: []
   onReputationChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onReputationTierChanged:
     m_PersistentCalls:
       m_Calls: []
   onRequestGenerated:
@@ -1422,6 +1503,10 @@ GameObject:
   - component: {fileID: 1709047034}
   - component: {fileID: 1709047036}
   - component: {fileID: 1709047035}
+  - component: {fileID: 1709047037}
+  - component: {fileID: 1709047038}
+  - component: {fileID: 1709047039}
+  - component: {fileID: 1709047040}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -1687,11 +1772,137 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d55dbd18d3f527c41b203fcf929ee6f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ReceptionQueue
+--- !u!114 &1709047037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709047018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef7d067d181bae74ba93e760df8dc2e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ReputationController
+--- !u!114 &1709047038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709047018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3d394c023421e942a5963215a79c058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuildRankProgressFeeder
+--- !u!114 &1709047039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709047018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c98e32c57c65d9f46968581e3b926a94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameBootstrapper
+  startingRequestTemplates:
+  - {fileID: 11400000, guid: 98432f3d23958bd42a3cf7dd5f48c051, type: 2}
+  - {fileID: 11400000, guid: d937ce707f51a424590baa2ea345361d, type: 2}
+  - {fileID: 11400000, guid: f9fe446290e50a54a99fd16a906c8979, type: 2}
+  startingRequestCount: 3
+  seed: 12345
+  archerTemplate: {fileID: 11400000, guid: 4942e33a21f5bbd449d225219ca0c9c5, type: 2}
+  fighterTemplate: {fileID: 11400000, guid: 37405d94557b4874abe1b7ee69adfc1d, type: 2}
+--- !u!114 &1709047040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709047018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f1b1344c2157d142a3cf48cc5dc8cbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IdService
 --- !u!4 &1714710738 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7579075699988860614, guid: e412b84232dee0e438b3a64344559c18, type: 3}
   m_PrefabInstance: {fileID: 1888862740374516713}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1726791746
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1726791747}
+  - component: {fileID: 1726791749}
+  - component: {fileID: 1726791748}
+  m_Layer: 0
+  m_Name: GuildRankHud
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1726791747
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726791746}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 983126841}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1726791748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726791746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fd12a84d986e2547a75beedb349f627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuildRankHudController
+  rankPalette: {fileID: 11400000, guid: 404503371eff8bc4d988668154984982, type: 2}
+  baseFillDuration: 0.6
+--- !u!114 &1726791749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726791746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: dc2783bd509c05942a3b0610f7f1845e, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 8673c8da8c37c98478785c77e84a3976, type: 3}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1 &1749319777
 GameObject:
   m_ObjectHideFlags: 0
@@ -1769,6 +1980,8 @@ MonoBehaviour:
   normalColor: {r: 0.3, g: 0.72, b: 0.4, a: 1}
   fastColor: {r: 0.92, g: 0.74, b: 0.26, a: 1}
   veryFastColor: {r: 0.86, g: 0.33, b: 0.28, a: 1}
+  rollDuration: 0.35
+  seasonFadeDuration: 0.6
 --- !u!1 &1822923451
 GameObject:
   m_ObjectHideFlags: 0

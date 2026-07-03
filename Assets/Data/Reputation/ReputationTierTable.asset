@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bf64c22819686a48ac70a23d8fae27e, type: 3}
+  m_Name: ReputationTierTable
+  m_EditorClassIdentifier: Assembly-CSharp::ReputationTierTable
+  bands:
+  - tier: 0
+    minValue: -100
+    arrivalRateMultiplier: 0.4
+    requestRateMultiplier: 0.5
+    arrivalQualityBonus: 0
+  - tier: 1
+    minValue: -60
+    arrivalRateMultiplier: 0.7
+    requestRateMultiplier: 0.75
+    arrivalQualityBonus: 0
+  - tier: 2
+    minValue: -20
+    arrivalRateMultiplier: 1
+    requestRateMultiplier: 1
+    arrivalQualityBonus: 0
+  - tier: 3
+    minValue: 20
+    arrivalRateMultiplier: 1.4
+    requestRateMultiplier: 1.25
+    arrivalQualityBonus: 1
+  - tier: 4
+    minValue: 55
+    arrivalRateMultiplier: 1.8
+    requestRateMultiplier: 1.5
+    arrivalQualityBonus: 2
+  - tier: 5
+    minValue: 85
+    arrivalRateMultiplier: 2.4
+    requestRateMultiplier: 2
+    arrivalQualityBonus: 3

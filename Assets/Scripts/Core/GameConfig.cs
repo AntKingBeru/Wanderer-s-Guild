@@ -54,9 +54,10 @@ public class GameConfig : MonoSingleton<GameConfig>
     public class ReputationConfig
     {
         public int startingReputation;
-        [Tooltip("Reputation needed before arrival rate begins scaling up.")]
-        public int arrivalRateThreshold = 50;
-        public float maxArrivalRateMultiplier = 3f;
+        public int minReputation = -100;
+        public int maxReputation = 100;
+        [Tooltip("Tier table asset mapping reputation bands to their effects.")]
+        public ReputationTierTable tierTable;
     }
     #endregion
     
@@ -114,6 +115,11 @@ public class GameConfig : MonoSingleton<GameConfig>
     [Serializable]
     public class GuildConfig
     {
+        [Header("Rank Progression")]
+        [Tooltip("Guild-rank EXP granted per successful quest.")]
+        public int rankExpPerQuestSuccess = 10;
+        [Tooltip("EXP required to advance one guild rank.")]
+        public int rankExpPerRank = 100;
         public GuildRank startingRank = GuildRank.F;
         [Tooltip("Quest-board slots = (int)GuildRank + this base. F→3 ... National→10.")]
         public int boardSlotBase = 3;

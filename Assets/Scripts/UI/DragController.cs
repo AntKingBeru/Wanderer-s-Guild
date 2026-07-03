@@ -11,8 +11,9 @@ public class DragController
     private readonly Action<int, Vector2> _onDrop;
 
     private VisualElement _ghost;
-    private int _payloadId = -1;
     private VisualElement _captured;
+    private int _payloadId = -1;
+    private int _pointerId = -1;
 
     public bool IsDragging => _payloadId != -1;
     
@@ -32,10 +33,12 @@ public class DragController
 
     private void BeginDrag(PointerDownEvent e, VisualElement source, int payloadId)
     {
-        if (e.button != 0 || IsDragging) return;
+        if (e.button != 0 || IsDragging)
+            return;
 
         _payloadId = payloadId;
         _captured = source;
+        _pointerId = e.pointerId;
         source.CapturePointer(e.pointerId);
 
         _ghost = _ghostFactory(payloadId);
@@ -49,7 +52,6 @@ public class DragController
 
         source.RegisterCallback<PointerMoveEvent>(OnPointerMove);
         source.RegisterCallback<PointerUpEvent>(OnPointerUp);
-        source.RegisterCallback<PointerCaptureOutEvent>(OnCaptureOut);
         e.StopPropagation();
     }
 
@@ -64,20 +66,23 @@ public class DragController
     {
         if (!IsDragging)
             return;
+        
         var payload = _payloadId;
         Vector2 pos = e.position;
 
-        _captured?.ReleasePointer(e.pointerId);
+        EndDrag();
+        
         _onDrop?.Invoke(payload, pos);
     }
     
-    private void OnCaptureOut(PointerCaptureOutEvent _)
+    private void EndDrag()
     {
         if (_captured != null)
         {
+            if (_pointerId != -1 && _captured.HasPointerCapture(_pointerId))
+                _captured.ReleasePointer(_pointerId);
             _captured.UnregisterCallback<PointerMoveEvent>(OnPointerMove);
             _captured.UnregisterCallback<PointerUpEvent>(OnPointerUp);
-            _captured.UnregisterCallback<PointerCaptureOutEvent>(OnCaptureOut);
         }
 
         if (_ghost != null)
@@ -85,8 +90,9 @@ public class DragController
             _ghost.RemoveFromHierarchy();
             _ghost = null;
         }
-        _payloadId = -1;
         _captured = null;
+        _payloadId = -1;
+        _pointerId = -1;
     }
     
     private void MoveGhost(Vector2 screenPos)

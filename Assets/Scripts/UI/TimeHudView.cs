@@ -6,14 +6,27 @@ using UnityEngine.UIElements;
 
 public class TimeHudView
 {
+    private readonly VisualElement _dateClip;
+    private readonly VisualElement _yearClip;
+    private readonly VisualElement _seasonIconNext;
     private readonly VisualElement _seasonIcon;
     private readonly Label _dateLabel;
     private readonly Label _yearLabel;
     private readonly Label _speedBadge;
     private readonly Dictionary<TimeSpeed, Button> _speedButtons;
     
+    public VisualElement DateClip => _dateClip;
+    public VisualElement YearClip => _yearClip;
+    public Label DateLabel => _dateLabel;
+    public Label YearLabel => _yearLabel;
+    public VisualElement SeasonIcon => _seasonIcon;
+    public VisualElement SeasonIconNext => _seasonIconNext;
+    
     public TimeHudView(VisualElement root)
     {
+        _dateClip = root.Q<VisualElement>("date-clip");
+        _yearClip = root.Q<VisualElement>("year-clip");
+        _seasonIconNext = root.Q<VisualElement>("season-icon-next");
         _seasonIcon = root.Q<VisualElement>("season-icon");
         _dateLabel  = root.Q<Label>("date-label");
         _yearLabel  = root.Q<Label>("year-label");
@@ -35,6 +48,12 @@ public class TimeHudView
         if (_seasonIcon == null || !icon)
             return;
         _seasonIcon.style.backgroundImage = new StyleBackground(icon);
+    }
+    
+    public void SetSeasonIconNext(Sprite icon)
+    {
+        if (_seasonIconNext != null && icon)
+            _seasonIconNext.style.backgroundImage = new StyleBackground(icon);
     }
     
     public void SetDate(GameDate date)
