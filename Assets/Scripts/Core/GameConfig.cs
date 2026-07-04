@@ -65,6 +65,10 @@ public class GameConfig : MonoSingleton<GameConfig>
     [Serializable]
     public class AdventurerConfig
     {
+        [Header("Rank-Up Applications")]
+        [Tooltip("Rank progress required before an adventurer submits a rank-up application.")]
+        public int rankProgressForPromotion = 100;
+        
         [Header("Arrival Pacing")]
         public float baseArrivalIntervalDays = 3f;
         [Tooltip("Shortest arrival interval once reputation is high.")]

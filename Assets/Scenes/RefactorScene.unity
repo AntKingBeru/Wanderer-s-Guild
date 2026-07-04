@@ -570,10 +570,14 @@ MonoBehaviour:
     maxReputation: 100
     tierTable: {fileID: 11400000, guid: 7bc6c308ca5115e4d8332aa07ed2694f, type: 2}
   adventurer:
+    rankProgressForPromotion: 100
     baseArrivalIntervalDays: 3
     minArrivalIntervalDays: 1
-    reputationForMinArrival: 200
-    maxRosterSize: 20
+    reputationForMinArrival: 100
+    maxRosterSize: 10
+    registrationGraceDays: 3
+    applicationWindowStart: 0.25
+    applicationWindowEnd: 0.75
     baseExperiencePerLevel: 100
     defaultRankCap: 3
   quest:
@@ -1228,6 +1232,15 @@ MonoBehaviour:
   onQuestCreated:
     m_PersistentCalls:
       m_Calls: []
+  onRankUpApproved:
+    m_PersistentCalls:
+      m_Calls: []
+  onRegistrationPending:
+    m_PersistentCalls:
+      m_Calls: []
+  onRegistrationApproved:
+    m_PersistentCalls:
+      m_Calls: []
   onAdventurerRecruited:
     m_PersistentCalls:
       m_Calls: []
@@ -1507,6 +1520,8 @@ GameObject:
   - component: {fileID: 1709047038}
   - component: {fileID: 1709047039}
   - component: {fileID: 1709047040}
+  - component: {fileID: 1709047041}
+  - component: {fileID: 1709047042}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -1828,6 +1843,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f1b1344c2157d142a3cf48cc5dc8cbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IdService
+--- !u!114 &1709047041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709047018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfa97fa560563f0458c737ac9712c4d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RegistrationController
+--- !u!114 &1709047042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709047018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6842742de8640c4988d3868d0d49997, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PromotionController
 --- !u!4 &1714710738 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7579075699988860614, guid: e412b84232dee0e438b3a64344559c18, type: 3}

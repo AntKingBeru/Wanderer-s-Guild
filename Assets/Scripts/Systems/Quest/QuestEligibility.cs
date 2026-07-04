@@ -11,7 +11,6 @@ public static class QuestEligibility
         if (quest.State != QuestState.Posted)
             return false;
 
-        var rank = (int)adventurer.Rank;
-        return rank >= (int)quest.Config.minRank && rank <= (int)quest.Config.maxRank;
+        return (int)adventurer.Rank >= (int)quest.Config.requiredRank;
     }
 }

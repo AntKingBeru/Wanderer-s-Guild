@@ -6,13 +6,13 @@ using UnityEngine.AI;
 // Base state: owns shared context and the arrival test; subclasses pick the destination.
 public abstract class MovementStateBase
 {
-    protected readonly NavMeshAgent agent;
-    protected readonly int adventurerId;
+    protected readonly NavMeshAgent Agent;
+    protected readonly int AdventurerId;
 
     protected MovementStateBase(NavMeshAgent agent, int adventurerId)
     {
-        this.agent = agent;
-        this.adventurerId = adventurerId;
+        Agent = agent;
+        AdventurerId = adventurerId;
     }
     
     public abstract MovementGoal Goal { get; }
@@ -21,9 +21,9 @@ public abstract class MovementStateBase
 
     public virtual bool HasArrived()
     {
-        if (agent.pathPending)
+        if (Agent.pathPending)
             return false;
-        return agent.remainingDistance <= GameConfig.Instance.World.arrivalTolerance;
+        return Agent.remainingDistance <= GameConfig.Instance.World.arrivalTolerance;
     }
 }
 
@@ -39,10 +39,10 @@ public class ToReceptionState : MovementStateBase
 
     public void Retarget()
     {
-        var idx = ReceptionQueue.Instance.IndexOf(adventurerId);
+        var idx = ReceptionQueue.Instance.IndexOf(AdventurerId);
         if (idx < 0)
-            idx = ReceptionQueue.Instance.Join(adventurerId);
-        agent.SetDestination(ReceptionQueue.Instance.SlotPosition(idx));
+            idx = ReceptionQueue.Instance.Join(AdventurerId);
+        Agent.SetDestination(ReceptionQueue.Instance.SlotPosition(idx));
     }
 }
 
@@ -59,7 +59,7 @@ public class ToBoardState : MovementStateBase
     {
         var transform = WorldAnchors.Instance.BoardPoint;
         if (transform)
-            agent.SetDestination(transform.position);
+            Agent.SetDestination(transform.position);
     }
 }
 
@@ -73,7 +73,7 @@ public class ToExitState : MovementStateBase
     {
         var transform = WorldAnchors.Instance.ExitPoint;
         if (transform)
-            agent.SetDestination(transform.position);
+            Agent.SetDestination(transform.position);
     }
 }
 
@@ -94,9 +94,9 @@ public class PatrolState : MovementStateBase
 
     public void Tick()
     {
-        if (agent.pathPending)
+        if (Agent.pathPending)
             return;
-        if (agent.remainingDistance > GameConfig.Instance.World.arrivalTolerance)
+        if (Agent.remainingDistance > GameConfig.Instance.World.arrivalTolerance)
             return;
         if (Time.time < _waitUntil)
             return;
@@ -106,9 +106,9 @@ public class PatrolState : MovementStateBase
     private void PickNewPoint()
     {
         var config = GameConfig.Instance.World;
-        var random = agent.transform.position + Random.insideUnitSphere * config.patrolRadius;
+        var random = Agent.transform.position + Random.insideUnitSphere * config.patrolRadius;
         if (NavMesh.SamplePosition(random, out var hit, config.patrolRadius, NavMesh.AllAreas))
-            agent.SetDestination(hit.position);
+            Agent.SetDestination(hit.position);
         _waitUntil = Time.time + Random.Range(config.minPatrolWaitSeconds, config.maxPatrolWaitSeconds);
     }
 }

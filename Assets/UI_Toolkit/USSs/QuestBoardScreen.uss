@@ -123,6 +123,46 @@
 
 .quest-card--ghost { opacity: 0.9; }
 
+.quest-paper {
+    position: relative;
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(238, 232, 214);
+    border-radius: 6px;
+    padding: 14px;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.quest-paper__content { flex-grow: 1; width: 100%; }
+
+.quest-paper__title {
+    color: rgb(40, 34, 24);
+    font-size: 15px;
+    -unity-font-style: bold;
+    white-space: normal;
+    margin-bottom: 6px;
+}
+.quest-paper__sub { color: rgb(70, 60, 44); font-size: 12px; margin-bottom: 8px; }
+.quest-paper__meta { color: rgb(70, 60, 44); font-size: 12px; }
+.quest-paper__reward {
+    color: rgb(120, 85, 15);
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-top: 6px;
+}
+
+.quest-paper__corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+}
+.quest-paper__corner--tl { top: 0; left: 0; border-top-left-radius: 6px; }
+.quest-paper__corner--tr { top: 0; right: 0; border-top-right-radius: 6px; }
+.quest-paper__corner--bl { bottom: 0; left: 0; border-bottom-left-radius: 6px; }
+.quest-paper__corner--br { bottom: 0; right: 0; border-bottom-right-radius: 6px; }
+
 .drag-layer {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;

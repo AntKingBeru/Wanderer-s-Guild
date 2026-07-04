@@ -58,6 +58,7 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
     public QuestStateEvent onQuestStateChanged = new();
     public QuestResultEvent onQuestResolved = new();
     public IntEvent onQuestCreated = new();
+    public IntEvent onRankUpApproved = new();
 
     public void RaiseRequestGenerated(int requestId)
         => onRequestGenerated?.Invoke(requestId);
@@ -82,6 +83,9 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
 
     public void RaiseQuestCreated(int questId)
         => onQuestCreated?.Invoke(questId);
+    
+    public void RaiseRankUpApproved(int adventurerId)
+        => onRankUpApproved?.Invoke(adventurerId);
     #endregion
 
     #region Adventurer System

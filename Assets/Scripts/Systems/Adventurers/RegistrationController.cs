@@ -7,7 +7,7 @@ using UnityEngine;
 [DefaultExecutionOrder(-64)]
 public class RegistrationController : MonoSingleton<RegistrationController>
 {
-    private class Pending { public int AdventurerId; public GameDate ExpiresOn; }
+    private class Pending { public GameDate ExpiresOn; }
     
     private readonly Dictionary<int, Pending> _pending = new Dictionary<int, Pending>();
     
@@ -46,7 +46,7 @@ public class RegistrationController : MonoSingleton<RegistrationController>
         var expires = TimeController.Instance.CurrentDate.AddDays(
             System.Math.Max(1, config.registrationGraceDays), GameConfig.Instance.Time.daysPerSeason);
 
-        _pending[adventurerId] = new Pending { AdventurerId = adventurerId, ExpiresOn = expires };
+        _pending[adventurerId] = new Pending { ExpiresOn = expires };
         AdventurerRoster.Instance.Get(adventurerId)?.SetState(AdventurerState.Applying);
         GameEventsRelay.Instance.RaiseRegistrationPending(adventurerId);
     }

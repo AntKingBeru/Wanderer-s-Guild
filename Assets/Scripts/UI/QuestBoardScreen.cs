@@ -153,7 +153,7 @@ public class QuestBoardScreen : UIScreen
         else
         {
             slot.AddToClassList("board-slot--filled");
-            slot.Add(_cardFactory.Build(q));
+            slot.Add(_cardFactory.BuildPaper(q));
         }
     }
     
@@ -176,7 +176,6 @@ public class QuestBoardScreen : UIScreen
     private void HandleDrop(int questId, Vector2 screenPos)
     {
         var slotIndex = SlotIndexAt(screenPos);
-        Debug.Log($"[Drop] pos={screenPos} slot={slotIndex} | slot0 bound={_slotElements[0].worldBound}");
         if (slotIndex < 0)
             return;
 

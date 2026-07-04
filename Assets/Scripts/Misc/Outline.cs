@@ -1,6 +1,5 @@
 // Toggles an inverted-hull outline by appending an outline material to this object's renderer(s).
 
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Outline : MonoBehaviour

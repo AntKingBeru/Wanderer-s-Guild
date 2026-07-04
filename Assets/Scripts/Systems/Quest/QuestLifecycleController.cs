@@ -99,7 +99,7 @@ public class QuestLifecycleController : MonoSingleton<QuestLifecycleController>
         _partyToQuest[party.Id] = questId;
 
         GameEventsRelay.Instance.RaisePartyFormed(party.Id);
-        ApplicationBoard.Instance.Submit(_partyToQuest[party.Id], party.Id);
+        ApplicationBoard.Instance.SubmitQuestApplication(_partyToQuest[party.Id], party.Id);
     }
     
     private bool InApplicationWindow()
@@ -113,7 +113,7 @@ public class QuestLifecycleController : MonoSingleton<QuestLifecycleController>
     
     private void HandleApplicationApproved(int applicationId)
     {
-        var (questId, partyId) = ApplicationBoard.Instance.GetTargets(applicationId);
+        var (questId, partyId) = ApplicationBoard.Instance.GetQuestTargets(applicationId);
         if (questId < 0 || !_parties.TryGetValue(partyId, out var party))
             return;
 
@@ -250,4 +250,9 @@ public class QuestLifecycleController : MonoSingleton<QuestLifecycleController>
         }
         return null;
     }
+    
+    public IReadOnlyList<int> GetPartyMembers(int partyId)
+        => _parties.TryGetValue(partyId, out var party)
+            ? party.MemberIds
+            : System.Array.Empty<int>();
 }

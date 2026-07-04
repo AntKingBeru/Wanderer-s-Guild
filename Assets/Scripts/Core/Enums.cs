@@ -273,4 +273,10 @@ public enum RegistrationStatus
     Registered,
     Rejected
 }
+
+public enum ApplicationType
+{
+    Quest,
+    RankUp
+}
 #endregion

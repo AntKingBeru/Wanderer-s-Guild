@@ -85,15 +85,14 @@ public struct QuestRequirements
 public struct QuestConfiguration
 {
     public RewardSplit rewardSplit;
-    public GuildRank minRank, maxRank;
+    public GuildRank requiredRank;
     public int minPartySize, maxPartySize;
 
-    public QuestConfiguration(RewardSplit rewardSplit, GuildRank minRank, GuildRank maxRank,
+    public QuestConfiguration(RewardSplit rewardSplit, GuildRank requiredRank,
         int minPartySize, int maxPartySize)
     {
         this.rewardSplit = rewardSplit;
-        this.minRank = minRank;
-        this.maxRank = maxRank;
+        this.requiredRank = requiredRank;
         this.minPartySize = minPartySize;
         this.maxPartySize = maxPartySize;
     }
@@ -281,5 +280,26 @@ public struct Band
     public float arrivalRateMultiplier;
     public float requestRateMultiplier;
     public int arrivalQualityBonus;
+}
+#endregion
+
+#region Application
+[Serializable]
+public struct MemberLine
+{
+    public string name;
+    public AdventurerClass @class;
+    public GuildRank rank;
+    public int level;
+    public bool isLeader;
+
+    public MemberLine(string name, AdventurerClass @class, GuildRank rank, int level, bool isLeader)
+    {
+        this.name = name;
+        this.@class = @class;
+        this.rank = rank;
+        this.level = level;
+        this.isLeader = isLeader;
+    }
 }
 #endregion

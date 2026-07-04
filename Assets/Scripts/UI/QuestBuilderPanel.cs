@@ -1,6 +1,7 @@
 // Reception Desk middle panel: configures a QuestBuilder from the selected request and creates a draft.
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 
@@ -11,8 +12,7 @@ public class QuestBuilderPanel
     private readonly Label _header;
     private readonly SliderInt _guildPercent;
     private readonly Label _guildPercentValue;
-    private readonly DropdownField _minRank;
-    private readonly DropdownField _maxRank;
+    private readonly DropdownField _requiredRank;
     private readonly SliderInt _minParty;
     private readonly SliderInt _maxParty;
     private readonly Button _createButton;
@@ -20,7 +20,6 @@ public class QuestBuilderPanel
     private readonly Action _onCreated;
     
     private int _requestId = -1;
-    private static readonly string[] RankNames = Enum.GetNames(typeof(GuildRank));
 
     public QuestBuilderPanel(VisualElement root, Action onCreated)
     {
@@ -30,8 +29,7 @@ public class QuestBuilderPanel
         _header = root.Q<Label>("builder-header");
         _guildPercent = root.Q<SliderInt>("guild-percent");
         _guildPercentValue = root.Q<Label>("guild-percent-value");
-        _minRank = root.Q<DropdownField>("min-rank");
-        _maxRank = root.Q<DropdownField>("max-rank");
+        _requiredRank = root.Q<DropdownField>("required-rank");
         _minParty = root.Q<SliderInt>("min-party");
         _maxParty = root.Q<SliderInt>("max-party");
         _createButton = root.Q<Button>("create-quest");
@@ -43,12 +41,6 @@ public class QuestBuilderPanel
     
     private void InitControls()
     {
-        var ranks = new List<string>(RankNames);
-        if (_minRank != null)
-            _minRank.choices = ranks;
-        if (_maxRank != null)
-            _maxRank.choices = ranks;
-
         _guildPercent?.RegisterValueChangedCallback(e =>
         {
             if (_guildPercentValue != null) _guildPercentValue.text = $"{e.newValue}%";
@@ -70,10 +62,14 @@ public class QuestBuilderPanel
         if (_header != null)
             _header.text = r.Objective;
         SetPercent(cfg.Quest.defaultGuildRewardPercent);
-        if (_minRank != null)
-            _minRank.value = RankNames[(int)r.RecommendedRank];
-        if (_maxRank != null)
-            _maxRank.value = RankNames[^1];   // S
+        if (_requiredRank != null)
+        {
+            var options = RankRange.Options(r.RecommendedRank);
+            var names = new List<string>(options.Count);
+            names.AddRange(options.Select(rank => rank.ToString()));
+            _requiredRank.choices = names;
+            _requiredRank.value = r.RecommendedRank.ToString();
+        }
         SetParty(cfg.Party.lowRankSize.min, cfg.Party.lowRankSize.max);
         SetError(null);
 
@@ -110,7 +106,7 @@ public class QuestBuilderPanel
 
         var builder = new QuestBuilder(req)
             .WithGuildRewardPercent(_guildPercent?.value ?? 30)
-            .WithRankRange(ParseRank(_minRank), ParseRank(_maxRank))
+            .WithRequiredRank(ParseRank(_requiredRank))
             .WithPartySize(_minParty?.value ?? 2,
                 _maxParty?.value ?? 5);
 

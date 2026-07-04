@@ -6,7 +6,6 @@ using UnityEngine.UIElements;
 public class ReputationHudView
 {
     private readonly VisualElement _barContainer;
-    private readonly VisualElement _bar;
     private readonly VisualElement _emoji;
     
     private static readonly Color[] TierColors =
@@ -22,7 +21,6 @@ public class ReputationHudView
     public ReputationHudView(VisualElement root)
     {
         _barContainer = root.Q<VisualElement>("rep-bar-container");
-        _bar = root.Q<VisualElement>("rep-bar");
         _emoji = root.Q<VisualElement>("rep-emoji");
     }
     

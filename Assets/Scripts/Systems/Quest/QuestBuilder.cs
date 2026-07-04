@@ -7,8 +7,9 @@ public class QuestBuilder
     private readonly Request _source;
     private readonly int _daysPerSeason;
     private int _guildPercent;
-    private GuildRank _minRank;
-    private GuildRank _maxRank;
+    private GuildRank _requiredRank;
+    private readonly GuildRank _rangeMin;
+    private readonly GuildRank _rangeMax;
     private int _minPartySize;
     private int _maxPartySize;
     private int _lifetimeDays;
@@ -17,14 +18,11 @@ public class QuestBuilder
     {
         _source = source;
         var config = GameConfig.Instance;
-
-        _guildPercent  = config.Quest.defaultGuildRewardPercent;
-        _lifetimeDays  = config.Quest.postedQuestLifetimeDays;
         _daysPerSeason = config.Time.daysPerSeason;
 
         // Sensible starting bounds: recommended rank as the floor, the low-rank party window.
-        _minRank = source.RecommendedRank;
-        _maxRank = GuildRank.National;
+        (_rangeMin, _rangeMax) = RankRange.For(source.RecommendedRank);
+        _requiredRank = source.RecommendedRank;
         _minPartySize = config.Party.lowRankSize.min;
         _maxPartySize = config.Party.lowRankSize.max;
     }
@@ -35,11 +33,10 @@ public class QuestBuilder
         return this;
     }
     
-    public QuestBuilder WithRankRange(GuildRank min, GuildRank max)
+    public QuestBuilder WithRequiredRank(GuildRank rank)
     {
-        if ((int)max < (int)min) (min, max) = (max, min);
-        _minRank = min;
-        _maxRank = max;
+        var clamped = Mathf.Clamp((int)rank, (int)_rangeMin, (int)_rangeMax);
+        _requiredRank = (GuildRank)clamped;
         return this;
     }
     
@@ -65,12 +62,6 @@ public class QuestBuilder
             return false;
         }
 
-        if ((int)_maxRank < (int)_minRank)
-        {
-            error = "Max rank is below min rank.";
-            return false;
-        }
-
         if (_maxPartySize < _minPartySize)
         {
             error = "Max party size is below min.";
@@ -92,7 +83,7 @@ public class QuestBuilder
             return null;
 
         var config = new QuestConfiguration(
-            new RewardSplit(_guildPercent), _minRank, _maxRank, _minPartySize, _maxPartySize);
+            new RewardSplit(_guildPercent), _requiredRank, _minPartySize, _maxPartySize);
 
         var expiry = now.AddDays(_lifetimeDays, _daysPerSeason);
         return new Quest(questId, _source, config, expiry);

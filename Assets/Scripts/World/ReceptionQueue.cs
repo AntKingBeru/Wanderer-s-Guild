@@ -6,20 +6,20 @@ using UnityEngine;
 [DefaultExecutionOrder(-83)]
 public class ReceptionQueue : MonoSingleton<ReceptionQueue>
 {
-    public readonly List<int> line = new();
+    public readonly List<int> Line = new();
 
     public int Join(int adventurerId)
     {
-        if (!line.Contains(adventurerId))
-            line.Add(adventurerId);
-        return line.IndexOf(adventurerId);
+        if (!Line.Contains(adventurerId))
+            Line.Add(adventurerId);
+        return Line.IndexOf(adventurerId);
     }
     
     public void Leave(int adventurerId)
-        => line.Remove(adventurerId);
+        => Line.Remove(adventurerId);
     
     public int IndexOf(int adventurerId)
-        => line.IndexOf(adventurerId);
+        => Line.IndexOf(adventurerId);
 
     public Vector3 SlotPosition(int queueIndex)
     {
