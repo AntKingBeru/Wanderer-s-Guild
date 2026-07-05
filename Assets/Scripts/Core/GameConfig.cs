@@ -18,6 +18,7 @@ public class GameConfig : MonoSingleton<GameConfig>
     [SerializeField] private GuildConfig guild = new();
     [SerializeField] private ResolutionConfig resolution = new();
     [SerializeField] private WorldConfig world = new();
+    [SerializeField] private FacilityConfig facilities = new();
     
     public CameraConfig Camera => cam;
     public TimeConfig Time => time;
@@ -29,6 +30,7 @@ public class GameConfig : MonoSingleton<GameConfig>
     public GuildConfig Guild => guild;
     public ResolutionConfig Resolution => resolution;
     public WorldConfig World => world;
+    public FacilityConfig Facilities => facilities;
     
     #region Cam
     [Serializable]
@@ -103,8 +105,6 @@ public class GameConfig : MonoSingleton<GameConfig>
         public float minArrivalIntervalDays = 1f;
         [Tooltip("Reputation at which the arrival interval reaches its minimum.")]
         public int reputationForMinArrival = 200;
-        [Tooltip("Max adventurers the guild can hold (later raised by Bedroom facilities).")]
-        public int maxRosterSize = 20;
         
         [Header("Registration (office-gated)")]
         [Tooltip("In-game days a pending registrant waits before leaving if unapproved.")]
@@ -218,6 +218,17 @@ public class GameConfig : MonoSingleton<GameConfig>
         [Header("Doors")]
         public float doorOpenAngle = 90f;
         public float doorSpeed = 4f;
+    }
+    #endregion
+    
+    #region Facilities
+    [Serializable]
+    public class FacilityConfig
+    {
+        [Tooltip("Adventurer capacity with no bedrooms built.")]
+        public int baseAdventurerCapacity = 4;
+        [Tooltip("Extra capacity added per bedroom level built.")]
+        public int capacityPerBedroomLevel = 2;
     }
     #endregion
 }

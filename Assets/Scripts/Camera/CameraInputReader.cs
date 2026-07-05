@@ -28,6 +28,7 @@ public class CameraInputReader : MonoBehaviour
     private Vector2 _lastPointer;
     private bool _dragPanning;
     private bool _dragRotating;
+    private bool _pointerPrimed;
     
     public bool IsDragRotating => _dragRotating;
     
@@ -43,6 +44,9 @@ public class CameraInputReader : MonoBehaviour
     private void Update()
     {
         var screenPointer = pointerPosition?.action?.ReadValue<Vector2>() ?? Vector2.zero;
+        
+        if (screenPointer != Vector2.zero)
+            _pointerPrimed = true;
 
         PanIntent = ReadPan(screenPointer);
         RotateIntent = ReadRotate(screenPointer);
@@ -80,12 +84,16 @@ public class CameraInputReader : MonoBehaviour
     
     private Vector2 EdgePan(Vector2 screenPointer)
     {
+        if (!_pointerPrimed || !Application.isFocused ||
+            screenPointer.x < 0f || screenPointer.y < 0f ||
+            screenPointer.x > Screen.width || screenPointer.y > Screen.height)
+            return Vector2.zero;
+
         var panel = referenceDocument ? referenceDocument.rootVisualElement?.panel : null;
         if (panel == null)
             return Vector2.zero;
         
         var p = RuntimePanelUtils.ScreenToPanel(panel, screenPointer);
-        
         var size = referenceDocument.rootVisualElement.layout.size;
         if (size.x <= 0f || size.y <= 0f)
             return Vector2.zero;

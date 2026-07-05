@@ -303,3 +303,16 @@ public struct MemberLine
     }
 }
 #endregion
+
+#region Facility System
+[Serializable]
+public struct FacilityLevelDef
+{
+    [Tooltip("In-game hours to construct/upgrade to this level.")]
+    public int constructionHours;
+    [Tooltip("Gold cost (enforced once a guild treasury controller exists).")]
+    public int goldCost;
+    [Tooltip("Minimum guild rank required to begin this level.")]
+    public GuildRank requiredGuildRank;
+}
+#endregion

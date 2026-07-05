@@ -56,8 +56,15 @@ public class RecruitmentController : MonoBehaviour
         AdventurerRoster.Instance.Add(_factory.Create(IdService.Instance.Next(IdService.Adventurer), template, RolledArrivalRank()));
     }
 
-    private bool HasCapacity() =>
-        AdventurerRoster.Exists && AdventurerRoster.Instance.Count < GameConfig.Instance.Adventurer.maxRosterSize;
+    private bool HasCapacity()
+    {
+        if (!AdventurerRoster.Exists)
+            return false;
+        var cap = FacilityController.Exists
+            ? FacilityController.Instance.AdventurerCapacity
+            : GameConfig.Instance.Facilities.baseAdventurerCapacity;
+        return AdventurerRoster.Instance.Count < cap;
+    }
     
     private float CurrentInterval()
     {

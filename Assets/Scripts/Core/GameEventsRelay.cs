@@ -135,14 +135,22 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
     #endregion
 
     #region Facility System
+    public FacilityEvent onFacilityConstructionStarted = new();
     public FacilityEvent onFacilityBuilt = new();
     public FacilityEvent onFacilityUpgraded = new();
+    public IntEvent onAdventurerCapacityChanged = new();
 
+    public void RaiseFacilityConstructionStarted(FacilityType type)
+        => onFacilityConstructionStarted?.Invoke(type);
+    
     public void RaiseFacilityBuilt(FacilityType type)
         => onFacilityBuilt?.Invoke(type);
 
     public void RaiseFacilityUpgraded(FacilityType type)
         => onFacilityUpgraded?.Invoke(type);
+
+    public void RaiseAdventurerCapacityChanged(int capacity)
+        => onAdventurerCapacityChanged?.Invoke(capacity);
     #endregion
 
     #region Economy System

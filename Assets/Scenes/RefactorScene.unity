@@ -584,7 +584,6 @@ MonoBehaviour:
     baseArrivalIntervalDays: 3
     minArrivalIntervalDays: 1
     reputationForMinArrival: 100
-    maxRosterSize: 10
     registrationGraceDays: 3
     applicationWindowStart: 0.25
     applicationWindowEnd: 0.75
@@ -630,6 +629,9 @@ MonoBehaviour:
     maxPatrolWaitSeconds: 6
     doorOpenAngle: 90
     doorSpeed: 4
+  facilities:
+    baseAdventurerCapacity: 4
+    capacityPerBedroomLevel: 2
 --- !u!1 &786383174
 GameObject:
   m_ObjectHideFlags: 0
@@ -1355,6 +1357,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1406559404}
   - component: {fileID: 1406559405}
+  - component: {fileID: 1406559406}
   m_Layer: 0
   m_Name: Facilities
   m_TagString: Untagged
@@ -1389,6 +1392,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5943cf8a4d9b5204cb73980bd47851ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FacilityController
+  facilityData:
+  - {fileID: 11400000, guid: 1185cb2e6fb576e449a35168b59e6219, type: 2}
+  - {fileID: 11400000, guid: 0a72e3a1fdbcfdd43b966e0025d401bd, type: 2}
+  - {fileID: 11400000, guid: aa42c1af35eb18c458ac99d938f72bdb, type: 2}
+  - {fileID: 11400000, guid: 0f13eda045e7ba4459a790704d81eea1, type: 2}
+  - {fileID: 11400000, guid: 7cee733cbfcdc7c44988319ef1516490, type: 2}
+  - {fileID: 11400000, guid: bdfa166a539dc3f488695ec1ca3085d2, type: 2}
+--- !u!114 &1406559406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1406559403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0554a9cd07e38964f98cd06e45d2cbe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ConstructionController
 --- !u!1 &1408904400
 GameObject:
   m_ObjectHideFlags: 0
@@ -1502,10 +1524,16 @@ MonoBehaviour:
   onQuestOutcome:
     m_PersistentCalls:
       m_Calls: []
+  onFacilityConstructionStarted:
+    m_PersistentCalls:
+      m_Calls: []
   onFacilityBuilt:
     m_PersistentCalls:
       m_Calls: []
   onFacilityUpgraded:
+    m_PersistentCalls:
+      m_Calls: []
+  onAdventurerCapacityChanged:
     m_PersistentCalls:
       m_Calls: []
   onGoldChanged:
@@ -1521,6 +1549,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onSeasonChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onHourAdvanced:
     m_PersistentCalls:
       m_Calls: []
   onScreenOpened:
@@ -2220,6 +2251,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  clockRefreshInterval: 0.25
   pauseColor: {r: 0.55, g: 0.55, b: 0.6, a: 1}
   normalColor: {r: 0.3, g: 0.72, b: 0.4, a: 1}
   fastColor: {r: 0.92, g: 0.74, b: 0.26, a: 1}
