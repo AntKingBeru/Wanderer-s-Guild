@@ -7,7 +7,7 @@
             "id": "dbafc4c5-6754-4aae-8c1c-6c36324fad40",
             "actions": [
                 {
-                    "name": "Pan",
+                    "name": "Pankeys",
                     "type": "Value",
                     "id": "2d172476-26d7-4352-9a02-bbc8cc35ef3a",
                     "expectedControlType": "Vector2",
@@ -16,37 +16,37 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "PanButton",
+                    "name": "DragPan",
                     "type": "Button",
-                    "id": "d96780b2-da5c-463b-a4c1-83680e97e762",
+                    "id": "6463bf0b-2d05-427c-af33-b5cdf43f9147",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Rotate",
+                    "name": "DragRotate",
+                    "type": "Button",
+                    "id": "25ca11b5-ef5a-4db9-beff-b4140bfd28ed",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RotateKeys",
                     "type": "Value",
-                    "id": "04735ad4-001c-400c-8916-257a9898e2a4",
-                    "expectedControlType": "Vector2",
+                    "id": "f61d7d8a-c20d-47cd-ace4-6d05d5b2a57b",
+                    "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
                 },
                 {
-                    "name": "RotateButton",
-                    "type": "Button",
-                    "id": "aeddb1dc-e601-4fb7-a2f3-8eb0c3dac37c",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Zoom",
+                    "name": "PointerPosition",
                     "type": "Value",
-                    "id": "de8b9a9c-e1a9-41c7-9207-52d9d3c7171a",
-                    "expectedControlType": "Axis",
+                    "id": "31340b7a-620b-4c1a-a031-1d7b31c94001",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -54,57 +54,123 @@
             ],
             "bindings": [
                 {
-                    "name": "",
-                    "id": "0af42f0b-a920-49ac-8f92-b83769b06239",
-                    "path": "<Mouse>/delta",
+                    "name": "2D Vector",
+                    "id": "d84a002b-7c03-437b-90aa-e8457d80576f",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Pan",
-                    "isComposite": false,
+                    "action": "Pankeys",
+                    "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "1b875d8f-66e8-4877-992a-6d33fbc6350a",
-                    "path": "<Mouse>/rightButton",
+                    "name": "up",
+                    "id": "8a0a2e5d-d50b-4b8d-86ef-c9a098316ccd",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "PanButton",
+                    "action": "Pankeys",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
-                    "name": "",
-                    "id": "27932f3b-5188-406a-ac75-bb9482bfff2a",
-                    "path": "<Mouse>/delta",
+                    "name": "down",
+                    "id": "dcd287f3-8796-47a1-96d8-40bce01a26bc",
+                    "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Rotate",
+                    "action": "Pankeys",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "be0330b6-e419-4069-8b0b-06aa705caa50",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pankeys",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "0c229591-013d-4e4a-a547-9e49c9a1165a",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pankeys",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "",
-                    "id": "06650e88-baa2-4be5-adce-637af7e868aa",
+                    "id": "62ea232b-36c2-4d34-8622-422825ee51a2",
                     "path": "<Mouse>/middleButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "RotateButton",
+                    "action": "DragPan",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "6caae084-ab31-431f-aae8-9162e34b2acd",
-                    "path": "<Mouse>/scroll/y",
+                    "id": "1d804091-d319-4283-a780-aa6923d27562",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Zoom",
+                    "action": "DragRotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "9c255a34-557d-4881-9ff9-017b029610a4",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateKeys",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "d12cbb28-0788-4c90-ab59-29f81a7c6614",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateKeys",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "f0e79eae-9f52-455d-942c-4e0a9b88f672",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateKeys",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "77a74f62-7575-4239-af75-4e33a2376dea",
+                    "path": "<Pointer>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PointerPosition",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

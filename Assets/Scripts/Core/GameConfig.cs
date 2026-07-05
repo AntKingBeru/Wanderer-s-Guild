@@ -8,6 +8,7 @@ using UnityEngine;
 public class GameConfig : MonoSingleton<GameConfig>
 {
     [Header("System Configuration Blocks")]
+    [SerializeField] private CameraConfig cam = new();
     [SerializeField] private TimeConfig time = new();
     [SerializeField] private EconomyConfig economy = new();
     [SerializeField] private ReputationConfig reputation = new();
@@ -18,6 +19,7 @@ public class GameConfig : MonoSingleton<GameConfig>
     [SerializeField] private ResolutionConfig resolution = new();
     [SerializeField] private WorldConfig world = new();
     
+    public CameraConfig Camera => cam;
     public TimeConfig Time => time;
     public EconomyConfig Economy => economy;
     public ReputationConfig Reputation => reputation;
@@ -27,6 +29,32 @@ public class GameConfig : MonoSingleton<GameConfig>
     public GuildConfig Guild => guild;
     public ResolutionConfig Resolution => resolution;
     public WorldConfig World => world;
+    
+    #region Cam
+    [Serializable]
+    public class CameraConfig
+    {
+        [Header("Pan")]
+        public float panSpeed = 12f;
+        [Tooltip("Screen-edge thickness (px) that triggers edge panning.")]
+        public float edgePanBorder = 12f;
+        [Tooltip("Middle-mouse drag sensitivity (world units per screen unit).")]
+        public float dragPanSpeed = 0.05f;
+
+        [Header("Pan Bounds (rig XZ position limits)")]
+        public Vector2 panMin = new(-30f, -30f);
+        public Vector2 panMax = new(30f, 30f);
+        
+        [Header("Rotation")]
+        public float rotateSpeed = 90f;
+        public float dragRotateSpeed = 0.2f;
+        
+        [Header("Smoothing")]
+        [Tooltip("Higher = snappier; framerate-independent easing toward target.")]
+        public float moveSmoothing = 10f;
+        public float rotateSmoothing = 10f;
+    }
+    #endregion
     
     #region Time & Simulation
     [Serializable]
