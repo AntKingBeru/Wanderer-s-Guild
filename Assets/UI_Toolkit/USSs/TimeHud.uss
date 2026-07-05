@@ -34,6 +34,14 @@
     color: rgba(238, 240, 245, 0.65);
     font-size: 12px;
 }
+.time-of-day-label {
+    color: rgb(238, 240, 245);
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-left: 16px;
+    min-width: 52px;
+    -unity-text-align: middle-left;
+}
 
 .speed-badge {
     min-width: 78px;

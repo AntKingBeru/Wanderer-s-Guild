@@ -9,6 +9,10 @@ public class TimeHudController : MonoBehaviour
 {
     [Header("Season Icons — order must match: Spring, Summer, Autumn, Winter")]
     [SerializeField] private Sprite[] seasonIcons = new Sprite[4];
+    
+    [Header("Clock Readout")]
+    [Tooltip("Seconds between HH:MM refreshes (real time).")]
+    [SerializeField] private float clockRefreshInterval = 0.25f;
 
     [Header("Time-Scale Colours")]
     [SerializeField] private Color pauseColor = new(0.55f, 0.55f, 0.60f);
@@ -24,6 +28,7 @@ public class TimeHudController : MonoBehaviour
     private RollingNumber _dateRoll;
     private RollingNumber _yearRoll;
     private Coroutine _seasonFade;
+    private float _clockRefreshTimer;
     private int _lastYear = -1;
 
     private void OnEnable()
@@ -45,6 +50,17 @@ public class TimeHudController : MonoBehaviour
 
     private void OnDisable()
         => Unsubscribe();
+    
+    private void Update()
+    {
+        if (!TimeController.Exists || _view == null)
+            return;
+        _clockRefreshTimer -= Time.unscaledDeltaTime;
+        if (_clockRefreshTimer > 0f)
+            return;
+        _clockRefreshTimer = clockRefreshInterval;
+        _view.SetTimeOfDay(TimeController.Instance.Hour, TimeController.Instance.Minute);
+    }
 
     private void WireButtons()
     {
@@ -76,6 +92,7 @@ public class TimeHudController : MonoBehaviour
         if (!TimeController.Exists)
             return;
         var tc = TimeController.Instance;
+        _view.SetTimeOfDay(tc.Hour, tc.Minute);
         HandleSeason(tc.CurrentDate.season);
         HandleDate(tc.CurrentDate);
         HandleSpeed(tc.CurrentSpeed);

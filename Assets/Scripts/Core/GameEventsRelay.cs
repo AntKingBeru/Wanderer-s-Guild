@@ -160,6 +160,7 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
     public TimeSpeedEvent onTimeSpeedChanged = new();
     public DateEvent onDayAdvanced = new();
     public SeasonEvent onSeasonChanged = new();
+    public IntEvent onHourAdvanced = new();
 
     public void RaiseTimeSpeedChanged(TimeSpeed speed)
         => onTimeSpeedChanged?.Invoke(speed);
@@ -169,6 +170,9 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
 
     public void RaiseSeasonChanged(Season season)
         => onSeasonChanged?.Invoke(season);
+    
+    public void RaiseHourAdvanced(int hour)
+        => onHourAdvanced?.Invoke(hour);
     #endregion
 
     #region UI

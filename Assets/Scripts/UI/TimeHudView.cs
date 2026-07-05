@@ -10,6 +10,7 @@ public class TimeHudView
     private readonly VisualElement _yearClip;
     private readonly VisualElement _seasonIconNext;
     private readonly VisualElement _seasonIcon;
+    private readonly Label _timeOfDayLabel;
     private readonly Label _dateLabel;
     private readonly Label _yearLabel;
     private readonly Label _speedBadge;
@@ -28,6 +29,7 @@ public class TimeHudView
         _yearClip = root.Q<VisualElement>("year-clip");
         _seasonIconNext = root.Q<VisualElement>("season-icon-next");
         _seasonIcon = root.Q<VisualElement>("season-icon");
+        _timeOfDayLabel = root.Q<Label>("time-of-day-label");
         _dateLabel  = root.Q<Label>("date-label");
         _yearLabel  = root.Q<Label>("year-label");
         _speedBadge = root.Q<Label>("speed-badge");
@@ -54,6 +56,12 @@ public class TimeHudView
     {
         if (_seasonIconNext != null && icon)
             _seasonIconNext.style.backgroundImage = new StyleBackground(icon);
+    }
+    
+    public void SetTimeOfDay(int hour, int minute)
+    {
+        if (_timeOfDayLabel != null)
+            _timeOfDayLabel.text = $"{hour:00}:{minute:00}";
     }
     
     public void SetDate(GameDate date)

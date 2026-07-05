@@ -13,6 +13,7 @@
                 <ui:VisualElement name="year-clip" class="roll-clip roll-clip--year">
                     <ui:Label name="year-label" class="year-label" text="Year 1" />
                 </ui:VisualElement>
+                <ui:Label name="time-of-day-label" class="time-of-day-label" text="00:00" />
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement class="time-hud__spacer"/>

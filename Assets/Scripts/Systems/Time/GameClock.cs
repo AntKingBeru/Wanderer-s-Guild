@@ -6,6 +6,7 @@ public class GameClock
 {
     private readonly int _daysPerSeason;
     private double _timeOfDay;
+    private int _lastHour = -1;
 
     public GameDate CurrentDate { get; private set; }
     
@@ -19,7 +20,39 @@ public class GameClock
         _daysPerSeason = Math.Max(1, daysPerSeason);
     }
     
+    public int Hour => (int)Math.Min(23, Math.Max(0, TimeOfDay * 24.0));
+    
+    public int Minute
+    {
+        get
+        {
+            var intoHour = TimeOfDay * 24.0 - Hour;
+            return (int)Math.Min(59, Math.Max(0, intoHour * 60.0));
+        }
+    }
+    
     public void AddTime(double deltaDays) => _timeOfDay += deltaDays;
+
+    public bool TryConsumeHour(out int hour)
+    {
+        var current = Hour;
+
+        if (_lastHour == -1)
+        {
+            _lastHour = current;
+            hour = current;
+            return false;
+        }
+        
+        if (_lastHour == current)
+        {
+            hour = current;
+            return false;
+        }
+        _lastHour = (_lastHour + 1) % 24;
+        hour = _lastHour;
+        return true;
+    }
 
     public bool TryConsumeDay(out bool seasonChanged, out bool yearChanged)
     {
