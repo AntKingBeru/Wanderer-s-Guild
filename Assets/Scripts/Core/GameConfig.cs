@@ -19,6 +19,7 @@ public class GameConfig : MonoSingleton<GameConfig>
     [SerializeField] private ResolutionConfig resolution = new();
     [SerializeField] private WorldConfig world = new();
     [SerializeField] private FacilityConfig facilities = new();
+    [SerializeField] private GridConfig grid = new();
     
     public CameraConfig Camera => cam;
     public TimeConfig Time => time;
@@ -31,6 +32,7 @@ public class GameConfig : MonoSingleton<GameConfig>
     public ResolutionConfig Resolution => resolution;
     public WorldConfig World => world;
     public FacilityConfig Facilities => facilities;
+    public GridConfig Grid => grid;
     
     #region Cam
     [Serializable]
@@ -67,6 +69,8 @@ public class GameConfig : MonoSingleton<GameConfig>
         public float fastMultiplier = 3f;
         public float veryFastMultiplier = 8f;
         public int daysPerSeason = 30;
+        [Tooltip("Hour of day the game starts at (0–23). Default 5 = 05:00.")]
+        [Range(0, 23)] public int startHour = 5;
     }
     #endregion
     
@@ -229,6 +233,19 @@ public class GameConfig : MonoSingleton<GameConfig>
         public int baseAdventurerCapacity = 4;
         [Tooltip("Extra capacity added per bedroom level built.")]
         public int capacityPerBedroomLevel = 2;
+    }
+    
+    [Serializable]
+    public class GridConfig
+    {
+        [Tooltip("World size of one tile edge in Unity units.")]
+        public float tileSize = 4f;
+        [Tooltip("Grid origin in world space (tile 0,0's corner).")]
+        public Vector3 gridOrigin = Vector3.zero;
+        [Tooltip("Grid width in tiles (X).")]
+        public int width = 20;
+        [Tooltip("Grid depth in tiles (Z).")]
+        public int depth = 20;
     }
     #endregion
 }

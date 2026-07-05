@@ -557,9 +557,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameConfig
   cam:
-    panSpeed: 12
-    edgePanBorder: 12
-    dragPanSpeed: 0.05
+    panSpeed: 18
+    edgePanBorder: 10
+    dragPanSpeed: 0.1
     panMin: {x: -30, y: -30}
     panMax: {x: 30, y: 30}
     rotateSpeed: 90
@@ -567,10 +567,11 @@ MonoBehaviour:
     moveSmoothing: 10
     rotateSmoothing: 10
   time:
-    realSecondsPerDay: 90
-    fastMultiplier: 3
-    veryFastMultiplier: 8
+    realSecondsPerDay: 480
+    fastMultiplier: 2
+    veryFastMultiplier: 4
     daysPerSeason: 30
+    startHour: 5
   economy:
     startingGold: 500
     dailyOperationCost: 25
@@ -632,6 +633,11 @@ MonoBehaviour:
   facilities:
     baseAdventurerCapacity: 4
     capacityPerBedroomLevel: 2
+  grid:
+    tileSize: 4
+    gridOrigin: {x: 0, y: 0, z: 0}
+    width: 21
+    depth: 21
 --- !u!1 &786383174
 GameObject:
   m_ObjectHideFlags: 0
@@ -1128,6 +1134,7 @@ Transform:
   - {fileID: 362341153}
   - {fileID: 578874264}
   - {fileID: 1726791747}
+  - {fileID: 1373603193}
   - {fileID: 1749319778}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1257,6 +1264,77 @@ Transform:
   - {fileID: 1540814196}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1373603192
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1373603193}
+  - component: {fileID: 1373603195}
+  - component: {fileID: 1373603194}
+  m_Layer: 0
+  m_Name: GoldHud
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1373603193
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373603192}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 983126841}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1373603194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373603192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4975233ffc7960c419c97bf90dc1e041, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoldHudController
+  tickDuration: 0.4
+  floaterDuration: 1
+  floaterRise: 42
+--- !u!114 &1373603195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373603192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: dc2783bd509c05942a3b0610f7f1845e, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 3b7efe7457e7e1149967f034f3c90ede, type: 3}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1 &1379731892
 GameObject:
   m_ObjectHideFlags: 0
@@ -1356,6 +1434,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1406559404}
+  - component: {fileID: 1406559407}
   - component: {fileID: 1406559405}
   - component: {fileID: 1406559406}
   m_Layer: 0
@@ -1411,6 +1490,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0554a9cd07e38964f98cd06e45d2cbe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ConstructionController
+--- !u!114 &1406559407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1406559403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d412f6621148e9a45948692730ce427c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuildGrid
 --- !u!1 &1408904400
 GameObject:
   m_ObjectHideFlags: 0
@@ -1527,6 +1618,9 @@ MonoBehaviour:
   onFacilityConstructionStarted:
     m_PersistentCalls:
       m_Calls: []
+  onRoomPlaced:
+    m_PersistentCalls:
+      m_Calls: []
   onFacilityBuilt:
     m_PersistentCalls:
       m_Calls: []
@@ -1540,6 +1634,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onTransaction:
+    m_PersistentCalls:
+      m_Calls: []
+  onTransactionRejected:
     m_PersistentCalls:
       m_Calls: []
   onTimeSpeedChanged:
@@ -1958,6 +2055,8 @@ GameObject:
   - component: {fileID: 1709047040}
   - component: {fileID: 1709047034}
   - component: {fileID: 1709047028}
+  - component: {fileID: 1709047041}
+  - component: {fileID: 1709047042}
   m_Layer: 0
   m_Name: _Systems
   m_TagString: Untagged
@@ -2103,6 +2202,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f1b1344c2157d142a3cf48cc5dc8cbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IdService
+--- !u!114 &1709047041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709047018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73df0c9eb8af355488c01f02aed2f10d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TreasuryController
+--- !u!114 &1709047042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709047018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ee9af73fa71c854ab9ae388b5de2ed4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OperationalCostController
 --- !u!4 &1714710738 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7579075699988860614, guid: e412b84232dee0e438b3a64344559c18, type: 3}
@@ -2251,7 +2374,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  clockRefreshInterval: 0.25
+  baseClockRefresh: 0.25
+  minClockRefresh: 0.03
   pauseColor: {r: 0.55, g: 0.55, b: 0.6, a: 1}
   normalColor: {r: 0.3, g: 0.72, b: 0.4, a: 1}
   fastColor: {r: 0.92, g: 0.74, b: 0.26, a: 1}

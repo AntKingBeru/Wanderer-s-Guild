@@ -6,7 +6,7 @@ using UnityEngine;
 [DefaultExecutionOrder(-64)]
 public class ConstructionController : MonoSingleton<ConstructionController>
 {
-    private class Job { public FacilityType Type; public int TargetLevel; public int HoursRemaining; }
+    private class Job { public FacilityType Type; public int TargetLevel; public int HoursRemaining; public int TotalHours; }
 
     private readonly Dictionary<FacilityType, Job> _jobs = new Dictionary<FacilityType, Job>();
 
@@ -29,7 +29,8 @@ public class ConstructionController : MonoSingleton<ConstructionController>
     {
         if (_jobs.ContainsKey(type))
             return false;
-        _jobs[type] = new Job { Type = type, TargetLevel = targetLevel, HoursRemaining = Mathf.Max(1, hours) };
+        _jobs[type] = new Job { Type = type, TargetLevel = targetLevel,
+            HoursRemaining = Mathf.Max(1, hours), TotalHours = Mathf.Max(1, hours) };
         return true;
     }
     
@@ -53,4 +54,7 @@ public class ConstructionController : MonoSingleton<ConstructionController>
                 FacilityController.Instance.CompleteConstruction(type);
         }
     }
+    
+    public float GetProgress(FacilityType type)
+        => !_jobs.TryGetValue(type, out var job) ? 1f : Mathf.Clamp01(1f - (float)job.HoursRemaining / job.TotalHours);
 }

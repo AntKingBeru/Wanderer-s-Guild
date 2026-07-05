@@ -177,6 +177,22 @@ public enum FacilityState
     Operational,
     Upgrading
 }
+
+public enum TileEdge
+{
+    North,
+    East,
+    South,
+    West
+}
+
+public enum ConstructionStage
+{
+    Empty,
+    EarlyScaffolding,
+    LateScaffolding,
+    Finished
+}
 #endregion
 
 #region Economy System

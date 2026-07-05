@@ -14,10 +14,11 @@ public class GameClock
     public float TimeOfDay => (float)Math.Min(_timeOfDay, 1.0);
     public DayPhase CurrentPhase => PhaseFromFraction(TimeOfDay);
 
-    public GameClock(GameDate start, int daysPerSeason)
+    public GameClock(GameDate start, int daysPerSeason, double startDayFraction = 0.0)
     {
         CurrentDate = start;
         _daysPerSeason = Math.Max(1, daysPerSeason);
+        _timeOfDay = Math.Max(0.0, Math.Min(0.9999, startDayFraction));
     }
     
     public int Hour => (int)Math.Min(23, Math.Max(0, TimeOfDay * 24.0));

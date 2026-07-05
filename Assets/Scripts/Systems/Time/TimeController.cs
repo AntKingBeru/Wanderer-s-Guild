@@ -14,11 +14,13 @@ public class TimeController : MonoSingleton<TimeController>
     public float TimeOfDay => _clock.TimeOfDay;
     public DayPhase CurrentPhase => _clock.CurrentPhase;
     public TimeSpeed CurrentSpeed => _speed.Current.Speed;
+    public float CurrentSpeedMultiplier => _speed.Current.Multiplier;
 
     protected override void OnSingletonAwake()
     {
         var config = GameConfig.Instance.Time;
-        _clock = new GameClock(new GameDate(1, Season.Spring, 1), config.daysPerSeason);
+        var startFraction = Mathf.Clamp(config.startHour, 0, 23) / 24.0;
+        _clock = new GameClock(new GameDate(1, Season.Spring, 1), config.daysPerSeason, startFraction);
         _speed = new TimeSpeedStateMachine(config.fastMultiplier, config.veryFastMultiplier);
     }
 

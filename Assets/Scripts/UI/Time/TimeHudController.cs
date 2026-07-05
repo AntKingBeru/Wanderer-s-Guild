@@ -12,7 +12,9 @@ public class TimeHudController : MonoBehaviour
     
     [Header("Clock Readout")]
     [Tooltip("Seconds between HH:MM refreshes (real time).")]
-    [SerializeField] private float clockRefreshInterval = 0.25f;
+    [SerializeField] private float baseClockRefresh = 0.25f;
+    [Tooltip("Minimum refresh interval, so very fast speeds don't refresh every single frame.")]
+    [SerializeField] private float minClockRefresh = 0.03f;
 
     [Header("Time-Scale Colours")]
     [SerializeField] private Color pauseColor = new(0.55f, 0.55f, 0.60f);
@@ -58,7 +60,13 @@ public class TimeHudController : MonoBehaviour
         _clockRefreshTimer -= Time.unscaledDeltaTime;
         if (_clockRefreshTimer > 0f)
             return;
-        _clockRefreshTimer = clockRefreshInterval;
+        
+        var mult = TimeController.Instance.CurrentSpeedMultiplier;
+        var interval = mult <= 0f
+            ? baseClockRefresh
+            : Mathf.Max(minClockRefresh, baseClockRefresh / mult);
+        _clockRefreshTimer = interval;
+        
         _view.SetTimeOfDay(TimeController.Instance.Hour, TimeController.Instance.Minute);
     }
 

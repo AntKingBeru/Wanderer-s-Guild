@@ -3,18 +3,18 @@
     <ui:VisualElement name="time-hud" class="time-hud">
         <ui:VisualElement class="time-hud__left">
             <ui:VisualElement class="season-stack">
-                <ui:VisualElement name="season-icon" class="season-icon" />
-                <ui:VisualElement name="season-icon-next" class="season-icon season-icon--overlay" />
+                <ui:VisualElement name="season-icon" class="season-icon"/>
+                <ui:VisualElement name="season-icon-next" class="season-icon season-icon--overlay"/>
             </ui:VisualElement>
             <ui:VisualElement class="date-block">
                 <ui:VisualElement name="date-clip" class="roll-clip">
-                    <ui:Label name="date-label" class="date-label" text="Day 1" />
+                    <ui:Label name="date-label" text="Day 1" class="date-label" style="align-content: flex-start;"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="year-clip" class="roll-clip roll-clip--year">
-                    <ui:Label name="year-label" class="year-label" text="Year 1" />
+                    <ui:Label name="year-label" text="Year 1" class="year-label"/>
                 </ui:VisualElement>
-                <ui:Label name="time-of-day-label" class="time-of-day-label" text="00:00" />
             </ui:VisualElement>
+            <ui:Label name="time-of-day-label" text="00:00" class="time-of-day-label"/>
         </ui:VisualElement>
         <ui:VisualElement class="time-hud__spacer"/>
         <ui:VisualElement class="time-hud__right">

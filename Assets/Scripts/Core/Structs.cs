@@ -315,4 +315,52 @@ public struct FacilityLevelDef
     [Tooltip("Minimum guild rank required to begin this level.")]
     public GuildRank requiredGuildRank;
 }
+
+[Serializable]
+public struct TileCoord
+{
+    public int x, z;
+    
+    public TileCoord(int x, int z)
+    {
+        this.x = x;
+        this.z = z;
+    }
+    
+    public static TileCoord operator +(TileCoord a, TileCoord b) => new(a.x + b.x, a.z + b.z);
+    public override string ToString() => $"({x},{z})";
+    public bool Equals(TileCoord other) => x == other.x && z == other.z;
+    public override bool Equals(object obj) => obj is TileCoord o && Equals(o);
+    public override int GetHashCode() => (x * 397) ^ z;
+    public static bool operator ==(TileCoord a, TileCoord b) => a.Equals(b);
+    public static bool operator !=(TileCoord a, TileCoord b) => !a.Equals(b);
+}
+
+[Serializable]
+public struct DoorPoint
+{
+    public TileCoord tile;
+    public TileEdge edge;
+
+    public DoorPoint(TileCoord tile, TileEdge edge)
+    {
+        this.tile = tile;
+        this.edge = edge;
+    }
+}
+
+[Serializable]
+public readonly struct PlacedRoom
+{
+    public readonly FacilityType Type;
+    public readonly RoomFootprint Footprint;
+    public readonly TileCoord Origin;
+
+    public PlacedRoom(FacilityType type, RoomFootprint footprint, TileCoord origin)
+    {
+        Type = type;
+        Footprint = footprint;
+        Origin = origin;
+    }
+}
 #endregion

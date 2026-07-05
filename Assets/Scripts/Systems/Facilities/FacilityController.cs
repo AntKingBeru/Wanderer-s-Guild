@@ -62,6 +62,15 @@ public class FacilityController : MonoSingleton<FacilityController>
             return false;
         }
 
+        if (TreasuryController.Exists && !TreasuryController.Instance.CanAfford(def.goldCost))
+        {
+            error = "Not enough gold.";
+            return false;
+        }
+        
+        if (TreasuryController.Exists && def.goldCost > 0)
+            TreasuryController.Instance.TrySpend(def.goldCost, TransactionType.Construction);
+
         f.SetState(f.Level == 0 ? FacilityState.UnderConstruction : FacilityState.Upgrading);
         ConstructionController.Instance.Enqueue(type, f.NextLevel, def.constructionHours);
         GameEventsRelay.Instance.RaiseFacilityConstructionStarted(type);

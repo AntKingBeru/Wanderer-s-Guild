@@ -136,12 +136,16 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
 
     #region Facility System
     public FacilityEvent onFacilityConstructionStarted = new();
+    public FacilityEvent onRoomPlaced = new();
     public FacilityEvent onFacilityBuilt = new();
     public FacilityEvent onFacilityUpgraded = new();
     public IntEvent onAdventurerCapacityChanged = new();
 
     public void RaiseFacilityConstructionStarted(FacilityType type)
         => onFacilityConstructionStarted?.Invoke(type);
+    
+    public void RaiseRoomPlaced(FacilityType type) 
+        => onRoomPlaced?.Invoke(type);
     
     public void RaiseFacilityBuilt(FacilityType type)
         => onFacilityBuilt?.Invoke(type);
@@ -156,12 +160,16 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
     #region Economy System
     public GoldEvent onGoldChanged = new();
     public TransactionEvent onTransaction = new();
+    public TransactionEvent onTransactionRejected = new();
 
     public void RaiseGoldChanged(int newTotal, int delta)
         => onGoldChanged?.Invoke(newTotal, delta);
 
     public void RaiseTransaction(Transaction tx)
         => onTransaction?.Invoke(tx);
+    
+    public void RaiseTransactionRejected(Transaction tx) 
+        => onTransactionRejected?.Invoke(tx); 
     #endregion
 
     #region Time & Simulation System
