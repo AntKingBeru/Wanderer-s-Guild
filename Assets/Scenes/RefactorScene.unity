@@ -1947,7 +1947,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestLifecycleController
   seed: 0
-  questDurationDays: 3
+  questDurationDays: 2
 --- !u!1 &1695221346
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,8 +16,9 @@ MonoBehaviour:
   category: 3
   objectivePool:
   - Escort the merchant to the village nearby
+  - Bring back some food
   minDifficulty: 0
-  maxDifficulty: 1
+  maxDifficulty: 0
   minRewardGold: 50
   maxRewardGold: 150
   minReputation: -100
