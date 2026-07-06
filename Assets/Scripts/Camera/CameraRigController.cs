@@ -8,6 +8,8 @@ public class CameraRigController : MonoBehaviour
     [Tooltip("The rig root (this object). The camera is a child angled downward.")]
     [SerializeField] private CameraInputReader input;
 
+    [SerializeField] private CameraZoom zoom;
+
     private Vector3 _targetPosition;
     private Vector3 _currentPosition;
     private float _targetYaw;
@@ -30,7 +32,8 @@ public class CameraRigController : MonoBehaviour
         
         var pan = input.PanIntent;
         var yawRot = Quaternion.Euler(0f, _targetYaw, 0f);
-        var move = (yawRot * Vector3.right * pan.x + yawRot * Vector3.forward * pan.y) * (config.panSpeed * Time.deltaTime);
+        var zoomMult = zoom ? zoom.PanSpeedMultiplier : 1f;
+        var move = (yawRot * Vector3.right * pan.x + yawRot * Vector3.forward * pan.y) * (config.panSpeed * zoomMult * Time.deltaTime);
         _targetPosition = CameraPanBounds.Clamp(_targetPosition + move, config.panMin, config.panMax);
         
         var posK = 1f - Mathf.Exp(-config.moveSmoothing * Time.deltaTime);

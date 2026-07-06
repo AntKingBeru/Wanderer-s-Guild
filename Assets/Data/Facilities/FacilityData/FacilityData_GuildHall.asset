@@ -20,5 +20,5 @@ MonoBehaviour:
   emptyPrefab: {fileID: 0}
   earlyScaffoldPrefab: {fileID: 0}
   lateScaffoldPrefab: {fileID: 0}
-  finishedPrefab: {fileID: 0}
+  finishedPrefab: {fileID: 3801255908114398408, guid: e412b84232dee0e438b3a64344559c18, type: 3}
   levelAddOns: []

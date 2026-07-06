@@ -109,6 +109,10 @@ MonoBehaviour:
   movement: {fileID: 5699605914648849010}
   content: {fileID: 3667339287773032964}
   healthBar: {fileID: 4305024725624541216}
+  renderers:
+  - {fileID: 0}
+  billboardDocument: {fileID: 4800389654559621065}
+  agent: {fileID: 2443323529321756406}
 --- !u!1 &2300373291389728039
 GameObject:
   m_ObjectHideFlags: 0

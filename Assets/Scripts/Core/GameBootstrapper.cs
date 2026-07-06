@@ -5,6 +5,12 @@ using UnityEngine;
 [DefaultExecutionOrder(-50)]
 public class GameBootstrapper : MonoBehaviour
 {
+    [Header("Guild Hall (pre-placed in scene)")]
+    [Tooltip("The Guild Hall already in the scene — its RoomInstance component.")]
+    [SerializeField] private RoomInstance sceneGuildHall;
+    [SerializeField] private RoomFootprint guildHallFootprint;
+    [SerializeField] private TileCoord guildHallOrigin;
+    
     [Header("Starting Requests")]
     [SerializeField] private RequestTemplate[] startingRequestTemplates;
     [SerializeField] private int startingRequestCount = 3;
@@ -14,8 +20,49 @@ public class GameBootstrapper : MonoBehaviour
     [SerializeField] private AdventurerClassTemplate archerTemplate;
     [SerializeField] private AdventurerClassTemplate fighterTemplate;
     
+    private bool _seeded;
+    
     private void Start()
     {
+        BuildGuildHall();
+        if (GameEventsRelay.Exists)
+            GameEventsRelay.Instance.onHourAdvanced.AddListener(HandleFirstHour);
+    }
+
+    private void OnDisable()
+    {
+        if (GameEventsRelay.Exists)
+            GameEventsRelay.Instance.onHourAdvanced.RemoveListener(HandleFirstHour);
+    }
+    
+    private void BuildGuildHall()
+    {
+        if (!guildHallFootprint || !GuildGrid.Exists || !PlacedRoomRegistry.Exists)
+            return;
+        
+        if (GuildGrid.Instance.TryGetOccupant(guildHallOrigin, out _))
+            return;
+
+        GuildGrid.Instance.Occupy(guildHallFootprint, guildHallOrigin, FacilityType.GuildHall);
+        PlacedRoomRegistry.Instance.Register(FacilityType.GuildHall, guildHallFootprint, guildHallOrigin);
+        
+        if (sceneGuildHall && FacilityController.Exists)
+        {
+            var data = FacilityController.Instance.Get(FacilityType.GuildHall)?.Data;
+            if (data)
+                sceneGuildHall.InitializeAsFinished(FacilityType.GuildHall, data);
+        }
+        if (FacilityController.Exists)
+            FacilityController.Instance.MarkBuilt(FacilityType.GuildHall);
+    }
+    
+    private void HandleFirstHour(int hour)
+    {
+        if (_seeded)
+            return;
+        _seeded = true;
+        GameEventsRelay.Instance.onHourAdvanced.RemoveListener(HandleFirstHour);
+
         SeedAdventurers();
         SeedRequests();
     }
@@ -29,11 +76,11 @@ public class GameBootstrapper : MonoBehaviour
         var factory = new StandardAdventurerFactory(rng, null, GameConfig.Instance.Adventurer.baseExperiencePerLevel);
 
         if (archerTemplate)
-            AdventurerRoster.Instance.Add(
-                factory.CreatePrebuilt(IdService.Instance.Next(IdService.Adventurer), archerTemplate, "Jonathan Ashford"));
+            AdventurerRoster.Instance.Add(factory.
+                CreatePrebuilt(IdService.Instance.Next(IdService.Adventurer), archerTemplate, "Jonathan Ashford"));
         if (fighterTemplate)
-            AdventurerRoster.Instance.Add(
-                factory.CreatePrebuilt(IdService.Instance.Next(IdService.Adventurer), fighterTemplate, "Joshua Blackwood"));
+            AdventurerRoster.Instance.Add(factory.
+                CreatePrebuilt(IdService.Instance.Next(IdService.Adventurer), fighterTemplate, "Joshua Blackwood"));
     }
     
     private void SeedRequests()

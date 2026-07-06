@@ -19,11 +19,19 @@ public class PlaceRoomCommand : IInteractionCommand
     {
         if (!GuildGrid.Exists || !GuildGrid.Instance.CanPlace(_footprint, _origin))
             return;
-        if (!ConnectionValidator.HasConnection(_footprint, _origin))
+
+        var connections = ConnectionValidator.CollectConnections(_footprint, _origin);
+        if (connections.Count == 0)
             return;
 
         GuildGrid.Instance.Occupy(_footprint, _origin, _type);
         PlacedRoomRegistry.Instance.Register(_type, _footprint, _origin);
+        foreach (var (candidate, existing) in connections)
+        {
+            PlacedRoomRegistry.Instance.MarkDoorUsed(candidate);
+            PlacedRoomRegistry.Instance.MarkDoorUsed(existing);
+        }
+
         _factory?.Create(_type, _footprint, _origin);
         GameEventsRelay.Instance.RaiseRoomPlaced(_type);
     }

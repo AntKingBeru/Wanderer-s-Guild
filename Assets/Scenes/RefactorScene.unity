@@ -559,13 +559,18 @@ MonoBehaviour:
   cam:
     panSpeed: 18
     edgePanBorder: 10
-    dragPanSpeed: 0.1
+    dragPanSpeed: 0.5
     panMin: {x: -30, y: -30}
     panMax: {x: 30, y: 30}
     rotateSpeed: 90
     dragRotateSpeed: 0.2
     moveSmoothing: 10
     rotateSmoothing: 10
+    zoomStageCount: 5
+    defaultZoomStage: 3
+    minZoomDistance: 8
+    maxZoomDistance: 28
+    zoomSmoothing: 10
   time:
     realSecondsPerDay: 480
     fastMultiplier: 2
@@ -680,6 +685,7 @@ GameObject:
   - component: {fileID: 917608726}
   - component: {fileID: 917608728}
   - component: {fileID: 917608727}
+  - component: {fileID: 917608729}
   m_Layer: 0
   m_Name: CameraRig
   m_TagString: Untagged
@@ -716,6 +722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraRigController
   input: {fileID: 917608728}
+  zoom: {fileID: 917608729}
 --- !u!114 &917608728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -734,6 +741,20 @@ MonoBehaviour:
   rotateKeys: {fileID: -7971145281442105081, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
   pointerPosition: {fileID: -6206618382673314649, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
   referenceDocument: {fileID: 1749319779}
+--- !u!114 &917608729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917608725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e174f3a4f648bb4ab2d052fb79b1e74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraZoom
+  cam: {fileID: 1835436260}
+  zoom: {fileID: -3608629715742911838, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
 --- !u!1 &921066710
 GameObject:
   m_ObjectHideFlags: 0
@@ -1751,11 +1772,11 @@ GameObject:
   - component: {fileID: 1540814196}
   - component: {fileID: 1540814197}
   m_Layer: 0
-  m_Name: NavMesh
+  m_Name: Surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1540814196
 Transform:
@@ -1802,7 +1823,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 95c8b92663bd821439e981772be8a046, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: e782429d9900cdc46be04bfb0c182e23, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &1580797870
 GameObject:
@@ -2048,6 +2069,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1709047019}
   - component: {fileID: 1709047039}
+  - component: {fileID: 1709047043}
   - component: {fileID: 1709047026}
   - component: {fileID: 1709047027}
   - component: {fileID: 1709047038}
@@ -2182,6 +2204,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c98e32c57c65d9f46968581e3b926a94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameBootstrapper
+  sceneGuildHall: {fileID: 1714710739}
+  guildHallFootprint: {fileID: 11400000, guid: 73cab4123d99b4e4caadbeee304c26cd, type: 2}
+  guildHallOrigin:
+    x: 0
+    z: 0
   startingRequestTemplates:
   - {fileID: 11400000, guid: 98432f3d23958bd42a3cf7dd5f48c051, type: 2}
   - {fileID: 11400000, guid: d937ce707f51a424590baa2ea345361d, type: 2}
@@ -2226,11 +2253,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ee9af73fa71c854ab9ae388b5de2ed4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OperationalCostController
+--- !u!114 &1709047043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709047018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcafb210ab4e06a468d0db66c01de21d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NavMeshRebuilder
+  surface: {fileID: 1540814197}
 --- !u!4 &1714710738 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7579075699988860614, guid: e412b84232dee0e438b3a64344559c18, type: 3}
   m_PrefabInstance: {fileID: 1888862740374516713}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1714710739 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -386537246883854277, guid: e412b84232dee0e438b3a64344559c18, type: 3}
+  m_PrefabInstance: {fileID: 1888862740374516713}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b76c489792683d408390a0c50983385, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomInstance
 --- !u!1 &1726791746
 GameObject:
   m_ObjectHideFlags: 0

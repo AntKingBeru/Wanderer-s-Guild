@@ -1,4 +1,4 @@
-// Presents one placed room: swaps staged prefabs during construction and reveals level add-ons.
+// Presents one-placed room: swaps staged prefabs during construction and reveals level add-ons.
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +16,13 @@ public class RoomInstance : MonoBehaviour
         _type = type;
         _data = data;
         SetStage(ConstructionStage.Empty);
+    }
+    
+    public void InitializeAsFinished(FacilityType type, FacilityData data)
+    {
+        _type = type;
+        _data = data;
+        _stage = ConstructionStage.Finished;
     }
     
     private void OnEnable()

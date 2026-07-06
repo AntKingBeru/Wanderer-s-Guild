@@ -33,4 +33,7 @@ public static class DoorGeometry
         return TargetTile(a, aOrigin) == DoorTile(b, bOrigin)
                && TargetTile(b, bOrigin) == DoorTile(a, aOrigin);
     }
+
+    public static DoorKey KeyOf(DoorPoint door, TileCoord roomOrigin)
+        => new(roomOrigin + door.tile, door.edge);
 }

@@ -1,4 +1,4 @@
-// Globally-accessible configuration hub (Singleton, execution order -101) for all systems.
+// Globally accessible configuration hub (Singleton, execution order -101) for all systems.
 
 using System;
 using UnityEngine;
@@ -57,6 +57,15 @@ public class GameConfig : MonoSingleton<GameConfig>
         [Tooltip("Higher = snappier; framerate-independent easing toward target.")]
         public float moveSmoothing = 10f;
         public float rotateSmoothing = 10f;
+        
+        [Header("Zoom")]
+        public int zoomStageCount = 5;
+        [Tooltip("Starting zoom stage (1 = closest, count = farthest).")]
+        public int defaultZoomStage = 3;
+        public float minZoomDistance = 8f;
+        public float maxZoomDistance = 28f;
+        public float zoomSmoothing = 10f;
+        
     }
     #endregion
     
@@ -147,7 +156,7 @@ public class GameConfig : MonoSingleton<GameConfig>
         public int postedQuestLifetimeDays = 10;
     }
     #endregion
-    
+
     #region Party
     [Serializable]
     public class PartyConfig

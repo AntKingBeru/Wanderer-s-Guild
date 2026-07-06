@@ -69,7 +69,8 @@ public class AdventurerPresenceController : MonoSingleton<AdventurerPresenceCont
                 SetGoal(id, MovementGoal.Patrol);
                 break;
             case MovementGoal.ToExit:
-                if (_visuals.TryGetValue(id, out var v) && v) v.gameObject.SetActive(false);
+                if (_visuals.TryGetValue(id, out var v) && v)
+                    v.SetVisible(false);
                 break;
         }
     }
@@ -96,7 +97,11 @@ public class AdventurerPresenceController : MonoSingleton<AdventurerPresenceCont
                     SetGoalIfChanged(kvp.Value, MovementGoal.ToExit);
                     break;
                 case AdventurerState.Idle:
-                    if (!kvp.Value.gameObject.activeSelf) kvp.Value.gameObject.SetActive(true);
+                    if (kvp.Value)
+                    {
+                        kvp.Value.SetVisible(true);
+                        RerenderVisual(kvp.Key, kvp.Value);
+                    }
                     SetGoalIfChanged(kvp.Value, MovementGoal.Patrol);
                     break;
             }
@@ -117,6 +122,14 @@ public class AdventurerPresenceController : MonoSingleton<AdventurerPresenceCont
     {
         if (_visuals.TryGetValue(id, out var v) && v)
             SetGoalIfChanged(v, goal);
+    }
+    
+    private void RerenderVisual(int id, AdventurerVisual visual)
+    {
+        var a = AdventurerRoster.Instance.Get(id);
+        if (a == null)
+            return;
+        visual.Render(new BillboardInfo(a.Level, a.Name, a.Class, a.Rank), SpriteFor(a.Class));
     }
     
     private Sprite SpriteFor(AdventurerClass adventurerClass)

@@ -317,7 +317,7 @@ public struct FacilityLevelDef
 }
 
 [Serializable]
-public struct TileCoord
+public struct TileCoord : IEquatable<TileCoord>
 {
     public int x, z;
     
@@ -329,9 +329,12 @@ public struct TileCoord
     
     public static TileCoord operator +(TileCoord a, TileCoord b) => new(a.x + b.x, a.z + b.z);
     public override string ToString() => $"({x},{z})";
-    public bool Equals(TileCoord other) => x == other.x && z == other.z;
-    public override bool Equals(object obj) => obj is TileCoord o && Equals(o);
-    public override int GetHashCode() => (x * 397) ^ z;
+    public bool Equals(TileCoord other)
+        => x == other.x && z == other.z;
+    public override bool Equals(object obj)
+        => obj is TileCoord o && Equals(o);
+    public override int GetHashCode()
+        => (x * 397) ^ z;
     public static bool operator ==(TileCoord a, TileCoord b) => a.Equals(b);
     public static bool operator !=(TileCoord a, TileCoord b) => !a.Equals(b);
 }
@@ -350,17 +353,38 @@ public struct DoorPoint
 }
 
 [Serializable]
+public struct DoorKey
+{
+    public TileCoord tile;
+    public TileEdge edge;
+
+    public DoorKey(TileCoord tile, TileEdge edge)
+    {
+        this.tile = tile;
+        this.edge = edge;
+    }
+
+    public bool Equals(DoorKey other) => tile == other.tile && edge == other.edge;
+    public override bool Equals(object obj)
+        => obj is DoorKey o && Equals(o);
+    public override int GetHashCode()
+        => (tile.GetHashCode() * 397) ^ (int)edge;
+    public static bool operator ==(DoorKey a, DoorKey b) => a.Equals(b);
+    public static bool operator !=(DoorKey a, DoorKey b) => !a.Equals(b);
+}
+
+[Serializable]
 public readonly struct PlacedRoom
 {
-    public readonly FacilityType Type;
-    public readonly RoomFootprint Footprint;
-    public readonly TileCoord Origin;
+    public readonly FacilityType type;
+    public readonly RoomFootprint footprint;
+    public readonly TileCoord origin;
 
     public PlacedRoom(FacilityType type, RoomFootprint footprint, TileCoord origin)
     {
-        Type = type;
-        Footprint = footprint;
-        Origin = origin;
+        this.type = type;
+        this.footprint = footprint;
+        this.origin = origin;
     }
 }
 #endregion

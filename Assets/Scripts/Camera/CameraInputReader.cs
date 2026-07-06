@@ -120,9 +120,9 @@ public class CameraInputReader : MonoBehaviour
         else if (p.x >= size.x - border)
             e.x += 1f;
         if (p.y <= border)
-            e.y += 1f;
-        else if (p.y >= size.y - border)
             e.y -= 1f;
+        else if (p.y >= size.y - border)
+            e.y += 1f;
         return e;
     }
     
