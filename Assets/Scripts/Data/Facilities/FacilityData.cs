@@ -18,9 +18,13 @@ public class FacilityData : ScriptableObject
     
     [Header("Per-Level Add-On Pieces (index 0 = level 2's add-on, etc.)")]
     [SerializeField] private GameObject[] levelAddOns;
+    
+    [Header("Placement")]
+    [SerializeField] private RoomFootprint footprint;
 
     public FacilityType Type => type;
     public int MaxLevel => levels?.Count ?? 0;
+    public RoomFootprint Footprint => footprint;
     
     public bool TryGetLevel(int level, out FacilityLevelDef def)
     {

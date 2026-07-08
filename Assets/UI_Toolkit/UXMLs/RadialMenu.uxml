@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI_Toolkit/USSs/RadialMenu.uss?fileID=7433441132597879392&amp;guid=84148e388cf6bec4d832fd50e8a4db2f&amp;type=3#RadialMenu"/>
+    <ui:VisualElement name="radial-overlay" picking-mode="Position" class="radial-overlay">
+        <ui:VisualElement name="radial-ring" picking-mode="Ignore" class="radial-ring"/>
+        <ui:Button name="radial-prev" text="◀" class="radial-arrow radial-arrow--prev"/>
+        <ui:Button name="radial-next" text="▶" class="radial-arrow radial-arrow--next"/>
+        <ui:Label name="radial-tooltip" class="radial-tooltip"/>
+    </ui:VisualElement>
+</ui:UXML>

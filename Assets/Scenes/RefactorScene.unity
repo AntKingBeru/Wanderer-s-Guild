@@ -299,6 +299,83 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 191067262}
   m_Mesh: {fileID: -6617631398587751468, guid: f3ca9a8fce898464b838c1c5229ddb5a, type: 3}
+--- !u!1 &214843366
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 214843367}
+  - component: {fileID: 214843368}
+  - component: {fileID: 214843369}
+  m_Layer: 0
+  m_Name: RadialBuildMenu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &214843367
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214843366}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 983126841}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &214843368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214843366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: dc2783bd509c05942a3b0610f7f1845e, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 334623ef36eb88847b5250b8ac7bfd29, type: 3}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &214843369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214843366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ebddb405e2752842968c4d48dd4bf10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RadialMenuController
+  cam: {fileID: 1835436259}
+  roomInstancePrefab: {fileID: 6047884647192634812, guid: 0d5e413fe76281340a3296e4125d421b, type: 3}
+  buildable:
+  - {fileID: 11400000, guid: aa42c1af35eb18c458ac99d938f72bdb, type: 2}
+  - {fileID: 11400000, guid: 1185cb2e6fb576e449a35168b59e6219, type: 2}
+  - {fileID: 11400000, guid: 0a72e3a1fdbcfdd43b966e0025d401bd, type: 2}
+  - {fileID: 11400000, guid: 0f13eda045e7ba4459a790704d81eea1, type: 2}
+  - {fileID: 11400000, guid: 7cee733cbfcdc7c44988319ef1516490, type: 2}
+  - {fileID: 11400000, guid: bdfa166a539dc3f488695ec1ca3085d2, type: 2}
 --- !u!1 &362341152
 GameObject:
   m_ObjectHideFlags: 0
@@ -643,6 +720,9 @@ MonoBehaviour:
     gridOrigin: {x: 0, y: 0, z: 0}
     width: 21
     depth: 21
+  build:
+    maxRadialOptions: 6
+    radialRadius: 92
 --- !u!1 &786383174
 GameObject:
   m_ObjectHideFlags: 0
@@ -1151,6 +1231,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 214843367}
   - {fileID: 640091902}
   - {fileID: 362341153}
   - {fileID: 578874264}
@@ -1455,6 +1536,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1406559404}
+  - component: {fileID: 1406559408}
   - component: {fileID: 1406559407}
   - component: {fileID: 1406559405}
   - component: {fileID: 1406559406}
@@ -1523,6 +1605,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d412f6621148e9a45948692730ce427c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GuildGrid
+--- !u!114 &1406559408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1406559403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34ce3a773ec282b4a996cf274f885eb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildModeController
+  toggleBuild: {fileID: 3551967878834676757, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  click: {fileID: 9061046987277445418, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  pointer: {fileID: -3901955804965246127, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  cam: {fileID: 1835436259}
+  doorLayers:
+    serializedVersion: 2
+    m_Bits: 128
+  doorMarkerPrefab: {fileID: 3290549717106153361, guid: 0b30aa8e742a1fe4c8971e7205fc9d36, type: 3}
 --- !u!1 &1408904400
 GameObject:
   m_ObjectHideFlags: 0
@@ -1679,6 +1781,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onAdventurerArrived:
+    m_PersistentCalls:
+      m_Calls: []
+  onBuildModeChanged:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &1525760103

@@ -1,0 +1,42 @@
+.radial-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+}
+.radial-ring {
+    position: absolute;
+    width: 0; height: 0;
+}
+.radial-option {
+    width: 68px; height: 48px;
+    border-radius: 8px;
+    border-width: 0;
+    background-color: rgba(40, 46, 60, 0.96);
+    color: rgb(236, 238, 244);
+    font-size: 11px;
+    -unity-font-style: bold;
+}
+.radial-option:hover { background-color: rgba(60, 70, 90, 0.98); }
+.radial-option--disabled {
+    background-color: rgba(40, 46, 60, 0.5);
+    color: rgba(236, 238, 244, 0.35);
+}
+.radial-arrow {
+    position: absolute;
+    width: 32px; height: 32px;
+    border-width: 0; border-radius: 16px;
+    background-color: rgba(40, 46, 60, 0.9);
+    color: rgb(236, 238, 244);
+}
+.radial-arrow--prev { left: 40px; top: 50%; }
+.radial-arrow--next { right: 40px; top: 50%; }
+.radial-tooltip {
+    position: absolute;
+    left: 50%; bottom: 40px;
+    padding: 8px 12px;
+    background-color: rgba(18, 20, 28, 0.96);
+    border-radius: 8px;
+    color: rgb(236, 238, 244);
+    font-size: 12px;
+    white-space: normal;
+    display: none;
+}

@@ -42,7 +42,7 @@ public class WorldInteractionController : MonoSingleton<WorldInteractionControll
         if (!cam || pointerPosition?.action == null)
             return;
 
-        if (ScreenManager.Exists && ScreenManager.Instance.HasOpenScreen)
+        if (ScreenManager.Exists && ScreenManager.Instance.HasOpenScreen && BuildModeController.Exists && BuildModeController.Instance.IsActive)
         {
             SetHover(null);
             return;

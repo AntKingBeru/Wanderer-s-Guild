@@ -20,6 +20,7 @@ public class GameConfig : MonoSingleton<GameConfig>
     [SerializeField] private WorldConfig world = new();
     [SerializeField] private FacilityConfig facilities = new();
     [SerializeField] private GridConfig grid = new();
+    [SerializeField] private BuildConfig build = new();
     
     public CameraConfig Camera => cam;
     public TimeConfig Time => time;
@@ -33,6 +34,7 @@ public class GameConfig : MonoSingleton<GameConfig>
     public WorldConfig World => world;
     public FacilityConfig Facilities => facilities;
     public GridConfig Grid => grid;
+    public BuildConfig Build => build;
     
     #region Cam
     [Serializable]
@@ -255,6 +257,17 @@ public class GameConfig : MonoSingleton<GameConfig>
         public int width = 20;
         [Tooltip("Grid depth in tiles (Z).")]
         public int depth = 20;
+    }
+    #endregion
+    
+    #region Build
+    [Serializable]
+    public class BuildConfig
+    {
+        [Tooltip("Max radial options shown per page before paging arrow appear.")]
+        public int maxRadialOptions = 6;
+        [Tooltip("Radius (panel px) of the radial option ring.")]
+        public float radialRadius = 92f;
     }
     #endregion
 }

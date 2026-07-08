@@ -25,6 +25,7 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
     [Serializable] public class SeasonEvent : UnityEvent<Season> { }
     [Serializable] public class ScreenEvent : UnityEvent<ScreenId> { }
     [Serializable] public class MovementArrivedEvent : UnityEvent<int, MovementGoal> { }
+    [Serializable] public class BoolEvent : UnityEvent<bool> { }
     #endregion
 
     #region Guild Rank System
@@ -207,5 +208,12 @@ public class GameEventsRelay : MonoSingleton<GameEventsRelay>
     
     public void RaiseAdventurerArrived(int id, MovementGoal goal)
         => onAdventurerArrived?.Invoke(id, goal);
+    #endregion
+    
+    #region Build Mode
+    public BoolEvent onBuildModeChanged = new();
+    
+    public void RaiseBuildModeChanged(bool active)
+        => onBuildModeChanged?.Invoke(active);
     #endregion
 }
