@@ -22,7 +22,8 @@ public class BuildModeController : MonoSingleton<BuildModeController>
 
     private DoorHighlighter _doorHighlighter;
 
-    protected override void OnSingletonAwake() => _doorHighlighter = new DoorHighlighter(doorMarkerPrefab);
+    protected override void OnSingletonAwake()
+        => _doorHighlighter = new DoorHighlighter(doorMarkerPrefab);
 
     private void OnEnable()
     {
@@ -45,7 +46,11 @@ public class BuildModeController : MonoSingleton<BuildModeController>
             click.action.performed -= OnClick;
     }
 
-    private void OnToggle(InputAction.CallbackContext _) => SetActive(!IsActive);
+    private void OnToggle(InputAction.CallbackContext _)
+    {
+        SetActive(!IsActive);
+        Debug.Log($"Build mode is now {IsActive}");
+    }
 
     public void SetActive(bool active)
     {

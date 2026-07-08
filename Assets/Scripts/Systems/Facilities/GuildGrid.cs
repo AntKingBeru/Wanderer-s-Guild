@@ -12,7 +12,7 @@ public class GuildGrid : MonoSingleton<GuildGrid>
     public Vector3 TileToWorld(TileCoord tile)
     {
         var config = GameConfig.Instance.Grid;
-        return config.gridOrigin + new Vector3((tile.x + 0.5f) * config.tileSize, 0f, (tile.z + 0.5f) * config.tileSize);
+        return config.gridOrigin + new Vector3(tile.x * config.tileSize, 0f, tile.z * config.tileSize);
     }
     
     public TileCoord WorldToTile(Vector3 world)

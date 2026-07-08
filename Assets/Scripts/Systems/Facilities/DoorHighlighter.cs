@@ -9,28 +9,29 @@ public class DoorHighlighter
     private readonly GameObject _markerPrefab;
     private readonly List<GameObject> _markers = new List<GameObject>();
 
-    public DoorHighlighter(GameObject markerPrefab) => _markerPrefab = markerPrefab;
+    public DoorHighlighter(GameObject markerPrefab)
+        => _markerPrefab = markerPrefab;
     
     public void Show()
     {
         Hide();
         if (!_markerPrefab || !PlacedRoomRegistry.Exists || !GuildGrid.Exists)
             return;
-
-        var tile = GameConfig.Instance.Grid.tileSize;
+        
         foreach (var room in PlacedRoomRegistry.Instance.Rooms)
         {
             if (!room.footprint)
                 continue;
             foreach (var dp in room.footprint.Doors)
             {
-                DoorKey key = DoorGeometry.KeyOf(dp, room.origin);
+                var key = DoorGeometry.KeyOf(dp, room.origin);
                 if (PlacedRoomRegistry.Instance.IsDoorUsed(key)) continue;
 
                 var targetTile = key.tile + DoorGeometry.OffsetFor(key.edge);
-                if (!GuildGrid.Instance.IsFree(targetTile)) continue;   // no space beyond → not buildable
+                if (!GuildGrid.Instance.IsFree(targetTile))
+                    continue;
 
-                var pos = GuildGrid.Instance.TileToWorld(key.tile) + EdgeDir(key.edge) * (tile * 0.5f);
+                var pos = GuildGrid.Instance.TileToWorld(key.tile) + EdgeDir(key.edge);
                 var go = Object.Instantiate(_markerPrefab, pos, Quaternion.identity);
                 go.GetComponent<DoorMarker>()?.Bind(key, pos);
                 _markers.Add(go);

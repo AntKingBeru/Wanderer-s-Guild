@@ -15,5 +15,11 @@ MonoBehaviour:
   type: 6
   levels:
   - constructionHours: 0
-    goldCost: 0
+    goldCost: 50
     requiredGuildRank: 0
+  emptyPrefab: {fileID: 0}
+  earlyScaffoldPrefab: {fileID: 0}
+  lateScaffoldPrefab: {fileID: 0}
+  finishedPrefab: {fileID: 0}
+  levelAddOns: []
+  footprint: {fileID: 11400000, guid: 849f5148b12a2ba44b7ac5874e012e26, type: 2}

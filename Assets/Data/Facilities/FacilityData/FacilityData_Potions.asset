@@ -14,6 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FacilityData
   type: 4
   levels:
-  - constructionHours: 0
-    goldCost: 0
+  - constructionHours: 24
+    goldCost: 750
     requiredGuildRank: 1
+  emptyPrefab: {fileID: 0}
+  earlyScaffoldPrefab: {fileID: 0}
+  lateScaffoldPrefab: {fileID: 0}
+  finishedPrefab: {fileID: 0}
+  levelAddOns: []
+  footprint: {fileID: 0}

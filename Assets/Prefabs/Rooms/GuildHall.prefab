@@ -2928,7 +2928,7 @@ GameObject:
   - component: {fileID: 8249184641982332975}
   - component: {fileID: 4149865987065932727}
   - component: {fileID: 510675349805548200}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4481,7 +4481,7 @@ GameObject:
   - component: {fileID: 4890460377306318980}
   - component: {fileID: 4288525703777343744}
   - component: {fileID: 6509046142125283372}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5576,7 +5576,7 @@ GameObject:
   - component: {fileID: 8000788603410713728}
   - component: {fileID: 7626267186964183746}
   - component: {fileID: 4237751108358422933}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7030,7 +7030,7 @@ GameObject:
   - component: {fileID: 3051279461560198293}
   - component: {fileID: 4889183126238298496}
   - component: {fileID: 1605052105215266117}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10638,14 +10638,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5948296931803955548}
     m_Modifications:
-    - target: {fileID: 1349540007996158543, guid: 4152f3d542080db4188b883e89cac183, type: 3}
-      propertyPath: m_Carve
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5593481718309333375, guid: 4152f3d542080db4188b883e89cac183, type: 3}
-      propertyPath: m_Carve
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6288571509630710166, guid: 4152f3d542080db4188b883e89cac183, type: 3}
       propertyPath: m_Name
       value: Reception_Desk
@@ -10689,10 +10681,6 @@ PrefabInstance:
     - target: {fileID: 7860516695192882608, guid: 4152f3d542080db4188b883e89cac183, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8917084153709139577, guid: 4152f3d542080db4188b883e89cac183, type: 3}
-      propertyPath: m_Carve
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

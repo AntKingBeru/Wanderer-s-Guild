@@ -1540,6 +1540,7 @@ GameObject:
   - component: {fileID: 1406559407}
   - component: {fileID: 1406559405}
   - component: {fileID: 1406559406}
+  - component: {fileID: 1406559409}
   m_Layer: 0
   m_Name: Facilities
   m_TagString: Untagged
@@ -1625,6 +1626,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   doorMarkerPrefab: {fileID: 3290549717106153361, guid: 0b30aa8e742a1fe4c8971e7205fc9d36, type: 3}
+--- !u!114 &1406559409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1406559403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 229d4bdc2434552489045184cef75936, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlacedRoomRegistry
+  originMarkerPrefab: {fileID: 3290549717106153361, guid: 0b30aa8e742a1fe4c8971e7205fc9d36, type: 3}
 --- !u!1 &1408904400
 GameObject:
   m_ObjectHideFlags: 0
