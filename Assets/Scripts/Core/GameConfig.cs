@@ -1,0 +1,273 @@
+// Globally accessible configuration hub (Singleton, execution order -101) for all systems.
+
+using System;
+using UnityEngine;
+
+// Initializes before every other gameplay script
+[DefaultExecutionOrder(-101)]
+public class GameConfig : MonoSingleton<GameConfig>
+{
+    [Header("System Configuration Blocks")]
+    [SerializeField] private CameraConfig cam = new();
+    [SerializeField] private TimeConfig time = new();
+    [SerializeField] private EconomyConfig economy = new();
+    [SerializeField] private ReputationConfig reputation = new();
+    [SerializeField] private AdventurerConfig adventurer = new();
+    [SerializeField] private QuestConfig quest = new();
+    [SerializeField] private PartyConfig party = new();
+    [SerializeField] private GuildConfig guild = new();
+    [SerializeField] private ResolutionConfig resolution = new();
+    [SerializeField] private WorldConfig world = new();
+    [SerializeField] private FacilityConfig facilities = new();
+    [SerializeField] private GridConfig grid = new();
+    [SerializeField] private BuildConfig build = new();
+    
+    public CameraConfig Camera => cam;
+    public TimeConfig Time => time;
+    public EconomyConfig Economy => economy;
+    public ReputationConfig Reputation => reputation;
+    public AdventurerConfig Adventurer => adventurer;
+    public QuestConfig Quest => quest;
+    public PartyConfig Party => party;
+    public GuildConfig Guild => guild;
+    public ResolutionConfig Resolution => resolution;
+    public WorldConfig World => world;
+    public FacilityConfig Facilities => facilities;
+    public GridConfig Grid => grid;
+    public BuildConfig Build => build;
+    
+    #region Cam
+    [Serializable]
+    public class CameraConfig
+    {
+        [Header("Pan")]
+        public float panSpeed = 12f;
+        [Tooltip("Screen-edge thickness (px) that triggers edge panning.")]
+        public float edgePanBorder = 12f;
+        [Tooltip("Middle-mouse drag sensitivity (world units per screen unit).")]
+        public float dragPanSpeed = 0.05f;
+
+        [Header("Pan Bounds (rig XZ position limits)")]
+        public Vector2 panMin = new(-30f, -30f);
+        public Vector2 panMax = new(30f, 30f);
+        
+        [Header("Rotation")]
+        public float rotateSpeed = 90f;
+        public float dragRotateSpeed = 0.2f;
+        
+        [Header("Smoothing")]
+        [Tooltip("Higher = snappier; framerate-independent easing toward target.")]
+        public float moveSmoothing = 10f;
+        public float rotateSmoothing = 10f;
+        
+        [Header("Zoom")]
+        public int zoomStageCount = 5;
+        [Tooltip("Starting zoom stage (1 = closest, count = farthest).")]
+        public int defaultZoomStage = 3;
+        public float minZoomDistance = 8f;
+        public float maxZoomDistance = 28f;
+        public float zoomSmoothing = 10f;
+        
+    }
+    #endregion
+    
+    #region Time & Simulation
+    [Serializable]
+    public class TimeConfig
+    {
+        [Tooltip("Real seconds for one in-game day to pass at Normal speed.")]
+        public float realSecondsPerDay = 90f;
+        public float fastMultiplier = 3f;
+        public float veryFastMultiplier = 8f;
+        public int daysPerSeason = 30;
+        [Tooltip("Hour of day the game starts at (0–23). Default 5 = 05:00.")]
+        [Range(0, 23)] public int startHour = 5;
+    }
+    #endregion
+    
+    #region Economy
+    [Serializable]
+    public class EconomyConfig
+    {
+        public int startingGold = 500;
+        public int dailyOperationCost = 25;
+    }
+    #endregion
+    
+    #region Repuatation
+    [Serializable]
+    public class ReputationConfig
+    {
+        public int startingReputation;
+        public int minReputation = -100;
+        public int maxReputation = 100;
+        [Tooltip("Tier table asset mapping reputation bands to their effects.")]
+        public ReputationTierTable tierTable;
+    }
+    #endregion
+    
+    #region Adventurer
+    [Serializable]
+    public class AdventurerConfig
+    {
+        [Header("Rank-Up Applications")]
+        [Tooltip("Rank progress required before an adventurer submits a rank-up application.")]
+        public int rankProgressForPromotion = 100;
+        
+        [Header("Arrival Pacing")]
+        public float baseArrivalIntervalDays = 3f;
+        [Tooltip("Shortest arrival interval once reputation is high.")]
+        public float minArrivalIntervalDays = 1f;
+        [Tooltip("Reputation at which the arrival interval reaches its minimum.")]
+        public int reputationForMinArrival = 200;
+        
+        [Header("Registration (office-gated)")]
+        [Tooltip("In-game days a pending registrant waits before leaving if unapproved.")]
+        public int registrationGraceDays = 3;
+
+        [Header("Quest Applications")]
+        [Tooltip("Day-fraction window start when parties may apply (0..1, e.g. 0.25 = ~06:00).")]
+        public float applicationWindowStart = 0.25f;
+        [Tooltip("Day-fraction window end (0..1, e.g. 0.75 = ~18:00).")]
+        public float applicationWindowEnd = 0.75f;
+
+        [Header("Progression")]
+        public int baseExperiencePerLevel = 100;
+        [Tooltip("Hard cap; also constrained by current Guild Rank later.")]
+        public GuildRank defaultRankCap = GuildRank.C;
+    }
+    #endregion
+    
+    #region Quest
+    [Serializable]
+    public class QuestConfig
+    {
+        [Range(0, 100)] public int defaultGuildRewardPercent = 30;
+        public int baseRequestExpirationDays = 14;
+        
+        [Header("Request Generation")]
+        [Tooltip("In-game days between requests at zero reputation.")]
+        public float baseRequestIntervalDays = 2f;
+        [Tooltip("Shortest interval once reputation is high.")]
+        public float minRequestIntervalDays = 1f;
+        [Tooltip("Reputation at which the interval reaches its minimum.")]
+        public int reputationForMinInterval = 200;
+        [Tooltip("Maximum simultaneously active requests on the board.")]
+        public int maxActiveRequests = 12;
+        [Tooltip("In-game days a posted quest stays on the board before expiring unfilled.")]
+        public int postedQuestLifetimeDays = 10;
+    }
+    #endregion
+
+    #region Party
+    [Serializable]
+    public class PartyConfig
+    {
+        public PartySizeRange lowRankSize = new(2, 5);
+        public PartySizeRange highRankSize = new(3, 7);
+    }
+    #endregion
+    
+    #region Guild
+    [Serializable]
+    public class GuildConfig
+    {
+        [Header("Rank Progression")]
+        [Tooltip("Guild-rank EXP granted per successful quest.")]
+        public int rankExpPerQuestSuccess = 10;
+        [Tooltip("EXP required to advance one guild rank.")]
+        public int rankExpPerRank = 100;
+        public GuildRank startingRank = GuildRank.F;
+        [Tooltip("Quest-board slots = (int)GuildRank + this base. F→3 ... National→10.")]
+        public int boardSlotBase = 3;
+        public int MaxBoardSlots => (int)GuildRank.National + boardSlotBase;
+    }
+    #endregion
+    
+    #region Resolution
+    [Serializable]
+    public class ResolutionConfig
+    {
+        [Header("Stat Matching")]
+        [Tooltip("Required party stat-total per difficulty tier (index = QuestDifficulty).")]
+        public int[] difficultyStatThreshold = { 20, 45, 80, 130, 200, 300 };
+        [Tooltip("Success chance when party total exactly meets the threshold.")]
+        [Range(0f, 1f)] public float baseSuccessChance = 0.6f;
+        [Tooltip("Success chance gained/lost per 10% over/under the threshold.")]
+        [Range(0f, 1f)] public float chancePerTenPercent = 0.08f;
+
+        [Header("Rewards")]
+        public int experiencePerDifficulty = 40;
+        public int rankProgressPerSuccess = 25;
+        public int failureExperienceFraction = 25;
+
+        [Header("Reputation Deltas")]
+        public int reputationOnSuccess = 10;
+        public int reputationOnFailure = -8;
+        public int reputationOnDeath = -15;
+
+        [Header("Casualty")]
+        [Tooltip("Death chance per member on a failure, scaled by how badly the party fell short.")]
+        [Range(0f, 1f)] public float baseDeathChanceOnFailure = 0.15f;
+    }
+    #endregion
+    
+    #region World
+    [Serializable]
+    public class WorldConfig
+    {
+        [Header("Movement")]
+        public float agentSpeed = 3.5f;
+        [Tooltip("Distance from destination counted as 'arrived'.")]
+        public float arrivalTolerance = 0.4f;
+        
+        [Header("Reception Queue")]
+        [Tooltip("Negative-Z spacing between adventurers lining up at the desk.")]
+        public float queueSpacing = 1.2f;
+
+        [Header("Patrol")]
+        public float patrolRadius = 8f;
+        public float minPatrolWaitSeconds = 2f;
+        public float maxPatrolWaitSeconds = 6f;
+
+        [Header("Doors")]
+        public float doorOpenAngle = 90f;
+        public float doorSpeed = 4f;
+    }
+    #endregion
+    
+    #region Facilities
+    [Serializable]
+    public class FacilityConfig
+    {
+        [Tooltip("Adventurer capacity with no bedrooms built.")]
+        public int baseAdventurerCapacity = 4;
+        [Tooltip("Extra capacity added per bedroom level built.")]
+        public int capacityPerBedroomLevel = 2;
+    }
+    
+    [Serializable]
+    public class GridConfig
+    {
+        [Tooltip("World size of one tile edge in Unity units.")]
+        public float tileSize = 4f;
+        [Tooltip("Grid origin in world space (tile 0,0's corner).")]
+        public Vector3 gridOrigin = Vector3.zero;
+        [Tooltip("Grid width in tiles (X).")]
+        public int width = 20;
+        [Tooltip("Grid depth in tiles (Z).")]
+        public int depth = 20;
+    }
+    #endregion
+    
+    #region Build
+    [Serializable]
+    public class BuildConfig
+    {
+        [Tooltip("Max radial options shown per page before paging arrow appear.")]
+        public int maxRadialOptions = 6;
+        [Tooltip("Radius (panel px) of the radial option ring.")]
+        public float radialRadius = 92f;
+    }
+    #endregion
+}

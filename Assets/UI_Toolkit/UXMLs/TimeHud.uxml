@@ -1,0 +1,30 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI_Toolkit/USSs/TimeHud.uss?fileID=7433441132597879392&amp;guid=9b9ace63fa15566429d6282c3951d34f&amp;type=3#TimeHud"/>
+    <ui:VisualElement name="time-hud" class="time-hud">
+        <ui:VisualElement class="time-hud__left">
+            <ui:VisualElement class="season-stack">
+                <ui:VisualElement name="season-icon" class="season-icon" />
+                <ui:VisualElement name="season-icon-next" class="season-icon season-icon--overlay" />
+            </ui:VisualElement>
+            <ui:VisualElement class="date-block">
+                <ui:VisualElement name="date-clip" class="roll-clip">
+                    <ui:Label name="date-label" class="date-label" text="Day 1" />
+                </ui:VisualElement>
+                <ui:VisualElement name="year-clip" class="roll-clip roll-clip--year">
+                    <ui:Label name="year-label" class="year-label" text="Year 1" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:Label name="time-of-day-label" class="time-of-day-label" text="05:00" />
+        </ui:VisualElement>
+        <ui:VisualElement class="time-hud__spacer" />
+        <ui:VisualElement class="time-hud__right">
+            <ui:Label name="speed-badge" class="speed-badge" text="NORMAL" />
+            <ui:VisualElement class="speed-controls">
+                <ui:Button name="btn-pause" class="speed-btn" text="II" />
+                <ui:Button name="btn-normal" class="speed-btn" text="&#9658;" />
+                <ui:Button name="btn-fast" class="speed-btn" text="&#9658;&#9658;" />
+                <ui:Button name="btn-very-fast" class="speed-btn" text="&#9658;&#9658;&#9658;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

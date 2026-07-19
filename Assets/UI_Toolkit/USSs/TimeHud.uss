@@ -1,0 +1,87 @@
+.time-hud {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    flex-direction: row;
+    align-items: center;
+    height: 56px;
+    padding: 0 16px;
+    background-color: rgba(18, 20, 28, 0.92);
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.10);
+}
+
+.time-hud__left { flex-direction: row; align-items: center; }
+.time-hud__right { flex-direction: row; align-items: center; }
+.time-hud__spacer { flex-grow: 1; }
+
+.season-stack { width: 36px; height: 36px; margin-right: 10px; }
+.season-icon {
+    width: 36px; height: 36px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+.season-icon--overlay { position: absolute; top: 0; left: 0; opacity: 0; }
+
+.date-block { justify-content: center; }
+
+/* clip windows crop the rolling numbers; tall enough to clear the font */
+.roll-clip {
+    height: 24px;
+    overflow: hidden;
+    position: relative;
+    min-width: 70px;
+}
+.roll-clip--year { height: 18px; }
+
+/* labels are absolutely centered inside their clip (RollingNumber animates `top`) */
+.date-label {
+    position: absolute;
+    left: 0; right: 0;
+    color: rgb(238, 240, 245);
+    font-size: 18px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    margin: 0; padding: 0;
+}
+.year-label {
+    position: absolute;
+    left: 0; right: 0;
+    color: rgba(238, 240, 245, 0.65);
+    font-size: 12px;
+    -unity-text-align: middle-left;
+    margin: 0; padding: 0;
+}
+
+.time-of-day-label {
+    color: rgb(238, 240, 245);
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-left: 16px;
+    min-width: 52px;
+    -unity-text-align: middle-left;
+}
+
+.speed-badge {
+    min-width: 78px;
+    margin-right: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: rgb(15, 16, 22);
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.speed-controls { flex-direction: row; }
+.speed-btn {
+    width: 32px; height: 30px;
+    margin-left: 3px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-width: 0;
+    border-radius: 6px;
+    color: rgba(238, 240, 245, 0.75);
+}
+.speed-btn:hover { background-color: rgba(255, 255, 255, 0.14); }
+.speed-btn--active {
+    background-color: rgba(255, 255, 255, 0.22);
+    color: rgb(255, 255, 255);
+}

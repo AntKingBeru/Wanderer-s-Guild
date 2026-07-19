@@ -1,0 +1,18 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI_Toolkit/USSs/QuestBoardScreen.uss?fileID=7433441132597879392&amp;guid=77d4784b14e75424fbe4da374a006edd&amp;type=3#QuestBoardScreen"/>
+    <ui:VisualElement name="quest-board" class="screen quest-board">
+        <ui:VisualElement class="panel panel--board">
+            <ui:Label text="Quest Board" class="panel__header"/>
+            <ui:Label name="board-error" class="board-error"/>
+            <ui:VisualElement name="slot-grid" class="slot-grid"/>
+        </ui:VisualElement>
+        <ui:VisualElement class="panel panel--drafts">
+            <ui:Label text="Unposted Quests" class="panel__header"/>
+            <ui:Label text="Drag a quest onto an open board slot to post it." class="panel__hint"/>
+            <ui:ScrollView name="draft-list" class="draft-list"/>
+            <ui:VisualElement class="panel__spacer"/>
+            <ui:Button name="close-screen" text="Close" class="close-button"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="drag-layer" picking-mode="Ignore" class="drag-layer"/>
+    </ui:VisualElement>
+</ui:UXML>
