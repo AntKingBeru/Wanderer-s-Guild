@@ -1,8 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI_Toolkit/USSs/GoldHud.uss?fileID=7433441132597879392&amp;guid=f9b6af9d3de7b2f4c8b6d79639977a61&amp;type=3#GoldHud"/>
-    <ui:VisualElement name="gold-hud" class="gold-hud">
-        <ui:VisualElement name="gold-icon" class="gold-icon"/>
-        <ui:Label name="gold-amount" text="0" class="gold-amount"/>
-        <ui:VisualElement name="gold-floaters" picking-mode="Ignore" class="gold-floaters"/>
-    </ui:VisualElement>
-</ui:UXML>
