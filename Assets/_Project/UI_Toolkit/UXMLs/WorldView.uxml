@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/WorldView.uss?fileID=7433441132597879392&amp;guid=98327eb0cf7704145994483b06881d8a&amp;type=3#WorldView"/>
+    <!-- The world render texture, full canvas (same integer scale + letterbox as the UI). Never picks. -->
+    <ui:VisualElement name="world-view" class="world-view" picking-mode="Ignore" />
+
+    <!-- Name of the hovered guild object, centred above it (positioned in code). -->
+    <ui:VisualElement name="world-label" class="pixel-window world-label" picking-mode="Ignore">
+        <wg:OutlinedText name="world-label-text" text="Reception Desk" />
+    </ui:VisualElement>
+</ui:UXML>

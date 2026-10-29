@@ -1,0 +1,18 @@
+/* The world render texture stretched over the 320×180 canvas; the panel's integer scaling keeps its pixels square. */
+.world-view {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    -unity-background-scale-mode: stretch-to-fill;
+}
+/* NOTE: Added at runtime only: a solid background under the texture, so a transparent world pixel can never show the
+   uncleared screen. In Edit mode the element stays transparent and the Game view shows the camera. */
+.world-view--live {
+    background-color: rgb(16, 16, 20);
+}
+/* NOTE: left/top are the anchor (set in code, whole pixels); the translate centres the label above it. */
+.world-label {
+    position: absolute;
+    padding: 1px 4px;
+    translate: -50% -100%;
+    display: none;
+}

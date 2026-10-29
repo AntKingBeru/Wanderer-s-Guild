@@ -46,6 +46,9 @@ namespace WanderersGuild
         [SerializeField] private QuestPanelSettings questPanel = new();
         [SerializeField] private AdventurerSettings adventurers = new();
         [SerializeField] private PromotionSettings promotion = new();
+        [SerializeField] private WorldViewSettings worldView = new();
+        [SerializeField] private GuildCameraSettings guildCamera = new();
+        [SerializeField] private InteractionSettings interaction = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -82,6 +85,9 @@ namespace WanderersGuild
         public QuestPanelSettings QuestPanel => questPanel;
         public AdventurerSettings Adventurers => adventurers;
         public PromotionSettings Promotion => promotion;
+        public WorldViewSettings WorldView => worldView;
+        public GuildCameraSettings GuildCamera => guildCamera;
+        public InteractionSettings Interaction => interaction;
     }
     
     #region Scene Management
@@ -167,6 +173,21 @@ namespace WanderersGuild
         
         [Tooltip("Button — <Keyboard>/escape (Game map). Opens the in-game pause menu.")]
         [SerializeField] private InputActionReference pauseMenu;
+        
+        [Tooltip("Value (Vector2) — WASD + arrow-key composites (Game map). Pans the guild camera.")]
+        [SerializeField] private InputActionReference cameraMove;
+
+        [Tooltip("Button — <Mouse>/middleButton (Game map). Held: drag-pans the guild camera (with Point).")]
+        [SerializeField] private InputActionReference cameraDrag;
+
+        [Tooltip("Value (Axis) — 1D composite: negative <Keyboard>/q, positive <Keyboard>/e (Game map). Rotates 90°.")]
+        [SerializeField] private InputActionReference cameraRotate;
+
+        [Tooltip("Value (Axis) — <Mouse>/scroll/y (Game map). Zooms the guild camera (sign only).")]
+        [SerializeField] private InputActionReference cameraZoom;
+        
+        [Tooltip("Button — <Mouse>/leftButton (Game map). Clicks the hovered guild object (opens its screen).")]
+        [SerializeField] private InputActionReference worldClick;
 
         public InputActionReference Skip => skip;
         public InputActionReference AnyKey => anyKey;
@@ -176,6 +197,11 @@ namespace WanderersGuild
         public InputActionReference SpeedFast => speedFast;
         public InputActionReference SpeedVeryFast => speedVeryFast;
         public InputActionReference PauseMenu => pauseMenu;
+        public InputActionReference CameraMove => cameraMove;
+        public InputActionReference CameraDrag => cameraDrag;
+        public InputActionReference CameraRotate => cameraRotate;
+        public InputActionReference CameraZoom => cameraZoom;
+        public InputActionReference WorldClick => worldClick;
     }
     #endregion
     
@@ -1320,6 +1346,94 @@ namespace WanderersGuild
 
         private static T ByIndex<T>(T[] values, int index, T fallback) =>
             values == null || values.Length == 0 ? fallback : values[Mathf.Clamp(index, 0, values.Length - 1)];
+    }
+    #endregion
+    
+    #region World
+    [Serializable]
+    public class WorldViewSettings
+    {
+        [Tooltip("Render-texture size the world is drawn at (point-upscaled with the UI). 320×180 with 16 px/unit textures " +
+                 "shows ~20 units across at 1 texel ≈ 1 pixel at the far zoom.")]
+        [SerializeField] private Vector2Int renderSize = new(320, 180);
+
+        public Vector2Int RenderSize => new(Mathf.Max(16, renderSize.x), Mathf.Max(16, renderSize.y));
+    }
+
+    [Serializable]
+    public class GuildCameraSettings
+    {
+        [Tooltip("Vertical field of view (degrees).")]
+        [SerializeField, Range(10f, 60f)] private float fieldOfView = 30f;
+
+        [Tooltip("Distance from the focus point: zoomed out (far) and zoomed in (near). With 320×180 and 16 px/unit, ~21 units " +
+                 "is 1 texel ≈ 1 pixel; farther than that, texels get smaller than a pixel (raise Render Size if it shimmers).")]
+        [SerializeField, Min(1f)] private float farDistance = 30f;
+        [SerializeField, Min(1f)] private float nearDistance = 21f;
+
+        [Tooltip("Downward tilt (degrees): zoomed out and zoomed in (a few degrees flatter when close).")]
+        [SerializeField, Range(10f, 89f)] private float farPitch = 55f;
+        [SerializeField, Range(10f, 89f)] private float nearPitch = 45f;
+
+        [Tooltip("Starting zoom (0 = far, 1 = near) and yaw (degrees). 45° = isometric; rotation steps keep the 45° offset.")]
+        [SerializeField, Range(0f, 1f)] private float startZoom;
+        [SerializeField] private float startYaw = 45f;
+
+        [Tooltip("Zoom per wheel notch (0–1 range) and smoothing time.")]
+        [SerializeField, Range(0.05f, 1f)] private float zoomStep = 0.2f;
+        [SerializeField, Min(0f)] private float zoomSmoothTime = 0.12f;
+
+        [Tooltip("Degrees per Q/E press and smoothing time.")]
+        [SerializeField] private float rotationStep = 90f;
+        [SerializeField, Min(0f)] private float rotationSmoothTime = 0.15f;
+
+        [Tooltip("Keyboard pan speed (units/second at the far zoom; slower when zoomed in) and smoothing time.")]
+        [SerializeField, Min(0f)] private float panSpeed = 12f;
+        [SerializeField, Min(0f)] private float panSmoothTime = 0.08f;
+
+        [Tooltip("How far inside the bounds box the focus point must stay.")]
+        [SerializeField, Min(0f)] private float boundsPadding = 1f;
+
+        [Tooltip("Snap the camera to the render-pixel grid (at the focus distance) so textures don't crawl while panning.")]
+        [SerializeField] private bool pixelSnap = true;
+
+        public float FieldOfView => fieldOfView;
+        public float FarDistance => Mathf.Max(farDistance, nearDistance);
+        public float NearDistance => Mathf.Min(farDistance, nearDistance);
+        public float FarPitch => farPitch;
+        public float NearPitch => nearPitch;
+        public float StartZoom => startZoom;
+        public float StartYaw => startYaw;
+        public float ZoomStep => zoomStep;
+        public float ZoomSmoothTime => zoomSmoothTime;
+        public float RotationStep => rotationStep;
+        public float RotationSmoothTime => rotationSmoothTime;
+        public float PanSpeed => panSpeed;
+        public float PanSmoothTime => panSmoothTime;
+        public float BoundsPadding => boundsPadding;
+        public bool PixelSnap => pixelSnap;
+    }
+    
+    [Serializable]
+    public class InteractionSettings
+    {
+        [Tooltip("Physics layer the interactables' colliders are put on (hover rays only hit this layer).")]
+        [SerializeField, Range(0, 31)] private int interactableLayer = 8;
+
+        [Tooltip("Rendering-layer bit switched on while hovered. MUST match the PixelOutline renderer feature's bit.")]
+        [SerializeField, Range(0, 31)] private int outlineRenderingLayer = 7;
+
+        [Tooltip("Longest hover ray (units).")]
+        [SerializeField, Min(1f)] private float maxRayDistance = 200f;
+
+        [Tooltip("Gap between the object's top and its name label (render pixels).")]
+        [SerializeField, Min(0f)] private float labelGap = 2f;
+
+        public int InteractableLayer => interactableLayer;
+        public int InteractableMask => 1 << interactableLayer;
+        public uint OutlineBit => 1u << outlineRenderingLayer;
+        public float MaxRayDistance => maxRayDistance;
+        public float LabelGap => labelGap;
     }
     #endregion
 }

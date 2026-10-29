@@ -4,7 +4,7 @@
 
         <!-- Top: one bar across the screen (time left, guild right), with the rank-up banner just below it. -->
         <ui:VisualElement class="hud-top" picking-mode="Ignore">
-            <ui:VisualElement name="hud-topbar" class="pixel-window hud-topbar" picking-mode="Ignore">
+            <ui:VisualElement name="hud-topbar" class="pixel-window hud-topbar" picking-mode="Position">
 
                 <!-- Left: time (TimeHudView / TimeHudPresenter) -->
                 <ui:VisualElement name="hud-root" class="hud-time-group" picking-mode="Ignore">

@@ -74,6 +74,11 @@ MonoBehaviour:
     speedFast: {fileID: -2068354175453318580, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
     speedVeryFast: {fileID: 2906850376779115368, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
     pauseMenu: {fileID: 5296796923681162282, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    cameraMove: {fileID: -5542685772316801389, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    cameraDrag: {fileID: 4159725362537257880, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    cameraRotate: {fileID: 5200073120712144679, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    cameraZoom: {fileID: 3429882728573722687, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    worldClick: {fileID: -2270512615485987031, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
   playerSettings:
     fileName: settings.json
     volumeStep: 5
@@ -309,6 +314,16 @@ MonoBehaviour:
     goldShakePixels: 1
     goldShakeSteps: 6
     goldShakeStepDuration: 0.04
+    adventurersFullColor: {r: 0.9098039, g: 0.6901961, b: 0.2509804, a: 1}
+    floatGainColor: {r: 0.3764706, g: 0.72156864, b: 0.34509805, a: 1}
+    floatLossColor: {r: 0.8784314, g: 0.4392157, b: 0.3764706, a: 1}
+    floatDuration: 0.9
+    floatDrift: {x: 10, y: 8}
+    floatGapPixels: 2
+    floatStackPixels: 8
+    floatStackWindow: 0.35
+    floatStackRows: 3
+    floatPoolSize: 6
     rankFillDuration: 0.4
     reputationFadeDuration: 0.2
     reputationFillDuration: 0.3
@@ -325,6 +340,8 @@ MonoBehaviour:
     gatedSourceMinimumLevel: 3
     expiryReputation: -2
     dismissReputation: -1
+  applications:
+    reapplyCooldownHours: 24
   quests:
     boardSlots: 10
     baseOpenSlots: 3
@@ -429,3 +446,35 @@ MonoBehaviour:
     wealthPerLevel: {x: 20, y: 60}
     experience:
       thresholds: 00000000000000002c0100000000000084030000000000008c0a0000000000006419000000000000b036000000000000d859000000000000d08400000000000080bb00000000000000fa000000000000084c010000000000a086010000000000c0d4010000000000e0220200000000008884020000000000b8f9020000000000e86e030000000000280b04000000000068a7040000000000b86a050000000000l
+  promotion:
+    progressRequired: 5
+    aboveRankProgress: 2
+    sameRankProgress: 1
+    oneBelowProgress: 0.5
+    minLevelByRank: 010000000300000005000000080000000b0000000e0000001100000014000000i
+    feeByRank: 000000000000000032000000000000006400000000000000c800000000000000900100000000000020030000000000004006000000000000800c000000000000l
+    examDays: 2
+    passReputation: 1
+  worldView:
+    renderSize: {x: 640, y: 360}
+  guildCamera:
+    fieldOfView: 30
+    farDistance: 50
+    nearDistance: 25
+    farPitch: 55
+    nearPitch: 45
+    startZoom: 0
+    startYaw: 45
+    zoomStep: 0.2
+    zoomSmoothTime: 0.12
+    rotationStep: 90
+    rotationSmoothTime: 0.15
+    panSpeed: 12
+    panSmoothTime: 0.08
+    boundsPadding: 1
+    pixelSnap: 1
+  interaction:
+    interactableLayer: 8
+    outlineRenderingLayer: 7
+    maxRayDistance: 200
+    labelGap: 2
