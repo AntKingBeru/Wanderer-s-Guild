@@ -1,0 +1,18 @@
+/* Quest-result toast, bottom-right, stacked just above the save toast. 320×180 UI pixels; never blocks clicks. */
+.quest-toast {
+    position: absolute;
+    right: 4px;
+    bottom: 30px;
+    max-width: 180px;
+    padding: 2px 5px;
+    opacity: 0;
+}
+.quest-toast .outlined-text__part {
+    white-space: normal;
+}
+.quest-toast.toast--error {
+    border-color: rgb(224, 112, 96);
+}
+.toast--error .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}

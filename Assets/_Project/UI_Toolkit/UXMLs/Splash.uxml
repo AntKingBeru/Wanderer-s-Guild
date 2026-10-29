@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Splash.uss?fileID=7433441132597879392&amp;guid=bb9b84f4135344a4a912249ee7d7a8de&amp;type=3#Splash"/>
+    <ui:VisualElement name="splash-root" class="splash-root">
+        <ui:VisualElement name="splash-content" class="splash-content">
+            <ui:VisualElement name="splash-logo" class="splash-logo" />
+            <wg:OutlinedText name="splash-placeholder" class="splash-placeholder" text="YOUR STUDIO" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

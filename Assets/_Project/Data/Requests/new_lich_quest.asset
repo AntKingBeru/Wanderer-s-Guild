@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de559deffd8c6224c9b8646ff2feb193, type: 3}
+  m_Name: new_lich_quest
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.RequestData
+  id: new_lich_quest
+  displayName: A New lich
+  objective: 'A new dungeon was created east of Wisazstein mines!
+
+    Please should send an expadition to raid it!'
+  category: 7
+  recommendedRank: 2
+  source: 5
+  recommendedPartySize: 5
+  reward:
+    gold: 320
+  expirationDays: 5

@@ -1,0 +1,10 @@
+.quit-window {
+    width: 120px;
+}
+.quit-message {
+    margin: 2px 0 6px 0;
+}
+.quit-buttons {
+    flex-direction: row;
+    justify-content: center;
+}

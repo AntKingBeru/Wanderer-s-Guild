@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/QuestToast.uss?fileID=7433441132597879392&amp;guid=c1a29d0765604f249aa55e31a2df878e&amp;type=3#QuestToast"/>
+    <ui:VisualElement name="toast-root" class="pixel-window toast-root quest-toast" picking-mode="Ignore">
+        <wg:OutlinedText name="toast-label" class="toast-label" text="Quest succeeded" />
+    </ui:VisualElement>
+</ui:UXML>

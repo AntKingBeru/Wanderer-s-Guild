@@ -1,0 +1,65 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Roster.uss?fileID=7433441132597879392&amp;guid=4a282725381ba3043b85013f08c061e9&amp;type=3#Roster"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="pixel-window roster-window">
+            <wg:OutlinedText name="roster-title" class="panel-title" text="Adventurers 0/6" />
+
+            <ui:VisualElement class="roster-body" picking-mode="Ignore">
+                <!-- Left: rows are created in code (one per roster slot). -->
+                <ui:VisualElement class="roster-list-frame" picking-mode="Ignore">
+                    <ui:ScrollView name="roster-list" class="roster-list pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" />
+                    <wg:OutlinedText name="roster-list-empty" class="roster-list-empty" text="No adventurers yet." />
+                </ui:VisualElement>
+
+                <!-- Right: details of the selected adventurer. -->
+                <ui:VisualElement class="roster-details" picking-mode="Ignore">
+                    <ui:VisualElement name="adv-content" class="adv-content" picking-mode="Ignore">
+                        <wg:OutlinedText name="adv-name" class="adv-name" text="Name" />
+                        <wg:OutlinedText name="adv-species-class" class="adv-line" text="Species · Class" />
+                        <wg:OutlinedText name="adv-rank-level" class="adv-line" text="Rank F · Level 1" />
+
+                        <ui:VisualElement class="adv-bar" picking-mode="Ignore">
+                            <ui:VisualElement name="adv-xp-track" class="adv-bar-track" picking-mode="Ignore">
+                                <ui:VisualElement name="adv-xp-fill" class="adv-bar-fill" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <wg:OutlinedText name="adv-xp-text" class="adv-bar-text" text="XP 0 / 300" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="adv-bar" picking-mode="Ignore">
+                            <ui:VisualElement name="adv-rankp-track" class="adv-bar-track" picking-mode="Ignore">
+                                <ui:VisualElement name="adv-rankp-fill" class="adv-bar-fill adv-bar-fill--rank" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <wg:OutlinedText name="adv-rankp-text" class="adv-bar-text" text="Rank 0/5" />
+                        </ui:VisualElement>
+
+                        <wg:OutlinedText name="adv-stats-top" class="adv-stats" text="STR 0  AGI 0" />
+                        <wg:OutlinedText name="adv-stats-bottom" class="adv-stats" text="INT 0  VIT 0" />
+                        <wg:OutlinedText name="adv-wealth" class="adv-line adv-gap" text="Wealth: 0g" />
+                        <wg:OutlinedText name="adv-affinities" class="adv-line adv-affinities" text="Good at: —" />
+                        <wg:OutlinedText name="adv-status" class="adv-line" text="Status: Idle" />
+                        <wg:OutlinedText name="adv-promote-hint" class="adv-hint" text="Needs more rank progress" />
+                    </ui:VisualElement>
+                    <wg:OutlinedText name="adv-empty" class="adv-empty" text="No adventurers yet." />
+
+                    <ui:VisualElement class="adv-buttons" picking-mode="Ignore">
+                        <ui:Button name="adv-promote" class="pixel-button panel-button"><wg:OutlinedText text="Promote" /></ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="roster-footer" picking-mode="Ignore">
+                <ui:Button name="roster-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Shared confirmation overlay (PixelTheme.uss › confirm-*), used for Promote. -->
+        <ui:VisualElement name="confirm-overlay" class="confirm-overlay">
+            <ui:VisualElement class="pixel-window confirm-window">
+                <wg:OutlinedText name="confirm-message" class="confirm-message" text="Take the exam?" />
+                <ui:VisualElement class="confirm-buttons" picking-mode="Ignore">
+                    <ui:Button name="confirm-no" class="pixel-button panel-button"><wg:OutlinedText text="No" /></ui:Button>
+                    <ui:Button name="confirm-yes" class="pixel-button panel-button"><wg:OutlinedText text="Yes" /></ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

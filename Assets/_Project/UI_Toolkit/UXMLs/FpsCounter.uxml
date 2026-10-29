@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/FpsCounter.uss?fileID=7433441132597879392&amp;guid=aed6cca8f1211d849a4deeba44508fe9&amp;type=3#FpsCounter"/>
+    <ui:VisualElement name="fps-root" picking-mode="Ignore" class="fps-root">
+        <wg:OutlinedText name="fps-label" text="0 FPS" class="fps-label"/>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,55 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/QuestBoard.uss?fileID=7433441132597879392&amp;guid=e7a324f4879542f4ca10962bb664acfe&amp;type=3#QuestBoard"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="qboard-frame">
+            <wg:OutlinedText name="qboard-title" class="panel-title qboard-title" text="Quest Board 0/3" />
+
+            <!-- Cork: notes are created in code (one per slot, 5 per row). -->
+            <ui:VisualElement name="qboard-grid" class="qboard-cork" picking-mode="Ignore" />
+
+            <ui:VisualElement class="qboard-footer" picking-mode="Ignore">
+                <ui:Button name="qboard-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Lifted note: a large copy over the dimmed board. The layer catches clicks. -->
+        <ui:VisualElement name="note-layer" class="note-layer">
+            <ui:VisualElement name="note-lifted" class="note-lifted">
+                <ui:VisualElement class="note-lifted__pin" picking-mode="Ignore" />
+                <ui:VisualElement name="note-badge" class="note-lifted__badge" picking-mode="Ignore">
+                    <wg:OutlinedText name="note-badge-label" />
+                </ui:VisualElement>
+
+                <ui:VisualElement class="note-lifted__body" picking-mode="Ignore">
+                    <wg:OutlinedText name="note-title" class="note-ink note-title" text="Title" />
+                    <wg:OutlinedText name="note-objective" class="note-ink note-wrap note-objective" text="Objective" />
+                    <wg:OutlinedText name="note-meta" class="note-ink note-faint" text="Combat · Merchant · Rank F" />
+                    <wg:OutlinedText name="note-terms" class="note-ink note-faint" text="Min. rank F · Party of 2" />
+                    <wg:OutlinedText name="note-split" class="note-ink note-faint note-wrap" text="Party 0g (0g each) · Guild 0g" />
+                    <wg:OutlinedText name="note-stamp" class="note-lifted__stamp" text="READY" />
+                    <wg:OutlinedText name="note-time" class="note-ink note-faint" text="Expires in 0d" />
+                    <wg:OutlinedText name="note-chance" class="note-ink note-chance" text="Success: —" />
+                    <ui:VisualElement name="note-members" class="note-members" picking-mode="Ignore" />
+                </ui:VisualElement>
+
+                <wg:OutlinedText class="note-lifted__stamp" text="TAKEN" />
+
+                <ui:VisualElement class="note-lifted__buttons" picking-mode="Ignore">
+                    <ui:Button name="note-back" class="pixel-button panel-button"><wg:OutlinedText text="Back" /></ui:Button>
+                    <ui:Button name="note-cancel" class="pixel-button panel-button"><wg:OutlinedText text="Cancel" /></ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Shared confirmation overlay (PixelTheme.uss › confirm-*), used for Cancel. -->
+        <ui:VisualElement name="confirm-overlay" class="confirm-overlay">
+            <ui:VisualElement class="pixel-window confirm-window">
+                <wg:OutlinedText name="confirm-message" class="confirm-message" text="Cancel this quest?" />
+                <ui:VisualElement class="confirm-buttons" picking-mode="Ignore">
+                    <ui:Button name="confirm-no" class="pixel-button panel-button"><wg:OutlinedText text="No" /></ui:Button>
+                    <ui:Button name="confirm-yes" class="pixel-button panel-button"><wg:OutlinedText text="Yes" /></ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

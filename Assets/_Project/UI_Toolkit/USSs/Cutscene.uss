@@ -1,0 +1,81 @@
+/* Intro cutscene in 320×180 UI pixels: slides fill the base frame; extra screen area (21:9, 4:3…) stays black. */
+.cutscene-root {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background-color: rgb(0, 0, 0);
+    align-items: center;
+    justify-content: center;
+}
+.cutscene-frame {
+    width: 320px;
+    height: 180px;
+    overflow: hidden;
+}
+
+/* ---------- Slides ---------- */
+.cutscene-images {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+.cutscene-image {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    opacity: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* ---------- Narration box ---------- */
+.cutscene-textbox {
+    position: absolute;
+    left: 8px; right: 8px; bottom: 6px;
+    height: 40px;
+    flex-direction: row;
+    padding: 2px 4px;
+    border-width: 1px;
+    border-color: var(--frame-normal-border);
+    background-color: rgba(0, 0, 0, 0.6);
+}
+/* NOTE: Mouse wheel scrolls back through the narration; the scrollbar is an indicator only (set up in code). */
+.cutscene-text-scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+/* NOTE: Sized in code to the revealed lines only; the 1px padding keeps the outline inside the clip. */
+.cutscene-text-clip {
+    flex-shrink: 0;
+    overflow: hidden;
+    padding: 1px;
+    height: 0;
+}
+/* NOTE: All nine copies wrap identically because they share one width and one string. */
+.cutscene-text .outlined-text__part {
+    white-space: normal;
+    -unity-text-align: upper-left;
+}
+.cutscene-prompt {
+    align-self: flex-end;
+    margin-left: 4px;
+    opacity: 0;
+}
+.cutscene-prompt .outlined-text__fill {
+    color: var(--color-accent);
+}
+
+/* ---------- Hold-to-skip hint (top-left; the FPS counter owns top-right) ---------- */
+.cutscene-skip {
+    position: absolute;
+    left: 6px; top: 4px;
+    opacity: 0.75;
+    display: none;
+}
+.cutscene-skip-bar {
+    width: 48px;
+    height: 2px;
+    margin-top: 1px;
+    background-color: var(--frame-disabled-bg);
+}
+.cutscene-skip-fill {
+    width: 0;
+    height: 2px;
+    background-color: var(--color-accent);
+}

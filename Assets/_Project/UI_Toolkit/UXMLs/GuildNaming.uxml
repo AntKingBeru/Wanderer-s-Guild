@@ -1,0 +1,26 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/GuildNaming.uss?fileID=7433441132597879392&amp;guid=c27a6f7772e14634eb8c14d7f0b38368&amp;type=3#GuildNaming"/>
+    <ui:VisualElement name="naming-root" class="naming-root">
+        <ui:VisualElement class="pixel-window naming-window">
+            <wg:OutlinedText class="panel-title" text="Name your guild" />
+            <ui:TextField name="naming-field" class="pixel-textfield naming-field" />
+            <ui:VisualElement class="naming-info" picking-mode="Ignore">
+                <wg:OutlinedText class="naming-hint" text="A-Z, 0-9, space ' -" />
+                <wg:OutlinedText name="naming-counter" class="naming-counter" text="0/20" />
+            </ui:VisualElement>
+            <wg:OutlinedText name="naming-error" class="naming-error" />
+            <ui:Button name="naming-confirm" class="pixel-button naming-confirm"><wg:OutlinedText text="Confirm" /></ui:Button>
+        </ui:VisualElement>
+
+        <!-- Shared confirmation overlay (PixelTheme.uss › confirm-*), screen-wide so it dims everything behind it. -->
+        <ui:VisualElement name="confirm-overlay" class="confirm-overlay">
+            <ui:VisualElement class="pixel-window confirm-window">
+                <wg:OutlinedText name="confirm-message" class="confirm-message" text="Are you sure?" />
+                <ui:VisualElement class="confirm-buttons" picking-mode="Ignore">
+                    <ui:Button name="confirm-no" class="pixel-button panel-button"><wg:OutlinedText text="No" /></ui:Button>
+                    <ui:Button name="confirm-yes" class="pixel-button panel-button"><wg:OutlinedText text="Yes" /></ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

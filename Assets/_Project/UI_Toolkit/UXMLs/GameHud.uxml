@@ -1,0 +1,72 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/GameHud.uss?fileID=7433441132597879392&amp;guid=648ce738656c86249a394d4ed6dfe8a5&amp;type=3#GuildHud"/>
+    <ui:VisualElement name="game-hud" class="game-hud" picking-mode="Ignore">
+
+        <!-- Top: one bar across the screen (time left, guild right), with the rank-up banner just below it. -->
+        <ui:VisualElement class="hud-top" picking-mode="Ignore">
+            <ui:VisualElement name="hud-topbar" class="pixel-window hud-topbar" picking-mode="Ignore">
+
+                <!-- Left: time (TimeHudView / TimeHudPresenter) -->
+                <ui:VisualElement name="hud-root" class="hud-time-group" picking-mode="Ignore">
+                    <ui:VisualElement class="hud-row" picking-mode="Ignore">
+                        <wg:OutlinedText name="hud-date" class="hud-date" text="Spring 1, Year 1" />
+                        <wg:OutlinedText name="hud-time" class="hud-time" text="08:00" />
+                        <wg:OutlinedText name="hud-phase" class="hud-phase" text="Day" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="hud-row hud-speeds" picking-mode="Ignore">
+                        <ui:Button name="hud-speed-pause" class="pixel-button hud-speed"><wg:OutlinedText text="||" /></ui:Button>
+                        <ui:Button name="hud-speed-normal" class="pixel-button hud-speed"><wg:OutlinedText text="&gt;" /></ui:Button>
+                        <ui:Button name="hud-speed-fast" class="pixel-button hud-speed"><wg:OutlinedText text="&gt;&gt;" /></ui:Button>
+                        <ui:Button name="hud-speed-veryfast" class="pixel-button hud-speed"><wg:OutlinedText text="&gt;&gt;&gt;" /></ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Right: gold over adventurers (left-aligned column), pause button beside them -->
+                <ui:VisualElement class="hud-guild-group" picking-mode="Ignore">
+                    <ui:VisualElement class="hud-counters" picking-mode="Ignore">
+                        <ui:VisualElement name="gold-root" class="hud-counter" picking-mode="Ignore">
+                            <ui:VisualElement name="gold-icon" class="hud-counter__icon" picking-mode="Ignore" />
+                            <wg:OutlinedText name="gold-amount" class="gold-amount" text="0" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="adv-count-root" class="hud-counter hud-counter--below" picking-mode="Ignore">
+                            <ui:VisualElement name="adv-count-icon" class="hud-counter__icon" picking-mode="Ignore" />
+                            <wg:OutlinedText name="adv-count-label" class="adv-count-label" text="0/6" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:Button name="hud-pause" class="pixel-button hud-pause">
+                        <ui:VisualElement name="hud-pause-icon" class="hud-pause__icon" picking-mode="Ignore" />
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Rank-up banner, centred just under the bar -->
+            <ui:VisualElement class="rank-banner-row" picking-mode="Ignore">
+                <ui:VisualElement name="rank-banner" class="pixel-window rank-banner" picking-mode="Ignore">
+                    <wg:OutlinedText name="rank-banner-label" class="rank-banner-label" text="Guild Rank E!" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Bottom-centre: rank badge + progress bar -->
+        <ui:VisualElement class="rank-row" picking-mode="Ignore">
+            <ui:VisualElement name="rank-badge" class="rank-badge" picking-mode="Ignore">
+                <wg:OutlinedText name="rank-badge-label" class="rank-badge-label" text="F" />
+            </ui:VisualElement>
+            <ui:VisualElement name="rank-track" class="rank-track" picking-mode="Ignore">
+                <ui:VisualElement name="rank-fill" class="rank-fill" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Bottom-left: reputation bar (shown on change) above the always-visible emoji -->
+        <ui:VisualElement class="rep-root" picking-mode="Ignore">
+            <ui:VisualElement name="rep-bar" class="rep-bar" picking-mode="Ignore">
+                <ui:VisualElement name="rep-fill" class="rep-fill" picking-mode="Ignore" />
+                <ui:VisualElement class="rep-zero" picking-mode="Ignore" />
+            </ui:VisualElement>
+            <ui:VisualElement name="rep-icon" class="rep-icon" picking-mode="Ignore" />
+        </ui:VisualElement>
+
+        <!-- Floating numbers (created in code); last child so they draw above the HUD. -->
+        <ui:VisualElement name="hud-floats" class="hud-floats" picking-mode="Ignore" />
+    </ui:VisualElement>
+</ui:UXML>

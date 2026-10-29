@@ -1,0 +1,177 @@
+/* Shared pixel-art UI theme: variables, base text, and shared components. All sizes are in 320×180 UI pixels. */
+:root {
+    --color-text: rgb(240, 232, 214);
+    --color-text-disabled: rgb(128, 122, 110);
+    --color-outline: rgb(0, 0, 0);
+    --color-accent: rgb(232, 200, 120);
+    --color-dim: rgba(0, 0, 0, 0.6);
+
+    /* NOTE: Calibrated: a glyph's vertical stroke is exactly as thick as the 1px menu divider. */
+    --text-size-body: 12px;
+    --text-size-title: 24px;
+
+    /* Placeholder frame colours, replaced by 9-slice sprites when the designer's frames arrive. */
+    --frame-normal-bg: rgb(38, 30, 22);
+    --frame-normal-border: rgb(96, 80, 58);
+    --frame-highlight-bg: rgb(64, 50, 34);
+    --frame-highlight-border: rgb(232, 200, 120);
+    --frame-disabled-bg: rgb(30, 28, 26);
+    --frame-disabled-border: rgb(64, 60, 56);
+    --divider-color: rgb(140, 116, 80);
+}
+
+/* NOTE: A class selector, so it matches the default theme's specificity and wins by import order.
+   Adjust the path to your font asset. */
+.unity-text-element {
+    color: var(--color-text);
+    font-size: var(--text-size-body);
+    -unity-font-definition: url("project://database/Assets/Fonts/monogram-extended SDF.asset");
+}
+
+/* OutlinedText parts. The outline rule comes after .unity-text-element so its colour wins. */
+.outlined-text__part {
+    margin: 0;
+    padding: 0;
+}
+/* NOTE: The 8 offset copies keep the outline square and crisp; the SDF outline fattens each copy slightly so the soft
+   (anti-aliased) edges of neighbouring copies overlap and no lighter seams show. 0.3px = subtler, 0.8px = heavier. */
+.outlined-text__outline {
+    color: var(--color-outline);
+    -unity-text-outline-width: 0.5px;
+    -unity-text-outline-color: var(--color-outline);
+}
+
+/* ---------- Pixel button (menu column, popups, panels) ---------- */
+/* Hover alone never highlights. Hovering moves focus, and focus is the single "selected" look. */
+.pixel-button {
+    flex-shrink: 0; /* NOTE: Never squash a button below its label. Fixed-height windows shrink their children otherwise. */
+    padding: 1px 4px;
+    border-width: 1px;
+    border-radius: 0;
+    border-color: var(--frame-normal-border);
+    background-color: var(--frame-normal-bg);
+    align-items: center;
+    justify-content: center;
+    transform-origin: center;
+}
+.pixel-button > .outlined-text {
+    align-self: center;
+}
+.pixel-button:hover {
+    border-color: var(--frame-normal-border);
+    background-color: var(--frame-normal-bg);
+}
+.pixel-button:focus {
+    border-color: var(--frame-highlight-border);
+    background-color: var(--frame-highlight-bg);
+}
+.pixel-button:disabled {
+    border-color: var(--frame-disabled-border);
+    background-color: var(--frame-disabled-bg);
+}
+.pixel-button:disabled .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+/* When the designer's frames arrive, replace each state's colours with a point-filtered 9-slice sprite, e.g.:
+   background-image: url("project://database/Assets/UI/Frames/button_normal.png");
+   -unity-slice-left: 3; -unity-slice-right: 3; -unity-slice-top: 3; -unity-slice-bottom: 3;
+   background-color: rgba(0, 0, 0, 0); border-width: 0; */
+
+/* ---------- Window frame (panels and popups) ---------- */
+.pixel-window {
+    padding: 6px;
+    border-width: 1px;
+    border-color: var(--frame-normal-border);
+    background-color: var(--frame-normal-bg);
+    align-items: center;
+}
+
+/* ---------- Thin pixel scrollbar: add class "pixel-scroll" to any ScrollView ---------- */
+/* NOTE: The default theme sizes the scroller, its slider, the slider's input/drag container, tracker and dragger
+   separately, so every part is pinned to 4px here. Pinning only some of them leaves a wide background. */
+.pixel-scroll .unity-scroller--vertical {
+    width: 4px;
+    min-width: 4px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+}
+.pixel-scroll .unity-scroller--vertical .unity-scroller__low-button,
+.pixel-scroll .unity-scroller--vertical .unity-scroller__high-button {
+    display: none;
+}
+.pixel-scroll .unity-scroller--vertical .unity-scroller__slider,
+.pixel-scroll .unity-scroller--vertical .unity-base-field__input,
+.pixel-scroll .unity-scroller--vertical .unity-base-slider__input,
+.pixel-scroll .unity-scroller--vertical .unity-base-slider__drag-container {
+    width: 4px;
+    min-width: 4px;
+    margin: 0;
+    padding: 0;
+}
+.pixel-scroll .unity-scroller--vertical .unity-base-slider__tracker {
+    width: 4px;
+    left: 0;
+    right: 0;
+    margin: 0;
+    border-width: 0;
+    border-radius: 0;
+    background-color: var(--frame-disabled-bg);
+}
+.pixel-scroll .unity-scroller--vertical .unity-base-slider__dragger {
+    width: 4px;
+    left: 0;
+    margin: 0;
+    border-width: 0;
+    border-radius: 0;
+    background-color: var(--frame-normal-border);
+}
+.pixel-scroll .unity-scroller--vertical .unity-base-slider__dragger-border {
+    display: none;
+}
+
+/* ---------- Panel roots ---------- */
+/* NOTE: Hidden until MenuPanel opens them, so nothing flashes on scene load. */
+.panel-root {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    align-items: center;
+    justify-content: center;
+    display: none;
+    opacity: 0;
+}
+.panel-root--dim {
+    background-color: var(--color-dim);
+}
+.panel-title {
+    flex-shrink: 0;
+    margin-bottom: 4px;
+}
+.panel-title .outlined-text__fill {
+    color: var(--color-accent);
+}
+.panel-button {
+    width: 48px;
+    margin: 0 2px;
+}
+
+/* ---------- Confirmation overlay (InlineConfirmation) — place inside a panel's window ---------- */
+.confirm-overlay {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background-color: var(--color-dim);
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+.confirm-window {
+    width: 200px;
+}
+.confirm-message {
+    margin: 2px 0 6px 0;
+    -unity-text-align: middle-center;
+}
+.confirm-buttons {
+    flex-direction: row;
+    justify-content: center;
+}

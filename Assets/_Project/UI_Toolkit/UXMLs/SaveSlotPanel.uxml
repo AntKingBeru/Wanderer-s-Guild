@@ -1,0 +1,30 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/SaveSlotPanel.uss?fileID=7433441132597879392&amp;guid=d9d6d0db25ef5654eb66c2e771f8a793&amp;type=3#SaveSlotPanel"/>
+    <ui:VisualElement name="panel-root" class="panel-root">
+        <ui:VisualElement name="panel-window" class="pixel-window slots-window">
+            <wg:OutlinedText name="slots-title" text="Load Game" class="panel-title"/>
+            <ui:ScrollView name="slots-list" mode="Vertical" horizontal-scroller-visibility="Hidden" class="slots-list pixel-scroll"/>
+            <ui:VisualElement picking-mode="Ignore" class="slots-footer">
+                <ui:Button name="slots-delete" class="pixel-button slots-footer-button slots-delete">
+                    <wg:OutlinedText text="Delete"/>
+                </ui:Button>
+                <ui:Button name="slots-back" class="pixel-button slots-footer-button">
+                    <wg:OutlinedText text="Back"/>
+                </ui:Button>
+            </ui:VisualElement>
+            <ui:VisualElement name="confirm-overlay" class="confirm-overlay">
+                <ui:VisualElement class="pixel-window confirm-window">
+                    <wg:OutlinedText name="confirm-message" text="Are you sure?" class="confirm-message"/>
+                    <ui:VisualElement picking-mode="Ignore" class="confirm-buttons">
+                        <ui:Button name="confirm-no" class="pixel-button panel-button">
+                            <wg:OutlinedText text="No"/>
+                        </ui:Button>
+                        <ui:Button name="confirm-yes" class="pixel-button panel-button">
+                            <wg:OutlinedText text="Yes"/>
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

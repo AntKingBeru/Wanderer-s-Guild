@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/ReceptionDesk.uss?fileID=7433441132597879392&amp;guid=1d14fa85658228b4481e0150cd58e6eb&amp;type=3#ReceptionDesk"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="pixel-window desk-window">
+            <wg:OutlinedText class="panel-title" text="Reception Desk" />
+
+            <!-- Two halves: Requests (left), Applications (right). Each half is one button. -->
+            <ui:VisualElement class="desk-halves" picking-mode="Ignore">
+                <ui:Button name="desk-requests" class="pixel-button desk-half">
+                    <wg:OutlinedText class="desk-half__title" text="Requests" />
+                    <wg:OutlinedText name="desk-requests-detail" class="desk-half__detail" text="No requests" />
+                </ui:Button>
+                <ui:Button name="desk-applications" class="pixel-button desk-half">
+                    <wg:OutlinedText class="desk-half__title" text="Applications" />
+                    <wg:OutlinedText name="desk-applications-detail" class="desk-half__detail" text="No applicants" />
+                </ui:Button>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="desk-footer" picking-mode="Ignore">
+                <ui:Button name="desk-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

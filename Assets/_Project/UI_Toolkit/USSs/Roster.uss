@@ -1,0 +1,168 @@
+/* Adventurer roster in 320×180 UI pixels: list (left) + details (right). Mirrors the request board's layout. */
+.roster-window {
+    width: 300px;
+    height: 164px;
+}
+.roster-body {
+    flex-direction: row;
+    flex-grow: 1;
+    min-height: 0;
+    align-self: stretch;
+}
+
+/* ---------- List ---------- */
+.roster-list-frame {
+    width: 150px;
+    margin-right: 4px;
+}
+.roster-list {
+    flex-grow: 1;
+}
+.roster-list-empty {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    right: 0;
+    align-items: center;
+    display: none;
+}
+.roster-row {
+    flex-direction: row;
+    align-items: center;
+    align-self: stretch;
+    height: 14px;
+    margin: 0 0 1px 0;
+    padding: 0 2px 0 1px;
+}
+.roster-row--selected {
+    border-color: var(--color-accent);
+}
+
+/* Rank badge: same 12×12 square as the HUD and request-board badges. */
+.roster-row__badge {
+    width: 12px;
+    height: 12px;
+    margin-right: 3px;
+    border-width: 1px;
+    border-color: var(--color-outline);
+}
+.roster-row__badge > .outlined-text {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+.roster-row__badge .outlined-text__stack {
+    flex-grow: 1;
+}
+.roster-row__badge .outlined-text__part {
+    flex-grow: 1;
+    -unity-text-align: middle-center;
+}
+
+/* NOTE: Name and class are clipped at their edges; the 1px padding keeps the outline inside the clip. */
+.roster-row__name {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1px;
+}
+.roster-row__class {
+    width: 44px;
+    overflow: hidden;
+    padding: 1px;
+}
+.roster-row__class .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.roster-row__level {
+    width: 26px;
+    align-items: flex-end;
+}
+
+/* ---------- Details ---------- */
+.roster-details {
+    flex-grow: 1;
+    min-width: 0;
+}
+/* NOTE: Clips if a class has many affinities; the 1px padding keeps every glyph inside the clip. */
+.adv-content {
+    flex-grow: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 1px;
+}
+.adv-name {
+    margin-bottom: 1px;
+}
+.adv-name .outlined-text__fill {
+    color: var(--color-accent);
+}
+.adv-line .outlined-text__fill,
+.adv-hint .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.adv-gap {
+    margin-top: 2px;
+}
+
+/* XP and rank-progress bars: track + fill (fill width set in code, whole UI pixels) + text. */
+.adv-bar {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 2px;
+}
+.adv-bar-track {
+    width: 50px;
+    height: 6px;
+    margin-right: 4px;
+    border-width: 1px;
+    border-color: var(--frame-normal-border);
+    background-color: var(--frame-disabled-bg);
+}
+.adv-bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background-color: var(--color-accent);
+}
+.adv-bar-fill--rank {
+    background-color: rgb(120, 200, 120);
+}
+.adv-stats {
+    margin-top: 2px;
+}
+/* NOTE: Affinities wrap if a class has many. */
+.adv-affinities {
+    align-items: stretch;
+}
+.adv-affinities .outlined-text__stack {
+    align-self: stretch;
+}
+.adv-affinities .outlined-text__part {
+    white-space: normal;
+}
+.adv-empty {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+.adv-buttons {
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+/* ---------- Footer ---------- */
+.roster-footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-self: stretch;
+    flex-shrink: 0;
+    margin-top: 3px;
+}

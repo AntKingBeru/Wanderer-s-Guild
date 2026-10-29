@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de559deffd8c6224c9b8646ff2feb193, type: 3}
+  m_Name: send_kelp_quest
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.RequestData
+  id: send_kelp_quest
+  displayName: Send Kelp
+  objective: 'We are in dire need of KELP!
+
+    We are making SOUP!
+
+    Send Kelp!'
+  category: 1
+  recommendedRank: 0
+  source: 4
+  recommendedPartySize: 1
+  reward:
+    gold: 50
+  expirationDays: 1

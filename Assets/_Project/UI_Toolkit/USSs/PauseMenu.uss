@@ -1,0 +1,8 @@
+/* In-game pause menu, centred over the dimmed game. 320×180 UI pixels. */
+.pause-window {
+    width: 156px;
+}
+.pause-button {
+    width: 140px;
+    margin-bottom: 2px;
+}

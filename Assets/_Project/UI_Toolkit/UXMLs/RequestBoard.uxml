@@ -1,0 +1,84 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/RequestBoard.uss?fileID=7433441132597879392&amp;guid=6f3e24035c137054ba8090bd9f2149db&amp;type=3#RequestBoard"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="pixel-window board-window">
+            <wg:OutlinedText name="board-title" class="panel-title" text="Requests 0/10" />
+
+            <ui:VisualElement class="board-body" picking-mode="Ignore">
+                <!-- Left: rows are created in code (one per board slot). -->
+                <ui:VisualElement class="board-list-frame" picking-mode="Ignore">
+                    <ui:ScrollView name="board-list" class="board-list pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" />
+                    <wg:OutlinedText name="board-list-empty" class="board-list-empty" text="No requests right now." />
+                </ui:VisualElement>
+
+                <!-- Right: details of the selected request. -->
+                <ui:VisualElement class="board-details" picking-mode="Ignore">
+                    <ui:VisualElement name="detail-content" class="detail-content" picking-mode="Ignore">
+                        <wg:OutlinedText name="detail-title" class="detail-title" text="Title" />
+                        <wg:OutlinedText name="detail-category" class="detail-line" text="Combat · Merchant" />
+                        <wg:OutlinedText name="detail-rank" class="detail-line" text="Rank F · Party of 2" />
+                        <wg:OutlinedText name="detail-reward" class="detail-line" text="Reward: 0g" />
+                        <wg:OutlinedText name="detail-time" class="detail-line" text="Expires in 0d" />
+                        <wg:OutlinedText name="detail-board" class="detail-line detail-board" text="Quest board full" />
+                        <wg:OutlinedText name="detail-objective" class="detail-objective" text="Objective" />
+                    </ui:VisualElement>
+                    <wg:OutlinedText name="detail-empty" class="detail-empty" text="No requests right now." />
+
+                    <ui:VisualElement class="detail-buttons" picking-mode="Ignore">
+                        <ui:Button name="detail-accept" class="pixel-button panel-button"><wg:OutlinedText text="Accept" /></ui:Button>
+                        <ui:Button name="detail-dismiss" class="pixel-button panel-button"><wg:OutlinedText text="Dismiss" /></ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="board-footer" picking-mode="Ignore">
+                <ui:Button name="board-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Quest clipboard: slides up over the board. The layer catches clicks so nothing behind it is clickable. -->
+        <ui:VisualElement name="clipboard-layer" class="clipboard-layer">
+            <ui:VisualElement name="clipboard" class="clipboard">
+                <ui:VisualElement class="clipboard__clip" picking-mode="Ignore" />
+                <ui:VisualElement class="clipboard__paper" picking-mode="Ignore">
+                    <wg:OutlinedText name="clip-title" class="clip-ink clip-title" text="Title" />
+                    <wg:OutlinedText name="clip-meta" class="clip-ink clip-meta" text="Combat · Merchant · Rank F" />
+
+                    <ui:VisualElement class="clip-row" picking-mode="Ignore">
+                        <wg:OutlinedText class="clip-ink clip-label" text="Reward share" />
+                        <wg:OptionCycler name="clip-share" class="clip-cycler" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="clip-row" picking-mode="Ignore">
+                        <wg:OutlinedText class="clip-ink clip-label" text="Min. rank" />
+                        <wg:OptionCycler name="clip-rank" class="clip-cycler" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="clip-row" picking-mode="Ignore">
+                        <wg:OutlinedText class="clip-ink clip-label" text="Party size" />
+                        <wg:OptionCycler name="clip-size" class="clip-cycler" />
+                    </ui:VisualElement>
+
+                    <wg:OutlinedText name="clip-split" class="clip-ink clip-line" text="Party 0g (0g each) · Guild 0g" />
+                    <wg:OutlinedText name="clip-duration" class="clip-ink clip-line" text="About 1 day" />
+
+                    <ui:VisualElement class="clip-buttons" picking-mode="Ignore">
+                        <ui:Button name="clip-back" class="pixel-button panel-button"><wg:OutlinedText text="Back" /></ui:Button>
+                        <ui:Button name="clip-post" class="pixel-button panel-button"><wg:OutlinedText text="Post" /></ui:Button>
+                    </ui:VisualElement>
+
+                    <wg:OutlinedText name="clip-stamp" class="clip-stamp" text="POSTED" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Shared confirmation overlay (PixelTheme.uss › confirm-*), used for Dismiss. -->
+        <ui:VisualElement name="confirm-overlay" class="confirm-overlay">
+            <ui:VisualElement class="pixel-window confirm-window">
+                <wg:OutlinedText name="confirm-message" class="confirm-message" text="Dismiss this request?" />
+                <ui:VisualElement class="confirm-buttons" picking-mode="Ignore">
+                    <ui:Button name="confirm-no" class="pixel-button panel-button"><wg:OutlinedText text="No" /></ui:Button>
+                    <ui:Button name="confirm-yes" class="pixel-button panel-button"><wg:OutlinedText text="Yes" /></ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

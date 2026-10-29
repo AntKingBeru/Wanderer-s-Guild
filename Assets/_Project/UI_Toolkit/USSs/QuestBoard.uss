@@ -1,0 +1,293 @@
+/* Quest board in 320×180 UI pixels: wood frame, cork, 10 note slots (5×2), and the lifted-note overlay. */
+:root {
+    --qb-wood: rgb(92, 58, 32);
+    --qb-wood-edge: rgb(54, 34, 18);
+    --qb-cork: rgb(166, 120, 76);
+    --qb-cork-edge: rgb(120, 84, 50);
+    --qb-paper: rgb(236, 226, 196);
+    --qb-paper-edge: rgb(196, 184, 150);
+    --qb-pin: rgb(186, 52, 44);
+    --qb-pin-edge: rgb(110, 26, 22);
+    --qb-plank: rgb(128, 86, 50);
+    --qb-plank-edge: rgb(70, 44, 24);
+    --qb-ink: rgb(52, 40, 30);
+    --qb-ink-faint: rgb(110, 92, 72);
+    --qb-stamp: rgb(176, 40, 40);
+}
+
+/* ---------- Frame & cork ---------- */
+.qboard-frame {
+    width: 300px;
+    height: 164px;
+    padding: 3px 5px 4px 5px;
+    border-width: 1px;
+    border-color: var(--qb-wood-edge);
+    background-color: var(--qb-wood);
+}
+.qboard-title {
+    align-self: center;
+    margin-bottom: 2px;
+}
+.qboard-cork {
+    flex-grow: 1;
+    min-height: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: space-between;
+    padding: 3px;
+    border-width: 1px;
+    border-color: var(--qb-cork-edge);
+    background-color: var(--qb-cork);
+}
+.qboard-footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+/* ---------- Note slot (one button per slot) ---------- */
+.quest-note {
+    width: 55px;
+    height: 58px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+/* NOTE: Layout top to bottom: badge row (11px), category icon (24×24), reward, time. */
+.quest-note__paper {
+    position: absolute;
+    left: 1px; top: 3px; right: 1px; bottom: 0;
+    padding: 11px 3px 1px 3px;
+    border-width: 1px;
+    border-color: var(--qb-paper-edge);
+    background-color: var(--qb-paper);
+    align-items: center;
+    overflow: hidden;
+    display: none;
+}
+.quest-note--paper .quest-note__paper {
+    display: flex;
+}
+.quest-note--paper:focus .quest-note__paper,
+.quest-note--paper:hover .quest-note__paper {
+    border-color: var(--qb-ink);
+}
+
+/* Pin: centred at the top; faint on an empty slot, hidden on a locked one. */
+.quest-note__pin {
+    position: absolute;
+    top: 0;
+    left: 24px;
+    width: 6px;
+    height: 6px;
+    border-width: 1px;
+    border-color: var(--qb-pin-edge);
+    background-color: var(--qb-pin);
+}
+.quest-note--empty .quest-note__pin {
+    opacity: 0.3;
+}
+.quest-note--locked .quest-note__pin {
+    display: none;
+}
+
+/* Rank badge: top-left corner of the note (same 12×12 square as elsewhere). */
+.quest-note__badge,
+.note-lifted__badge {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    border-width: 1px;
+    border-color: var(--color-outline);
+    display: none;
+}
+.quest-note--paper .quest-note__badge {
+    display: flex;
+}
+.quest-note__badge > .outlined-text,
+.note-lifted__badge > .outlined-text {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+.quest-note__badge .outlined-text__stack,
+.note-lifted__badge .outlined-text__stack {
+    flex-grow: 1;
+}
+.quest-note__badge .outlined-text__part,
+.note-lifted__badge .outlined-text__part {
+    flex-grow: 1;
+    -unity-text-align: middle-center;
+}
+
+/* Category icon: a 12×12 sprite drawn at exactly 2× (crisp). Placeholder: two inked letters in a box. */
+.quest-note__icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-bottom: 1px;
+    -unity-background-scale-mode: scale-to-fit;
+    align-items: center;
+    justify-content: center;
+}
+.quest-note__icon--placeholder {
+    border-width: 1px;
+    border-color: var(--qb-ink-faint);
+}
+
+/* NOTE: Ink on paper — outline copies hidden, dark fill (the badge keeps its outlined letter). */
+.quest-note__paper .outlined-text__outline,
+.note-ink .outlined-text__outline,
+.note-lifted__stamp .outlined-text__outline {
+    display: none;
+}
+.quest-note__paper .outlined-text__fill,
+.note-ink .outlined-text__fill {
+    color: var(--qb-ink);
+}
+.quest-note__icon-letters .outlined-text__fill,
+.quest-note__time .outlined-text__fill {
+    color: var(--qb-ink-faint);
+}
+.quest-note--urgent .quest-note__time .outlined-text__fill {
+    color: var(--qb-stamp);
+}
+
+/* TAKEN stamp on a pinned note (party away). */
+.quest-note__stamp {
+    position: absolute;
+    left: 6px;
+    bottom: 12px;
+    padding: 0 2px;
+    border-width: 1px;
+    border-color: var(--qb-stamp);
+    rotate: -14deg;
+    display: none;
+}
+.quest-note__stamp .outlined-text__fill {
+    color: var(--qb-stamp);
+}
+.quest-note--taken .quest-note__stamp,
+.quest-note--ready .quest-note__stamp {
+    display: flex;
+}
+.quest-note--ready .quest-note__stamp {
+    border-color: rgb(60, 130, 60);
+}
+.quest-note--ready .quest-note__stamp .outlined-text__fill {
+    color: rgb(60, 130, 60);
+}
+
+/* Locked slot: a plank nailed across it, reading the rank that unlocks it. */
+.quest-note__plank {
+    position: absolute;
+    left: -2px; right: -2px;
+    top: 22px;
+    height: 14px;
+    border-width: 1px;
+    border-color: var(--qb-plank-edge);
+    background-color: var(--qb-plank);
+    align-items: center;
+    justify-content: center;
+    rotate: -6deg;
+    display: none;
+}
+.quest-note--locked .quest-note__plank {
+    display: flex;
+}
+
+/* ---------- Lifted note ---------- */
+.note-layer {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+}
+.note-lifted {
+    width: 200px;
+    height: 160px;
+    padding: 15px 6px 4px 6px;
+    border-width: 1px;
+    border-color: var(--qb-paper-edge);
+    background-color: var(--qb-paper);
+}
+.note-lifted__pin {
+    position: absolute;
+    top: -3px;
+    left: 96px;
+    width: 8px;
+    height: 8px;
+    border-width: 1px;
+    border-color: var(--qb-pin-edge);
+    background-color: var(--qb-pin);
+}
+.note-lifted__badge {
+    top: 2px;
+    left: 2px;
+    display: flex;
+}
+/* NOTE: Clips an over-long objective/member list; the 1px padding keeps every glyph inside the clip. */
+.note-lifted__body {
+    flex-grow: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 1px;
+}
+.note-title {
+    margin-bottom: 2px;
+}
+.note-wrap {
+    align-items: stretch;
+}
+.note-wrap .outlined-text__stack {
+    align-self: stretch;
+}
+.note-wrap .outlined-text__part {
+    white-space: normal;
+}
+.note-objective {
+    margin-bottom: 3px;
+}
+.note-faint .outlined-text__fill {
+    color: var(--qb-ink-faint);
+}
+.note-time--urgent .outlined-text__fill {
+    color: var(--qb-stamp);
+}
+.note-chance {
+    margin-top: 2px;
+}
+.note-lifted__stamp {
+    position: absolute;
+    right: 12px;
+    top: 40px;
+    padding: 2px 6px;
+    border-width: 2px;
+    border-color: var(--qb-stamp);
+    rotate: -12deg;
+    display: none;
+}
+.note-lifted__stamp .outlined-text__fill {
+    color: var(--qb-stamp);
+    font-size: var(--text-size-title);
+}
+.note-lifted--stamped .note-lifted__stamp {
+    display: flex;
+}
+.note-lifted--ready .note-lifted__stamp {
+    border-color: rgb(60, 130, 60);
+}
+.note-lifted--ready .note-lifted__stamp .outlined-text__fill {
+    color: rgb(60, 130, 60);
+}
+.note-lifted__buttons {
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}

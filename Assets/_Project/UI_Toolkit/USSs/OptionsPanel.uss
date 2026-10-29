@@ -1,0 +1,217 @@
+/* Options panel layout in 320×180 UI pixels. */
+.options-window {
+    width: 240px;
+    height: 160px;
+}
+
+/* ---------- Tabs ---------- */
+.options-tabs {
+    flex-direction: row;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-bottom: 6px;
+}
+.options-tab {
+    width: 64px;
+    margin: 0 2px;
+}
+/* The selected tab keeps an accent frame; focus (more specific) still wins while it's focused. */
+.options-tab--selected {
+    border-color: var(--color-accent);
+}
+.options-tab--selected .outlined-text__fill {
+    color: var(--color-accent);
+}
+
+/* ---------- Pages ---------- */
+/* NOTE: Zero basis plus grow: a page fills only the space between the tabs and the footer. Shown by OptionsTabBar. */
+.options-page {
+    flex-grow: 1;
+    flex-basis: 0;
+    min-height: 0;
+    align-self: stretch;
+    display: none;
+}
+.options-row {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    height: 14px;
+    margin-bottom: 2px;
+}
+.options-label {
+    width: 68px;
+}
+.options-value {
+    width: 22px;
+    align-items: flex-end;
+}
+.options-value--wide {
+    width: 54px;
+}
+.options-control {
+    flex-grow: 1;
+    margin: 0 6px;
+}
+.options-placeholder {
+    align-self: center;
+    margin-top: 16px;
+}
+
+/* ---------- Footer ---------- */
+.options-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-self: stretch;
+    flex-shrink: 0;
+}
+.options-footer-right {
+    flex-direction: row;
+}
+.options-footer-button {
+    padding: 1px 6px;
+    margin-left: 2px;
+}
+
+/* ---------- Pixel slider ---------- */
+.pixel-slider {
+    flex-grow: 1;
+    margin: 0 6px;
+    min-height: 8px;
+}
+.pixel-slider .unity-base-slider__drag-container {
+    height: 8px;
+}
+.pixel-slider .unity-base-slider__tracker {
+    height: 2px;
+    top: 3px;
+    margin-top: 0;
+    background-color: var(--frame-disabled-border);
+    border-width: 0;
+    border-radius: 0;
+}
+.pixel-slider .unity-base-slider__dragger {
+    width: 4px;
+    height: 8px;
+    top: 0;
+    margin-top: 0;
+    background-color: var(--frame-normal-border);
+    border-width: 0;
+    border-radius: 0;
+}
+.pixel-slider:focus .unity-base-slider__dragger {
+    background-color: var(--frame-highlight-border);
+}
+.pixel-slider:disabled .unity-base-slider__dragger {
+    background-color: var(--frame-disabled-border);
+}
+.pixel-slider .unity-base-slider__dragger-border {
+    display: none;
+}
+
+/* ---------- Pixel toggle ---------- */
+.pixel-toggle {
+    margin: 0 6px;
+}
+.pixel-toggle .unity-toggle__checkmark {
+    width: 8px;
+    height: 8px;
+    border-width: 1px;
+    border-radius: 0;
+    border-color: var(--frame-normal-border);
+    background-color: var(--frame-disabled-bg);
+    background-image: none;
+}
+.pixel-toggle:checked .unity-toggle__checkmark {
+    background-color: var(--color-accent);
+}
+.pixel-toggle:focus .unity-toggle__checkmark {
+    border-color: var(--frame-highlight-border);
+}
+
+/* ---------- Option cycler  < value > ---------- */
+.option-cycler {
+    flex-direction: row;
+    align-items: center;
+    height: 12px;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0);
+}
+.option-cycler:focus {
+    border-color: var(--frame-highlight-border);
+    background-color: var(--frame-highlight-bg);
+}
+.option-cycler__arrow {
+    width: 10px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    align-items: center;
+    justify-content: center;
+}
+.option-cycler__value {
+    flex-grow: 1;
+    align-items: center;
+}
+.option-cycler:disabled .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+
+/* ---------- Pixel dropdown ---------- */
+.pixel-dropdown {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 12px;
+    padding: 0 3px;
+    border-width: 1px;
+    border-color: var(--frame-normal-border);
+    background-color: var(--frame-normal-bg);
+}
+.pixel-dropdown:focus {
+    border-color: var(--frame-highlight-border);
+    background-color: var(--frame-highlight-bg);
+}
+/* NOTE: Hidden until a dropdown opens; then it catches clicks outside the list (to close it). */
+.options-dropdown-layer {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    display: none;
+}
+.pixel-dropdown__list {
+    max-height: 72px;
+    border-width: 1px;
+    border-color: var(--frame-highlight-border);
+    background-color: var(--frame-normal-bg);
+}
+.pixel-dropdown__item {
+    align-self: stretch;
+    margin: 0;
+    padding: 0 3px;
+    border-width: 0;
+}
+.pixel-dropdown__item > .outlined-text {
+    align-self: flex-start;
+}
+
+/* ---------- Confirmation overlay (Restore Defaults / Keep settings / Apply changes) ---------- */
+.options-confirm {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background-color: var(--color-dim);
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+.options-confirm-window {
+    width: 200px;
+}
+.options-confirm-message {
+    margin: 2px 0 6px 0;
+    -unity-text-align: middle-center;
+}
+.options-confirm-buttons {
+    flex-direction: row;
+    justify-content: center;
+}

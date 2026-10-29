@@ -9,11 +9,11 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Walkable
+  - TitleClick
   - Water
   - UI
-  - Interactable
-  - BuildInteractable
+  - 
+  - 
   - 
   - 
   - 
@@ -41,6 +41,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 6149165
     locked: 0
   m_RenderingLayers:
   - Default

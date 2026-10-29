@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/QuitConfirmation.uss?fileID=7433441132597879392&amp;guid=133184dc26f06ec4fbeab82b52c2befb&amp;type=3#QuitConfirmation"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="pixel-window quit-window">
+            <wg:OutlinedText text="Quit the game?" class="quit-message"/>
+            <ui:VisualElement picking-mode="Ignore" class="quit-buttons">
+                <ui:Button name="quit-no" class="pixel-button panel-button">
+                    <wg:OutlinedText text="No"/>
+                </ui:Button>
+                <ui:Button name="quit-yes" class="pixel-button panel-button">
+                    <wg:OutlinedText text="Yes"/>
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47e38c55d300bbc4eab1bff25e62fcce, type: 3}
+  m_Name: IntroCutscene
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.CutsceneData
+  slides:
+  - image: {fileID: 0}
+    placeholderColor: {r: 0, g: 0, b: 0, a: 0}
+    text: In a fantastical world filled with monsters and various dangers, exist adventurers to fight against those who seek to disrupt humanity's peace.
+  - image: {fileID: 0}
+    placeholderColor: {r: 0, g: 0, b: 0, a: 0}
+    text: 'Those that decide to take that path must register at a guild in order to be rewarded for their efforts....
+
+
+
+
+
+      Including you.'
+  - image: {fileID: 0}
+    placeholderColor: {r: 0, g: 0, b: 0, a: 0}
+    text: 'Now retired, you start wandering the world, trying to help when you can.
+
+      In your travels, you reach a faraway region, filled with monsters, dungeons, and people in need.'
+  - image: {fileID: 0}
+    placeholderColor: {r: 0, g: 0, b: 0, a: 0}
+    text: There are few adventurers in the area, especially capable ones, so you decide to take matters into your own hand.
+  - image: {fileID: 0}
+    placeholderColor: {r: 0, g: 0, b: 0, a: 0}
+    text: 'Though you are old, there are other ways you can contribute to the fight.
+
+      You decide to open your very own guild, so you can help the younger adventurers better survive and prosper.'
+  - image: {fileID: 0}
+    placeholderColor: {r: 0, g: 0, b: 0, a: 0}
+    text: With your humble shack now converted into a make-shift guildhall, you can start your journey.
+  - image: {fileID: 0}
+    placeholderColor: {r: 0, g: 0, b: 0, a: 0}
+    text: 'Welcome adventurers!
+
+      ...
+
+      ...
+
+      ...
+
+      ...
+
+      ...
+
+      To the Wanderer''s Guild!'

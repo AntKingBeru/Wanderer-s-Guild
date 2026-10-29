@@ -1,0 +1,27 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Cutscene.uss?fileID=7433441132597879392&amp;guid=552294de14176274587dda3034e1b8ad&amp;type=3#Cutscene"/>
+    <ui:VisualElement name="cutscene-root" class="cutscene-root" picking-mode="Ignore">
+        <ui:VisualElement class="cutscene-frame" picking-mode="Ignore">
+            <ui:VisualElement class="cutscene-images" picking-mode="Ignore">
+                <ui:VisualElement name="cutscene-image-a" class="cutscene-image" picking-mode="Ignore" />
+                <ui:VisualElement name="cutscene-image-b" class="cutscene-image" picking-mode="Ignore" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="cutscene-textbox" picking-mode="Ignore">
+                <ui:ScrollView name="cutscene-text-scroll" class="cutscene-text-scroll pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden">
+                    <ui:VisualElement name="cutscene-text-clip" class="cutscene-text-clip" picking-mode="Ignore">
+                        <wg:OutlinedText name="cutscene-text" class="cutscene-text" />
+                    </ui:VisualElement>
+                </ui:ScrollView>
+                <wg:OutlinedText name="cutscene-prompt" class="cutscene-prompt" text="v" />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="cutscene-skip" class="cutscene-skip" picking-mode="Ignore">
+                <wg:OutlinedText name="cutscene-skip-label" class="cutscene-skip-label" text="Hold Esc to skip" />
+                <ui:VisualElement class="cutscene-skip-bar" picking-mode="Ignore">
+                    <ui:VisualElement name="cutscene-skip-fill" class="cutscene-skip-fill" picking-mode="Ignore" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,60 @@
+/* Guild-naming panel in 320×180 UI pixels; fades in over the black left by the cutscene. */
+.naming-root {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    align-items: center;
+    justify-content: center;
+    display: none;
+    opacity: 0;
+}
+.naming-window {
+    width: 200px;
+}
+
+/* ---------- Text field (pixel style; the typed text is plain fill, no outline) ---------- */
+.pixel-textfield {
+    margin: 2px 0;
+}
+.pixel-textfield .unity-base-text-field__input,
+.pixel-textfield .unity-text-field__input {
+    min-height: 14px;
+    padding: 1px 3px;
+    border-width: 1px;
+    border-radius: 0;
+    border-color: var(--frame-normal-border);
+    background-color: var(--frame-disabled-bg);
+    --unity-cursor-color: var(--color-text);
+    --unity-selection-color: rgba(232, 200, 120, 0.4);
+}
+.pixel-textfield:focus .unity-base-text-field__input,
+.pixel-textfield .unity-base-text-field__input:focus {
+    border-color: var(--frame-highlight-border);
+}
+.naming-field {
+    width: 160px;
+}
+
+/* ---------- Hint + counter row ---------- */
+.naming-info {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 160px;
+    margin-bottom: 2px;
+}
+.naming-hint .outlined-text__fill,
+.naming-counter .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+
+/* ---------- Error + Confirm ---------- */
+.naming-error {
+    display: none;
+    margin-bottom: 2px;
+}
+.naming-error .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}
+.naming-confirm {
+    width: 64px;
+    margin-top: 2px;
+}

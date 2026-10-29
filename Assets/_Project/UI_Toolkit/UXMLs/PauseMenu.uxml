@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/PauseMenu.uss?fileID=7433441132597879392&amp;guid=cf37a42ac85bf244ab0a691b4c3d8928&amp;type=3#PauseMenu"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="pixel-window pause-window">
+            <wg:OutlinedText class="panel-title" text="Paused" />
+            <ui:Button name="pause-resume" class="pixel-button pause-button"><wg:OutlinedText text="Resume" /></ui:Button>
+            <ui:Button name="pause-save" class="pixel-button pause-button"><wg:OutlinedText text="Save" /></ui:Button>
+            <ui:Button name="pause-options" class="pixel-button pause-button"><wg:OutlinedText text="Options" /></ui:Button>
+            <ui:Button name="pause-quit-menu" class="pixel-button pause-button"><wg:OutlinedText text="Save &amp; Quit to Menu" /></ui:Button>
+            <ui:Button name="pause-quit-desktop" class="pixel-button pause-button"><wg:OutlinedText text="Save &amp; Quit to Desktop" /></ui:Button>
+        </ui:VisualElement>
+
+        <!-- Shared confirmation overlay (PixelTheme.uss › confirm-*), shown only if a quit save fails. -->
+        <ui:VisualElement name="confirm-overlay" class="confirm-overlay">
+            <ui:VisualElement class="pixel-window confirm-window">
+                <wg:OutlinedText name="confirm-message" class="confirm-message" text="Couldn't save." />
+                <ui:VisualElement class="confirm-buttons" picking-mode="Ignore">
+                    <ui:Button name="confirm-no" class="pixel-button panel-button"><wg:OutlinedText text="No" /></ui:Button>
+                    <ui:Button name="confirm-yes" class="pixel-button panel-button"><wg:OutlinedText text="Yes" /></ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="false">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Fader.uss?fileID=7433441132597879392&amp;guid=a93f1d15a21f06f4daef84368a5f8eff&amp;type=3#Fader"/>
+    <ui:VisualElement name="fade-overlay" picking-mode="Ignore" class="fade-overlay"/>
+</ui:UXML>

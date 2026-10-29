@@ -1,0 +1,40 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Applications.uss?fileID=7433441132597879392&amp;guid=7695ee1f488f82747b8fe1f73be5ca4a&amp;type=3#Applications"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="pixel-window app-window">
+            <wg:OutlinedText name="app-panel-title" class="panel-title" text="Applications 0" />
+
+            <ui:VisualElement class="app-body" picking-mode="Ignore">
+                <!-- Left: quests with applicants (rows created in code). -->
+                <ui:VisualElement class="app-list-frame" picking-mode="Ignore">
+                    <ui:ScrollView name="app-list" class="app-list pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" />
+                    <wg:OutlinedText name="app-list-empty" class="app-list-empty" text="No applications right now." />
+                </ui:VisualElement>
+
+                <!-- Right: one scroll view — the quest summary, then every applicant (rows created in code). -->
+                <ui:VisualElement class="app-details" picking-mode="Ignore">
+                    <ui:ScrollView name="app-content" class="app-content pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden">
+                        <wg:OutlinedText name="app-title" class="app-title" text="Title" />
+                        <wg:OutlinedText name="app-meta" class="app-line" text="Combat · Merchant · Rank F" />
+                        <wg:OutlinedText name="app-terms" class="app-line" text="Min. rank F · Party of 2" />
+                        <wg:OutlinedText name="app-split" class="app-line app-wrap" text="Party 0g (0g each) · Guild 0g" />
+                        <wg:OutlinedText name="app-time-chance" class="app-line app-wrap" text="Expires in 0d · Success: —" />
+                        <wg:OutlinedText class="app-section" text="Applicants" />
+                        <ui:VisualElement name="app-applicants" class="app-applicants" picking-mode="Ignore" />
+                    </ui:ScrollView>
+                    <wg:OutlinedText name="app-empty" class="app-empty" text="No applications right now." />
+
+                    <wg:OutlinedText name="app-hint" class="app-hint" text="Waiting for 1 more" />
+                    <ui:VisualElement class="app-buttons" picking-mode="Ignore">
+                        <ui:Button name="app-decline-all" class="pixel-button panel-button"><wg:OutlinedText text="Decline all" /></ui:Button>
+                        <ui:Button name="app-approve" class="pixel-button panel-button"><wg:OutlinedText text="Approve" /></ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="app-footer" picking-mode="Ignore">
+                <ui:Button name="app-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,36 @@
+/* Main menu layout in 320×180 UI pixels. Anchored (logo top-centre, column left) so wider or taller aspects just add space. */
+.menu-root {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+
+/* NOTE: Animated items start invisible so nothing flashes before the entrance animator takes over. */
+.menu-logo {
+    position: absolute;
+    top: 12px; left: 0; right: 0;
+    align-items: center;
+    opacity: 0;
+}
+.menu-logo__placeholder .unity-text-element {
+    font-size: var(--text-size-title);
+}
+
+.menu-column {
+    position: absolute;
+    left: 16px; top: 48px; bottom: 8px;
+    justify-content: center;
+}
+
+.menu-button {
+    width: 88px;
+    margin: 0 0 2px 0;
+    opacity: 0;
+}
+
+.menu-divider {
+    width: 88px;
+    height: 1px;
+    margin: 3px 0 5px 0;
+    background-color: var(--divider-color);
+    opacity: 0;
+}

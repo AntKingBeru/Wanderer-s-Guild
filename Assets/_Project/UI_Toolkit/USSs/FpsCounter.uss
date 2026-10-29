@@ -1,0 +1,7 @@
+/* FPS readout at the very bottom-right corner (gold owns top-right in-game); shown/hidden by FpsCounter. */
+.fps-root {
+    position: absolute;
+    bottom: 2px;
+    right: 3px;
+    display: none;
+}

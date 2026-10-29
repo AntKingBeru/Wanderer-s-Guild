@@ -1,0 +1,282 @@
+/* Request board in 320×180 UI pixels: list (left) + details (right), plus the quest clipboard overlay. */
+:root {
+    --clip-board: rgb(120, 78, 44);
+    --clip-board-edge: rgb(78, 50, 28);
+    --clip-paper: rgb(236, 226, 196);
+    --clip-paper-edge: rgb(196, 184, 150);
+    --clip-metal: rgb(156, 160, 168);
+    --clip-metal-edge: rgb(96, 100, 108);
+    --clip-ink: rgb(52, 40, 30);
+    --clip-ink-faint: rgb(110, 92, 72);
+    --clip-stamp: rgb(176, 40, 40);
+}
+
+.board-window {
+    width: 300px;
+    height: 164px;
+}
+.board-body {
+    flex-direction: row;
+    flex-grow: 1;
+    min-height: 0;
+    align-self: stretch;
+}
+
+/* ---------- List ---------- */
+.board-list-frame {
+    width: 150px;
+    margin-right: 4px;
+}
+.board-list {
+    flex-grow: 1;
+}
+.board-list-empty {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    right: 0;
+    align-items: center;
+    display: none;
+}
+.request-row {
+    flex-direction: row;
+    align-items: center;
+    align-self: stretch;
+    height: 14px;
+    margin: 0 0 1px 0;
+    padding: 0 2px 0 1px;
+}
+.request-row--selected {
+    border-color: var(--color-accent);
+}
+
+/* Rank badge: same 12×12 square as the HUD rank badge. */
+.request-row__badge {
+    width: 12px;
+    height: 12px;
+    margin-right: 3px;
+    border-width: 1px;
+    border-color: var(--color-outline);
+}
+/* NOTE: The label fills the badge and centres its text both ways, so it stays centred whatever the glyph's size. */
+.request-row__badge > .outlined-text {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+.request-row__badge .outlined-text__stack {
+    flex-grow: 1;
+}
+.request-row__badge .outlined-text__part {
+    flex-grow: 1;
+    -unity-text-align: middle-center;
+}
+
+/* NOTE: Long titles are clipped at the row edge. The 1px padding keeps the outline (drawn 1px outside the glyphs)
+   inside the clip, so the first letter's left edge isn't cut. */
+.request-row__title {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1px;
+}
+.request-row__new {
+    margin: 0 2px;
+}
+.request-row__new .outlined-text__fill {
+    color: var(--color-accent);
+}
+.request-row__reward {
+    width: 30px;
+    align-items: flex-end;
+}
+.request-row__time {
+    width: 18px;
+    align-items: flex-end;
+}
+.request-row--urgent .request-row__time .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}
+
+/* ---------- Details ---------- */
+.board-details {
+    flex-grow: 1;
+    min-width: 0;
+}
+/* NOTE: Clips an over-long objective; the 1px padding keeps every line's outline inside the clip. */
+.detail-content {
+    flex-grow: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 1px;
+}
+.detail-title {
+    margin-bottom: 2px;
+}
+.detail-title .outlined-text__fill {
+    color: var(--color-accent);
+}
+.detail-line .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.detail-time--urgent .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}
+/* NOTE: Shown only while the quest board has no free slot. */
+.detail-board {
+    display: none;
+}
+.detail-board .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}
+/* NOTE: The objective wraps within the pane's width and keeps its line breaks. */
+.detail-objective {
+    margin-top: 3px;
+    align-items: stretch;
+}
+.detail-objective .outlined-text__stack {
+    align-self: stretch;
+}
+.detail-objective .outlined-text__part {
+    white-space: normal;
+}
+.detail-empty {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+.detail-buttons {
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+/* ---------- Footer ---------- */
+.board-footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-self: stretch;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+/* ---------- Quest clipboard ---------- */
+/* NOTE: Full-panel layer: dims the board a little more and catches every click while the clipboard is up. */
+.clipboard-layer {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.35);
+    display: none;
+}
+/* Placeholder art: brown board, cream paper, grey clip. Each part can become a 9-slice sprite later. */
+.clipboard {
+    width: 196px;
+    height: 162px;
+    padding: 8px 6px 6px 6px;
+    border-width: 1px;
+    border-color: var(--clip-board-edge);
+    background-color: var(--clip-board);
+}
+.clipboard__clip {
+    position: absolute;
+    top: -3px;
+    left: 70px;
+    width: 54px;
+    height: 10px;
+    border-width: 1px;
+    border-color: var(--clip-metal-edge);
+    background-color: var(--clip-metal);
+}
+.clipboard__paper {
+    flex-grow: 1;
+    padding: 6px 6px 4px 6px;
+    border-width: 1px;
+    border-color: var(--clip-paper-edge);
+    background-color: var(--clip-paper);
+}
+
+/* NOTE: Ink on paper — the outline copies are hidden and the fill is dark ink (buttons keep the normal theme). */
+.clip-ink .outlined-text__outline,
+.clip-cycler .outlined-text__outline,
+.clip-stamp .outlined-text__outline {
+    display: none;
+}
+.clip-ink .outlined-text__fill,
+.clip-cycler .outlined-text__fill {
+    color: var(--clip-ink);
+}
+.clip-title {
+    margin-bottom: 1px;
+}
+.clip-meta {
+    margin-bottom: 5px;
+}
+.clip-meta .outlined-text__fill,
+.clip-line .outlined-text__fill {
+    color: var(--clip-ink-faint);
+}
+.clip-row {
+    flex-direction: row;
+    align-items: center;
+    height: 14px;
+    margin-bottom: 2px;
+}
+.clip-label {
+    width: 70px;
+}
+.clip-line {
+    margin-top: 2px;
+}
+.clip-buttons {
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: auto;
+}
+
+/* Cyclers on paper (own copy — the Options stylesheet isn't loaded here). */
+.clip-cycler {
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: center;
+    height: 12px;
+    border-width: 1px;
+    border-color: rgba(0, 0, 0, 0);
+}
+.clip-cycler:focus {
+    border-color: var(--clip-ink);
+}
+.clip-cycler .option-cycler__arrow {
+    width: 10px;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    align-items: center;
+    justify-content: center;
+}
+.clip-cycler .option-cycler__value {
+    flex-grow: 1;
+    align-items: center;
+}
+
+/* POSTED stamp: red, tilted, centred on the paper; shown and animated in code. */
+.clip-stamp {
+    position: absolute;
+    left: 46px;
+    top: 52px;
+    padding: 2px 6px;
+    border-width: 2px;
+    border-color: var(--clip-stamp);
+    rotate: -12deg;
+    display: none;
+}
+.clip-stamp .outlined-text__fill {
+    color: var(--clip-stamp);
+    font-size: var(--text-size-title);
+}

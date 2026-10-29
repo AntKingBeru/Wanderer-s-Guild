@@ -1,0 +1,200 @@
+/* In-game HUD in 320×180 UI pixels: one top bar (time left; gold, adventurers and pause right) with the rank-up banner
+   under it; rank bar bottom-centre; reputation bottom-left; floating numbers on top. */
+.game-hud {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+
+/* ---------- Top: bar + banner (one column, so the banner always sits right under the bar) ---------- */
+.hud-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    align-items: stretch;
+}
+/* NOTE: The theme's window look, flush with the screen: only the bottom edge keeps its border. */
+.hud-topbar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 4px;
+    margin: 0;
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+}
+.hud-row {
+    flex-direction: row;
+    align-items: center;
+}
+
+/* ---------- Time (left of the bar) ---------- */
+.hud-time-group {
+    align-items: flex-start;
+}
+.hud-date {
+    margin-right: 6px;
+}
+.hud-time {
+    margin-right: 4px;
+}
+.hud-phase .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+/* NOTE: 3px between the text row and the buttons, so the button frames never touch the text's outline. */
+.hud-speeds {
+    margin-top: 3px;
+}
+/* NOTE: Two-class selectors so these beat the theme's .pixel-button:hover (which deliberately shows no hover). */
+.pixel-button.hud-speed {
+    width: 20px;
+    margin-right: 1px;
+    padding: 0;
+}
+.pixel-button.hud-speed:hover {
+    border-color: var(--frame-highlight-border);
+}
+.pixel-button.hud-speed--selected {
+    border-color: var(--color-accent);
+    background-color: var(--frame-highlight-bg);
+}
+.pixel-button.hud-speed--selected .outlined-text__fill {
+    color: var(--color-accent);
+}
+
+/* ---------- Guild (right of the bar) ---------- */
+/* NOTE: A row: the counters column, then the pause button at its top right. */
+.hud-guild-group {
+    flex-direction: row;
+    align-items: flex-start;
+}
+/* NOTE: Left-aligned, so the adventurer icon and count sit directly under the coin and gold amount. */
+.hud-counters {
+    align-items: flex-start;
+}
+.hud-counter {
+    flex-direction: row;
+    align-items: center;
+}
+.hud-counter--below {
+    margin-top: 2px;
+}
+.hud-counter__icon {
+    width: 12px;
+    height: 12px;
+    margin-right: 3px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+.pixel-button.hud-pause {
+    width: 16px;
+    height: 16px;
+    margin: 0 0 0 6px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+}
+.pixel-button.hud-pause:hover {
+    border-color: var(--frame-highlight-border);
+}
+.hud-pause__icon {
+    width: 12px;
+    height: 12px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* ---------- Rank-up banner (under the bar) ---------- */
+.rank-banner-row {
+    align-items: center;
+    margin-top: 3px;
+}
+.rank-banner {
+    padding: 3px 8px;
+    border-width: 1px;
+    opacity: 0;
+}
+
+/* ---------- Rank bar (bottom-centre) ---------- */
+.rank-row {
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.rank-badge {
+    width: 12px;
+    height: 12px;
+    margin-right: 3px;
+    border-width: 1px;
+    border-color: var(--color-outline);
+    align-items: center;
+    justify-content: center;
+}
+.rank-track {
+    width: 120px;
+    height: 6px;
+    border-width: 1px;
+    border-color: var(--frame-normal-border);
+    background-color: var(--frame-disabled-bg);
+}
+/* NOTE: Width and colour are set in code (whole UI pixels, colour blended by progress). */
+.rank-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+}
+
+/* ---------- Reputation (bottom-left) ---------- */
+.rep-root {
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    align-items: center;
+}
+/* NOTE: Hidden until a change; opacity is driven in code. */
+.rep-bar {
+    width: 6px;
+    height: 40px;
+    margin-bottom: 2px;
+    border-width: 1px;
+    border-color: var(--frame-normal-border);
+    background-color: var(--frame-disabled-bg);
+    opacity: 0;
+}
+.rep-fill {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 0;
+}
+/* The neutral (0) mark, halfway up. */
+.rep-zero {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background-color: var(--frame-normal-border);
+}
+.rep-icon {
+    width: 12px;
+    height: 12px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+/* ---------- Floating numbers ---------- */
+.hud-floats {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+/* NOTE: Position (right/top), drift and opacity are set in code; right-anchored so a float ends beside its counter. */
+.hud-float {
+    position: absolute;
+    white-space: nowrap;
+}

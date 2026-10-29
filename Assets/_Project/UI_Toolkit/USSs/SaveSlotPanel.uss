@@ -1,0 +1,72 @@
+/* Save-slot panel (Load Game / New Game slot picker) in 320×180 UI pixels. */
+.slots-window {
+    width: 252px;
+    height: 164px;
+}
+
+/* NOTE: Zero basis + grow: the list fills only the space between the title and the footer. */
+.slots-list {
+    flex-grow: 1;
+    flex-basis: 0;
+    min-height: 0;
+    align-self: stretch;
+    margin: 2px 0 6px 0;
+}
+
+/* ---------- Slot row ---------- */
+.save-slot {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-self: stretch;
+    padding: 2px 3px;
+    margin: 0 1px 2px 0; /* Right margin keeps the frame off the scrollbar. */
+}
+/* Marks the slot Delete acts on while focus is on the footer. */
+.save-slot.save-slot--selected {
+    border-color: var(--color-accent);
+}
+.save-slot__thumbnail {
+    width: 32px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-right: 4px;
+    border-width: 1px;
+    border-color: var(--frame-normal-border);
+    background-color: var(--frame-disabled-bg);
+    -unity-background-scale-mode: scale-and-crop;
+}
+.save-slot__details {
+    flex-grow: 1;
+}
+.save-slot__line {
+    flex-direction: row;
+    justify-content: space-between;
+}
+.save-slot__rank .outlined-text__fill {
+    color: var(--color-accent);
+}
+.save-slot__saved-at .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+
+/* ---------- Footer ---------- */
+/* NOTE: flex-end + auto margin: Back stays right; Delete (Load mode only) sits left. */
+.slots-footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-self: stretch;
+    flex-shrink: 0;
+}
+.slots-footer-button {
+    padding: 1px 6px;
+    margin-left: 2px;
+}
+.slots-delete {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+/* Unreadable saves stay selectable (for Delete) but read as unusable. */
+.save-slot--unreadable .outlined-text__fill {
+    color: var(--color-text-disabled);
+}

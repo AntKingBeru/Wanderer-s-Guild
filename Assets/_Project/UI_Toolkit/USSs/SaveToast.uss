@@ -1,0 +1,14 @@
+/* Save toast, bottom-right, one line above the FPS counter. 320×180 UI pixels; never blocks clicks. */
+.toast-root {
+    position: absolute;
+    right: 4px;
+    bottom: 14px;
+    padding: 2px 5px;
+    opacity: 0;
+}
+.toast-root.toast--error {
+    border-color: rgb(224, 112, 96);
+}
+.toast--error .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}

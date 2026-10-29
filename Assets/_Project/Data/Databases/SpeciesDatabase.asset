@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edca3efccdbe9b74b969743c85023cdb, type: 3}
+  m_Name: SpeciesDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.SpeciesDatabase
+  species:
+  - {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+  - {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+  - {fileID: 11400000, guid: d1231bcb6e16bf840be0792efcffb2c3, type: 2}

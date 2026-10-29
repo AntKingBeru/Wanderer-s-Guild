@@ -1,0 +1,163 @@
+/* Applications screen in 320×180 UI pixels: quests with applicants (left) + one scrolling details pane (right). */
+.app-window {
+    width: 300px;
+    height: 164px;
+}
+.app-body {
+    flex-direction: row;
+    flex-grow: 1;
+    min-height: 0;
+    align-self: stretch;
+}
+
+/* ---------- List ---------- */
+.app-list-frame {
+    width: 130px;
+    margin-right: 4px;
+}
+.app-list {
+    flex-grow: 1;
+}
+.app-list-empty {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    right: 0;
+    align-items: center;
+    display: none;
+}
+.app-row {
+    flex-direction: row;
+    align-items: center;
+    align-self: stretch;
+    height: 14px;
+    margin: 0 0 1px 0;
+    padding: 0 2px 0 1px;
+}
+.app-row--selected {
+    border-color: var(--color-accent);
+}
+.app-row--ready .app-row__status .outlined-text__fill {
+    color: rgb(120, 200, 120);
+}
+
+/* Rank badge: same 12×12 square as elsewhere. */
+.app-row__badge {
+    width: 12px;
+    height: 12px;
+    margin-right: 3px;
+    border-width: 1px;
+    border-color: var(--color-outline);
+}
+.app-row__badge > .outlined-text {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+.app-row__badge .outlined-text__stack {
+    flex-grow: 1;
+}
+.app-row__badge .outlined-text__part {
+    flex-grow: 1;
+    -unity-text-align: middle-center;
+}
+/* NOTE: Titles are clipped at their edge; the 1px padding keeps the outline inside the clip. */
+.app-row__title {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1px;
+}
+.app-row__status {
+    width: 30px;
+    align-items: flex-end;
+}
+
+/* ---------- Details (one scroll view) ---------- */
+.app-details {
+    flex-grow: 1;
+    min-width: 0;
+}
+/* NOTE: The whole pane scrolls; the content keeps the viewport's width (no horizontal scroll), so long lines wrap.
+   The 1px padding keeps every glyph's outline inside the scroll's clip. */
+.app-content {
+    flex-grow: 1;
+    min-height: 0;
+}
+.app-content .unity-scroll-view__content-container {
+    padding: 1px;
+}
+.app-title {
+    margin-bottom: 1px;
+}
+.app-title .outlined-text__fill {
+    color: var(--color-accent);
+}
+.app-line .outlined-text__fill,
+.app-hint .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.app-wrap {
+    align-items: stretch;
+}
+.app-wrap .outlined-text__stack {
+    align-self: stretch;
+}
+.app-wrap .outlined-text__part {
+    white-space: normal;
+}
+.app-section {
+    margin: 3px 0 1px 0;
+}
+
+/* NOTE: The row sizes to its content (min-height, not a fixed height) and the Decline button has an explicit compact
+   size, so the button can never overflow the row and leave its bottom border showing under the next row. */
+.applicant-row {
+    flex-direction: row;
+    align-items: center;
+    min-height: 14px;
+    margin-bottom: 2px;
+}
+.applicant-row__label {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1px;
+}
+.applicant-row__decline {
+    flex-shrink: 0;
+    height: 12px;
+    min-height: 12px;
+    margin: 0 0 0 2px;
+    padding: 0 3px;
+    border-width: 1px;
+    align-items: center;
+    justify-content: center;
+}
+.app-empty {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+.app-hint {
+    align-self: flex-end;
+    margin-top: 1px;
+    display: none;
+}
+.app-buttons {
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* ---------- Footer ---------- */
+.app-footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-self: stretch;
+    flex-shrink: 0;
+    margin-top: 3px;
+}

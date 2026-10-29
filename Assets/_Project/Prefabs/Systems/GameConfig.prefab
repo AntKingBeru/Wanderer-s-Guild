@@ -1,0 +1,431 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1506289473998731507
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5404142482316822980}
+  - component: {fileID: 2417623208355657373}
+  m_Layer: 0
+  m_Name: GameConfig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &5404142482316822980
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1506289473998731507}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2417623208355657373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1506289473998731507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac3d35b0ee192f14497ba5ddad0060e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.GameConfig
+  persistAcrossScenes: 1
+  scenes:
+    firstSceneAfterBoot: 1
+    entries:
+    - id: 0
+      sceneName: Bootstrap
+    - id: 1
+      sceneName: MainMenu
+    - id: 2
+      sceneName: Intro
+    - id: 3
+      sceneName: Game
+  transitions:
+    fadeOutDuration: 0.5
+    fadeInDuration: 0.75
+    fadeEase: 4
+  tweening:
+    useSafeMode: 1
+    logBehaviour: 2
+    tweenersCapacity: 200
+    sequencesCapacity: 50
+  inputBindings:
+    skip: {fileID: -2494860314890070530, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    anyKey: {fileID: -827710720026600517, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    point: {fileID: -4946607970778886214, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    togglePause: {fileID: -2156492778693654700, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    speedNormal: {fileID: 1718325754125508370, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    speedFast: {fileID: -2068354175453318580, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    speedVeryFast: {fileID: 2906850376779115368, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    pauseMenu: {fileID: 5296796923681162282, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  playerSettings:
+    fileName: settings.json
+    volumeStep: 5
+    defaultMasterVolume: 100
+    defaultMusicVolume: 80
+    defaultSfxVolume: 80
+    defaultCharacterVolume: 80
+  displaySettings:
+    defaultWindowMode: 1
+    defaultVSync: 1
+    fpsLimits: 1e0000003c0000005a0000007800000090000000a5000000f000000000000000i
+    defaultFpsLimitIndex: 7
+    defaultBrightness: 50
+    brightnessStep: 5
+    maxExposure: 1
+    brightnessVolumePriority: 100
+    keepPromptSeconds: 10
+    fpsCounterInterval: 0.5
+  saveSlots:
+    slotCount: 5
+    rootFolder: saves
+    headerFileName: header.json
+    thumbnailFileName: thumbnail.png
+    gameFileName: game.json
+    thumbnailSize: {x: 64, y: 36}
+    newGameScene: 2
+    loadedGameScene: 3
+    savedAtFormat: yyyy-MM-dd HH:mm
+  uiScale:
+    referenceResolution: {x: 320, y: 180}
+    pixelPanels:
+    - {fileID: 11400000, guid: 6a12b064e5aaf24479f9d0c41e745f9e, type: 2}
+  audioMixer:
+    mixer: {fileID: 24100000, guid: aef01b88448b3f84a8e7adf534e57f55, type: 2}
+    masterParameter: MasterVolume
+    musicParameter: MusicVolume
+    sfxParameter: SFXVolume
+    characterParameter: CharacterVolume
+  music:
+    outputGroup: {fileID: -7145607219341094057, guid: aef01b88448b3f84a8e7adf534e57f55, type: 2}
+    defaultFadeIn: 1.5
+    defaultFadeOut: 1
+    tracks:
+    - id: 1
+      clip: {fileID: 0}
+      volume: 1
+    - id: 2
+      clip: {fileID: 0}
+      volume: 1
+  uiSounds:
+    outputGroup: {fileID: 0}
+    hover:
+      clip: {fileID: 0}
+      volume: 1
+    click:
+      clip: {fileID: 0}
+      volume: 1
+    panelOpen:
+      clip: {fileID: 0}
+      volume: 1
+    panelClose:
+      clip: {fileID: 0}
+      volume: 1
+    hoverCooldown: 0.04
+  splash:
+    backgroundColor: {r: 0, g: 0, b: 0, a: 1}
+    slides:
+    - logo: {fileID: 0}
+      placeholderText: YOUR STUDIO
+      delayBefore: 0.5
+      fadeInDuration: 1
+      holdDuration: 1.5
+      fadeOutDuration: 1
+  titleScreen:
+    promptFadeOutDuration: 0.4
+  cameraPan:
+    duration: 2.5
+    ease: 4
+  parallax:
+    maxShift: {x: 0.4, y: 0.25}
+    smoothing: 6
+    moveAgainstPointer: 1
+    uniformLayerScale: 1
+    panStrength: 0.3
+    characterPointerStrength: 0.5
+    characterSmoothing: 3
+    panJointOverlapPixels: 1
+  pupilFollow:
+    maxOffsetPixels: {x: 2, y: 1}
+    reachPixels: 8
+    smoothing: 12
+  titleCharacterReactions:
+    clickLayers:
+      serializedVersion: 2
+      m_Bits: 8
+    eyebrowRaisePixels: 2
+    eyebrowStepDuration: 0.04
+    eyebrowHoldDuration: 0.35
+    moustacheTwitch:
+    - offset: {x: 0, y: 1}
+      duration: 0.05
+    - offset: {x: 0, y: 0}
+      duration: 0.05
+    - offset: {x: 1, y: 0}
+      duration: 0.05
+    - offset: {x: -1, y: 0}
+      duration: 0.05
+    - offset: {x: 0, y: 1}
+      duration: 0.05
+  menuButtons:
+    popScale: 1.08
+    popDuration: 0.12
+    popEase: 27
+    settleDuration: 0.1
+    settleEase: 6
+  menuEntrance:
+    logoDuration: 0.6
+    logoDrop: 6
+    logoEase: 9
+    delayBeforeItems: 0.1
+    itemSlide: 24
+    itemDuration: 0.35
+    itemStagger: 0.06
+    itemEase: 9
+  panelTransitions:
+    openDuration: 0.25
+    closeDuration: 0.18
+    windowSlide: 8
+    openEase: 9
+    closeEase: 8
+    menuHideDuration: 0.2
+    menuHideEase: 8
+    menuReturnSpeed: 2
+  credits:
+    keyScrollStep: 12
+    wheelScrollStep: 12
+  intro:
+    charactersPerSecond: 40
+    slideCrossfadeDuration: 0.6
+    endFadeDuration: 0.6
+    skipHoldDuration: 1
+    skipDrainMultiplier: 2
+    promptBlinkInterval: 0.5
+    textScrollStep: 10
+    namingFadeDuration: 0.4
+  newGuild:
+    nameMinLength: 1
+    nameMaxLength: 20
+    startingRank: 0
+    startingDate:
+      year: 1
+      month: 1
+      day: 1
+    startingGold: 500
+  time:
+    months:
+    - name: Spring
+      season: 0
+    - name: Summer
+      season: 1
+    - name: Autumn
+      season: 2
+    - name: Winter
+      season: 3
+    daysPerMonth: 28
+    realSecondsPerDay: 60
+    minutesPerTick: 1
+    fastMultiplier: 2
+    veryFastMultiplier: 4
+    maxTicksPerFrame: 8
+    dawnHour: 5
+    dayHour: 7
+    duskHour: 18
+    nightHour: 20
+    startHour: 8
+  saveGame:
+    autosaveAtDayStart: 1
+    saveOnQuit: 1
+    thumbnailRenderSize: {x: 320, y: 180}
+    toastFadeDuration: 0.25
+    savedToastDuration: 1.5
+    failedToastDuration: 3
+  guildRanks:
+    ranks:
+    - rank: 0
+      pointsRequired: 0
+      color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
+    - rank: 1
+      pointsRequired: 100
+      color: {r: 0.3764706, g: 0.72156864, b: 0.34509805, a: 1}
+    - rank: 2
+      pointsRequired: 300
+      color: {r: 0.2509804, g: 0.6901961, b: 0.65882355, a: 1}
+    - rank: 3
+      pointsRequired: 700
+      color: {r: 0.28235295, g: 0.47058824, b: 0.84705883, a: 1}
+    - rank: 4
+      pointsRequired: 1500
+      color: {r: 0.59607846, g: 0.34509805, b: 0.78431374, a: 1}
+    - rank: 5
+      pointsRequired: 3100
+      color: {r: 0.9098039, g: 0.53333336, b: 0.21960784, a: 1}
+    - rank: 6
+      pointsRequired: 6300
+      color: {r: 0.9098039, g: 0.78431374, b: 0.28235295, a: 1}
+    - rank: 7
+      pointsRequired: 12700
+      color: {r: 0.78431374, g: 0.15686275, b: 0.21960784, a: 1}
+  reputation:
+    minimum: -100
+    maximum: 100
+    starting: 0
+    levels:
+    - level: 0
+      minimumValue: -100
+      color: {r: 0.6901961, g: 0.15686275, b: 0.15686275, a: 1}
+    - level: 1
+      minimumValue: -59
+      color: {r: 0.8784314, g: 0.5019608, b: 0.21960784, a: 1}
+    - level: 2
+      minimumValue: -19
+      color: {r: 0.78431374, g: 0.76862746, b: 0.72156864, a: 1}
+    - level: 3
+      minimumValue: 20
+      color: {r: 0.3764706, g: 0.72156864, b: 0.34509805, a: 1}
+    - level: 4
+      minimumValue: 60
+      color: {r: 0.9098039, g: 0.78431374, b: 0.28235295, a: 1}
+  guildHud:
+    goldGainColor: {r: 0.3764706, g: 0.72156864, b: 0.34509805, a: 1}
+    goldLossColor: {r: 0.8784314, g: 0.4392157, b: 0.3764706, a: 1}
+    goldFlashDuration: 0.4
+    goldShakePixels: 1
+    goldShakeSteps: 6
+    goldShakeStepDuration: 0.04
+    rankFillDuration: 0.4
+    reputationFadeDuration: 0.2
+    reputationFillDuration: 0.3
+    reputationShowDuration: 2
+    bannerDuration: 3
+    bannerFadeDuration: 0.3
+    bannerSlidePixels: 6
+  requests:
+    database: {fileID: 11400000, guid: af14e793d4e6f3e4eb3dab858be6cbf6, type: 2}
+    boardCapacity: 10
+    dawnBatchByReputation: 0100000002000000020000000300000003000000i
+    rankAllowance: 1
+    gatedSources: 0000000001000000i
+    gatedSourceMinimumLevel: 3
+    expiryReputation: -2
+    dismissReputation: -1
+  quests:
+    boardSlots: 10
+    baseOpenSlots: 3
+    slotsPerRank: 1
+    minRewardShare: 50
+    maxRewardShare: 100
+    rewardShareStep: 10
+    defaultRewardShare: 70
+    ranksBelowRequest: 1
+    ranksAboveRequest: 1
+    lowerRankPartySize: {x: 1, y: 5}
+    higherRankPartySize: {x: 1, y: 7}
+    higherRankFrom: 4
+    expectedGoldPerLevel: 1
+    affinityAcceptFactor: 1.25
+    baseDaysByCategory: 0200000001000000030000000100000002000000030000000200000004000000i
+    ranksPerExtraDay: 2
+    difficultyPerMemberByRank:
+    - 6
+    - 10
+    - 16
+    - 24
+    - 34
+    - 46
+    - 60
+    - 80
+    affinityPowerBonus: 0.2
+    chanceAtEven: 0.7
+    chancePerRatio: 1
+    minChance: 0.05
+    maxChance: 0.95
+    statWeights:
+    - category: 0
+      strength: 0.5
+      agility: 0.2
+      intellect: 0
+      vitality: 0.3
+    - category: 1
+      strength: 0
+      agility: 0.4
+      intellect: 0.4
+      vitality: 0.2
+    - category: 2
+      strength: 0.3
+      agility: 0.3
+      intellect: 0
+      vitality: 0.4
+    - category: 3
+      strength: 0
+      agility: 0.6
+      intellect: 0
+      vitality: 0.4
+    - category: 4
+      strength: 0.4
+      agility: 0
+      intellect: 0.2
+      vitality: 0.4
+    - category: 5
+      strength: 0
+      agility: 0.4
+      intellect: 0.3
+      vitality: 0.3
+    - category: 6
+      strength: 0
+      agility: 0.3
+      intellect: 0.7
+      vitality: 0
+    - category: 7
+      strength: 0.3
+      agility: 0.2
+      intellect: 0.2
+      vitality: 0.3
+    experienceByRank: 96000000000000002c010000000000005802000000000000b0040000000000006009000000000000c0120000000000008025000000000000004b000000000000l
+    rankPointsByRank: 0a00000000000000140000000000000028000000000000005000000000000000a000000000000000400100000000000080020000000000000005000000000000l
+    successReputation: 2
+    failureReputation: -3
+  questClipboard:
+    slideDuration: 0.3
+    slideDistance: 180
+    stampDuration: 0.15
+    stampStartScale: 1.6
+    stampHold: 0.45
+  questPanel:
+    categoryIcons: {fileID: 11400000, guid: 9f7bf3e818460994e9382412d459086a, type: 2}
+    liftDuration: 0.15
+    liftStartScale: 0.7
+    resultToastHold: 2.5
+  adventurers:
+    classDatabase: {fileID: 11400000, guid: bb15dd73d6cdda74fb45a283cf62eee7, type: 2}
+    speciesDatabase: {fileID: 11400000, guid: c36934fcfba45734bb0b1050837def0e, type: 2}
+    nameList: {fileID: 11400000, guid: fd0d5328347d2b94ea57680df4417c3d, type: 2}
+    epithetChance: 0.25
+    capacity: 6
+    startingAdventurers: 2
+    arrivalChanceByReputation:
+    - 0.15
+    - 0.3
+    - 0.5
+    - 0.7
+    - 0.9
+    maxArrivalLevelByReputation: 0100000002000000030000000500000008000000i
+    wealthPerLevel: {x: 20, y: 60}
+    experience:
+      thresholds: 00000000000000002c0100000000000084030000000000008c0a0000000000006419000000000000b036000000000000d859000000000000d08400000000000080bb00000000000000fa000000000000084c010000000000a086010000000000c0d4010000000000e0220200000000008884020000000000b8f9020000000000e86e030000000000280b04000000000068a7040000000000b86a050000000000l

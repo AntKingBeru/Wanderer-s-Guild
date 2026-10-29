@@ -1,0 +1,18 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/MainMenu.uss?fileID=7433441132597879392&amp;guid=8f10c6ef2b59aa641b418bec7942b41d&amp;type=3#MainMenu"/>
+    <ui:VisualElement name="menu-root" class="menu-root" picking-mode="Ignore">
+        <ui:VisualElement name="menu-logo" class="menu-logo" picking-mode="Ignore">
+            <wg:OutlinedText name="menu-logo-placeholder" class="menu-logo__placeholder" text="WANDERER'S GUILD" />
+        </ui:VisualElement>
+        <ui:VisualElement name="menu-column" class="menu-column" picking-mode="Ignore">
+            <ui:Button name="menu-button-continue" class="menu-button pixel-button"><wg:OutlinedText text="Continue" /></ui:Button>
+            <ui:VisualElement class="menu-divider" picking-mode="Ignore" />
+            <ui:Button name="menu-button-new-game" class="menu-button pixel-button"><wg:OutlinedText text="New Game" /></ui:Button>
+            <ui:Button name="menu-button-load-game" class="menu-button pixel-button"><wg:OutlinedText text="Load Game" /></ui:Button>
+            <ui:VisualElement class="menu-divider" picking-mode="Ignore" />
+            <ui:Button name="menu-button-options" class="menu-button pixel-button"><wg:OutlinedText text="Options" /></ui:Button>
+            <ui:Button name="menu-button-credits" class="menu-button pixel-button"><wg:OutlinedText text="Credits" /></ui:Button>
+            <ui:Button name="menu-button-quit-game" class="menu-button pixel-button"><wg:OutlinedText text="Quit Game" /></ui:Button>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

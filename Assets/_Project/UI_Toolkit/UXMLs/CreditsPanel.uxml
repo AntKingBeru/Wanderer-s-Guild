@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/CreditsPanel.uss?fileID=7433441132597879392&amp;guid=41ec824e48c81774ebefadedc604df38&amp;type=3#CreditsPanel"/>
+    <ui:VisualElement name="panel-root" class="panel-root">
+        <ui:VisualElement name="panel-window" class="pixel-window credits-window">
+            <wg:OutlinedText class="panel-title" text="Credits" />
+            <ui:ScrollView name="credits-scroll" class="credits-scroll pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" />
+            <ui:Button name="credits-back" class="pixel-button panel-button"><wg:OutlinedText text="Back" /></ui:Button>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

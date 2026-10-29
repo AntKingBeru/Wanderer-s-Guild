@@ -1,55 +1,45 @@
-// Generic MonoBehaviour singleton base with an inspector flag for cross-scene persistence.
 using UnityEngine;
 
 namespace WanderersGuild
 {
     public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T>
     {
-        // Tick in the inspector for singletons that must survive scene loads
-        [SerializeField] private bool dontDestroyOnLoad;
-
-        private static T _instance;
-
-        // Global access point. Logs an error (and returns null) if accessed before it exists.
-        public static T Instance
-        {
-            get
-            {
-                if (!_instance)
-                    Debug.LogError($"[Singleton] {typeof(T).Name} accessed before it existed in the scene.");
-                return _instance;
-            }
-        }
+        [Tooltip("Detach to root and survive scene loads.")]
+        [SerializeField] private bool persistAcrossScenes = true;
         
-        // Safe existence check that never logs — use before Instance when unsure.
-        public static bool Exists => _instance;
+        public static T Instance { get; private set; }
         
-        // Claims the instance slot and applies persistence. Override, but call base.Awake() first.
-        protected virtual void Awake()
+        public static bool HasInstance => Instance;
+
+        // NOTE: Non-virtual on purpose. Derived classes must NOT declare Awake; override OnSingletonAwake instead.
+        protected void Awake()
         {
-            if (_instance && _instance != this)
+            if (HasInstance && Instance != this)
             {
-                Debug.LogWarning($"[Singleton] Duplicate {typeof(T).Name} destroyed.");
+                gameObject.SetActive(false); // Prevents OnEnable/Start on the duplicate (Destroy is deferred).
                 Destroy(gameObject);
                 return;
             }
 
-            _instance = (T)this;
-            
-            // DontDestroyOnLoad only works on root objects; detach if nested so persistence is reliable.
-            if (dontDestroyOnLoad)
+            Instance = (T)this;
+
+            if (persistAcrossScenes)
             {
-                if (transform.parent)
-                    transform.SetParent(null);
+                transform.SetParent(null); // DontDestroyOnLoad only works on root objects.
                 DontDestroyOnLoad(gameObject);
             }
+            
+            OnSingletonAwake();
         }
         
-        // Clears the static ref so scene changes / play-exit don't leave a stale pointer.
+        // Runs once, only on the surviving instance.
+        protected virtual void OnSingletonAwake() { }
+        
+        // NOTE: Overrides must call base.OnDestroy().
         protected virtual void OnDestroy()
         {
-            if (_instance == this)
-                _instance = null;
+            if (Instance == this)
+                Instance = null;
         }
     }
 }

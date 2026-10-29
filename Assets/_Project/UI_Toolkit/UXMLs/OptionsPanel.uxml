@@ -1,0 +1,98 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/OptionsPanel.uss?fileID=7433441132597879392&amp;guid=15273ca0fc6ce3c4cbf7c7372a3ce538&amp;type=3#OptionsPanel"/>
+    <ui:VisualElement name="panel-root" class="panel-root">
+        <ui:VisualElement name="panel-window" class="pixel-window options-window">
+            <wg:OutlinedText class="panel-title" text="Options" />
+
+            <ui:VisualElement name="options-tabs" class="options-tabs" picking-mode="Ignore">
+                <ui:Button name="tab-audio" class="pixel-button options-tab"><wg:OutlinedText text="Audio" /></ui:Button>
+                <ui:Button name="tab-display" class="pixel-button options-tab"><wg:OutlinedText text="Display" /></ui:Button>
+                <ui:Button name="tab-controls" class="pixel-button options-tab"><wg:OutlinedText text="Controls" /></ui:Button>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="tab-page-audio" class="options-page">
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="Master" />
+                    <ui:SliderInt name="volume-master" class="pixel-slider" low-value="0" high-value="100" />
+                    <wg:OutlinedText name="volume-master-value" class="options-value" text="100" />
+                </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="Music" />
+                    <ui:SliderInt name="volume-music" class="pixel-slider" low-value="0" high-value="100" />
+                    <wg:OutlinedText name="volume-music-value" class="options-value" text="100" />
+                </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="Effects" />
+                    <ui:SliderInt name="volume-sfx" class="pixel-slider" low-value="0" high-value="100" />
+                    <wg:OutlinedText name="volume-sfx-value" class="options-value" text="100" />
+                </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="Character" />
+                    <ui:SliderInt name="volume-character" class="pixel-slider" low-value="0" high-value="100" />
+                    <wg:OutlinedText name="volume-character-value" class="options-value" text="100" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:ScrollView name="tab-page-display" class="options-page pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden">
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="Resolution" />
+                    <wg:PixelDropdown name="display-resolution" class="options-control" />
+                </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="Window" />
+                    <wg:OptionCycler name="display-window-mode" class="options-control" />
+                </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="Monitor" />
+                    <wg:OptionCycler name="display-monitor" class="options-control" />
+                </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="VSync" />
+                    <ui:Toggle name="display-vsync" class="pixel-toggle" />
+                </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="FPS Limit" />
+                    <ui:SliderInt name="display-fps" class="pixel-slider" low-value="0" high-value="7" />
+                    <wg:OutlinedText name="display-fps-value" class="options-value options-value--wide" text="Unlimited" />
+                </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="Brightness" />
+                    <ui:SliderInt name="display-brightness" class="pixel-slider" low-value="0" high-value="100" />
+                    <wg:OutlinedText name="display-brightness-value" class="options-value options-value--wide" text="50" />
+                </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="UI Scale" />
+                    <wg:OptionCycler name="display-ui-scale" class="options-control" />
+                </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="FPS Counter" />
+                    <ui:Toggle name="display-fps-counter" class="pixel-toggle" />
+                </ui:VisualElement>
+            </ui:ScrollView>
+
+            <ui:VisualElement name="tab-page-controls" class="options-page">
+                <wg:OutlinedText class="options-placeholder" text="Coming later." />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="options-footer" picking-mode="Ignore">
+                <ui:Button name="options-restore" class="pixel-button options-footer-button"><wg:OutlinedText text="Restore Defaults" /></ui:Button>
+                <ui:VisualElement class="options-footer-right" picking-mode="Ignore">
+                    <ui:Button name="options-apply" class="pixel-button options-footer-button"><wg:OutlinedText text="Apply" /></ui:Button>
+                    <ui:Button name="options-back" class="pixel-button options-footer-button"><wg:OutlinedText text="Back" /></ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="options-dropdown-layer" class="options-dropdown-layer" />
+
+            <ui:VisualElement name="confirm-overlay" class="confirm-overlay">
+                <ui:VisualElement class="pixel-window confirm-window">
+                    <wg:OutlinedText name="confirm-message" class="confirm-message" text="Are you sure?" />
+                    <ui:VisualElement class="confirm-buttons" picking-mode="Ignore">
+                        <ui:Button name="confirm-no" class="pixel-button panel-button"><wg:OutlinedText text="No" /></ui:Button>
+                        <ui:Button name="confirm-yes" class="pixel-button panel-button"><wg:OutlinedText text="Yes" /></ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

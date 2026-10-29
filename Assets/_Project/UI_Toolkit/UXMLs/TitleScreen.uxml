@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/TitleScreen.uss?fileID=7433441132597879392&amp;guid=f80b0b1971eb9974eb721fea7a0109ce&amp;type=3#TitleScreen"/>
+    <ui:VisualElement name="title-root" class="title-root" picking-mode="Ignore">
+        <wg:OutlinedText name="title-prompt" class="title-prompt" text="Press any key" />
+    </ui:VisualElement>
+</ui:UXML>

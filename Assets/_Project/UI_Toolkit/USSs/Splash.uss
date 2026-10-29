@@ -1,0 +1,22 @@
+.splash-root {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background-color: rgb(0, 0, 0);
+    align-items: center;
+    justify-content: center;
+}
+.splash-content { align-items: center; justify-content: center; opacity: 0; }
+.splash-logo {
+    width: 160px;
+    height: 80px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+}
+.splash-placeholder {
+    letter-spacing: 2px;
+}
+.splash-placeholder .unity-text-element {
+    font-size: var(--text-size-title);
+}
