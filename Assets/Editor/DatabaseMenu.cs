@@ -22,8 +22,9 @@ namespace Editor
                 var species = await new SpeciesSheetImporter().ImportAsync();
                 var classes = await new ClassSheetImporter().ImportAsync();
                 var requests = await new RequestSheetImporter().ImportAsync();
+                var facilities = await new FacilitySheetImporter().ImportAsync();
 
-                Debug.Log(species && classes && requests
+                Debug.Log(species && classes && requests && facilities
                     ? "[Database] Load finished."
                     : "[Database] Load finished with errors (see above).");
             }
@@ -41,20 +42,21 @@ namespace Editor
         [MenuItem("Database/Load", true)]
         private static bool CanLoad() => !_isLoading && !EditorApplication.isPlayingOrWillChangePlaymode;
 
-        // NOTE: Deleting changes GUIDs — references in GameConfig (Requests › Database, Adventurers › Class/Species Database)
-        // must be reassigned after a Clean.
+        // NOTE: Deleting changes GUIDs — references in GameConfig (Requests › Database, Adventurers › Class/Species Database,
+        // Facilities › Database) and hand-assigned prefabs/icons on the assets must be redone after a Clean.
         [MenuItem("Database/Clean")]
         private static void Clean()
         {
             if (!EditorUtility.DisplayDialog("Clean database",
-                    "Delete every imported data asset (species, classes, requests and their databases)?\n\n" +
-                    "References to them in GameConfig will need reassigning after the next Load.",
+                    "Delete every imported data asset (species, classes, requests, facilities and their databases)?\n\n" +
+                    "References to them in GameConfig — and prefabs/icons assigned on the assets — will need redoing.",
                     "Delete", "Cancel"))
                 return;
 
             new SpeciesSheetImporter().DeleteGenerated();
             new ClassSheetImporter().DeleteGenerated();
             new RequestSheetImporter().DeleteGenerated();
+            new FacilitySheetImporter().DeleteGenerated();
             AssetDatabase.Refresh();
         }
 

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2207a156ee50e6e46bd8fc7273ebf9d1, type: 3}
+  m_Name: FacilityDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.FacilityDatabase
+  facilities:
+  - {fileID: 11400000, guid: 8245fc9f4f0a8f0408c161af0d8abef3, type: 2}
+  - {fileID: 11400000, guid: d06f9d30654abfc498108851a706fd21, type: 2}
+  - {fileID: 11400000, guid: fedfa58c7197c8844bbfd5cf38369e62, type: 2}
+  - {fileID: 11400000, guid: 9b4fa6026f6c18244867e6a102a29f91, type: 2}
+  - {fileID: 11400000, guid: 1916a87a08b450b48abd5b0abe7833de, type: 2}
+  - {fileID: 11400000, guid: 441770f4078b37b408c4d88c015bbd4c, type: 2}
+  - {fileID: 11400000, guid: 7b819866e183c3a428100aaea3ede49f, type: 2}

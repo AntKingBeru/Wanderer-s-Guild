@@ -1,8 +1,9 @@
-// Reads and validates sheet cells for the importer: text (single/multi-line), whole numbers, enums, stat blocks and lists.
+// Reads and validates sheet cells for the importer: text, whole numbers, enums, stat blocks, sizes ("6x4") and lists.
 using System;
 using System.Linq;
 using System.Globalization;
 using Csv;
+using UnityEngine;
 using WanderersGuild;
 
 namespace Editor
@@ -50,10 +51,33 @@ namespace Editor
                                  ParseWholeNumber(parts[2], column), ParseWholeNumber(parts[3], column));
         }
 
+        // "6x4" (or "6X4", "6×4") — width × depth, both at least 1.
+        public static Vector2Int Size(CsvRow row, string column)
+        {
+            var text = Text(row, column).Replace('X', 'x').Replace('×', 'x');
+            var parts = text.Split('x');
+            if (parts.Length != 2)
+                throw new FormatException($"{column} needs WxD (e.g. 6x4), got '{text}'");
+
+            Vector2Int size = new(ParseWholeNumber(parts[0], column), ParseWholeNumber(parts[1], column));
+            if (size.x < 1 || size.y < 1) throw new FormatException($"{column} '{text}' must be at least 1x1");
+            return size;
+        }
+
         // Comma-separated items, trimmed; empty items dropped. An empty cell is an empty list.
         public static string[] List(CsvRow row, string column)
         {
             return Text(row, column).Split(',').Select(part => part.Trim()).Where(item => item.Length > 0).ToArray();
+        }
+
+        // Comma-separated whole numbers (e.g. "200,400,800"). Any bad item throws.
+        public static int[] WholeNumberList(CsvRow row, string column)
+        {
+            var items = List(row, column);
+            var values = new int[items.Length];
+            for (var i = 0; i < items.Length; i++)
+                values[i] = ParseWholeNumber(items[i], column);
+            return values;
         }
 
         // Comma-separated enum names (empty cell = none). Unknown names throw.

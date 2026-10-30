@@ -49,6 +49,7 @@ namespace WanderersGuild
         [SerializeField] private WorldViewSettings worldView = new();
         [SerializeField] private GuildCameraSettings guildCamera = new();
         [SerializeField] private InteractionSettings interaction = new();
+        [SerializeField] private FacilitySettings facilities = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -88,6 +89,7 @@ namespace WanderersGuild
         public WorldViewSettings WorldView => worldView;
         public GuildCameraSettings GuildCamera => guildCamera;
         public InteractionSettings Interaction => interaction;
+        public FacilitySettings Facilities => facilities;
     }
     
     #region Scene Management
@@ -1434,6 +1436,46 @@ namespace WanderersGuild
         public uint OutlineBit => 1u << outlineRenderingLayer;
         public float MaxRayDistance => maxRayDistance;
         public float LabelGap => labelGap;
+    }
+    #endregion
+    
+    #region Facilities
+    [Serializable]
+    public class FacilitySettings
+    {
+        [Tooltip("The imported FacilityDatabase (Database › Load builds it).")]
+        [SerializeField] private FacilityDatabase database;
+
+        [Tooltip("Sheet ID of the Guild Hall — placed for free, already complete, on a new guild; can't be demolished.")]
+        [SerializeField] private string guildHallId = "fac_guild_hall";
+        [Tooltip("The Guild Hall's origin cell and rotation (0–3). Default centres a 20×28 hall on the world origin.")]
+        [SerializeField] private Vector2Int guildHallOrigin = new(-10, -14);
+        [SerializeField, Range(0, 3)] private int guildHallRotation;
+
+        [Tooltip("Cells rooms may occupy (x, y = min corner; width, height).")]
+        [SerializeField] private RectInt buildArea = new(-60, -60, 120, 120);
+
+        [Tooltip("Share of a room's total cost returned when it's demolished.")]
+        [SerializeField, Range(0f, 1f)] private float demolishRefund = 0.5f;
+
+        [Tooltip("Reputation when a new room finishes construction (not for upgrades).")]
+        [SerializeField] private int builtReputation = 1;
+
+        [Tooltip("Shown over a footprint while it's being built or upgraded (scaled to the footprint). Empty = a plain box.")]
+        [SerializeField] private GameObject scaffoldPrefab;
+
+        [Tooltip("Extra space (units) around all rooms for the camera's bounds.")]
+        [SerializeField, Min(0f)] private float cameraBoundsPadding = 1f;
+
+        public FacilityDatabase Database => database;
+        public string GuildHallId => guildHallId;
+        public Vector2Int GuildHallOrigin => guildHallOrigin;
+        public int GuildHallRotation => guildHallRotation & 3;
+        public RectInt BuildArea => buildArea;
+        public float DemolishRefund => demolishRefund;
+        public int BuiltReputation => builtReputation;
+        public GameObject ScaffoldPrefab => scaffoldPrefab;
+        public float CameraBoundsPadding => cameraBoundsPadding;
     }
     #endregion
 }

@@ -8,9 +8,9 @@ namespace WanderersGuild
     [Serializable]
     public class GameSaveData
     {
-        // NOTE: v2 added the guild state; v3 the request board; v4 the adventurer roster; v5 posted quests. Older files load
-        // with the missing parts at defaults.
-        public const int CurrentVersion = 5;
+        // NOTE: v2 guild state; v3 request board; v4 roster; v5 posted quests; v6 facilities. Older files load with the
+        // missing parts at defaults (a save without facilities gets the Guild Hall placed on load).
+        public const int CurrentVersion = 6;
 
         // NOTE: Generous upper bound (~114 years) — anything above means a corrupted file.
         private const double MaxPlayTimeSeconds = 3.6e9;
@@ -34,6 +34,10 @@ namespace WanderersGuild
 
         [SerializeField] private List<SavedQuest> quests = new();
         [SerializeField] private int nextQuestId = 1;
+
+        [SerializeField] private List<SavedFacility> facilities = new();
+        [SerializeField] private int nextFacilityId = 1;
+        [SerializeField] private bool facilitiesInitialized;
 
         public int Version => version;
 
@@ -121,7 +125,7 @@ namespace WanderersGuild
             set => adventurersInitialized = value;
         }
 
-        // Posted quests (waiting or in progress). Written by QuestManager.
+        // Posted quests (waiting, ready or in progress). Written by QuestManager.
         public IReadOnlyList<SavedQuest> Quests => quests ?? (IReadOnlyList<SavedQuest>)Array.Empty<SavedQuest>();
 
         public void SetQuests(IEnumerable<SavedQuest> items) => quests = items != null ? new List<SavedQuest>(items) : new List<SavedQuest>();
@@ -131,6 +135,26 @@ namespace WanderersGuild
         {
             get => nextQuestId;
             set => nextQuestId = Math.Max(1, value);
+        }
+
+        // The guild's rooms. Written by FacilityManager.
+        public IReadOnlyList<SavedFacility> Facilities => facilities ?? (IReadOnlyList<SavedFacility>)Array.Empty<SavedFacility>();
+
+        public void SetFacilities(IEnumerable<SavedFacility> items) =>
+            facilities = items != null ? new List<SavedFacility>(items) : new List<SavedFacility>();
+
+        // Next room id (keeps ids unique across saves). Written by FacilityManager.
+        public int NextFacilityId
+        {
+            get => nextFacilityId;
+            set => nextFacilityId = Math.Max(1, value);
+        }
+
+        // True once the Guild Hall has been placed. Written by FacilityManager.
+        public bool FacilitiesInitialized
+        {
+            get => facilitiesInitialized;
+            set => facilitiesInitialized = value;
         }
 
         public bool IsValid =>

@@ -649,4 +649,106 @@ namespace WanderersGuild
         public static PromotionCheck HighestRank() => new(false, false, GuildRank.National, 0, "Highest rank");
     }
     #endregion
+    
+    #region Facilities
+    // One validated row of the Facilities sheet, handed to FacilityData.ApplyImport by the importer.
+    public readonly struct FacilityImportRow
+    {
+        public FacilityImportRow(string id, string displayName, string description, Vector2Int size, int maxLevel,
+            long[] costs, int[] buildDays, GuildRank[] unlockRanks, int limit)
+        {
+            Id = id;
+            DisplayName = displayName;
+            Description = description;
+            Size = size;
+            MaxLevel = maxLevel;
+            Costs = costs;
+            BuildDays = buildDays;
+            UnlockRanks = unlockRanks;
+            Limit = limit;
+        }
+
+        public string Id { get; }
+        public string DisplayName { get; }
+        public string Description { get; }
+        public Vector2Int Size { get; }
+        public int MaxLevel { get; }
+        public long[] Costs { get; }
+        public int[] BuildDays { get; }
+        public GuildRank[] UnlockRanks { get; }
+        public int Limit { get; }
+    }
+    
+    // A placed room as stored in game.json (facility by sheet id).
+    [Serializable]
+    public struct SavedFacility
+    {
+        [SerializeField] private int id;
+        [SerializeField] private string facilityId;
+        [SerializeField] private Vector2Int origin;
+        [SerializeField] private int rotation;
+        [SerializeField] private int level;
+        [SerializeField] private int targetLevel;
+        [SerializeField] private FacilityState state;
+        [SerializeField] private long finishAtMinutes;
+        [SerializeField] private long totalSpent;
+
+        public SavedFacility(int id, string facilityId, Vector2Int origin, int rotation, int level, int targetLevel,
+            FacilityState state, long finishAtMinutes, long totalSpent)
+        {
+            this.id = id;
+            this.facilityId = facilityId;
+            this.origin = origin;
+            this.rotation = rotation;
+            this.level = level;
+            this.targetLevel = targetLevel;
+            this.state = state;
+            this.finishAtMinutes = finishAtMinutes;
+            this.totalSpent = totalSpent;
+        }
+
+        public int Id => id;
+        public string FacilityId => facilityId;
+        public Vector2Int Origin => origin;
+        public int Rotation => rotation;
+        public int Level => level;
+        public int TargetLevel => targetLevel;
+        public FacilityState State => state;
+        public long FinishAtMinutes => finishAtMinutes;
+        public long TotalSpent => totalSpent;
+    }
+    
+    // A connector in the room's unrotated footprint: its edge cell and which way the door faces.
+    public readonly struct ConnectorSpec
+    {
+        public ConnectorSpec(Vector2Int cell, CardinalDirection facing)
+        {
+            Cell = cell;
+            Facing = facing;
+        }
+
+        public Vector2Int Cell { get; }
+        public CardinalDirection Facing { get; }
+    }
+    
+    // Whether a build, upgrade or demolish is allowed now: its cost (or refund) and, if not, why.
+    public readonly struct FacilityCheck
+    {
+        private FacilityCheck(bool allowed, long gold, string reason)
+        {
+            Allowed = allowed;
+            Gold = gold;
+            Reason = reason;
+        }
+
+        public bool Allowed { get; }
+
+        // The cost (build / upgrade) or the refund (demolish).
+        public long Gold { get; }
+        public string Reason { get; }
+
+        public static FacilityCheck Ok(long gold) => new(true, gold, string.Empty);
+        public static FacilityCheck No(string reason, long gold = 0) => new(false, gold, reason);
+    }
+    #endregion
 }

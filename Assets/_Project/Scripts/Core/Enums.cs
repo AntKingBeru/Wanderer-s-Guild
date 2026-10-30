@@ -270,4 +270,23 @@ namespace WanderersGuild
         InExam = 3
     }
     #endregion
+    
+    #region Facilities
+    // Where a placed room is. NOTE: Values are saved.
+    public enum FacilityState
+    {
+        Building = 0,
+        Complete = 1,
+        Upgrading = 2
+    }
+    
+    // Grid facing; order matters — rotating a room adds its rotation steps (N → E → S → W, clockwise from above).
+    public enum CardinalDirection
+    {
+        North = 0,
+        East = 1,
+        South = 2,
+        West = 3
+    }
+    #endregion
 }

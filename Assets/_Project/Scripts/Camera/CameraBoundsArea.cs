@@ -1,12 +1,19 @@
-// A box on the floor the guild camera's focus point must stay inside (resize it as rooms are added); drawn as a gizmo.
+// The box on the floor the guild camera's focus point must stay inside; resized by the facilities as rooms are built.
 using UnityEngine;
 
 namespace WanderersGuild
 {
     public class CameraBoundsArea : MonoBehaviour
     {
-        [Tooltip("Width (x) and depth (z) of the walkable area, centred on this object. Height is ignored.")]
+        [Tooltip("Width (x) and depth (z) of the area, centred on this object. Height is ignored. Set by FacilityManager at runtime.")]
         [SerializeField] private Vector2 size = new(20f, 28f);
+
+        // Moves and resizes the area (y of the center is ignored).
+        public void SetArea(Vector3 centre, Vector2 newSize)
+        {
+            transform.position = new Vector3(centre.x, transform.position.y, centre.z);
+            size = new Vector2(Mathf.Max(0f, newSize.x), Mathf.Max(0f, newSize.y));
+        }
 
         // The point clamped inside the box (shrunk by padding on each side); y is kept.
         public Vector3 Clamp(Vector3 point, float padding)

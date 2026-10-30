@@ -175,5 +175,19 @@ namespace WanderersGuild
         // Arg: the adventurer.
         public static readonly UnityEvent<Adventurer> OnAdventurerLeft = new();
         #endregion
+        
+        #region Facilities
+        // A room was placed (construction started; the Guild Hall arrives already complete). Arg: the room.
+        public static readonly UnityEvent<PlacedFacility> OnFacilityPlaced = new();
+
+        // A construction or upgrade finished — the room now works at its new level. Arg: the room.
+        public static readonly UnityEvent<PlacedFacility> OnFacilityCompleted = new();
+
+        // An upgrade started. Arg: the room.
+        public static readonly UnityEvent<PlacedFacility> OnFacilityUpgradeStarted = new();
+
+        // A room was demolished. Arg: the room (no longer in the guild).
+        public static readonly UnityEvent<PlacedFacility> OnFacilityRemoved = new();
+        #endregion
     }
 }

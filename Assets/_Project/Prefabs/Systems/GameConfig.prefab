@@ -478,3 +478,17 @@ MonoBehaviour:
     outlineRenderingLayer: 7
     maxRayDistance: 200
     labelGap: 2
+  facilities:
+    database: {fileID: 11400000, guid: f090ea522f5f4e840a02af578e837280, type: 2}
+    guildHallId: facility_guild_hall
+    guildHallOrigin: {x: -10, y: -14}
+    guildHallRotation: 0
+    buildArea:
+      x: -60
+      y: -60
+      width: 120
+      height: 120
+    demolishRefund: 0.5
+    builtReputation: 1
+    scaffoldPrefab: {fileID: 0}
+    cameraBoundsPadding: 1
