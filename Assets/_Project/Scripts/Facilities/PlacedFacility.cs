@@ -1,4 +1,4 @@
-// A room in the guild: its facility, grid origin and rotation, level, construction state, and its world cells/connectors.
+// A room in the guild: its facility, grid origin and rotation, level, construction state, and its world cells/doors.
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +7,7 @@ namespace WanderersGuild
     public sealed class PlacedFacility
     {
         private readonly List<Vector2Int> _cells = new();
-        private readonly List<(Vector2Int cell, CardinalDirection facing)> _connectors = new();
+        private readonly List<WorldDoor> _doors = new();
 
         public PlacedFacility(int id, FacilityData data, Vector2Int origin, int rotation, int level, int targetLevel,
                               FacilityState state, long finishAtMinutes, long totalSpent)
@@ -24,10 +24,7 @@ namespace WanderersGuild
 
             _cells.AddRange(FacilityFootprint.Cells(origin, data.Size, Rotation));
             foreach (var connector in data.Connectors)
-            {
-                _connectors.Add((FacilityFootprint.ToWorldCell(connector.Cell, data.Size, origin, Rotation),
-                                 FacilityFootprint.Rotate(connector.Facing, Rotation)));
-            }
+                _doors.Add(FacilityFootprint.ToWorldDoor(connector, data.Size, origin, Rotation));
         }
 
         public int Id { get; }
@@ -47,7 +44,7 @@ namespace WanderersGuild
         public long TotalSpent { get; private set; }
 
         public IReadOnlyList<Vector2Int> Cells => _cells;
-        public IReadOnlyList<(Vector2Int cell, CardinalDirection facing)> Connectors => _connectors;
+        public IReadOnlyList<WorldDoor> Doors => _doors;
         public bool IsUnderConstruction => State != FacilityState.Complete;
 
         public void StartUpgrade(long cost, long finishAtMinutes)

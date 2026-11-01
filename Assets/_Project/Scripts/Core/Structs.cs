@@ -718,7 +718,8 @@ namespace WanderersGuild
         public long TotalSpent => totalSpent;
     }
     
-    // A connector in the room's unrotated footprint: its edge cell and which way the door faces.
+    // A door in the room's unrotated footprint: its first cell (lower x for north/south doors, lower z for
+    // east/west doors — the second cell is the next one along the edge) and which way it faces.
     public readonly struct ConnectorSpec
     {
         public ConnectorSpec(Vector2Int cell, CardinalDirection facing)
@@ -749,6 +750,37 @@ namespace WanderersGuild
 
         public static FacilityCheck Ok(long gold) => new(true, gold, string.Empty);
         public static FacilityCheck No(string reason, long gold = 0) => new(false, gold, reason);
+    }
+    
+    // A 2-cell-wide door on the grid: both cells (kept in a fixed order, so equal doors compare equal at any
+    // rotation) and its facing.
+    public readonly struct WorldDoor : IEquatable<WorldDoor>
+    {
+        public WorldDoor(Vector2Int a, Vector2Int b, CardinalDirection facing)
+        {
+            bool swap = b.x < a.x || (b.x == a.x && b.y < a.y);
+            A = swap ? b : a;
+            B = swap ? a : b;
+            Facing = facing;
+        }
+
+        public Vector2Int A { get; }
+        public Vector2Int B { get; }
+        public CardinalDirection Facing { get; }
+
+        // The door that would meet this one: both cells just outside it, facing back.
+        public WorldDoor Partner
+        {
+            get
+            {
+                var step = FacilityFootprint.Step(Facing);
+                return new WorldDoor(A + step, B + step, FacilityFootprint.Opposite(Facing));
+            }
+        }
+
+        public bool Equals(WorldDoor other) => A == other.A && B == other.B && Facing == other.Facing;
+        public override bool Equals(object obj) => obj is WorldDoor other && Equals(other);
+        public override int GetHashCode() => HashCode.Combine(A, B, (int)Facing);
     }
     #endregion
 }

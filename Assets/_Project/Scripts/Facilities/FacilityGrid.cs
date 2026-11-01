@@ -1,4 +1,4 @@
-// Occupancy + connector map of the guild's rooms on the grid; answers overlap, connection and reachability questions.
+// Occupancy + door map of the guild's rooms on the grid; answers overlap, connection and reachability questions.
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +8,7 @@ namespace WanderersGuild
     public sealed class FacilityGrid
     {
         private readonly Dictionary<Vector2Int, int> _occupied = new();
-        private readonly Dictionary<(Vector2Int, CardinalDirection), int> _connectors = new();
+        private readonly Dictionary<WorldDoor, int> _doors = new();
         private readonly Dictionary<int, PlacedFacility> _rooms = new();
 
         public void Add(PlacedFacility room)
@@ -16,8 +16,8 @@ namespace WanderersGuild
             _rooms[room.Id] = room;
             foreach (var cell in room.Cells)
                 _occupied[cell] = room.Id;
-            foreach (var (cell, facing) in room.Connectors)
-                _connectors[(cell, facing)] = room.Id;
+            foreach (var door in room.Doors)
+                _doors[door] = room.Id;
         }
 
         public void Remove(PlacedFacility room)
@@ -25,8 +25,8 @@ namespace WanderersGuild
             _rooms.Remove(room.Id);
             foreach (var cell in room.Cells)
                 _occupied.Remove(cell);
-            foreach (var (cell, facing) in room.Connectors)
-                _connectors.Remove((cell, facing));
+            foreach (var door in room.Doors)
+                _doors.Remove(door);
         }
 
         public bool IsFree(IEnumerable<Vector2Int> cells)
@@ -34,21 +34,26 @@ namespace WanderersGuild
             return cells.All(cell => !_occupied.ContainsKey(cell));
         }
 
-        // Room ids linked to these connectors: the neighboring cell has a connector facing back.
-        public void LinkedRooms(IEnumerable<(Vector2Int cell, CardinalDirection facing)> connectors, int ignoreId, List<int> results)
+        // True if both cells just outside this door are empty (somewhere a new room could connect).
+        public bool IsOpen(WorldDoor door)
+        {
+            var partner = door.Partner;
+            return !_occupied.ContainsKey(partner.A) && !_occupied.ContainsKey(partner.B);
+        }
+
+        // Room ids linked to these doors: a door covering both outside cells and facing back.
+        public void LinkedRooms(IEnumerable<WorldDoor> doors, int ignoreId, List<int> results)
         {
             results.Clear();
-            foreach (var (cell, facing) in connectors)
+            foreach (var door in doors)
             {
-                var neighbour = cell + FacilityFootprint.Step(facing);
-                if (_connectors.TryGetValue((neighbour, FacilityFootprint.Opposite(facing)), out var id) &&
-                    id != ignoreId && !results.Contains(id))
+                if (_doors.TryGetValue(door.Partner, out int id) && id != ignoreId && !results.Contains(id))
                     results.Add(id);
             }
         }
 
         // True if every room except <paramref name="removedId"/> stays reachable from the root room.
-        // NOTE: Breadth-first search over connector links, skipping the room being removed.
+        // NOTE: Breadth-first search over door links, skipping the room being removed.
         public bool StaysConnectedWithout(int removedId, int rootId)
         {
             if (removedId == rootId)
@@ -62,7 +67,7 @@ namespace WanderersGuild
             while (queue.Count > 0)
             {
                 var room = _rooms[queue.Dequeue()];
-                LinkedRooms(room.Connectors, room.Id, linked);
+                LinkedRooms(room.Doors, room.Id, linked);
                 foreach (var id in linked.Where(id => id != removedId && visited.Add(id)))
                 {
                     queue.Enqueue(id);

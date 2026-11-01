@@ -23,4 +23,4 @@ MonoBehaviour:
   unlockRanks: 01000000i
   limit: 1
   levelPrefabs:
-  - {fileID: 2578081604567545320, guid: 73deb30968ac6444d8922290404b1608, type: 3}
+  - {fileID: 2578081604567545320, guid: 58740282ae00b054db3f34e97acd3ce9, type: 3}

@@ -29,7 +29,8 @@ namespace WanderersGuild
 
         [Header("Models (not set by the importer)")]
         [Tooltip("One prefab per level (element 0 = level 1). Missing levels use the previous level's prefab. Pivot at the " +
-                 "footprint's min corner; footprint along +X (width) and +Z (depth); FacilityConnector markers on the level-1 prefab.")]
+                 "footprint's min corner; footprint along +X (width) and +Z (depth); FacilityConnector markers (at each " +
+                 "2-wide doorway's centre on the edge) on the level-1 prefab.")]
         [SerializeField] private GameObject[] levelPrefabs = Array.Empty<GameObject>();
 
         private ConnectorSpec[] _connectors;
@@ -58,7 +59,8 @@ namespace WanderersGuild
             return null;
         }
 
-        // Connectors from the level-1 prefab's FacilityConnector markers (read once, cached).
+        // Doors from the level-1 prefab's FacilityConnector markers, derived from their positions (read once, cached).
+        // NOTE: Positions are taken relative to the prefab root, so the root's own stored position doesn't matter.
         public IReadOnlyList<ConnectorSpec> Connectors
         {
             get
@@ -67,10 +69,13 @@ namespace WanderersGuild
                     return _connectors;
 
                 var prefab = PrefabFor(1);
-                FacilityConnector[] markers = prefab ? prefab.GetComponentsInChildren<FacilityConnector>(true) : Array.Empty<FacilityConnector>();
+                var markers = prefab ? prefab.GetComponentsInChildren<FacilityConnector>(true) : Array.Empty<FacilityConnector>();
                 _connectors = new ConnectorSpec[markers.Length];
                 for (var i = 0; i < markers.Length; i++)
-                    _connectors[i] = new ConnectorSpec(markers[i].Cell, markers[i].Facing);
+                {
+                    var local = prefab.transform.InverseTransformPoint(markers[i].transform.position);
+                    _connectors[i] = new ConnectorSpec(FacilityConnector.StartCell(local, markers[i].Facing, Size), markers[i].Facing);
+                }
                 return _connectors;
             }
         }

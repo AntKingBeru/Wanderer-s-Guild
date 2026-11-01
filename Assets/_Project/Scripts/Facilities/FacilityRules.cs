@@ -28,7 +28,7 @@ namespace WanderersGuild
             if (!grid.IsFree(FacilityFootprint.Cells(origin, data.Size, rotation)))
                 return FacilityCheck.No("Overlaps another room");
 
-            grid.LinkedRooms(WorldConnectors(data, origin, rotation), -1, Linked);
+            grid.LinkedRooms(WorldDoors(data, origin, rotation), -1, Linked);
             if (Linked.Count == 0)
                 return FacilityCheck.No("Not connected to the guild");
 
@@ -65,10 +65,9 @@ namespace WanderersGuild
             return rooms.Count(room => room.Data == data);
         }
 
-        public static IEnumerable<(Vector2Int, CardinalDirection)> WorldConnectors(FacilityData data, Vector2Int origin, int rotation)
+        public static IEnumerable<WorldDoor> WorldDoors(FacilityData data, Vector2Int origin, int rotation)
         {
-            return data.Connectors.Select(connector => (FacilityFootprint.ToWorldCell(connector.Cell, data.Size, origin, rotation),
-                FacilityFootprint.Rotate(connector.Facing, rotation)));
+            return data.Connectors.Select(connector => FacilityFootprint.ToWorldDoor(connector, data.Size, origin, rotation));
         }
     }
 }

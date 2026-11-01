@@ -1,4 +1,4 @@
-// Footprint maths for rotated rooms: rotated size and cells, rotated connectors, and the prefab's world pivot.
+// Footprint maths for rotated rooms: rotated size and cells, rotated 2-wide doors, and the prefab's world pivot.
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +6,9 @@ namespace WanderersGuild
 {
     public static class FacilityFootprint
     {
+        // Every door is this many cells wide.
+        public const int DoorWidth = 2;
+
         // Size after rotation (0–3): 90° and 270° swap width and depth.
         public static Vector2Int RotatedSize(Vector2Int size, int rotation) =>
             (rotation & 1) == 0 ? size : new Vector2Int(size.y, size.x);
@@ -24,6 +27,18 @@ namespace WanderersGuild
             };
             return origin + rotated;
         }
+
+        // A door of the unrotated footprint → its world door (both cells rotated, facing rotated).
+        public static WorldDoor ToWorldDoor(ConnectorSpec door, Vector2Int size, Vector2Int origin, int rotation)
+        {
+            var second = door.Cell + EdgeStep(door.Facing);
+            return new WorldDoor(ToWorldCell(door.Cell, size, origin, rotation), ToWorldCell(second, size, origin, rotation),
+                                 Rotate(door.Facing, rotation));
+        }
+
+        // Step along a door's edge: north/south doors run along x, east/west doors along z.
+        public static Vector2Int EdgeStep(CardinalDirection facing) =>
+            facing is CardinalDirection.North or CardinalDirection.South ? new Vector2Int(1, 0) : new Vector2Int(0, 1);
 
         public static CardinalDirection Rotate(CardinalDirection facing, int rotation) => (CardinalDirection)(((int)facing + rotation) & 3);
 

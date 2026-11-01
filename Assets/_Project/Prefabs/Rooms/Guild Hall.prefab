@@ -42,7 +42,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6171696577106801797}
   - component: {fileID: 2439067178881548991}
-  - component: {fileID: 8106540740903814615}
   m_Layer: 0
   m_Name: Door_Back
   m_TagString: Untagged
@@ -59,7 +58,7 @@ Transform:
   m_GameObject: {fileID: 903762348363827241}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 10, y: 0, z: 28}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -77,21 +76,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ebb75017a7e9d41b5dd19a79060cd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.FacilityConnector
-  cell: {x: 9, y: 27}
-  facing: 0
---- !u!114 &8106540740903814615
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 903762348363827241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4ebb75017a7e9d41b5dd19a79060cd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.FacilityConnector
-  cell: {x: 10, y: 27}
   facing: 0
 --- !u!1 &1000310807825224076
 GameObject:
@@ -372,7 +356,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3131243624346846068}
   - component: {fileID: 5120030269509549388}
-  - component: {fileID: 5411437184847502945}
   m_Layer: 0
   m_Name: Door_Left
   m_TagString: Untagged
@@ -389,7 +372,7 @@ Transform:
   m_GameObject: {fileID: 5784940832248962217}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -407,21 +390,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ebb75017a7e9d41b5dd19a79060cd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.FacilityConnector
-  cell: {x: 0, y: 13}
-  facing: 3
---- !u!114 &5411437184847502945
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5784940832248962217}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4ebb75017a7e9d41b5dd19a79060cd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.FacilityConnector
-  cell: {x: 0, y: 14}
   facing: 3
 --- !u!1 &7198873409027181570
 GameObject:
@@ -433,7 +401,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2633741895957829690}
   - component: {fileID: 382995180927242914}
-  - component: {fileID: 6041744420977541361}
   m_Layer: 0
   m_Name: Door_Right
   m_TagString: Untagged
@@ -450,7 +417,7 @@ Transform:
   m_GameObject: {fileID: 7198873409027181570}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 20, y: 0, z: 14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -468,21 +435,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ebb75017a7e9d41b5dd19a79060cd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.FacilityConnector
-  cell: {x: 19, y: 13}
-  facing: 1
---- !u!114 &6041744420977541361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7198873409027181570}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4ebb75017a7e9d41b5dd19a79060cd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.FacilityConnector
-  cell: {x: 19, y: 14}
   facing: 1
 --- !u!1 &8900859225698101056
 GameObject:

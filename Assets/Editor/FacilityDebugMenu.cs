@@ -12,7 +12,7 @@ namespace Editor
         private const string MenuRoot = "Tools/Wanderer's Guild/Debug/Facilities/";
 
         // NOTE: Stand-in for build mode (17b). Cheapest / lowest-rank first; rank, limit and gold checked once per facility;
-        // positions come only from the network's open doors (a cell outside a connector that a new room's connector can face).
+        // positions come only from the network's open doors, lined up cell-for-cell with a door of the new room.
         [MenuItem(MenuRoot + "Build Anything Somewhere")]
         private static void BuildAnywhere()
         {
@@ -73,17 +73,17 @@ namespace Editor
             var manager = FacilityManager.Instance;
             foreach (var room in manager.Rooms)
             {
-                if (room.Connectors.Count == 0)
+                if (room.Doors.Count == 0)
                 {
-                    Debug.LogWarning($"#{room.Id} {room.Data.DisplayName}: NO connectors (check FacilityConnector markers on its level-1 prefab).");
+                    Debug.LogWarning($"#{room.Id} {room.Data.DisplayName}: NO doors (check FacilityConnector markers on its level-1 prefab).");
                     continue;
                 }
 
-                foreach (var (cell, facing) in room.Connectors)
+                foreach (var door in room.Doors)
                 {
-                    var outside = cell + FacilityFootprint.Step(facing);
-                    var open = manager.Grid.IsFree(new[] { outside });
-                    Debug.Log($"#{room.Id} {room.Data.DisplayName}: door at {cell} facing {facing} → {outside} ({(open ? "open" : "occupied")})");
+                    var outside = door.Partner;
+                    Debug.Log($"#{room.Id} {room.Data.DisplayName}: door {door.A}+{door.B} facing {door.Facing} → " +
+                              $"{outside.A}+{outside.B} ({(manager.Grid.IsOpen(door) ? "open" : "occupied")})");
                 }
             }
         }
@@ -152,28 +152,25 @@ namespace Editor
             return gold < data.CostFor(1) ? $"costs {data.CostFor(1):N0}g (have {gold:N0}g)" : null;
         }
 
-        // NOTE: For each open door (free cell just outside an existing connector), every rotation and connector of the new room
-        // that would sit in that cell facing back — the only positions that can pass the connection rule.
+        // NOTE: For each open door, every rotation and door of the new room whose rotated door lands exactly on that door's two
+        // outside cells, facing back. Doors are kept in a fixed cell order, so A lines up with A and B with B.
         private static IEnumerable<(Vector2Int origin, int rotation)> CandidatesAtOpenDoors(FacilityData data, FacilityManager manager)
         {
             foreach (var room in manager.Rooms)
             {
-                foreach (var (cell, facing) in room.Connectors)
+                foreach (var door in room.Doors)
                 {
-                    var doorCell = cell + FacilityFootprint.Step(facing);
-                    if (!manager.Grid.IsFree(new[] { doorCell }))
+                    if (!manager.Grid.IsOpen(door))
                         continue;
 
-                    var needed = FacilityFootprint.Opposite(facing);
+                    var target = door.Partner;
                     for (var rotation = 0; rotation < 4; rotation++)
                     {
                         foreach (var connector in data.Connectors)
                         {
-                            if (FacilityFootprint.Rotate(connector.Facing, rotation) != needed)
-                                continue;
-
-                            var offset = FacilityFootprint.ToWorldCell(connector.Cell, data.Size, Vector2Int.zero, rotation);
-                            yield return (doorCell - offset, rotation);
+                            var local = FacilityFootprint.ToWorldDoor(connector, data.Size, Vector2Int.zero, rotation);
+                            if (local.Facing == target.Facing)
+                                yield return (target.A - local.A, rotation);
                         }
                     }
                 }
