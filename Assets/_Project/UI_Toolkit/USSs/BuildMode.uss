@@ -14,6 +14,69 @@
     color: rgb(224, 112, 96);
 }
 
+/* ---------- Room card (fixed above the build bar, left) ---------- */
+/* NOTE: The bar is 46px tall; the card sits 2px above it. Children stretch (the theme's window centres them by default). */
+.room-card {
+    position: absolute;
+    left: 4px;
+    bottom: 48px;
+    width: 156px;
+    padding: 2px 4px 3px 4px;
+    align-items: stretch;
+    display: none;
+}
+.room-card__header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1px;
+}
+.room-card__title {
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1px;
+}
+.room-card__title .outlined-text__fill {
+    color: var(--color-accent);
+}
+.pixel-button.room-card__close {
+    width: 11px;
+    height: 11px;
+    margin: 0 0 0 2px;
+    padding: 0;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+}
+.room-card__line .outlined-text__part {
+    white-space: normal;
+}
+.room-card__faint .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.room-card__reasons .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}
+.room-card__buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 2px;
+}
+.pixel-button.room-card__button {
+    flex-grow: 1;
+    margin: 0;
+    padding: 1px 2px;
+}
+/* NOTE: USS has no :first-child — target the Upgrade button by name for the gap between the two buttons. */
+#room-card-upgrade {
+    margin-right: 2px;
+}
+.pixel-button.room-card__close:hover,
+.pixel-button.room-card__button:hover {
+    border-color: var(--frame-highlight-border);
+}
+
 /* ---------- Bottom bar ---------- */
 /* NOTE: Flush with the bottom edge (only the top border shows). The HUD hides its rank bar and reputation while building. */
 .build-bar {

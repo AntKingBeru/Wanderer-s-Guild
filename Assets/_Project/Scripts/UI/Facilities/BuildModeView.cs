@@ -15,6 +15,7 @@ namespace WanderersGuild
         private readonly VisualElement _root;
         private readonly VisualElement _catalog;
         private readonly VisualElement _strip;
+        private readonly OutlinedText _hint;
         private readonly VisualElement _cursor;
         private readonly OutlinedText _cursorText;
         private readonly InlineConfirmation _confirm;
@@ -23,12 +24,13 @@ namespace WanderersGuild
         private int _visibleCards;
         private float _offset;
 
-        private BuildModeView(VisualElement root, VisualElement catalog, VisualElement strip, VisualElement cursor,
+        private BuildModeView(VisualElement root, VisualElement catalog, VisualElement strip, OutlinedText hint, VisualElement cursor,
                               OutlinedText cursorText, InlineConfirmation confirm, Action<FacilityData> onPicked)
         {
             _root = root;
             _catalog = catalog;
             _strip = strip;
+            _hint = hint;
             _cursor = cursor;
             _cursorText = cursorText;
             _confirm = confirm;
@@ -48,12 +50,13 @@ namespace WanderersGuild
             var root = documentRoot?.Q<VisualElement>("build-root");
             var catalog = documentRoot?.Q<VisualElement>("build-catalog");
             var strip = documentRoot?.Q<VisualElement>("build-strip");
+            var hint = documentRoot?.Q<OutlinedText>("build-hint");
             var cursor = documentRoot?.Q<VisualElement>("build-cursor");
             var cursorText = documentRoot?.Q<OutlinedText>("build-cursor-text");
             var confirm = documentRoot != null ? InlineConfirmation.Bind(documentRoot) : null;
 
-            return root != null && catalog != null && strip != null && cursor != null && cursorText != null && confirm != null
-                ? new BuildModeView(root, catalog, strip, cursor, cursorText, confirm, onPicked)
+            return root != null && catalog != null && strip != null && hint != null && cursor != null && cursorText != null && confirm != null
+                ? new BuildModeView(root, catalog, strip, hint, cursor, cursorText, confirm, onPicked)
                 : null;
         }
 
@@ -67,8 +70,10 @@ namespace WanderersGuild
                 _confirm.HideImmediate();
         }
 
+        public void SetHint(string text) => _hint.Text = text;
+
         // NOTE: Cards are pooled — created as needed, extra ones hidden. The strip's width is set explicitly to the cards'
-        // total (the layout engine won't grow a container for overflowing children), so the scroll range is always right.
+        // total, so the scroll range is always right.
         public void ShowCatalog(IReadOnlyList<BuildCatalogEntry> entries, FacilityData selected)
         {
             while (_cards.Count < entries.Count)
@@ -101,7 +106,7 @@ namespace WanderersGuild
                 SetOffset(_offset);
         }
 
-        /// <summary>True if the screen position (Input System: y up from the bottom) is over the catalog.</summary>
+        // True if the screen position (Input System: y up from the bottom) is over the catalog.
         public bool IsOverCatalog(Vector2 screenPosition)
         {
             if (_catalog.panel == null || _root.resolvedStyle.display == DisplayStyle.None)
@@ -138,7 +143,7 @@ namespace WanderersGuild
 
         // ---------- Scrolling ----------
 
-        // >One card plus its right margin, from the cards' resolved style (fallback before the first layout).
+        // One card plus its right margin, from the cards' resolved style (fallback before the first layout).
         private float CardStep
         {
             get
@@ -173,7 +178,7 @@ namespace WanderersGuild
 
             if (left < _offset)
                 SetOffset(left);
-            else if(viewport > 0f && right > _offset + viewport)
+            else if (viewport > 0f && right > _offset + viewport)
                 SetOffset(right - viewport);
             else
                 SetOffset(_offset);

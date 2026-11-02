@@ -1,4 +1,4 @@
-// One facility type (imported from the Facilities sheet): size, levels with cost/days/unlock rank, limit; prefabs set in Unity.
+// One facility type (imported from the Facilities sheet): size, levels with cost/days/unlock rank, limit; prefabs and effects set in Unity.
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +33,10 @@ namespace WanderersGuild
                  "2-wide doorway's centre on the edge) on the level-1 prefab.")]
         [SerializeField] private GameObject[] levelPrefabs = Array.Empty<GameObject>();
 
+        [Header("Effects (not set by the importer)")]
+        [Tooltip("What this facility does (e.g. a CapacityEffect for the Guild Hall and bedrooms). Reloads keep these.")]
+        [SerializeField] private FacilityEffect[] effects = Array.Empty<FacilityEffect>();
+
         private ConnectorSpec[] _connectors;
 
         public string Id => id;
@@ -42,6 +46,18 @@ namespace WanderersGuild
         public Vector2Int Size => new(Mathf.Max(1, size.x), Mathf.Max(1, size.y));
         public int MaxLevel => Mathf.Max(1, maxLevel);
         public int Limit => limit;
+        public IReadOnlyList<FacilityEffect> Effects => effects ?? Array.Empty<FacilityEffect>();
+
+        // The first effect of this type, or null.
+        public T Effect<T>() where T : FacilityEffect
+        {
+            foreach (var effect in Effects)
+            {
+                if (effect is T typed)
+                    return typed;
+            }
+            return null;
+        }
 
         // Cost to reach this level (1-based). 0 if the sheet has no value.
         public long CostFor(int level) => ByLevel(costs, level, 0L);
@@ -84,7 +100,8 @@ namespace WanderersGuild
             values == null || values.Length == 0 ? fallback : values[Mathf.Clamp(level - 1, 0, values.Length - 1)];
 
 #if UNITY_EDITOR
-        // Editor-only: the sheet importer fills or updates this asset in place. NOTE: Prefabs and icon are untouched.
+        // Editor-only: the sheet importer fills or updates this asset in place. NOTE: Prefabs, icon and effects
+        // are untouched.
         public void ApplyImport(in FacilityImportRow row)
         {
             id = row.Id;

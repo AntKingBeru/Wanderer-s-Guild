@@ -1283,7 +1283,7 @@ namespace WanderersGuild
         [Tooltip("Chance a new adventurer also gets an epithet (\"Bran the Bold\").")]
         [SerializeField, Range(0f, 1f)] private float epithetChance = 0.25f;
 
-        [Tooltip("Most adventurers the guild can hold (Bedrooms will raise it later).")]
+        [Tooltip("Fallback capacity, used only while no facility has a CapacityEffect (normally the Guild Hall and bedrooms set it).")]
         [SerializeField, Range(1, 50)] private int capacity = 6;
 
         [Tooltip("Adventurers a new guild starts with.")]

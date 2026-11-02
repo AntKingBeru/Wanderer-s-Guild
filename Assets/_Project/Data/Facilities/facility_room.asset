@@ -26,3 +26,5 @@ MonoBehaviour:
   limit: 0
   levelPrefabs:
   - {fileID: 2578081604567545320, guid: 73deb30968ac6444d8922290404b1608, type: 3}
+  effects:
+  - {fileID: 11400000, guid: 32860327986611a4baca8a740c869ae4, type: 2}

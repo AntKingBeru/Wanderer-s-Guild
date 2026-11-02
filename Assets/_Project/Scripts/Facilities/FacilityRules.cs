@@ -67,12 +67,26 @@ namespace WanderersGuild
             return gold < cost ? FacilityCheck.No($"Costs {cost:N0}g: not enough gold", cost) : FacilityCheck.Ok(cost);
         }
 
-        public static FacilityCheck CanDemolish(PlacedFacility room, FacilityGrid grid, int hallId, FacilitySettings settings)
+        /// <param name="room"></param>
+        /// <param name="grid"></param>
+        /// <param name="hallId"></param>
+        /// <param name="settings"></param>
+        /// <param name="totalCapacity">The guild's capacity now (from FacilityEffects).</param>
+        /// <param name="rosterCount">Adventurers in the guild now.</param>
+        // NOTE: Refused if the beds left after removing this room would be fewer than the roster.
+        public static FacilityCheck CanDemolish(PlacedFacility room, FacilityGrid grid, int hallId, FacilitySettings settings,
+                                                int totalCapacity, int rosterCount)
         {
-            if (room.Id == hallId) return FacilityCheck.No("The Guild Hall can't be demolished");
-            return !grid.StaysConnectedWithout(room.Id, hallId)
-                ? FacilityCheck.No("Other rooms depend on it")
-                : FacilityCheck.Ok((long)(room.TotalSpent * settings.DemolishRefund));
+            if (room.Id == hallId)
+                return FacilityCheck.No("The Guild Hall can't be demolished");
+            if (!grid.StaysConnectedWithout(room.Id, hallId))
+                return FacilityCheck.No("Other rooms depend on it");
+
+            var beds = FacilityEffects.CapacityOf(room);
+            if (beds > 0 && totalCapacity - beds < rosterCount)
+                return FacilityCheck.No("Adventurers need these beds");
+
+            return FacilityCheck.Ok((long)(room.TotalSpent * settings.DemolishRefund));
         }
 
         public static int CountOf(FacilityData data, IReadOnlyList<PlacedFacility> rooms)

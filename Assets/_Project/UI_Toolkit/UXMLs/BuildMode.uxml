@@ -6,6 +6,22 @@
         <ui:VisualElement name="build-cursor" class="pixel-window build-cursor" picking-mode="Ignore">
             <wg:OutlinedText name="build-cursor-text" text="200g · 2 days" />
         </ui:VisualElement>
+        
+        <!-- Room info card (build mode, a room selected): fixed above the build bar on the left. -->
+        <ui:VisualElement name="room-card" class="pixel-window room-card" picking-mode="Position">
+            <ui:VisualElement class="room-card__header" picking-mode="Ignore">
+                <wg:OutlinedText name="room-card-title" class="room-card__title" text="Bedroom · Lv 1/3" />
+                <ui:Button name="room-card-close" class="pixel-button room-card__close"><wg:OutlinedText text="x" /></ui:Button>
+            </ui:VisualElement>
+            <wg:OutlinedText name="room-card-state" class="room-card__line" text="Complete" />
+            <wg:OutlinedText name="room-card-effects" class="room-card__line" text="Capacity +2 · Lv 2: Capacity +4" />
+            <wg:OutlinedText name="room-card-next" class="room-card__line room-card__faint" text="Next: Lv 2 · 400g · 3 days · Rank E" />
+            <wg:OutlinedText name="room-card-reasons" class="room-card__line room-card__reasons" text="Upgrade: Needs guild rank E" />
+            <ui:VisualElement class="room-card__buttons" picking-mode="Ignore">
+                <ui:Button name="room-card-upgrade" class="pixel-button room-card__button"><wg:OutlinedText text="Upgrade (400g)" /></ui:Button>
+                <ui:Button name="room-card-demolish" class="pixel-button room-card__button"><wg:OutlinedText text="Demolish (+100g)" /></ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
 
         <!-- Bottom bar: title + controls hint, then the catalog: a clipped viewport with a strip of cards (created in code),
              scrolled sideways by the wheel. Picks, so the world under it doesn't. -->

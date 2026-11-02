@@ -49,6 +49,7 @@ namespace WanderersGuild
             GameEventsRelay.OnGoldChanged.AddListener(OnGoldChanged);
             GameEventsRelay.OnAdventurerJoined.AddListener(OnAdventurerJoined);
             GameEventsRelay.OnAdventurerLeft.AddListener(OnAdventurerLeft);
+            GameEventsRelay.OnAdventurerCapacityChanged.AddListener(OnCapacityChanged);
             GameEventsRelay.OnReputationChanged.AddListener(OnReputationChanged);
             GameEventsRelay.OnReputationLevelChanged.AddListener(OnReputationLevelChanged);
             GameEventsRelay.OnRankProgressChanged.AddListener(OnRankProgressChanged);
@@ -60,6 +61,7 @@ namespace WanderersGuild
             GameEventsRelay.OnGoldChanged.RemoveListener(OnGoldChanged);
             GameEventsRelay.OnAdventurerJoined.RemoveListener(OnAdventurerJoined);
             GameEventsRelay.OnAdventurerLeft.RemoveListener(OnAdventurerLeft);
+            GameEventsRelay.OnAdventurerCapacityChanged.RemoveListener(OnCapacityChanged);
             GameEventsRelay.OnReputationChanged.RemoveListener(OnReputationChanged);
             GameEventsRelay.OnReputationLevelChanged.RemoveListener(OnReputationLevelChanged);
             GameEventsRelay.OnRankProgressChanged.RemoveListener(OnRankProgressChanged);
@@ -95,6 +97,9 @@ namespace WanderersGuild
 
         private void OnAdventurerJoined(Adventurer _) => RefreshAdventurers(+1);
         private void OnAdventurerLeft(Adventurer _) => RefreshAdventurers(-1);
+
+        // NOTE: More (or fewer) beds change only the "/N" part — no float, no shake.
+        private void OnCapacityChanged(int _) => RefreshAdventurers(0);
 
         // NOTE: The count always comes from the roster (never kept here), so it can't drift from the truth.
         private void RefreshAdventurers(int delta)

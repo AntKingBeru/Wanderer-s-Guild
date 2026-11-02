@@ -1,4 +1,5 @@
-// Spawns and refreshes the visible side of rooms: the level's prefab at the grid pivot, plus a scaffold while building.
+// Spawns and refreshes the visible side of rooms (level prefab at the grid pivot, scaffold while building) and outlines rooms.
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ namespace WanderersGuild
             public GameObject Model;
             public GameObject Scaffold;
             public int ModelLevel = -1;
+            public bool Highlighted;
+            public readonly Dictionary<Renderer, uint> OriginalLayers = new();
         }
 
         private readonly Grid _grid;
@@ -26,11 +29,20 @@ namespace WanderersGuild
         }
 
         // NOTE: The model shows the finished level (none while a new room is still being built); the scaffold covers the
-        // footprint during any construction or upgrade.
+        // footprint during any construction or upgrade. An outlined room is un-outlined before any swap and re-outlined
+        // after, so new renderers get the outline and nothing keeps a stale bit.
         public void Refresh(PlacedFacility room)
         {
             if (!_views.TryGetValue(room.Id, out var view))
                 _views[room.Id] = view = new View();
+
+            var needsScaffold = room.IsUnderConstruction;
+            var changes = view.ModelLevel != room.Level || needsScaffold != (view.Scaffold);
+            if (!changes)
+                return;
+
+            if (view.Highlighted)
+                ApplyHighlight(view, false);
 
             if (view.ModelLevel != room.Level)
             {
@@ -40,7 +52,6 @@ namespace WanderersGuild
                 view.ModelLevel = room.Level;
             }
 
-            var needsScaffold = room.IsUnderConstruction;
             switch (needsScaffold)
             {
                 case true when !view.Scaffold:
@@ -51,6 +62,9 @@ namespace WanderersGuild
                     view.Scaffold = null;
                     break;
             }
+
+            if (view.Highlighted)
+                ApplyHighlight(view, true);
         }
 
         public void Remove(PlacedFacility room)
@@ -58,6 +72,8 @@ namespace WanderersGuild
             if (!_views.TryGetValue(room.Id, out var view))
                 return;
 
+            if (view.Highlighted)
+                PixelOutlineRequests.Remove();
             if (view.Model)
                 Object.Destroy(view.Model);
             if (view.Scaffold)
@@ -65,8 +81,53 @@ namespace WanderersGuild
             _views.Remove(room.Id);
         }
 
+        // Outlines a room (its model and scaffold) with the hover outline, or removes it.
+        public void SetHighlighted(PlacedFacility room, bool highlighted)
+        {
+            if (!_views.TryGetValue(room.Id, out var view) || view.Highlighted == highlighted)
+                return;
+
+            view.Highlighted = highlighted;
+            ApplyHighlight(view, highlighted);
+            if (highlighted)
+                PixelOutlineRequests.Add();
+            else
+                PixelOutlineRequests.Remove();
+        }
+
         // World position of a cell's min corner (Grid with Cell Swizzle XZY: grid y = world z).
         public Vector3 CellToWorld(Vector2Int cell) => _grid.CellToWorld(new Vector3Int(cell.x, cell.y, 0));
+
+        // NOTE: Originals are stored once per renderer and restored exactly; destroyed renderers are simply forgotten.
+        private static void ApplyHighlight(View view, bool on)
+        {
+            if (!on)
+            {
+                foreach (var pair in view.OriginalLayers.Where(pair => pair.Key))
+                {
+                    pair.Key.renderingLayerMask = pair.Value;
+                }
+                view.OriginalLayers.Clear();
+                return;
+            }
+
+            var bit = GameConfig.Instance.Interaction.OutlineBit;
+            AddBit(view, view.Model, bit);
+            AddBit(view, view.Scaffold, bit);
+        }
+
+        private static void AddBit(View view, GameObject target, uint bit)
+        {
+            if (!target)
+                return;
+
+            foreach (var renderer in target.GetComponentsInChildren<Renderer>(true))
+            {
+                if (!view.OriginalLayers.ContainsKey(renderer))
+                    view.OriginalLayers[renderer] = renderer.renderingLayerMask;
+                renderer.renderingLayerMask = view.OriginalLayers[renderer] | bit;
+            }
+        }
 
         private GameObject SpawnModel(PlacedFacility room)
         {

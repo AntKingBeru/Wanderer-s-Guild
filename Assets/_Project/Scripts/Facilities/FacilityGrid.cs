@@ -1,4 +1,4 @@
-// Occupancy + door map of the guild's rooms on the grid; answers overlap, connection and reachability questions.
+// Occupancy + door map of the guild's rooms on the grid; answers overlap, connection, reachability and "which room" questions.
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,6 +29,13 @@ namespace WanderersGuild
                 _doors.Remove(door);
         }
 
+        // The room occupying a cell, if any.
+        public bool TryGetRoomAt(Vector2Int cell, out PlacedFacility room)
+        {
+            room = null;
+            return _occupied.TryGetValue(cell, out var id) && _rooms.TryGetValue(id, out room);
+        }
+
         public bool IsFree(IEnumerable<Vector2Int> cells)
         {
             return cells.All(cell => !_occupied.ContainsKey(cell));
@@ -47,7 +54,7 @@ namespace WanderersGuild
             results.Clear();
             foreach (var door in doors)
             {
-                if (_doors.TryGetValue(door.Partner, out int id) && id != ignoreId && !results.Contains(id))
+                if (_doors.TryGetValue(door.Partner, out var id) && id != ignoreId && !results.Contains(id))
                     results.Add(id);
             }
         }

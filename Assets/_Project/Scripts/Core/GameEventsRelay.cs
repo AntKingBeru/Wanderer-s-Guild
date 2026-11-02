@@ -174,6 +174,9 @@ namespace WanderersGuild
         // An adventurer left the guild (dismissed, died, departed — raised by those systems when they exist).
         // Arg: the adventurer.
         public static readonly UnityEvent<Adventurer> OnAdventurerLeft = new();
+        
+        // The guild's adventurer capacity changed (a room with beds finished or was demolished). Arg: new capacity.
+        public static readonly UnityEvent<int> OnAdventurerCapacityChanged = new();
         #endregion
         
         #region Facilities

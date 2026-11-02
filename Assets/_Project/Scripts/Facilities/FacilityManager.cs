@@ -5,7 +5,9 @@ using UnityEngine;
 
 namespace WanderersGuild
 {
-    // NOTE: Scene-scoped — untick "Persist Across Scenes". Awake runs after SaveGameService (−50) has loaded.
+    // NOTE: Scene-scoped — untick "Persist Across Scenes". Order −30: after SaveGameService (−50) has loaded, and before
+    // AdventurerManager — its Start (which places a missing Guild Hall, the base beds) must run before starting recruits.
+    [DefaultExecutionOrder(-30)]
     public class FacilityManager : Singleton<FacilityManager>, ISaveContributor
     {
         [Tooltip("Unity Grid with Cell Size 1 and Cell Swizzle XZY (grid y = world z).")]
@@ -30,6 +32,7 @@ namespace WanderersGuild
         private static long Now => RequestManager.NowMinutes;
         private static GuildRank GuildRank => GuildManager.HasInstance ? GuildManager.Instance.Rank.Rank : GameConfig.Instance.NewGuild.StartingRank;
         private static long Gold => GuildManager.HasInstance ? GuildManager.Instance.Wallet.Gold : 0L;
+        private static int RosterCount => AdventurerManager.HasInstance ? AdventurerManager.Instance.Adventurers.Count : 0;
 
         protected override void OnSingletonAwake()
         {
@@ -55,8 +58,7 @@ namespace WanderersGuild
             if (SaveGameService.HasInstance)
                 SaveGameService.Instance.Register(this);
 
-            if (!HasGuildHall)
-                PlaceGuildHall();
+            if (!HasGuildHall) PlaceGuildHall();
 
             foreach (var room in _rooms)
                 _views.Refresh(room);
@@ -75,12 +77,23 @@ namespace WanderersGuild
 
         public IEnumerable<FacilityData> Catalog => _facilities.Values;
 
+        // The room occupying a grid cell, or null.
+        public PlacedFacility RoomAt(Vector2Int cell) => _grid.TryGetRoomAt(cell, out var room) ? room : null;
+
+        // Outlines a room (hover / selection in build mode), or removes the outline.
+        public void SetHighlighted(PlacedFacility room, bool highlighted)
+        {
+            if (room != null)
+                _views.SetHighlighted(room, highlighted);
+        }
+
         public FacilityCheck CanPlace(FacilityData data, Vector2Int origin, int rotation) =>
             FacilityRules.CanPlace(data, origin, rotation, _grid, _rooms, GuildRank, Gold, _settings);
 
         public FacilityCheck CanUpgrade(PlacedFacility room) => FacilityRules.CanUpgrade(room, GuildRank, Gold);
 
-        public FacilityCheck CanDemolish(PlacedFacility room) => FacilityRules.CanDemolish(room, _grid, _hallId, _settings);
+        public FacilityCheck CanDemolish(PlacedFacility room) =>
+            FacilityRules.CanDemolish(room, _grid, _hallId, _settings, FacilityEffects.Capacity(_rooms).total, RosterCount);
 
         // Pays and starts construction if still allowed (re-checked here). Null = nothing changed.
         public PlacedFacility TryPlace(FacilityData data, Vector2Int origin, int rotation)
@@ -110,10 +123,12 @@ namespace WanderersGuild
             _views.Refresh(room);
             GameEventsRelay.OnFacilityUpgradeStarted.Invoke(room);
 
-            if (days == 0) Finish(room, isNewRoom: false);
+            if (days == 0)
+                Finish(room, isNewRoom: false);
             return true;
         }
 
+        // NOTE: OnFacilityRemoved is raised before the views go, so listeners can drop selections/outlines first.
         public bool TryDemolish(PlacedFacility room)
         {
             var check = CanDemolish(room);
@@ -125,9 +140,9 @@ namespace WanderersGuild
 
             _rooms.Remove(room);
             _grid.Remove(room);
+            GameEventsRelay.OnFacilityRemoved.Invoke(room);
             _views.Remove(room);
             UpdateCameraBounds();
-            GameEventsRelay.OnFacilityRemoved.Invoke(room);
             return true;
         }
 
