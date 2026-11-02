@@ -1,4 +1,4 @@
-// Game-scene owner of the roster: starting adventurers, dawn arrivals (chance and level by reputation), XP, capacity, save/load.
+// Game-scene owner of the roster: starting adventurers, dawn arrivals (join, or apply when an office exists), XP, capacity, save.
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,10 +6,11 @@ using UnityEngine;
 namespace WanderersGuild
 {
     // NOTE: Scene-scoped — untick "Persist Across Scenes". Awake runs after SaveGameService (−50) has loaded; Start after
-    // FacilityManager's (−30), so the Guild Hall's beds exist before starting recruits.
-    // Until the Guild Master's Office exists, arrivals join automatically (they become applicants once it's built).
+    // FacilityManager's (−30), so the Guild Hall's beds exist before starting recruits. With an active Guild Master's
+    // Office, arrivals become applicants (RecruitmentManager); otherwise they join directly.
     public class AdventurerManager : Singleton<AdventurerManager>, ISaveContributor
     {
+        private readonly HashSet<string> _takenNames = new();
         private AdventurerSettings _settings;
         private Dictionary<string, ClassData> _classes = new();
         private Dictionary<string, SpeciesData> _species = new();
@@ -22,6 +23,9 @@ namespace WanderersGuild
 
         public IReadOnlyList<Adventurer> Adventurers => _roster.Adventurers;
         public int Capacity => _roster.Capacity;
+        public bool IsFull => _roster.IsFull;
+
+        private static bool UsesApplicants => RecruitmentManager.HasInstance && RecruitmentManager.Instance.AcceptsApplicants;
 
         protected override void OnSingletonAwake()
         {
@@ -55,7 +59,7 @@ namespace WanderersGuild
             GameEventsRelay.OnFacilityRemoved.RemoveListener(OnFacilityChanged);
         }
 
-        // NOTE: A new guild (or an older save without a roster) gets its starting adventurers, once.
+        // NOTE: A new guild (or an older save without a roster) gets its starting adventurers, once — always directly.
         private void Start()
         {
             if (SaveGameService.HasInstance)
@@ -67,7 +71,9 @@ namespace WanderersGuild
 
             _startingAdventurersDone = true;
             for (var i = 0; i < _settings.StartingAdventurers; i++)
-                TryRecruit();
+            {
+                if (TryCreateCandidate(out var adventurer)) TryAddMember(adventurer);
+            }
         }
 
         protected override void OnDestroy()
@@ -93,8 +99,39 @@ namespace WanderersGuild
             return gained;
         }
 
-        // An arrival right now, ignoring the dawn chance (debug and testing). False if full or nobody can be created.
-        public bool ForceArrival() => TryRecruit();
+        // Adds an adventurer to the roster (starting recruit, direct arrival, accepted applicant) and raises
+        // OnAdventurerJoined. False when the guild is full.
+        public bool TryAddMember(Adventurer adventurer)
+        {
+            if (!_roster.TryAdd(adventurer))
+                return false;
+
+            GameEventsRelay.OnAdventurerJoined.Invoke(adventurer);
+            return true;
+        }
+
+        // Rebuilds a saved adventurer (roster or applicant). False if their species or class no longer exists.
+        public bool TryRebuild(SavedAdventurer saved, out Adventurer adventurer)
+        {
+            adventurer = null;
+            if (string.IsNullOrEmpty(saved.SpeciesId) || !_species.TryGetValue(saved.SpeciesId, out var species) ||
+                string.IsNullOrEmpty(saved.ClassId) || !_classes.TryGetValue(saved.ClassId, out var classData))
+            {
+                Debug.LogWarning($"[AdventurerManager] '{saved.Name}' has an unknown species '{saved.SpeciesId}' or class " +
+                                 $"'{saved.ClassId}' and couldn't be loaded.", this);
+                return false;
+            }
+
+            adventurer = new Adventurer(saved.Id, saved.Name, species, classData, saved.Experience, saved.Rank, saved.Wealth,
+                                        saved.Status, saved.JoinedAtMinutes, saved.RetainedGrowth, _settings.Experience,
+                                        saved.RankProgress, saved.ExamReturnsAtMinutes);
+            _nextId = Mathf.Max(_nextId, saved.Id + 1);
+            return true;
+        }
+
+        // An arrival right now, ignoring the dawn chance (debug and testing): an applicant if the office is active,
+        // otherwise a direct join. False if there's no room or nobody can be created.
+        public bool ForceArrival() => Arrive();
 
         public void WriteTo(GameSaveData data)
         {
@@ -136,42 +173,51 @@ namespace WanderersGuild
             GameEventsRelay.OnAdventurerCapacityChanged.Invoke(capacity);
         }
 
-        // NOTE: One roll per day at dawn; a full guild means nobody arrives.
+        // NOTE: One roll per day at dawn. With an office, the waiting list's room matters (a full guild still gets
+        // applicants); without one, a full guild means nobody arrives.
         private void OnHourStarted(GameDateTime now)
         {
-            if (now.Minute != 0 || now.Hour != GameConfig.Instance.Time.DawnHour || _roster.IsFull)
+            if (now.Minute != 0 || now.Hour != GameConfig.Instance.Time.DawnHour || !HasRoomForArrival)
                 return;
 
             if (Random.value < _settings.ArrivalChance(CurrentReputation))
-                TryRecruit();
+                Arrive();
         }
 
-        private bool TryRecruit()
+        private bool HasRoomForArrival => UsesApplicants ? RecruitmentManager.Instance.HasRoom : !_roster.IsFull;
+
+        private bool Arrive()
         {
-            if (_roster.IsFull)
+            if (!HasRoomForArrival || !TryCreateCandidate(out var adventurer))
                 return false;
 
+            return UsesApplicants ? RecruitmentManager.Instance.AddApplicant(adventurer) : TryAddMember(adventurer);
+        }
+
+        // NOTE: Names are unique across the roster AND the waiting applicants.
+        private bool TryCreateCandidate(out Adventurer adventurer)
+        {
             var rank = GuildManager.HasInstance ? GuildManager.Instance.Rank.Rank : GameConfig.Instance.NewGuild.StartingRank;
-            if (!_factory.TryCreate(_nextId, rank, CurrentReputation, RequestManager.NowMinutes, _roster.Names, out Adventurer adventurer))
+
+            _takenNames.Clear();
+            _takenNames.UnionWith(_roster.Names);
+            if (RecruitmentManager.HasInstance)
+                _takenNames.UnionWith(RecruitmentManager.Instance.Names);
+
+            if (!_factory.TryCreate(_nextId, rank, CurrentReputation, RequestManager.NowMinutes, _takenNames, out adventurer))
             {
                 Debug.LogWarning($"[AdventurerManager] Nobody could arrive: no species, or no base class unlocked at rank {rank}.", this);
                 return false;
             }
 
             _nextId++;
-            if (!_roster.TryAdd(adventurer))
-                return false;
-
-            GameEventsRelay.OnAdventurerJoined.Invoke(adventurer);
             return true;
         }
 
         private static ReputationLevel CurrentReputation =>
             GuildManager.HasInstance ? GuildManager.Instance.Reputation.Level : ReputationLevel.Neutral;
 
-        // NOTE: An adventurer whose species or class no longer exists can't be rebuilt — dropped with a warning naming them.
-        // Restored adventurers ignore capacity (nobody is dropped if a data change lowered it). Rank progress and exam times
-        // default to 0 in older saves.
+        // NOTE: Restored adventurers ignore capacity (nobody is dropped if a data change lowered it).
         private void Restore(GameSaveData data)
         {
             if (data == null)
@@ -182,19 +228,8 @@ namespace WanderersGuild
 
             foreach (var saved in data.Adventurers)
             {
-                if (string.IsNullOrEmpty(saved.SpeciesId) || !_species.TryGetValue(saved.SpeciesId, out var species) ||
-                    string.IsNullOrEmpty(saved.ClassId) || !_classes.TryGetValue(saved.ClassId, out var classData))
-                {
-                    Debug.LogWarning($"[AdventurerManager] '{saved.Name}' has an unknown species '{saved.SpeciesId}' or class " +
-                                     $"'{saved.ClassId}' and couldn't be loaded.", this);
-                    continue;
-                }
-
-                Adventurer adventurer = new(saved.Id, saved.Name, species, classData, saved.Experience, saved.Rank, saved.Wealth,
-                                            saved.Status, saved.JoinedAtMinutes, saved.RetainedGrowth, _settings.Experience,
-                                            saved.RankProgress, saved.ExamReturnsAtMinutes);
-                _roster.AddRestored(adventurer);
-                _nextId = Mathf.Max(_nextId, saved.Id + 1);
+                if (TryRebuild(saved, out var adventurer))
+                    _roster.AddRestored(adventurer);
             }
         }
     }

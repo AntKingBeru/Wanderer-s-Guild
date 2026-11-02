@@ -9,6 +9,10 @@ namespace WanderersGuild
     {
         private const string EmptyMessage = "No adventurers yet.";
 
+        // NOTE: Rows are created once and can't grow afterward (MenuPanel sets them up in Initialize) — far more than any
+        // realistic guild; past this, the extra adventurers aren't listed and a warning says to raise it.
+        private const int RowPool = 48;
+
         private readonly List<Button> _buttons = new();
         private readonly List<VisualElement> _navigationOrder = new();
         private readonly List<Adventurer> _sorted = new();
@@ -19,6 +23,7 @@ namespace WanderersGuild
         private Button _close;
         private int _selectedId = -1;
         private int _selectedIndex;
+        private bool _warnedPool;
 
         protected override IReadOnlyList<Button> Buttons => _buttons;
         protected override IReadOnlyList<Button> ListButtons => _list.Buttons;
@@ -41,9 +46,7 @@ namespace WanderersGuild
             if (_title == null || scroll == null || listEmpty == null || _close == null || _details == null || _confirm == null)
                 return false;
 
-            // NOTE: One pooled row per roster slot — the roster can never hold more.
-            var capacity = GameConfig.HasInstance ? Settings.Capacity : 6;
-            _list = new RosterListView(scroll, listEmpty, capacity, Select);
+            _list = new RosterListView(scroll, listEmpty, RowPool, Select);
 
             _buttons.Clear();
             _buttons.Add(_details.Promote);
@@ -70,6 +73,7 @@ namespace WanderersGuild
             GameEventsRelay.OnAdventurerJoined.AddListener(OnAdventurerEvent);
             GameEventsRelay.OnAdventurerLeveledUp.AddListener(OnAdventurerEvent);
             GameEventsRelay.OnAdventurerChanged.AddListener(OnAdventurerEvent);
+            GameEventsRelay.OnAdventurerCapacityChanged.AddListener(OnCapacityChanged);
             GameEventsRelay.OnPromotionExamEnded.AddListener(OnExamEnded);
             GameEventsRelay.OnGoldChanged.AddListener(OnGoldChanged);
             GameEventsRelay.OnGuildRankUp.AddListener(OnGuildRankUp);
@@ -81,6 +85,7 @@ namespace WanderersGuild
             GameEventsRelay.OnAdventurerJoined.RemoveListener(OnAdventurerEvent);
             GameEventsRelay.OnAdventurerLeveledUp.RemoveListener(OnAdventurerEvent);
             GameEventsRelay.OnAdventurerChanged.RemoveListener(OnAdventurerEvent);
+            GameEventsRelay.OnAdventurerCapacityChanged.RemoveListener(OnCapacityChanged);
             GameEventsRelay.OnPromotionExamEnded.RemoveListener(OnExamEnded);
             GameEventsRelay.OnGoldChanged.RemoveListener(OnGoldChanged);
             GameEventsRelay.OnGuildRankUp.RemoveListener(OnGuildRankUp);
@@ -148,13 +153,20 @@ namespace WanderersGuild
                           });
         }
 
-        // NOTE: Sorted by rank, then level (highest first), then name. The selection is kept by adventurer id.
+        // NOTE: Sorted by rank, then level (highest first), then name. The selection is kept by adventurer id, among the
+        // listed rows only.
         private void Refresh()
         {
             _sorted.Clear();
             if (AdventurerManager.HasInstance)
                 _sorted.AddRange(AdventurerManager.Instance.Adventurers);
             _sorted.Sort(CompareForRoster);
+
+            if (_sorted.Count > _list.RowCount && !_warnedPool)
+            {
+                _warnedPool = true;
+                Debug.LogWarning($"[RosterPanel] {_sorted.Count} adventurers but only {_list.RowCount} rows; raise RowPool.", this);
+            }
 
             var selected = ResolveSelection();
             var capacity = AdventurerManager.HasInstance ? AdventurerManager.Instance.Capacity : Settings.Capacity;
@@ -174,13 +186,15 @@ namespace WanderersGuild
 
         private static int CompareForRoster(Adventurer a, Adventurer b)
         {
-            if (a.Rank != b.Rank) return b.Rank.CompareTo(a.Rank);
+            if (a.Rank != b.Rank)
+                return b.Rank.CompareTo(a.Rank);
             return a.Level != b.Level ? b.Level.CompareTo(a.Level) : string.CompareOrdinal(a.Name, b.Name);
         }
 
         private Adventurer ResolveSelection()
         {
-            for (var i = 0; i < _sorted.Count; i++)
+            var visible = Mathf.Min(_sorted.Count, _list.RowCount);
+            for (var i = 0; i < visible; i++)
             {
                 if (_sorted[i].Id != _selectedId)
                     continue;
@@ -189,19 +203,20 @@ namespace WanderersGuild
                 return _sorted[i];
             }
 
-            if (_sorted.Count == 0)
+            if (visible == 0)
             {
                 _selectedId = -1;
                 _selectedIndex = 0;
                 return null;
             }
 
-            _selectedIndex = Mathf.Clamp(_selectedIndex, 0, _sorted.Count - 1);
+            _selectedIndex = Mathf.Clamp(_selectedIndex, 0, visible - 1);
             _selectedId = _sorted[_selectedIndex].Id;
             return _sorted[_selectedIndex];
         }
 
         private void OnAdventurerEvent(Adventurer _) => RefreshIfOpen();
+        private void OnCapacityChanged(int _) => RefreshIfOpen();
         private void OnExamEnded(Adventurer _, GuildRank __, bool ___) => RefreshIfOpen();
         private void OnGoldChanged(long _, long __) => RefreshIfOpen();
         private void OnGuildRankUp(GuildRank _) => RefreshIfOpen();

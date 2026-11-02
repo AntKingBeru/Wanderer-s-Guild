@@ -1,0 +1,41 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Recruits.uss?fileID=7433441132597879392&amp;guid=52666c4a61b7b574c80c26d7d7e7b43c&amp;type=3#Recruits"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="pixel-window rec-window">
+            <wg:OutlinedText name="rec-title" class="panel-title" text="Recruits 0/3" />
+
+            <ui:VisualElement class="rec-body" picking-mode="Ignore">
+                <!-- Left: waiting applicants (rows created in code). -->
+                <ui:VisualElement class="rec-list-frame" picking-mode="Ignore">
+                    <ui:ScrollView name="rec-list" class="rec-list pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" />
+                    <wg:OutlinedText name="rec-list-empty" class="rec-list-empty" text="No applicants right now." />
+                </ui:VisualElement>
+
+                <!-- Right: the selected applicant. -->
+                <ui:VisualElement class="rec-details" picking-mode="Ignore">
+                    <ui:VisualElement name="rec-content" class="rec-content" picking-mode="Ignore">
+                        <wg:OutlinedText name="rec-name" class="rec-name" text="Bran the Bold" />
+                        <wg:OutlinedText name="rec-species-class" class="rec-line" text="Human · Fighter" />
+                        <wg:OutlinedText name="rec-rank-level" class="rec-line" text="Rank F · Level 2" />
+                        <wg:OutlinedText name="rec-stats-top" class="rec-stats" text="STR 7  AGI 5" />
+                        <wg:OutlinedText name="rec-stats-bottom" class="rec-stats" text="INT 3  VIT 6" />
+                        <wg:OutlinedText name="rec-wealth" class="rec-line" text="Wealth: 80g" />
+                        <wg:OutlinedText name="rec-affinities" class="rec-line rec-wrap" text="Good at: Combat" />
+                        <wg:OutlinedText name="rec-leaves" class="rec-line rec-leaves" text="Leaves in 3d" />
+                    </ui:VisualElement>
+                    <wg:OutlinedText name="rec-empty" class="rec-empty" text="No applicants right now." />
+
+                    <wg:OutlinedText name="rec-hint" class="rec-hint" text="Guild is full (6/6)" />
+                    <ui:VisualElement class="rec-buttons" picking-mode="Ignore">
+                        <ui:Button name="rec-decline" class="pixel-button panel-button"><wg:OutlinedText text="Decline" /></ui:Button>
+                        <ui:Button name="rec-accept" class="pixel-button panel-button"><wg:OutlinedText text="Accept" /></ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="rec-footer" picking-mode="Ignore">
+                <ui:Button name="rec-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

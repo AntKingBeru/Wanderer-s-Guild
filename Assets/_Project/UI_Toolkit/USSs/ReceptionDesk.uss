@@ -35,3 +35,12 @@
     align-self: stretch;
     margin-top: 3px;
 }
+/* NOTE: Shown only while a Guild Master's Office is finished. */
+.desk-recruits {
+    align-self: center;
+    margin-top: 3px;
+    display: none;
+}
+.desk-recruits .outlined-text__fill {
+    color: var(--color-text-disabled);
+}

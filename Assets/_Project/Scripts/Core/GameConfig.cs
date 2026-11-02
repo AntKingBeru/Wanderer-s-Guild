@@ -46,6 +46,7 @@ namespace WanderersGuild
         [SerializeField] private QuestPanelSettings questPanel = new();
         [SerializeField] private AdventurerSettings adventurers = new();
         [SerializeField] private PromotionSettings promotion = new();
+        [SerializeField] private RecruitmentSettings recruitment = new();
         [SerializeField] private WorldViewSettings worldView = new();
         [SerializeField] private GuildCameraSettings guildCamera = new();
         [SerializeField] private InteractionSettings interaction = new();
@@ -87,6 +88,7 @@ namespace WanderersGuild
         public QuestPanelSettings QuestPanel => questPanel;
         public AdventurerSettings Adventurers => adventurers;
         public PromotionSettings Promotion => promotion;
+        public RecruitmentSettings Recruitment => recruitment;
         public WorldViewSettings WorldView => worldView;
         public GuildCameraSettings GuildCamera => guildCamera;
         public InteractionSettings Interaction => interaction;
@@ -1362,6 +1364,15 @@ namespace WanderersGuild
 
         private static T ByIndex<T>(T[] values, int index, T fallback) =>
             values == null || values.Length == 0 ? fallback : values[Mathf.Clamp(index, 0, values.Length - 1)];
+    }
+    
+    [Serializable]
+    public class RecruitmentSettings
+    {
+        [Tooltip("In-game days an applicant waits at the Guild Master's Office before leaving.")]
+        [SerializeField, Range(1, 30)] private int waitDays = 3;
+
+        public long WaitMinutes => (long)waitDays * GameCalendar.MinutesPerDay;
     }
     #endregion
     

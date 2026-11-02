@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: GuildHudArt
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.GuildHudArt
   coin: {fileID: 0}
+  adventurer: {fileID: 0}
+  pause: {fileID: 0}
+  build: {fileID: 0}
   reputationIcons:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2148809133968853226, guid: dbba96bde487054429dfecfa17b661cf, type: 3}
+  - {fileID: -1917003864, guid: dbba96bde487054429dfecfa17b661cf, type: 3}
+  - {fileID: -336606616, guid: dbba96bde487054429dfecfa17b661cf, type: 3}
+  - {fileID: -801891706, guid: dbba96bde487054429dfecfa17b661cf, type: 3}
+  - {fileID: 28514455, guid: dbba96bde487054429dfecfa17b661cf, type: 3}

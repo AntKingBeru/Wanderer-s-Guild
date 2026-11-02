@@ -132,7 +132,7 @@ MonoBehaviour:
       clip: {fileID: 0}
       volume: 1
   uiSounds:
-    outputGroup: {fileID: 0}
+    outputGroup: {fileID: 4019844444243420605, guid: aef01b88448b3f84a8e7adf534e57f55, type: 2}
     hover:
       clip: {fileID: 0}
       volume: 1
@@ -149,8 +149,8 @@ MonoBehaviour:
   splash:
     backgroundColor: {r: 0, g: 0, b: 0, a: 1}
     slides:
-    - logo: {fileID: 0}
-      placeholderText: YOUR STUDIO
+    - logo: {fileID: 21300000, guid: 7a2780b1e78a61e45bccc3c88a053434, type: 3}
+      placeholderText: Kobold Brigade
       delayBefore: 0.5
       fadeInDuration: 1
       holdDuration: 1.5
@@ -458,6 +458,8 @@ MonoBehaviour:
     feeByRank: 000000000000000032000000000000006400000000000000c800000000000000900100000000000020030000000000004006000000000000800c000000000000l
     examDays: 2
     passReputation: 1
+  recruitment:
+    waitDays: 3
   worldView:
     renderSize: {x: 640, y: 360}
   guildCamera:

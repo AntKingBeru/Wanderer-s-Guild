@@ -648,6 +648,23 @@ namespace WanderersGuild
         public static PromotionCheck Blocked(GuildRank target, long fee, string reason) => new(false, true, target, fee, reason);
         public static PromotionCheck HighestRank() => new(false, false, GuildRank.National, 0, "Highest rank");
     }
+    
+    // A waiting applicant as stored in game.json: the adventurer they'd become, and when they leave.
+    [Serializable]
+    public struct SavedApplicant
+    {
+        [SerializeField] private SavedAdventurer adventurer;
+        [SerializeField] private long expiresAtMinutes;
+
+        public SavedApplicant(SavedAdventurer adventurer, long expiresAtMinutes)
+        {
+            this.adventurer = adventurer;
+            this.expiresAtMinutes = expiresAtMinutes;
+        }
+
+        public SavedAdventurer Adventurer => adventurer;
+        public long ExpiresAtMinutes => expiresAtMinutes;
+    }
     #endregion
     
     #region Facilities

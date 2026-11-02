@@ -8,9 +8,9 @@ namespace WanderersGuild
     [Serializable]
     public class GameSaveData
     {
-        // NOTE: v2 guild state; v3 request board; v4 roster; v5 posted quests; v6 facilities. Older files load with the
-        // missing parts at defaults (a save without facilities gets the Guild Hall placed on load).
-        public const int CurrentVersion = 6;
+        // NOTE: v2 guild state; v3 request board; v4 roster; v5 posted quests; v6 facilities; v7 applicants. Older files load
+        // with the missing parts at defaults.
+        public const int CurrentVersion = 7;
 
         // NOTE: Generous upper bound (~114 years) — anything above means a corrupted file.
         private const double MaxPlayTimeSeconds = 3.6e9;
@@ -38,6 +38,8 @@ namespace WanderersGuild
         [SerializeField] private List<SavedFacility> facilities = new();
         [SerializeField] private int nextFacilityId = 1;
         [SerializeField] private bool facilitiesInitialized;
+
+        [SerializeField] private List<SavedApplicant> applicants = new();
 
         public int Version => version;
 
@@ -111,7 +113,7 @@ namespace WanderersGuild
         public void SetAdventurers(IEnumerable<SavedAdventurer> items) =>
             adventurers = items != null ? new List<SavedAdventurer>(items) : new List<SavedAdventurer>();
 
-        // Next adventurer id (keeps ids unique across saves). Written by AdventurerManager.
+        // Next adventurer id — shared with applicants (keeps ids unique across saves). Written by AdventurerManager.
         public int NextAdventurerId
         {
             get => nextAdventurerId;
@@ -150,12 +152,18 @@ namespace WanderersGuild
             set => nextFacilityId = Math.Max(1, value);
         }
 
-        // True once the Guild Hall has been placed. Written by FacilityManager.
+        // True when the Guild Hall exists (informational — FacilityManager checks for the hall itself on load).
         public bool FacilitiesInitialized
         {
             get => facilitiesInitialized;
             set => facilitiesInitialized = value;
         }
+
+        // Applicants waiting at the Guild Master's Office. Written by RecruitmentManager.
+        public IReadOnlyList<SavedApplicant> Applicants => applicants ?? (IReadOnlyList<SavedApplicant>)Array.Empty<SavedApplicant>();
+
+        public void SetApplicants(IEnumerable<SavedApplicant> items) =>
+            applicants = items != null ? new List<SavedApplicant>(items) : new List<SavedApplicant>();
 
         public bool IsValid =>
             version is >= 1 and <= CurrentVersion &&

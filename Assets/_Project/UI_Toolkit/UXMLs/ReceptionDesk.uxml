@@ -15,7 +15,7 @@
                     <wg:OutlinedText name="desk-applications-detail" class="desk-half__detail" text="No applicants" />
                 </ui:Button>
             </ui:VisualElement>
-
+            <wg:OutlinedText name="desk-recruits" class="desk-recruits" text="Recruits: 2 waiting at the office" />
             <ui:VisualElement class="desk-footer" picking-mode="Ignore">
                 <ui:Button name="desk-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
             </ui:VisualElement>

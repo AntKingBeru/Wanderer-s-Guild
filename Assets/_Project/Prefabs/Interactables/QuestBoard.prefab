@@ -243,7 +243,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2664663648235718011
 Transform:
@@ -1043,8 +1043,16 @@ PrefabInstance:
       value: QuestBoard
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5ae086e8bef179b4f8f4d474ced69513, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5ae086e8bef179b4f8f4d474ced69513, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 1412827137150407991, guid: 5ae086e8bef179b4f8f4d474ced69513, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1412827137150407991, guid: 5ae086e8bef179b4f8f4d474ced69513, type: 3}
       propertyPath: m_IsActive
@@ -1053,6 +1061,10 @@ PrefabInstance:
     - target: {fileID: 1412827137150407991, guid: 5ae086e8bef179b4f8f4d474ced69513, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2191750151954457832, guid: 5ae086e8bef179b4f8f4d474ced69513, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2191750151954457832, guid: 5ae086e8bef179b4f8f4d474ced69513, type: 3}
       propertyPath: m_StaticEditorFlags

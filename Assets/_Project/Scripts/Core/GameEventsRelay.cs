@@ -177,6 +177,12 @@ namespace WanderersGuild
         
         // The guild's adventurer capacity changed (a room with beds finished or was demolished). Arg: new capacity.
         public static readonly UnityEvent<int> OnAdventurerCapacityChanged = new();
+        
+        // An applicant arrived at the Guild Master's Office. Arg: the applicant (an adventurer not in the roster).
+        public static readonly UnityEvent<Applicant> OnApplicantArrived = new();
+
+        // An applicant stopped waiting. Args: the applicant, and why (accepted, declined, expired, office closed).
+        public static readonly UnityEvent<Applicant, ApplicantEndReason> OnApplicantLeft = new();
         #endregion
         
         #region Facilities

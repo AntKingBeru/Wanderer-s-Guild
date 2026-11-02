@@ -64,7 +64,8 @@ namespace WanderersGuild
         Roster = 7,
         Quests = 8,
         ReceptionDesk = 9,
-        Applications = 10
+        Applications = 10,
+        Recruits
     }
     
     // How a ParallaxGroup reacts to the pointer (strength + follow speed set in GameConfig › Parallax).
@@ -268,6 +269,15 @@ namespace WanderersGuild
         SignedUp = 1,
         OnQuest = 2,
         InExam = 3
+    }
+    
+    // Why an applicant stopped waiting.
+    public enum ApplicantEndReason
+    {
+        Accepted = 0,
+        Declined = 1,
+        Expired = 2,
+        OfficeClosed = 3
     }
     #endregion
     

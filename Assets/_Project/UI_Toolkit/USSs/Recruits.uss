@@ -1,0 +1,124 @@
+/* Recruits screen in 320×180 UI pixels: waiting applicants (left) + the selected applicant (right). */
+.rec-window {
+    width: 300px;
+    height: 164px;
+}
+/* NOTE: The theme's pixel-window centres its children — body and footer stretch to the window's width. */
+.rec-body {
+    flex-direction: row;
+    flex-grow: 1;
+    min-height: 0;
+    align-self: stretch;
+}
+
+/* ---------- List ---------- */
+.rec-list-frame {
+    width: 130px;
+    margin-right: 4px;
+}
+.rec-list {
+    flex-grow: 1;
+}
+.rec-list-empty {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    right: 0;
+    align-items: center;
+    display: none;
+}
+.rec-row {
+    flex-direction: row;
+    align-items: center;
+    align-self: stretch;
+    height: 22px;
+    margin: 0 0 1px 0;
+    padding: 0 2px;
+}
+.rec-row--selected {
+    border-color: var(--color-accent);
+}
+/* NOTE: Name and info are clipped at their edge; the 1px padding keeps the outline inside the clip. */
+.rec-row__text {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1px;
+}
+.rec-row__info .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.rec-row__time {
+    flex-shrink: 0;
+    margin-left: 2px;
+}
+.rec-row--urgent .rec-row__time .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}
+
+/* ---------- Details ---------- */
+.rec-details {
+    flex-grow: 1;
+    min-width: 0;
+}
+.rec-content {
+    flex-grow: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 1px;
+}
+.rec-name {
+    margin-bottom: 1px;
+}
+.rec-name .outlined-text__fill {
+    color: var(--color-accent);
+}
+.rec-line .outlined-text__fill,
+.rec-hint .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.rec-stats {
+    margin-top: 1px;
+}
+.rec-wrap {
+    align-items: stretch;
+}
+.rec-wrap .outlined-text__stack {
+    align-self: stretch;
+}
+.rec-wrap .outlined-text__part {
+    white-space: normal;
+}
+.rec-leaves {
+    margin-top: 2px;
+}
+.rec-empty {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+.rec-hint {
+    align-self: flex-end;
+    margin-top: 1px;
+    display: none;
+}
+.rec-hint .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}
+.rec-buttons {
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* ---------- Footer ---------- */
+.rec-footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-self: stretch;
+    flex-shrink: 0;
+    margin-top: 3px;
+}

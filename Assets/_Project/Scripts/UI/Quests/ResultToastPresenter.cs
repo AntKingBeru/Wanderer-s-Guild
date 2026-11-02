@@ -1,4 +1,4 @@
-// Queues a toast for each result — quests (party ready, succeeded with the guild's gold, failed, expired) and promotion exams.
+// Queues a toast for each result — quests, promotion exams, and applicants arriving / giving up.
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
@@ -13,12 +13,15 @@ namespace WanderersGuild
         private readonly Queue<(string message, bool isError)> _queue = new();
         private Tween _wait;
         private bool _isShowing;
+        private int _officeClosedFrame = -1;
 
         private void OnEnable()
         {
             GameEventsRelay.OnQuestPartyReady.AddListener(OnPartyReady);
             GameEventsRelay.OnQuestEnded.AddListener(OnQuestEnded);
             GameEventsRelay.OnPromotionExamEnded.AddListener(OnExamEnded);
+            GameEventsRelay.OnApplicantArrived.AddListener(OnApplicantArrived);
+            GameEventsRelay.OnApplicantLeft.AddListener(OnApplicantLeft);
         }
 
         private void OnDisable()
@@ -26,6 +29,8 @@ namespace WanderersGuild
             GameEventsRelay.OnQuestPartyReady.RemoveListener(OnPartyReady);
             GameEventsRelay.OnQuestEnded.RemoveListener(OnQuestEnded);
             GameEventsRelay.OnPromotionExamEnded.RemoveListener(OnExamEnded);
+            GameEventsRelay.OnApplicantArrived.RemoveListener(OnApplicantArrived);
+            GameEventsRelay.OnApplicantLeft.RemoveListener(OnApplicantLeft);
             if (_wait.IsActive())
                 _wait.Kill();
             _queue.Clear();
@@ -41,7 +46,7 @@ namespace WanderersGuild
             switch (reason)
             {
                 case QuestEndReason.Succeeded:
-                    long guildGold = QuestFormatter.GuildShare(quest, quest.MemberIds.Count);
+                    var guildGold = QuestFormatter.GuildShare(quest, quest.MemberIds.Count);
                     Enqueue($"Quest succeeded: {title}  +{guildGold:N0}g", false);
                     break;
                 case QuestEndReason.Failed:
@@ -56,6 +61,28 @@ namespace WanderersGuild
         private void OnExamEnded(Adventurer adventurer, GuildRank target, bool passed) =>
             Enqueue(passed ? $"{adventurer.Name} passed the Rank {target} exam"
                            : $"{adventurer.Name} failed the Rank {target} exam", !passed);
+
+        private void OnApplicantArrived(Applicant applicant)
+        {
+            var a = applicant.Adventurer;
+            Enqueue($"New applicant: {a.Name} ({a.Class.DisplayName} Lv {a.Level})", false);
+        }
+
+        // NOTE: Accepting / declining are the player's own actions — no toast. The office closing makes everyone leave at
+        // once — one summary toast per frame instead of one per applicant.
+        private void OnApplicantLeft(Applicant applicant, ApplicantEndReason reason)
+        {
+            switch (reason)
+            {
+                case ApplicantEndReason.Expired:
+                    Enqueue($"{applicant.Adventurer.Name} stopped waiting", true);
+                    break;
+                case ApplicantEndReason.OfficeClosed when _officeClosedFrame != Time.frameCount:
+                    _officeClosedFrame = Time.frameCount;
+                    Enqueue("Applicants left: no Guild Master's Office", true);
+                    break;
+            }
+        }
 
         private void Enqueue(string message, bool isError)
         {
