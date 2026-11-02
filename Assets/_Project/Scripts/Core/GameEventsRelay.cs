@@ -188,6 +188,9 @@ namespace WanderersGuild
 
         // A room was demolished. Arg: the room (no longer in the guild).
         public static readonly UnityEvent<PlacedFacility> OnFacilityRemoved = new();
+        
+        // Build mode opened (true) or closed (false).
+        public static readonly UnityEvent<bool> OnBuildModeChanged = new();
         #endregion
     }
 }

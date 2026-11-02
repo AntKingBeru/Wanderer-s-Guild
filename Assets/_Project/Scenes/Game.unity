@@ -316,6 +316,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 993639236}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &408834674
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 408834675}
+  - component: {fileID: 408834676}
+  m_Layer: 0
+  m_Name: BuildMode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &408834675
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408834674}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 606351659}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &408834676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408834674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93b0583340b718d4b8c4bedcb6d7c25f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.BuildModeController
+  persistAcrossScenes: 0
+  worldCamera: {fileID: 1904311416}
+  view: {fileID: 998846831}
+  panels: {fileID: 1873610642}
+  grid: {fileID: 637456967}
+  document: {fileID: 1263578233}
 --- !u!1 &478497155
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,6 +438,8 @@ GameObject:
   - component: {fileID: 495723428}
   - component: {fileID: 495723432}
   - component: {fileID: 495723431}
+  - component: {fileID: 495723433}
+  - component: {fileID: 495723434}
   m_Layer: 0
   m_Name: HudUI
   m_TagString: Untagged
@@ -485,6 +537,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.GuildHudPresenter
   art: {fileID: 11400000, guid: fdfb48ffb92d3854fb19a8f103a76552, type: 2}
+--- !u!114 &495723433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495723426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bff6c3061949e4088cfd065192ea93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.HudBuildButtonPresenter
+  art: {fileID: 11400000, guid: fdfb48ffb92d3854fb19a8f103a76552, type: 2}
+--- !u!114 &495723434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495723426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5598faa4b78a3db49b4a63c34ef298e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.HudBuildModeStyler
 --- !u!1 &592386956
 GameObject:
   m_ObjectHideFlags: 0
@@ -649,6 +726,7 @@ Transform:
   - {fileID: 948241086}
   - {fileID: 1054836479}
   - {fileID: 1253490074}
+  - {fileID: 408834675}
   - {fileID: 637456966}
   - {fileID: 1873610641}
   m_Father: {fileID: 0}
@@ -664,6 +742,7 @@ GameObject:
   - component: {fileID: 637456966}
   - component: {fileID: 637456967}
   - component: {fileID: 637456968}
+  - component: {fileID: 637456969}
   m_Layer: 0
   m_Name: FacilityGrid
   m_TagString: Untagged
@@ -714,6 +793,21 @@ MonoBehaviour:
   grid: {fileID: 637456967}
   roomsParent: {fileID: 1931201566}
   cameraBounds: {fileID: 799481445}
+--- !u!114 &637456969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637456965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b56c9e5f27d2e004396a118ed8eb9755, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.FacilityFootprintGizmos
+  grid: {fileID: 637456967}
+  footprintColor: {r: 0.2, g: 0.9, b: 1, a: 0.9}
+  doorColor: {r: 1, g: 0.7, b: 0.2, a: 0.9}
 --- !u!1 &682354377
 GameObject:
   m_ObjectHideFlags: 0
@@ -917,6 +1011,7 @@ Transform:
   m_Children:
   - {fileID: 998846825}
   - {fileID: 495723427}
+  - {fileID: 1263578232}
   - {fileID: 1555328941}
   - {fileID: 1410555967}
   - {fileID: 1669214138}
@@ -1243,6 +1338,61 @@ MonoBehaviour:
   worldCamera: {fileID: 1904311416}
   view: {fileID: 998846831}
   panels: {fileID: 1873610642}
+--- !u!1 &1263578231
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1263578232}
+  - component: {fileID: 1263578233}
+  m_Layer: 0
+  m_Name: BuildModeUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1263578232
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263578231}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 993639236}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1263578233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263578231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 6a12b064e5aaf24479f9d0c41e745f9e, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 6a2353fbb5063bc4e9f2f1210573b1e5, type: 3}
+  m_SortingOrder: 1
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1 &1346576952
 GameObject:
   m_ObjectHideFlags: 0

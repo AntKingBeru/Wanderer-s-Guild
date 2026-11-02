@@ -25,7 +25,7 @@ namespace WanderersGuild
         }
 
         // Opens the pause menu if nothing is in the way (host busy, a panel open, time not running, scene
-        // loading). True if it opened.
+        // loading). True if it opened. (Build mode closes itself when the menu opens.)
         public bool TryOpen()
         {
             if (!host || host.IsBusy || host.HasOpenPanel)
@@ -41,9 +41,14 @@ namespace WanderersGuild
             return true;
         }
 
-        // NOTE: Only ever opens — Esc inside the menu is UI Cancel, which the panel handles (that same press is
-        // ignored by the panel while its open animation plays).
-        private void OnPauseMenuPressed(InputAction.CallbackContext _) => TryOpen();
+        // NOTE: Only ever opens — Esc inside the menu is UI Cancel. Esc belongs to build mode while it's open, or if build
+        // mode used it this frame (the two listeners can fire in either order).
+        private void OnPauseMenuPressed(InputAction.CallbackContext _)
+        {
+            if (BuildModeController.HasInstance && BuildModeController.Instance.BlocksEscape)
+                return;
+            TryOpen();
+        }
 
         // NOTE: Options → pause menu keeps a panel open, so time only resumes once nothing is open.
         private void OnPanelClosed(MenuPanelId _)

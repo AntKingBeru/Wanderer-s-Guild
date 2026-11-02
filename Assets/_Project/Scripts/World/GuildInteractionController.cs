@@ -17,9 +17,11 @@ namespace WanderersGuild
         private WorldHoverLabel _label;
         private GuildInteractable _hovered;
 
+        // NOTE: Also off in build mode — clicks there place rooms, not open screens.
         private bool IsBlocked =>
             (panels && (panels.HasOpenPanel || panels.IsBusy)) ||
-            (SceneLoader.HasInstance && SceneLoader.Instance.IsBusy);
+            (SceneLoader.HasInstance && SceneLoader.Instance.IsBusy) ||
+            (BuildModeController.HasInstance && BuildModeController.Instance.IsActive);
 
         private void OnEnable()
         {

@@ -83,13 +83,15 @@ namespace WanderersGuild
             return model;
         }
 
+        // NOTE: Same convention as rooms — the scaffold prefab is one 1×1 cell with its pivot at the min corner; it's placed
+        // at the footprint's min corner and stretched over the rotated footprint, so it covers exactly the room's cells.
         private GameObject SpawnScaffold(PlacedFacility room)
         {
             if (!_settings.ScaffoldPrefab)
                 return SpawnBox(room, 0.5f, $"Scaffold #{room.Id}");
 
             var size = FacilityFootprint.RotatedSize(room.Data.Size, room.Rotation);
-            var scaffold = Object.Instantiate(_settings.ScaffoldPrefab, FootprintCentre(room, 0f), Quaternion.identity, _parent);
+            var scaffold = Object.Instantiate(_settings.ScaffoldPrefab, CellToWorld(room.Origin), Quaternion.identity, _parent);
             scaffold.transform.localScale = new Vector3(size.x, 1f, size.y);
             scaffold.name = $"Scaffold #{room.Id}";
             return scaffold;

@@ -33,6 +33,9 @@
                             <wg:OutlinedText name="adv-count-label" class="adv-count-label" text="0/6" />
                         </ui:VisualElement>
                     </ui:VisualElement>
+                    <ui:Button name="hud-build" class="pixel-button hud-pause hud-build">
+                        <ui:VisualElement name="hud-build-icon" class="hud-pause__icon" picking-mode="Ignore" />
+                    </ui:Button>
                     <ui:Button name="hud-pause" class="pixel-button hud-pause">
                         <ui:VisualElement name="hud-pause-icon" class="hud-pause__icon" picking-mode="Ignore" />
                     </ui:Button>

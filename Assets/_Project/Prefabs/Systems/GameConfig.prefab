@@ -79,6 +79,9 @@ MonoBehaviour:
     cameraRotate: {fileID: 5200073120712144679, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
     cameraZoom: {fileID: 3429882728573722687, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
     worldClick: {fileID: -2270512615485987031, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    buildMode: {fileID: 8375276412662802405, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    buildRotate: {fileID: 8401335848834111592, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+    buildCancel: {fileID: -8253566798527813827, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
   playerSettings:
     fileName: settings.json
     volumeStep: 5
@@ -244,7 +247,7 @@ MonoBehaviour:
     - name: Winter
       season: 3
     daysPerMonth: 28
-    realSecondsPerDay: 60
+    realSecondsPerDay: 1440
     minutesPerTick: 1
     fastMultiplier: 2
     veryFastMultiplier: 4
@@ -490,5 +493,15 @@ MonoBehaviour:
       height: 120
     demolishRefund: 0.5
     builtReputation: 1
-    scaffoldPrefab: {fileID: 0}
+    scaffoldPrefab: {fileID: 7208577845384851530, guid: 054400daf5632514185576856b443046, type: 3}
     cameraBoundsPadding: 1
+  buildMode:
+    ghostMaterial: {fileID: 2100000, guid: 4b27ad8e3bd9ab342bc67f6b0299b3b0, type: 2}
+    validColor: {r: 0.4, g: 1, b: 0.45, a: 0.45}
+    invalidColor: {r: 1, g: 0.35, b: 0.3, a: 0.45}
+    gridColor: {r: 1, g: 1, b: 1, a: 0.15}
+    gridRadius: 6
+    snapDistance: 2.5
+    rotationSnapPenalty: 0.5
+    floorHeight: 0
+    cursorLabelOffset: {x: 6, y: -6}

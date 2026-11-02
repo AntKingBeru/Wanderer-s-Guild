@@ -15,6 +15,8 @@ namespace WanderersGuild
         private static readonly Color32 CoinShine = new(255, 240, 168, 255);
         private static readonly Color32 Skin = new(232, 196, 160, 255);
         private static readonly Color32 Tunic = new(88, 128, 184, 255);
+        private static readonly Color32 Wood = new(150, 104, 60, 255);
+        private static readonly Color32 Iron = new(170, 176, 186, 255);
 
         // NOTE: Mouth pixels (x, y from the bottom), worst → best: big frown → big smile.
         private static readonly Vector2Int[][] Mouths =
@@ -29,6 +31,7 @@ namespace WanderersGuild
         private static Texture2D _coin;
         private static Texture2D _person;
         private static Texture2D _pause;
+        private static Texture2D _hammer;
         private static readonly Texture2D[] Faces = new Texture2D[Mouths.Length];
 
         // NOTE: Runtime textures die when Play stops; with domain reload off the fields survive, so rebuild if destroyed.
@@ -41,6 +44,9 @@ namespace WanderersGuild
 
         // >Two white bars inside a thin frame (the frame tells it apart from the time HUD's speed "||").
         public static Texture2D Pause => _pause ? _pause : _pause = BuildPause();
+        
+        // A small hammer (not meant to be tinted).
+        public static Texture2D Hammer => _hammer ? _hammer : _hammer = BuildHammer();
 
         // >A white square face (tint it in the level's color); the mouth reflects the level.
         public static Texture2D Face(ReputationLevel level)
@@ -105,6 +111,17 @@ namespace WanderersGuild
             FillRect(pixels, 7, 3, 1, 6, White);
             return ToTexture(pixels, "PlaceholderPause");
         }
+        
+        // NOTE: y counts from the bottom. Head across the top, handle down the middle, ink outline.
+        private static Texture2D BuildHammer()
+        {
+            var pixels = Blank();
+            FillRect(pixels, 2, 7, 8, 4, Ink);
+            FillRect(pixels, 3, 8, 6, 2, Iron);
+            FillRect(pixels, 4, 1, 4, 7, Ink);
+            FillRect(pixels, 5, 2, 2, 6, Wood);
+            return ToTexture(pixels, "PlaceholderHammer");
+        }
 
         private static Texture2D BuildFace(Vector2Int[] mouth)
         {
@@ -159,6 +176,7 @@ namespace WanderersGuild
             _coin = null;
             _person = null;
             _pause = null;
+            _hammer = null;
             System.Array.Clear(Faces, 0, Faces.Length);
         }
     }

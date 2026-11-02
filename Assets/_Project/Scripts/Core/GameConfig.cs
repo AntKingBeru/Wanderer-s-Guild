@@ -50,6 +50,7 @@ namespace WanderersGuild
         [SerializeField] private GuildCameraSettings guildCamera = new();
         [SerializeField] private InteractionSettings interaction = new();
         [SerializeField] private FacilitySettings facilities = new();
+        [SerializeField] private BuildModeSettings buildMode = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -90,6 +91,7 @@ namespace WanderersGuild
         public GuildCameraSettings GuildCamera => guildCamera;
         public InteractionSettings Interaction => interaction;
         public FacilitySettings Facilities => facilities;
+        public BuildModeSettings BuildMode => buildMode;
     }
     
     #region Scene Management
@@ -190,6 +192,15 @@ namespace WanderersGuild
         
         [Tooltip("Button — <Mouse>/leftButton (Game map). Clicks the hovered guild object (opens its screen).")]
         [SerializeField] private InputActionReference worldClick;
+        
+        [Tooltip("Button — <Keyboard>/b (Game map). Opens / closes build mode.")]
+        [SerializeField] private InputActionReference buildMode;
+
+        [Tooltip("Button — <Keyboard>/r (Game map). Rotates the build ghost 90°.")]
+        [SerializeField] private InputActionReference buildRotate;
+
+        [Tooltip("Button — <Mouse>/rightButton (Game map). Deselects the facility being placed.")]
+        [SerializeField] private InputActionReference buildCancel;
 
         public InputActionReference Skip => skip;
         public InputActionReference AnyKey => anyKey;
@@ -204,6 +215,9 @@ namespace WanderersGuild
         public InputActionReference CameraRotate => cameraRotate;
         public InputActionReference CameraZoom => cameraZoom;
         public InputActionReference WorldClick => worldClick;
+        public InputActionReference BuildMode => buildMode;
+        public InputActionReference BuildRotate => buildRotate;
+        public InputActionReference BuildCancel => buildCancel;
     }
     #endregion
     
@@ -1461,7 +1475,8 @@ namespace WanderersGuild
         [Tooltip("Reputation when a new room finishes construction (not for upgrades).")]
         [SerializeField] private int builtReputation = 1;
 
-        [Tooltip("Shown over a footprint while it's being built or upgraded (scaled to the footprint). Empty = a plain box.")]
+        [Tooltip("Shown over a footprint while it's being built or upgraded. Author it as ONE 1×1 cell with its pivot at the " +
+                 "min corner (like rooms); it's stretched over the footprint. Empty = a plain box.")]
         [SerializeField] private GameObject scaffoldPrefab;
 
         [Tooltip("Extra space (units) around all rooms for the camera's bounds.")]
@@ -1476,6 +1491,40 @@ namespace WanderersGuild
         public int BuiltReputation => builtReputation;
         public GameObject ScaffoldPrefab => scaffoldPrefab;
         public float CameraBoundsPadding => cameraBoundsPadding;
+    }
+    
+    [Serializable]
+    public class BuildModeSettings
+    {
+        [Tooltip("Transparent unlit material for the ghost, footprint and grid (URP Unlit, Surface Transparent). Tinted per use.")]
+        [SerializeField] private Material ghostMaterial;
+
+        [SerializeField] private Color validColor = new(0.4f, 1f, 0.45f, 0.45f);
+        [SerializeField] private Color invalidColor = new(1f, 0.35f, 0.3f, 0.45f);
+        [SerializeField] private Color gridColor = new(1f, 1f, 1f, 0.15f);
+
+        [Tooltip("Grid lines drawn this many cells around the cursor.")]
+        [SerializeField, Range(1, 20)] private int gridRadius = 6;
+
+        [Tooltip("The ghost snaps to a fitting connection within this many cells; other rotations cost this much extra.")]
+        [SerializeField, Min(0f)] private float snapDistance = 2.5f;
+        [SerializeField, Min(0f)] private float rotationSnapPenalty = 0.5f;
+
+        [Tooltip("Height of the floor the pointer is projected onto.")]
+        [SerializeField] private float floorHeight;
+
+        [Tooltip("Cursor label offset from the pointer (render pixels).")]
+        [SerializeField] private Vector2 cursorLabelOffset = new(6f, -6f);
+
+        public Material GhostMaterial => ghostMaterial;
+        public Color ValidColor => validColor;
+        public Color InvalidColor => invalidColor;
+        public Color GridColor => gridColor;
+        public int GridRadius => gridRadius;
+        public float SnapDistance => snapDistance;
+        public float RotationSnapPenalty => rotationSnapPenalty;
+        public float FloorHeight => floorHeight;
+        public Vector2 CursorLabelOffset => cursorLabelOffset;
     }
     #endregion
 }

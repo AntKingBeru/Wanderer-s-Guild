@@ -63,6 +63,12 @@
     color: var(--color-accent);
 }
 
+/* NOTE: The build button shares the pause button's size; it lights up while build mode is open. */
+.pixel-button.hud-build--active {
+    border-color: var(--color-accent);
+    background-color: var(--frame-highlight-bg);
+}
+
 /* ---------- Guild (right of the bar) ---------- */
 /* NOTE: A row: the counters column, then the pause button at its top right. */
 .hud-guild-group {
@@ -197,4 +203,9 @@
 .hud-float {
     position: absolute;
     white-space: nowrap;
+}
+/* NOTE: While building, the build bar takes the bottom of the screen — the rank bar and reputation step aside. */
+.game-hud--building .rank-row,
+.game-hud--building .rep-root {
+    display: none;
 }

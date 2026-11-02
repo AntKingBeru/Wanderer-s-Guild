@@ -1,0 +1,33 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/BuildMode.uss?fileID=7433441132597879392&amp;guid=bb543aeec30316343ba9d22157859e23&amp;type=3#BuildMode"/>
+    <ui:VisualElement name="build-root" class="build-root" picking-mode="Ignore">
+
+        <!-- Beside the cursor: cost and days, or why the spot is invalid. -->
+        <ui:VisualElement name="build-cursor" class="pixel-window build-cursor" picking-mode="Ignore">
+            <wg:OutlinedText name="build-cursor-text" text="200g · 2 days" />
+        </ui:VisualElement>
+
+        <!-- Bottom bar: title + controls hint, then the catalog: a clipped viewport with a strip of cards (created in code),
+             scrolled sideways by the wheel. Picks, so the world under it doesn't. -->
+        <ui:VisualElement class="pixel-window build-bar" picking-mode="Position">
+            <ui:VisualElement class="build-bar__header" picking-mode="Ignore">
+                <wg:OutlinedText class="build-title" text="Build" />
+                <wg:OutlinedText name="build-hint" class="build-hint" text="R rotate · Right-click cancel · B / Esc exit" />
+            </ui:VisualElement>
+            <ui:VisualElement name="build-catalog" class="build-catalog" picking-mode="Position">
+                <ui:VisualElement name="build-strip" class="build-strip" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Shared confirmation overlay (PixelTheme.uss › confirm-*), used to confirm a build. -->
+        <ui:VisualElement name="confirm-overlay" class="confirm-overlay">
+            <ui:VisualElement class="pixel-window confirm-window">
+                <wg:OutlinedText name="confirm-message" class="confirm-message" text="Build?" />
+                <ui:VisualElement class="confirm-buttons" picking-mode="Ignore">
+                    <ui:Button name="confirm-no" class="pixel-button panel-button"><wg:OutlinedText text="No" /></ui:Button>
+                    <ui:Button name="confirm-yes" class="pixel-button panel-button"><wg:OutlinedText text="Yes" /></ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

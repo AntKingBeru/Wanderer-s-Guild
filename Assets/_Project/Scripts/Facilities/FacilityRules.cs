@@ -13,27 +13,42 @@ namespace WanderersGuild
         public static FacilityCheck CanPlace(FacilityData data, Vector2Int origin, int rotation, FacilityGrid grid,
                                              IReadOnlyList<PlacedFacility> rooms, GuildRank guildRank, long gold, FacilitySettings settings)
         {
-            var unlock = data.UnlockRankFor(1);
-            if (unlock > guildRank)
-                return FacilityCheck.No($"Needs guild rank {unlock}");
+            var lockReason = LockReason(data, rooms, guildRank);
+            if (lockReason != null)
+                return FacilityCheck.No(lockReason);
 
-            if (data.Limit > 0 && CountOf(data, rooms) >= data.Limit)
-                return FacilityCheck.No($"Limit reached ({data.Limit})");
-
-            var area = settings.BuildArea;
-            var size = FacilityFootprint.RotatedSize(data.Size, rotation);
-            if (origin.x < area.xMin || origin.y < area.yMin || origin.x + size.x > area.xMax || origin.y + size.y > area.yMax)
-                return FacilityCheck.No("Outside the build area");
-
-            if (!grid.IsFree(FacilityFootprint.Cells(origin, data.Size, rotation)))
-                return FacilityCheck.No("Overlaps another room");
-
-            grid.LinkedRooms(WorldDoors(data, origin, rotation), -1, Linked);
-            if (Linked.Count == 0)
-                return FacilityCheck.No("Not connected to the guild");
+            var geometry = GeometryReason(data, origin, rotation, grid, settings);
+            if (geometry != null)
+                return FacilityCheck.No(geometry);
 
             var cost = data.CostFor(1);
             return gold < cost ? FacilityCheck.No($"Costs {cost:N0}g: not enough gold", cost) : FacilityCheck.Ok(cost);
+        }
+
+        // Position-independent reasons a facility can't be built at all right now (rank, limit), or null.
+        public static string LockReason(FacilityData data, IReadOnlyList<PlacedFacility> rooms, GuildRank guildRank)
+        {
+            var unlock = data.UnlockRankFor(1);
+            if (unlock > guildRank)
+                return $"Needs guild rank {unlock}";
+            if (data.Limit > 0 && CountOf(data, rooms) >= data.Limit)
+                return $"Limit reached ({data.Limit})";
+            return null;
+        }
+
+        // Why this spot doesn't work (outside the area, overlap, not connected), or null if it fits.
+        public static string GeometryReason(FacilityData data, Vector2Int origin, int rotation, FacilityGrid grid, FacilitySettings settings)
+        {
+            var area = settings.BuildArea;
+            var size = FacilityFootprint.RotatedSize(data.Size, rotation);
+            if (origin.x < area.xMin || origin.y < area.yMin || origin.x + size.x > area.xMax || origin.y + size.y > area.yMax)
+                return "Outside the build area";
+
+            if (!grid.IsFree(FacilityFootprint.Cells(origin, data.Size, rotation)))
+                return "Overlaps another room";
+
+            grid.LinkedRooms(WorldDoors(data, origin, rotation), -1, Linked);
+            return Linked.Count == 0 ? "Not connected to the guild" : null;
         }
 
         public static FacilityCheck CanUpgrade(PlacedFacility room, GuildRank guildRank, long gold)

@@ -15,6 +15,9 @@ namespace WanderersGuild
 
         [Tooltip("Pause-menu button icon (12×12, Point filtering).")]
         [SerializeField] private Sprite pause;
+        
+        [Tooltip("Build-mode button icon (12×12, Point filtering).")]
+        [SerializeField] private Sprite build;
 
         [Tooltip("One emoji per level, worst → best (Despised, Distrusted, Neutral, Respected, Renowned). " +
                  "Author them white/greyscale — they're tinted in the level's colour.")]
@@ -23,6 +26,7 @@ namespace WanderersGuild
         public Sprite Coin => coin;
         public Sprite Adventurer => adventurer;
         public Sprite Pause => pause;
+        public Sprite Build => build;
 
         public Sprite ReputationIcon(ReputationLevel level)
         {

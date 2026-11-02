@@ -209,6 +209,36 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "BuildMode",
+                    "type": "Button",
+                    "id": "066197cb-362b-45f6-827d-c19c24c69475",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "BuildRotate",
+                    "type": "Button",
+                    "id": "339dd1ff-299a-4787-954c-adb67a9b7ebd",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "BuildCancel",
+                    "type": "Button",
+                    "id": "6d2de391-8294-46c5-8915-b831492f1c90",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -440,6 +470,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "WorldClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a7fb0a2f-e7f4-42b8-8392-6e1813103d1d",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BuildMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1c91e7da-6b24-484d-8b43-9d8445c0a42e",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BuildRotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "02b1446c-cb72-4ad1-9b9d-93b8f47c29b3",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BuildCancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

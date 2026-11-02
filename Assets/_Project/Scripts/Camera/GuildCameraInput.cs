@@ -75,14 +75,19 @@ namespace WanderersGuild
         }
 
         // NOTE: Wheel values differ per platform (±1 or ±120 per notch) — only the sign is used: one notch, one step.
+        // Over UI (the build catalog, the HUD) the wheel belongs to the UI, not the camera.
         private void ReadZoom()
         {
             if (_zoom == null)
                 return;
 
             var value = _zoom.ReadValue<float>();
-            if (Mathf.Abs(value) > 0.01f)
-                rig.ZoomBy(value > 0f ? 1 : -1);
+            if (Mathf.Abs(value) <= 0.01f)
+                return;
+            if (view && _point != null && view.IsPointerOverUI(_point.ReadValue<Vector2>()))
+                return;
+
+            rig.ZoomBy(value > 0f ? 1 : -1);
         }
 
         // NOTE: The first held frame only records the position (no jump); outside the view (letterbox) the drag stops.

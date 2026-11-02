@@ -782,5 +782,21 @@ namespace WanderersGuild
         public override bool Equals(object obj) => obj is WorldDoor other && Equals(other);
         public override int GetHashCode() => HashCode.Combine(A, B, (int)Facing);
     }
+    
+    // One card of the build catalog: the facility, why it can't be chosen (empty = selectable), and affordability.<
+    public readonly struct BuildCatalogEntry
+    {
+        public BuildCatalogEntry(FacilityData data, string lockReason, bool affordable)
+        {
+            Data = data;
+            LockReason = lockReason ?? string.Empty;
+            Affordable = affordable;
+        }
+
+        public FacilityData Data { get; }
+        public string LockReason { get; }
+        public bool IsLocked => LockReason.Length > 0;
+        public bool Affordable { get; }
+    }
     #endregion
 }
