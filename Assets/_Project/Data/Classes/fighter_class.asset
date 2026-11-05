@@ -29,5 +29,9 @@ MonoBehaviour:
     intellect: 0
     vitality: 1
   requiredGuildRank: 0
+  maxRank: 2
   advancesToIds: []
   categoryAffinities: 000000000400000007000000i
+  startingGearIds:
+  - equipment_start_sword
+  - equipment_start_armor_fighter

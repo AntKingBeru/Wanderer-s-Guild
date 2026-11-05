@@ -1,4 +1,4 @@
-// One item (imported from the Equipment sheet): slot, allowed classes, stat bonus, price, armory level, unlock rank, two-handed.
+// One item (imported from the Equipment sheet): slot, allowed classes, stat bonus, price, armory level (0 = starter only), unlock rank.
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,8 +19,8 @@ namespace WanderersGuild
         [SerializeField] private string[] classIds = Array.Empty<string>();
         [SerializeField] private StatBlock stats;
         [SerializeField, Min(0)] private int price;
-        [Tooltip("Armory stock tier needed to sell it.")]
-        [SerializeField, Min(1)] private int armoryLevel = 1;
+        [Tooltip("Armory stock tier needed to sell it. 0 = never sold (starting gear only).")]
+        [SerializeField, Min(0)] private int armoryLevel = 1;
         [SerializeField] private GuildRank unlockRank = GuildRank.F;
         [Tooltip("Weapons only: holding it leaves no hand for an offhand.")]
         [SerializeField] private bool twoHanded;
@@ -36,6 +36,9 @@ namespace WanderersGuild
         public int ArmoryLevel => armoryLevel;
         public GuildRank UnlockRank => unlockRank;
         public bool TwoHanded => twoHanded && slot == EquipmentSlot.Weapon;
+
+        // False for starter-only gear (ARMORY_LEVEL 0).
+        public bool IsSoldInArmory => armoryLevel >= 1;
 
         public bool CanBeUsedBy(ClassData classData) =>
             classIds == null || classIds.Length == 0 || Array.IndexOf(classIds, classData.Id) >= 0;

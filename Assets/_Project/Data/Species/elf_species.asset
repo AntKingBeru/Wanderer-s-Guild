@@ -17,6 +17,11 @@ MonoBehaviour:
   description: Snotty bastards that live long and look down on others for no reason.
   icon: {fileID: 0}
   baseStatModifiers:
+    strength: 1
+    agility: 3
+    intellect: 2
+    vitality: 1
+  growthPerLevel:
     strength: 0
     agility: 2
     intellect: 1

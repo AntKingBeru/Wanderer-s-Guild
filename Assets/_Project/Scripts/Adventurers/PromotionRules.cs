@@ -3,7 +3,7 @@ namespace WanderersGuild
 {
     public static class PromotionRules
     {
-        // NOTE: Check order = what the player most needs to know first: busy, progress, level, guild rank, gold.
+        // NOTE: Check order = what the player most needs to know first: busy, class cap, progress, level, guild rank, gold.
         public static PromotionCheck Check(Adventurer adventurer, GuildRank guildRank, long guildGold, PromotionSettings settings)
         {
             if (adventurer.Rank >= GuildRank.National)
@@ -16,6 +16,11 @@ namespace WanderersGuild
                 return PromotionCheck.Blocked(target, fee, "Taking an exam");
             if (adventurer.Status != AdventurerStatus.Idle)
                 return PromotionCheck.Blocked(target, fee, "Busy with a quest");
+
+            var cap = adventurer.Class.MaxRank;
+            if (target > cap)
+                return PromotionCheck.Blocked(target, fee, $"{adventurer.Class.DisplayName} can't rank above {cap}: advance class first");
+
             if (adventurer.RankProgress < settings.ProgressRequired)
                 return PromotionCheck.Blocked(target, fee, "Needs more rank progress");
 

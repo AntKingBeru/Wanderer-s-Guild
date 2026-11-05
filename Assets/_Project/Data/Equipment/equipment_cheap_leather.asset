@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: equipment_cheap_leather
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
   id: equipment_cheap_leather
-  displayName: Cheap Leather Armor
-  description: A Low quality leather made armor
+  displayName: Boar-Leather Armor
+  description: A low quality armor made from a board's cured leather.
   icon: {fileID: 0}
   slot: 2
   classIds:
@@ -23,8 +23,8 @@ MonoBehaviour:
     strength: 0
     agility: 0
     intellect: 0
-    vitality: 1
+    vitality: 2
   price: 8
   armoryLevel: 1
-  unlockRank: 0
+  unlockRank: 2
   twoHanded: 0

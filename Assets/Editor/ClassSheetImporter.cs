@@ -14,16 +14,27 @@ namespace Editor
         protected override void Apply(ClassData asset, in ClassImportRow row) => asset.ApplyImport(row);
         protected override void SetDatabase(ClassDatabase database, ClassData[] assets) => database.SetClasses(assets);
 
-        // NOTE: ICON_REPO isn't read yet — icons assigned by hand on the assets survive reloads.
-        protected override ClassImportRow ReadRow(CsvRow row) => new(
-            SheetCells.Text(row, "ID"),
-            SheetCells.SingleLineText(row, "NAME"),
-            SheetCells.MultilineText(row, "DESC"),
-            SheetCells.Stats(row, "STATS"),
-            SheetCells.Stats(row, "STAT_GROWTH"),
-            SheetCells.EnumValue<GuildRank>(row, "UNLOCK"),
-            SheetCells.List(row, "UPGRADES"),
-            SheetCells.EnumList<QuestCategory>(row, "CATEGORIES"));
+        // NOTE: ICON_REPO isn't read yet. MAX_RANK and STARTING_GEAR are optional (absent/empty = no cap, no gear).
+        // STARTING_GEAR ids can't be checked here (Equipment imports after Classes) — the game warns about unknown ones.
+        protected override ClassImportRow ReadRow(CsvRow row)
+        {
+            var maxRank = SheetCells.TryText(row, "MAX_RANK", out var max) && max.Length > 0
+                ? SheetCells.EnumValue<GuildRank>(row, "MAX_RANK")
+                : GuildRank.National;
+            var gear = SheetCells.TryText(row, "STARTING_GEAR", out _) ? SheetCells.List(row, "STARTING_GEAR") : System.Array.Empty<string>();
+
+            return new ClassImportRow(
+                SheetCells.Text(row, "ID"),
+                SheetCells.SingleLineText(row, "NAME"),
+                SheetCells.MultilineText(row, "DESC"),
+                SheetCells.Stats(row, "STATS"),
+                SheetCells.Stats(row, "STAT_GROWTH"),
+                SheetCells.EnumValue<GuildRank>(row, "UNLOCK"),
+                maxRank,
+                SheetCells.List(row, "UPGRADES"),
+                SheetCells.EnumList<QuestCategory>(row, "CATEGORIES"),
+                gear);
+        }
 
         // NOTE: Upgrade ids must name another imported class — unknown ids and self-references are dropped with a warning.
         protected override List<ClassImportRow> ValidateAll(List<ClassImportRow> rows)

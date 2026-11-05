@@ -92,7 +92,7 @@ namespace WanderersGuild
                 Book(sales - buyBacks, sold);
         }
 
-        // NOTE: On sale = armory tier reached and the guild's rank reached.
+        // NOTE: On sale = sold in the armory at all (not starter-only), armory tier reached, and the guild's rank reached.
         private bool BuildStock()
         {
             var tier = StockTier;
@@ -103,7 +103,7 @@ namespace WanderersGuild
             var rank = GuildManager.HasInstance ? GuildManager.Instance.Rank.Rank : GuildRank.F;
             foreach (var item in _items)
             {
-                if (item && item.ArmoryLevel <= tier && item.UnlockRank <= rank)
+                if (item && item.IsSoldInArmory && item.ArmoryLevel <= tier && item.UnlockRank <= rank)
                     _stock.Add(item);
             }
             return _stock.Count > 0;

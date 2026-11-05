@@ -19,6 +19,11 @@ MonoBehaviour:
     Nothing remarkable about them.'
   icon: {fileID: 0}
   baseStatModifiers:
+    strength: 2
+    agility: 2
+    intellect: 2
+    vitality: 2
+  growthPerLevel:
     strength: 1
     agility: 1
     intellect: 1

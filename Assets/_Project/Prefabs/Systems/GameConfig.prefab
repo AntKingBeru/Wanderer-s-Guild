@@ -247,7 +247,7 @@ MonoBehaviour:
     - name: Winter
       season: 3
     daysPerMonth: 28
-    realSecondsPerDay: 1440
+    realSecondsPerDay: 720
     minutesPerTick: 1
     fastMultiplier: 2
     veryFastMultiplier: 4
@@ -363,17 +363,17 @@ MonoBehaviour:
     baseDaysByCategory: 0200000001000000030000000100000002000000030000000200000004000000i
     ranksPerExtraDay: 2
     difficultyPerMemberByRank:
-    - 6
-    - 10
-    - 16
-    - 24
-    - 34
-    - 46
-    - 60
-    - 80
+    - 4.5
+    - 8.5
+    - 15
+    - 26
+    - 38
+    - 54
+    - 72
+    - 95
     affinityPowerBonus: 0.2
     chanceAtEven: 0.7
-    chancePerRatio: 1
+    chancePerRatio: 0.7
     minChance: 0.05
     maxChance: 0.95
     statWeights:
@@ -438,7 +438,15 @@ MonoBehaviour:
     nameList: {fileID: 11400000, guid: fd0d5328347d2b94ea57680df4417c3d, type: 2}
     epithetChance: 0.25
     capacity: 6
-    startingAdventurers: 2
+    startingParty:
+    - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+      classData: {fileID: 11400000, guid: 7e16d1dcd825423409cbec5b211cfde9, type: 2}
+      level: 1
+      name: 
+    - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+      classData: {fileID: 11400000, guid: 215f3f74669f23a4da6ca5854dcd0b60, type: 2}
+      level: 1
+      name: 
     arrivalChanceByReputation:
     - 0.15
     - 0.3
@@ -448,16 +456,16 @@ MonoBehaviour:
     maxArrivalLevelByReputation: 0100000002000000030000000500000008000000i
     wealthPerLevel: {x: 20, y: 60}
     experience:
-      thresholds: 00000000000000002c0100000000000084030000000000008c0a0000000000006419000000000000b036000000000000d859000000000000d08400000000000080bb00000000000000fa000000000000084c010000000000a086010000000000c0d4010000000000e0220200000000008884020000000000b8f9020000000000e86e030000000000280b04000000000068a7040000000000b86a050000000000l
+      thresholds: 0000000000000000c800000000000000f401000000000000e8030000000000000807000000000000b80b000000000000f811000000000000c819000000000000f023000000000000d430000000000000l
   promotion:
     progressRequired: 5
     aboveRankProgress: 2
     sameRankProgress: 1
     oneBelowProgress: 0.5
-    minLevelByRank: 010000000300000005000000080000000b0000000e0000001100000014000000i
+    minLevelByRank: 010000000300000006000000030000000600000003000000060000000a000000i
     feeByRank: 000000000000000032000000000000006400000000000000c800000000000000900100000000000020030000000000004006000000000000800c000000000000l
     examDays: 2
-    passReputation: 1
+    passReputation: 5
   recruitment:
     waitDays: 3
   worldView:

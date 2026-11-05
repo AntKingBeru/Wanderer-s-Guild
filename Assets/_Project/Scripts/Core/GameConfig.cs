@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -583,7 +584,7 @@ namespace WanderersGuild
         public int EyebrowRaisePixels => eyebrowRaisePixels;
         public float EyebrowStepDuration => eyebrowStepDuration;
         public float EyebrowHoldDuration => eyebrowHoldDuration;
-        public System.Collections.Generic.IReadOnlyList<PixelStep> MoustacheTwitch =>
+        public IReadOnlyList<PixelStep> MoustacheTwitch =>
             moustacheTwitch ?? Array.Empty<PixelStep>();
     }
     
@@ -755,7 +756,7 @@ namespace WanderersGuild
         private RankDefinition[] _validated;
 
         // The validated rank table (falls back to the defaults, with a warning, if the configured one is invalid).
-        public System.Collections.Generic.IReadOnlyList<RankDefinition> Ranks => _validated ??= Validate();
+        public IReadOnlyList<RankDefinition> Ranks => _validated ??= Validate();
 
         public GuildRank Highest => Ranks[^1].Rank;
 
@@ -1070,12 +1071,12 @@ namespace WanderersGuild
 
         [Header("Resolution")]
         [Tooltip("Difficulty per recommended member, by request rank F → National.")]
-        [SerializeField] private float[] difficultyPerMemberByRank = { 6f, 10f, 16f, 24f, 34f, 46f, 60f, 80f };
+        [SerializeField] private float[] difficultyPerMemberByRank = { 4.5f, 8.5f, 15f, 26f, 38f, 54f, 72f, 95f };
         [Tooltip("A member with affinity for the category counts this much more (0.2 = +20%).")]
         [SerializeField, Min(0f)] private float affinityPowerBonus = 0.2f;
         [Tooltip("Success chance when party power equals difficulty, and how much it moves per 1.0 of power ÷ difficulty.")]
         [SerializeField, Range(0f, 1f)] private float chanceAtEven = 0.7f;
-        [SerializeField, Min(0f)] private float chancePerRatio = 1f;
+        [SerializeField, Min(0f)] private float chancePerRatio = 0.7f;
         [SerializeField, Range(0f, 1f)] private float minChance = 0.05f;
         [SerializeField, Range(0f, 1f)] private float maxChance = 0.95f;
         [SerializeField] private StatWeights[] statWeights =
@@ -1221,13 +1222,10 @@ namespace WanderersGuild
     [Serializable]
     public class ExperienceTable
     {
-        private static readonly long[] Defaults =
-        {
-            0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000,
-            85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000
-        };
+        private static readonly long[] Defaults = { 0, 200, 500, 1000, 1800, 3000, 4600, 6600, 9200, 12500 };
 
-        [Tooltip("Total XP to reach each level, starting at level 1 (must be 0) and strictly ascending. Its length is the level cap.")]
+        [Tooltip("Total XP to reach each level of a class, starting at level 1 (must be 0) and strictly ascending. Its LENGTH is " +
+                 "the level cap (10 = cap 10).")]
         [SerializeField] private long[] thresholds = (long[])Defaults.Clone();
 
         private long[] _validated;
@@ -1270,7 +1268,7 @@ namespace WanderersGuild
             if (valid)
                 return thresholds;
 
-            Debug.LogWarning("[ExperienceTable] Thresholds must start at 0 and strictly rise; using the D&D defaults.");
+            Debug.LogWarning("[ExperienceTable] Thresholds must start at 0 and strictly rise; using the defaults.");
             return Defaults;
         }
     }
@@ -1290,13 +1288,14 @@ namespace WanderersGuild
         [Tooltip("Fallback capacity, used only while no facility has a CapacityEffect (normally the Guild Hall and bedrooms set it).")]
         [SerializeField, Range(1, 50)] private int capacity = 6;
 
-        [Tooltip("Adventurers a new guild starts with.")]
-        [SerializeField, Range(0, 6)] private int startingAdventurers = 2;
+        [Tooltip("The adventurers a new guild starts with (species, class, level, optional name). They come with their class's " +
+                 "starting gear, like every arrival.")]
+        [SerializeField] private StartingAdventurerSpec[] startingParty = Array.Empty<StartingAdventurerSpec>();
 
         [Tooltip("Chance of one arrival each dawn, by reputation level: Despised, Distrusted, Neutral, Respected, Renowned.")]
         [SerializeField] private float[] arrivalChanceByReputation = { 0.15f, 0.30f, 0.50f, 0.70f, 0.90f };
 
-        [Tooltip("Highest level an arrival can have, by reputation level (arrivals are level 1 to this).")]
+        [Tooltip("Highest level an arrival can have, by reputation level (arrivals are level 1 to this; capped by the XP table).")]
         [SerializeField] private int[] maxArrivalLevelByReputation = { 1, 2, 3, 5, 8 };
 
         [Tooltip("Starting wealth = a random amount in this range × the adventurer's level.")]
@@ -1309,7 +1308,7 @@ namespace WanderersGuild
         public AdventurerNameList NameList => nameList;
         public float EpithetChance => epithetChance;
         public int Capacity => capacity;
-        public int StartingAdventurers => startingAdventurers;
+        public IReadOnlyList<StartingAdventurerSpec> StartingParty => startingParty ?? Array.Empty<StartingAdventurerSpec>();
         public Vector2Int WealthPerLevel => new(Mathf.Max(0, wealthPerLevel.x), Mathf.Max(wealthPerLevel.x, wealthPerLevel.y));
         public ExperienceTable Experience => experience;
 
@@ -1334,8 +1333,9 @@ namespace WanderersGuild
         [SerializeField, Min(0f)] private float oneBelowProgress = 0.5f;
 
         [Header("Eligibility")]
-        [Tooltip("Minimum level to take the exam for each rank, F → National (F is never a target).")]
-        [SerializeField] private int[] minLevelByRank = { 1, 3, 5, 8, 11, 14, 17, 20 };
+        [Tooltip("Minimum level IN THE CURRENT CLASS to take the exam for each rank, F → National (F is never a target). " +
+                 "Each class tier covers two ranks: base classes E/D, tier 2 C/B, tier 3 A/S.")]
+        [SerializeField] private int[] minLevelByRank = { 1, 3, 6, 3, 6, 3, 6, 10 };
 
         [Header("Exam")]
         [Tooltip("Fee the guild pays for an exam, by target rank F → National.")]

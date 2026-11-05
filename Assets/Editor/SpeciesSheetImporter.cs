@@ -1,4 +1,4 @@
-// Imports the "Species" sheet into SpeciesData assets + SpeciesDatabase.
+// Imports the "Species" sheet into SpeciesData assets + SpeciesDatabase (base stats and growth per level).
 using Csv;
 using WanderersGuild;
 
@@ -13,11 +13,19 @@ namespace Editor
         protected override void Apply(SpeciesData asset, in SpeciesImportRow row) => asset.ApplyImport(row);
         protected override void SetDatabase(SpeciesDatabase database, SpeciesData[] assets) => database.SetSpecies(assets);
 
-        // NOTE: ICON_REPO isn't read yet — icons assigned by hand on the assets survive reloads.
-        protected override SpeciesImportRow ReadRow(CsvRow row) => new(
-            SheetCells.Text(row, "ID"),
-            SheetCells.SingleLineText(row, "NAME"),
-            SheetCells.MultilineText(row, "DESC"),
-            SheetCells.Stats(row, "STATS"));
+        // NOTE: ICON_REPO isn't read yet. GROWTH is optional (absent/empty = no growth beyond the class bonus).
+        protected override SpeciesImportRow ReadRow(CsvRow row)
+        {
+            var growth = SheetCells.TryText(row, "GROWTH", out var text) && text.Length > 0
+                ? SheetCells.Stats(row, "GROWTH")
+                : default;
+
+            return new SpeciesImportRow(
+                SheetCells.Text(row, "ID"),
+                SheetCells.SingleLineText(row, "NAME"),
+                SheetCells.MultilineText(row, "DESC"),
+                SheetCells.Stats(row, "STATS"),
+                growth);
+        }
     }
 }

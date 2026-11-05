@@ -1,12 +1,15 @@
-// The stat formula: class base + species modifier + class growth × (level − 1) + retained growth, each stat at least 1.
+// The stat formula: class base + species base + (species growth + class bonus) × (level − 1) + retained growth, each ≥ 1.
 namespace WanderersGuild
 {
     public static class AdventurerStats
     {
         public const int MinimumStat = 1;
 
-        public static StatBlock Compute(ClassData classData, SpeciesData species, int level, StatBlock retainedGrowth) =>
-            (classData.BaseStats + species.BaseStatModifiers + classData.StatGrowthPerLevel * (level - 1) + retainedGrowth)
-            .AtLeast(MinimumStat);
+        // NOTE: Level is the level in the CURRENT class; growth from earlier classes is carried in retainedGrowth.
+        public static StatBlock Compute(ClassData classData, SpeciesData species, int level, StatBlock retainedGrowth)
+        {
+            var perLevel = species.GrowthPerLevel + classData.StatGrowthPerLevel;
+            return (classData.BaseStats + species.BaseStatModifiers + perLevel * (level - 1) + retainedGrowth).AtLeast(MinimumStat);
+        }
     }
 }

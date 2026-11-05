@@ -1,4 +1,4 @@
-// Game-scene owner of the roster: starting adventurers, dawn arrivals (join, or apply when an office exists), XP, capacity, save.
+// Game-scene owner of the roster: starting party, dawn arrivals (join, or apply when an office exists), XP, capacity, save.
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +6,7 @@ using UnityEngine;
 namespace WanderersGuild
 {
     // NOTE: Scene-scoped — untick "Persist Across Scenes". Awake runs after SaveGameService (−50) has loaded; Start after
-    // FacilityManager's (−30), so the Guild Hall's beds exist before starting recruits. With an active Guild Master's
+    // FacilityManager's (−30), so the Guild Hall's beds exist before the starting party joins. With an active Guild Master's
     // Office, arrivals become applicants (RecruitmentManager); otherwise they join directly.
     public class AdventurerManager : Singleton<AdventurerManager>, ISaveContributor
     {
@@ -44,7 +44,7 @@ namespace WanderersGuild
 
             var baseClasses = _settings.ClassDatabase ? _settings.ClassDatabase.BaseClasses(_classes) : new List<ClassData>();
             _roster = new AdventurerRoster(CurrentCapacity);
-            _factory = new AdventurerFactory(_settings, new List<SpeciesData>(_species.Values), baseClasses);
+            _factory = new AdventurerFactory(_settings, new List<SpeciesData>(_species.Values), baseClasses, _equipment);
 
             Restore(SaveGameService.HasInstance ? SaveGameService.Instance.LoadedData : null);
         }
@@ -63,7 +63,7 @@ namespace WanderersGuild
             GameEventsRelay.OnFacilityRemoved.RemoveListener(OnFacilityChanged);
         }
 
-        // NOTE: A new guild (or an older save without a roster) gets its starting adventurers, once — always directly.
+        // NOTE: A new guild (or an older save without a roster) gets its starting party, once — always directly.
         private void Start()
         {
             if (SaveGameService.HasInstance)
@@ -74,10 +74,7 @@ namespace WanderersGuild
                 return;
 
             _startingAdventurersDone = true;
-            for (var i = 0; i < _settings.StartingAdventurers; i++)
-            {
-                if (TryCreateCandidate(out var adventurer)) TryAddMember(adventurer);
-            }
+            JoinStartingParty();
         }
 
         protected override void OnDestroy()
@@ -103,7 +100,7 @@ namespace WanderersGuild
             return gained;
         }
 
-        // Adds an adventurer to the roster (starting recruit, direct arrival, accepted applicant) and raises
+        // Adds an adventurer to the roster (starting party, direct arrival, accepted applicant) and raises
         // OnAdventurerJoined. False when the guild is full.
         public bool TryAddMember(Adventurer adventurer)
         {
@@ -138,8 +135,8 @@ namespace WanderersGuild
             }
 
             adventurer = new Adventurer(saved.Id, saved.Name, species, classData, saved.Experience, saved.Rank, saved.Wealth,
-                saved.Status, saved.JoinedAtMinutes, saved.RetainedGrowth, _settings.Experience,
-                saved.RankProgress, saved.ExamReturnsAtMinutes, gear);
+                                        saved.Status, saved.JoinedAtMinutes, saved.RetainedGrowth, _settings.Experience,
+                                        saved.RankProgress, saved.ExamReturnsAtMinutes, gear);
             _nextId = Mathf.Max(_nextId, saved.Id + 1);
             return true;
         }
@@ -157,6 +154,27 @@ namespace WanderersGuild
             data.AdventurersInitialized = _startingAdventurersDone;
         }
 
+        // NOTE: An entry without species or class is skipped with a warning; the rest still join.
+        private void JoinStartingParty()
+        {
+            var party = _settings.StartingParty;
+            for (var i = 0; i < party.Count; i++)
+            {
+                if (!party[i].IsValid)
+                {
+                    Debug.LogWarning($"[AdventurerManager] Starting party entry {i} has no species or class; skipped.", this);
+                    continue;
+                }
+
+                FillTakenNames();
+                if (_factory.TryCreateStarting(_nextId, party[i], RequestManager.NowMinutes, _takenNames, out Adventurer adventurer))
+                {
+                    _nextId++;
+                    TryAddMember(adventurer);
+                }
+            }
+        }
+
         // NOTE: Beds from every finished room's CapacityEffect; the settings' capacity is only a fallback while no facility
         // has one (warned once). Read on demand, so it's right whatever order the managers' Awakes ran in.
         private int CurrentCapacity()
@@ -164,8 +182,7 @@ namespace WanderersGuild
             if (FacilityManager.HasInstance)
             {
                 var (total, anyProvider) = FacilityEffects.Capacity(FacilityManager.Instance.Rooms);
-                if (anyProvider)
-                    return total;
+                if (anyProvider) return total;
 
                 if (!_warnedNoCapacityEffects)
                 {
@@ -209,16 +226,11 @@ namespace WanderersGuild
             return UsesApplicants ? RecruitmentManager.Instance.AddApplicant(adventurer) : TryAddMember(adventurer);
         }
 
-        // NOTE: Names are unique across the roster AND the waiting applicants.
         private bool TryCreateCandidate(out Adventurer adventurer)
         {
             var rank = GuildManager.HasInstance ? GuildManager.Instance.Rank.Rank : GameConfig.Instance.NewGuild.StartingRank;
 
-            _takenNames.Clear();
-            _takenNames.UnionWith(_roster.Names);
-            if (RecruitmentManager.HasInstance)
-                _takenNames.UnionWith(RecruitmentManager.Instance.Names);
-
+            FillTakenNames();
             if (!_factory.TryCreate(_nextId, rank, CurrentReputation, RequestManager.NowMinutes, _takenNames, out adventurer))
             {
                 Debug.LogWarning($"[AdventurerManager] Nobody could arrive: no species, or no base class unlocked at rank {rank}.", this);
@@ -229,10 +241,20 @@ namespace WanderersGuild
             return true;
         }
 
+        // NOTE: Names are unique across the roster AND the waiting applicants.
+        private void FillTakenNames()
+        {
+            _takenNames.Clear();
+            _takenNames.UnionWith(_roster.Names);
+            if (RecruitmentManager.HasInstance)
+                _takenNames.UnionWith(RecruitmentManager.Instance.Names);
+        }
+
         private static ReputationLevel CurrentReputation =>
             GuildManager.HasInstance ? GuildManager.Instance.Reputation.Level : ReputationLevel.Neutral;
 
-        // NOTE: Restored adventurers ignore capacity (nobody is dropped if a data change lowered it).
+        // NOTE: Restored adventurers ignore capacity (nobody is dropped if a data change lowered it). XP above the class
+        // cap is clamped on construction (they become the cap level).
         private void Restore(GameSaveData data)
         {
             if (data == null)

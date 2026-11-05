@@ -17,6 +17,11 @@ MonoBehaviour:
   description: Bearded folk, both man and woman, that like to drink and dig holes.
   icon: {fileID: 0}
   baseStatModifiers:
+    strength: 2
+    agility: 1
+    intellect: 1
+    vitality: 3
+  growthPerLevel:
     strength: 1
     agility: 0
     intellect: 0

@@ -481,6 +481,23 @@ namespace WanderersGuild
     #endregion
     
     #region Adventurers
+    // One adventurer a new guild starts with (GameConfig › Adventurers › Starting Party). Empty name = random.
+    [Serializable]
+    public struct StartingAdventurerSpec
+    {
+        [SerializeField] private SpeciesData species;
+        [SerializeField] private ClassData classData;
+        [SerializeField, Min(1)] private int level;
+        [Tooltip("Optional fixed name; empty = a random one.")]
+        [SerializeField] private string name;
+
+        public SpeciesData Species => species;
+        public ClassData Class => classData;
+        public int Level => Mathf.Max(1, level);
+        public string Name => name;
+        public bool IsValid => species && classData;
+    }
+    
     // The four adventurer stats. Sheet format "Str,Agi,Int,Vit" (whole numbers).
     [Serializable]
     public struct StatBlock : IEquatable<StatBlock>
@@ -584,7 +601,8 @@ namespace WanderersGuild
     public readonly struct ClassImportRow
     {
         public ClassImportRow(string id, string displayName, string description, StatBlock baseStats, StatBlock statGrowth,
-                              GuildRank requiredGuildRank, string[] advancesToIds, QuestCategory[] affinities)
+            GuildRank requiredGuildRank, GuildRank maxRank, string[] advancesToIds, QuestCategory[] affinities,
+            string[] startingGearIds)
         {
             Id = id;
             DisplayName = displayName;
@@ -592,8 +610,10 @@ namespace WanderersGuild
             BaseStats = baseStats;
             StatGrowth = statGrowth;
             RequiredGuildRank = requiredGuildRank;
+            MaxRank = maxRank;
             AdvancesToIds = advancesToIds;
             Affinities = affinities;
+            StartingGearIds = startingGearIds;
         }
 
         public string Id { get; }
@@ -602,29 +622,33 @@ namespace WanderersGuild
         public StatBlock BaseStats { get; }
         public StatBlock StatGrowth { get; }
         public GuildRank RequiredGuildRank { get; }
+        public GuildRank MaxRank { get; }
         public string[] AdvancesToIds { get; }
         public QuestCategory[] Affinities { get; }
+        public string[] StartingGearIds { get; }
 
         // A copy with a different upgrade list (used after cross-row validation).
         public ClassImportRow WithAdvancesTo(string[] ids) =>
-            new(Id, DisplayName, Description, BaseStats, StatGrowth, RequiredGuildRank, ids, Affinities);
+            new(Id, DisplayName, Description, BaseStats, StatGrowth, RequiredGuildRank, MaxRank, ids, Affinities, StartingGearIds);
     }
 
     // One validated row of the Species sheet, handed to SpeciesData.ApplyImport by the importer.
     public readonly struct SpeciesImportRow
     {
-        public SpeciesImportRow(string id, string displayName, string description, StatBlock statModifiers)
+        public SpeciesImportRow(string id, string displayName, string description, StatBlock statModifiers, StatBlock growth)
         {
             Id = id;
             DisplayName = displayName;
             Description = description;
             StatModifiers = statModifiers;
+            Growth = growth;
         }
 
         public string Id { get; }
         public string DisplayName { get; }
         public string Description { get; }
         public StatBlock StatModifiers { get; }
+        public StatBlock Growth { get; }
     }
     
     // Whether an adventurer can take a promotion exam now: the target rank, its fee, or why not.

@@ -20,16 +20,16 @@ namespace Editor
         protected override void Apply(EquipmentData asset, in EquipmentImportRow row) => asset.ApplyImport(row);
         protected override void SetDatabase(EquipmentDatabase database, EquipmentData[] assets) => database.SetItems(assets);
 
-        // NOTE: ICON_REPO isn't read; icons are assigned on the assets by hand (reloads keep them). Unknown class ids are kept
-        // (they just never match) but warned, so typos show up.
+        // NOTE: ARMORY_LEVEL 0 = starting gear only (never sold). ICON_REPO isn't read. Unknown class ids are kept (they just
+        // never match) but warned, so typos show up.
         protected override EquipmentImportRow ReadRow(CsvRow row)
         {
             var price = SheetCells.WholeNumber(row, "PRICE");
             var armoryLevel = SheetCells.WholeNumber(row, "ARMORY_LEVEL");
             if (price < 0)
                 throw new FormatException("PRICE can't be negative");
-            if (armoryLevel < 1)
-                throw new FormatException("ARMORY_LEVEL must be at least 1");
+            if (armoryLevel < 0)
+                throw new FormatException("ARMORY_LEVEL can't be negative (0 = starting gear only)");
 
             var id = SheetCells.Text(row, "ID");
             var classes = SheetCells.List(row, "CLASSES");
