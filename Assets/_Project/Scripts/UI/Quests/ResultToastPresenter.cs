@@ -23,6 +23,7 @@ namespace WanderersGuild
             GameEventsRelay.OnApplicantArrived.AddListener(OnApplicantArrived);
             GameEventsRelay.OnApplicantLeft.AddListener(OnApplicantLeft);
             GameEventsRelay.OnArmorySalesCompleted.AddListener(OnArmorySales);
+            GameEventsRelay.OnArmoryRestocked.AddListener(OnArmoryRestocked);
         }
 
         private void OnDisable()
@@ -33,6 +34,7 @@ namespace WanderersGuild
             GameEventsRelay.OnApplicantArrived.RemoveListener(OnApplicantArrived);
             GameEventsRelay.OnApplicantLeft.RemoveListener(OnApplicantLeft);
             GameEventsRelay.OnArmorySalesCompleted.RemoveListener(OnArmorySales);
+            GameEventsRelay.OnArmoryRestocked.RemoveListener(OnArmoryRestocked);
             if (_wait.IsActive())
                 _wait.Kill();
             _queue.Clear();
@@ -88,6 +90,17 @@ namespace WanderersGuild
         
         private void OnArmorySales(int sold, long net) =>
             Enqueue(sold == 1 ? $"Armory: 1 item sold ({Signed(net)}g)" : $"Armory: {sold} items sold ({Signed(net)}g)", false);
+        
+        // NOTE: Full restock → normal toast; partial / nothing → error toast (the guild ran short).
+        private void OnArmoryRestocked(int bought, long cost, int missing)
+        {
+            if (bought == 0)
+                Enqueue("Armory couldn't restock (not enough gold)", true);
+            else if (bought < missing)
+                Enqueue($"Armory partly restocked: {bought} of {missing} items (-{cost:N0}g)", true);
+            else
+                Enqueue($"Armory restocked: {bought} items (-{cost:N0}g)", false);
+        }
 
         private static string Signed(long value) => value >= 0 ? $"+{value:N0}" : $"-{-value:N0}";
 

@@ -39,7 +39,7 @@ namespace WanderersGuild
     }
     #endregion
     
-    #region MenuMenu
+    #region Menu
     // Every main-menu button. Each maps to a UXML element and an IMenuCommand.
     public enum MenuAction
     {
@@ -65,7 +65,8 @@ namespace WanderersGuild
         Quests = 8,
         ReceptionDesk = 9,
         Applications = 10,
-        Recruits
+        Recruits = 11,
+        Armory = 12
     }
     
     // How a ParallaxGroup reacts to the pointer (strength + follow speed set in GameConfig › Parallax).
@@ -130,6 +131,7 @@ namespace WanderersGuild
         AdventurerDismissed = 6,
         AdventurerDeparted = 7,
         RequestDismissed = 8,
+        ArmoryRestockFailed = 9,
         Debug = 99
     }
     
@@ -144,6 +146,7 @@ namespace WanderersGuild
         OperationalCost = 5,
         PromotionFee = 6,
         EquipmentSales = 7,
+        ArmoryRestock = 8,
         Debug = 99
     }
     #endregion

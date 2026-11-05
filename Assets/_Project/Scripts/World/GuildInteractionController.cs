@@ -55,7 +55,8 @@ namespace WanderersGuild
             UpdateLabel();
         }
 
-        // NOTE: Nothing under UI (any pickable element — the HUD bar, buttons) or outside the view (letterbox).
+        // NOTE: Nothing under UI (any pickable element — the HUD bar, buttons) or outside the view (letterbox). The ray uses
+        // the view's live size (the texture follows the canvas).
         private GuildInteractable FindUnderPointer()
         {
             if (_point == null || !view || !worldCamera)
@@ -65,7 +66,7 @@ namespace WanderersGuild
             if (view.IsPointerOverUI(screen) || !view.TryScreenToView(screen, out var pixel))
                 return null;
 
-            var size = GameConfig.Instance.WorldView.RenderSize;
+            var size = view.RenderSize;
             var ray = worldCamera.ViewportPointToRay(new Vector3(pixel.x / size.x, 1f - pixel.y / size.y, 0f));
 
             var settings = GameConfig.Instance.Interaction;
@@ -102,14 +103,14 @@ namespace WanderersGuild
                 return;
             }
 
-            var size = GameConfig.Instance.WorldView.RenderSize;
+            var size = view.RenderSize;
             Vector2 pixel = new(viewport.x * size.x, (1f - viewport.y) * size.y - GameConfig.Instance.Interaction.LabelGap);
             _label.Show(_hovered.DisplayName, view.ViewToLocal(pixel));
         }
 
         private static InputAction Enable(InputActionReference reference)
         {
-            InputAction action = reference != null ? reference.action : null;
+            var action = reference ? reference.action : null;
             action?.Enable();
             return action;
         }

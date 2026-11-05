@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Armory
   description: Provides adventurers with a place to upgrade their gear.
   icon: {fileID: 0}
-  size: {x: 16, y: 12}
+  size: {x: 12, y: 16}
   maxLevel: 1
   costs: e803000000000000l
   buildDays: 03000000i

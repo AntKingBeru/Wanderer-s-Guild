@@ -8,9 +8,8 @@ namespace WanderersGuild
     [Serializable]
     public class GameSaveData
     {
-        // NOTE: v2 guild state; v3 request board; v4 roster; v5 posted quests; v6 facilities; v7 applicants. Older files load
-        // with the missing parts at defaults.
-        public const int CurrentVersion = 7;
+        // NOTE: v2 guild state; v3 request board; v4 roster; v5 posted quests; v6 facilities; v7 applicants; v8 armory stock.
+        public const int CurrentVersion = 8;
 
         // NOTE: Generous upper bound (~114 years) — anything above means a corrupted file.
         private const double MaxPlayTimeSeconds = 3.6e9;
@@ -40,6 +39,7 @@ namespace WanderersGuild
         [SerializeField] private bool facilitiesInitialized;
 
         [SerializeField] private List<SavedApplicant> applicants = new();
+        [SerializeField] private List<SavedStockItem> armoryStock = new();
 
         public int Version => version;
 
@@ -161,6 +161,9 @@ namespace WanderersGuild
 
         // Applicants waiting at the Guild Master's Office. Written by RecruitmentManager.
         public IReadOnlyList<SavedApplicant> Applicants => applicants ?? (IReadOnlyList<SavedApplicant>)Array.Empty<SavedApplicant>();
+        
+        // Units in the armory per item. Written by ArmoryManager.
+        public IReadOnlyList<SavedStockItem> ArmoryStock => armoryStock ?? (IReadOnlyList<SavedStockItem>)Array.Empty<SavedStockItem>();
 
         public void SetApplicants(IEnumerable<SavedApplicant> items) =>
             applicants = items != null ? new List<SavedApplicant>(items) : new List<SavedApplicant>();
@@ -180,5 +183,8 @@ namespace WanderersGuild
             copy.version = CurrentVersion;
             return copy;
         }
+        
+        public void SetArmoryStock(IEnumerable<SavedStockItem> items) =>
+            armoryStock = items != null ? new List<SavedStockItem>(items) : new List<SavedStockItem>();
     }
 }

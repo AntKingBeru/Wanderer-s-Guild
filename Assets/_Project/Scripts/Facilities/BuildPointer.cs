@@ -1,4 +1,4 @@
-// Turns the pointer into a point on the guild floor and a grid cell (through the 320×180 world view).
+// Turns the pointer into a point on the guild floor and a grid cell (through the world view at its live size).
 using UnityEngine;
 
 namespace WanderersGuild
@@ -13,7 +13,7 @@ namespace WanderersGuild
             if (!view.TryScreenToView(screen, out viewPixel))
                 return false;
 
-            var size = GameConfig.Instance.WorldView.RenderSize;
+            var size = view.RenderSize;
             var ray = camera.ViewportPointToRay(new Vector3(viewPixel.x / size.x, 1f - viewPixel.y / size.y, 0f));
             Plane floor = new(Vector3.up, new Vector3(0f, floorHeight, 0f));
 

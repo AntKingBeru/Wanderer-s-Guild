@@ -10,6 +10,8 @@ namespace Editor
     public sealed class EquipmentSheetImporter : SheetImporter<EquipmentImportRow, EquipmentData, EquipmentDatabase>
     {
         private const string TwoHandedColumn = "TWO_HANDED"; // Optional; empty = false.
+        private const string StockColumn = "STOCK"; // Optional; empty = DefaultStock.
+        private const int DefaultStock = 3;
 
         private HashSet<string> _classIds;
 
@@ -31,6 +33,12 @@ namespace Editor
             if (armoryLevel < 0)
                 throw new FormatException("ARMORY_LEVEL can't be negative (0 = starting gear only)");
 
+            var stock = SheetCells.TryText(row, StockColumn, out var stockText) && stockText.Length > 0
+                ? SheetCells.WholeNumber(row, StockColumn)
+                : DefaultStock;
+            if (stock < 0)
+                throw new FormatException("STOCK can't be negative");
+
             var id = SheetCells.Text(row, "ID");
             var classes = SheetCells.List(row, "CLASSES");
             WarnUnknownClasses(id, classes);
@@ -47,7 +55,8 @@ namespace Editor
                 price,
                 armoryLevel,
                 SheetCells.EnumValue<GuildRank>(row, "UNLOCK"),
-                twoHanded);
+                twoHanded,
+                stock);
         }
 
         private void WarnUnknownClasses(string itemId, string[] classes)

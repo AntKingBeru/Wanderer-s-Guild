@@ -118,6 +118,14 @@ namespace WanderersGuild
         public static readonly UnityEvent<GameSpeed> OnGameSpeedChanged = new();
         #endregion
         
+        #region World
+        // The world render texture was recreated at a new size (window/UI-scale change). Arg: the new size.
+        public static readonly UnityEvent<Vector2Int> OnWorldViewResized = new();
+
+        // Daylight changed (once per in-game minute). Arg: 0 = deepest night … 1 = brightest noon.
+        public static readonly UnityEvent<float> OnDaylightChanged = new();
+        #endregion
+        
         #region Guild
         // Guild gold changed. Args: new total, applied change (0 = initial value on scene start).
         public static readonly UnityEvent<long, long> OnGoldChanged = new();
@@ -206,6 +214,12 @@ namespace WanderersGuild
 
         // A morning's armory shopping finished. Args: items sold, the guild's net gold from it.
         public static readonly UnityEvent<int, long> OnArmorySalesCompleted = new();
+        
+        // The dawn restock ran. Args: units bought, gold spent, units that were missing before it.
+        public static readonly UnityEvent<int, long, int> OnArmoryRestocked = new();
+
+        // The armory's stock changed (a sale, a restocking, the armory removed).
+        public static readonly UnityEvent OnArmoryStockChanged = new();
         #endregion
     }
 }

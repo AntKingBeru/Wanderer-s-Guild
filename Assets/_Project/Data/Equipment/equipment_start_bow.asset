@@ -30,3 +30,4 @@ MonoBehaviour:
   armoryLevel: 0
   unlockRank: 0
   twoHanded: 1
+  stock: 0

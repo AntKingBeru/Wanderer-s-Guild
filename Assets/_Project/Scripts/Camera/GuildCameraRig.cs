@@ -13,6 +13,7 @@ namespace WanderersGuild
         [SerializeField] private Vector3 startFocus = Vector3.zero;
 
         private Camera _camera;
+        private WorldRenderTarget _target;
         private GuildCameraSettings _settings;
         private Vector3 _focus, _focusTarget, _focusVelocity;
         private float _yaw, _yawTarget, _yawVelocity;
@@ -24,11 +25,15 @@ namespace WanderersGuild
         // 0 at the far zoom, 1 at the near zoom.
         public float Zoom01 => _zoom;
 
-        private static int RenderHeight => GameConfig.Instance.WorldView.RenderSize.y;
+        // NOTE: The reference height + reference FOV give the true pixel size at any texture height (the FOV scales with it).
+        private static int ReferenceHeight => GameConfig.Instance.WorldView.ReferenceHeight;
+
+        private int LiveHeight => _target ? _target.Size.y : ReferenceHeight;
 
         private void Awake()
         {
             _camera = GetComponent<Camera>();
+            _target = GetComponent<WorldRenderTarget>();
             _settings = GameConfig.Instance.GuildCamera;
 
             _focus = _focusTarget = ClampFocus(startFocus, _settings);
@@ -38,9 +43,9 @@ namespace WanderersGuild
         }
 
         // The pose the camera starts in (also used by the editor preview, which passes the settings itself).
-        public (Vector3 position, Quaternion rotation) StartPose(GuildCameraSettings settings, int renderHeight) =>
+        public (Vector3 position, Quaternion rotation) StartPose(GuildCameraSettings settings, int referenceHeight) =>
             GuildCameraPose.Compute(ClampFocus(startFocus, settings), Mathf.Repeat(settings.StartYaw, 360f),
-                                    settings.StartZoom, settings, renderHeight);
+                                    settings.StartZoom, settings, referenceHeight);
 
         // Pans by a ground offset in camera-relative axes (x = right, y = forward), world units.
         public void Pan(Vector2 offset)
@@ -52,7 +57,7 @@ namespace WanderersGuild
         // Drag-pans by a pointer move in view pixels (y down), so the ground follows the pointer.
         public void PanByViewPixels(Vector2 viewDelta)
         {
-            var pixel = PixelSnap.PixelWorldSize(Distance, _settings.FieldOfView, RenderHeight);
+            var pixel = PixelSnap.PixelWorldSize(Distance, _settings.FieldOfView, ReferenceHeight);
             var pitch = GuildCameraPose.Pitch(_zoom, _settings);
 
             // NOTE: Vertical screen movement covers more ground on a tilted view (÷ sin(pitch)).
@@ -76,11 +81,12 @@ namespace WanderersGuild
             Apply();
         }
 
-        // NOTE: Snapping (inside GuildCameraPose) is applied after smoothing and never fed back into it.
+        // NOTE: Snapping (inside GuildCameraPose) is applied after smoothing and never fed back into it. The FOV follows the
+        // live texture height so every aspect keeps the same pixel size.
         private void Apply()
         {
-            var (position, rotation) = GuildCameraPose.Compute(_focus, _yaw, _zoom, _settings, RenderHeight);
-            _camera.fieldOfView = _settings.FieldOfView;
+            var (position, rotation) = GuildCameraPose.Compute(_focus, _yaw, _zoom, _settings, ReferenceHeight);
+            _camera.fieldOfView = GuildCameraPose.VerticalFov(_settings.FieldOfView, LiveHeight, ReferenceHeight);
             transform.SetPositionAndRotation(position, rotation);
         }
 

@@ -1,0 +1,35 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Armory.uss?fileID=7433441132597879392&amp;guid=30443d395663a7c43a74e15010a801ad&amp;type=3#Armory"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="pixel-window arm-window">
+            <wg:OutlinedText name="arm-title" class="panel-title" text="Armory · Tier 1" />
+
+            <ui:VisualElement class="arm-body" picking-mode="Ignore">
+                <!-- Left: items for sale (rows created in code). -->
+                <ui:VisualElement class="arm-list-frame" picking-mode="Ignore">
+                    <ui:ScrollView name="arm-list" class="arm-list pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" />
+                    <wg:OutlinedText name="arm-list-empty" class="arm-list-empty" text="Nothing for sale yet." />
+                </ui:VisualElement>
+
+                <!-- Right: the selected item. -->
+                <ui:VisualElement class="arm-details" picking-mode="Ignore">
+                    <ui:ScrollView name="arm-content" class="arm-content pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden">
+                        <wg:OutlinedText name="arm-name" class="arm-name" text="Blunt Sword" />
+                        <wg:OutlinedText name="arm-desc" class="arm-line arm-wrap" text="A sword that was never sharpened." />
+                        <wg:OutlinedText name="arm-slot" class="arm-line arm-gap" text="Weapon" />
+                        <wg:OutlinedText name="arm-users" class="arm-line arm-wrap" text="For: Fighter" />
+                        <wg:OutlinedText name="arm-stats" class="arm-stats" text="STR +2" />
+                        <wg:OutlinedText name="arm-price" class="arm-line arm-gap" text="Price: 7g" />
+                        <wg:OutlinedText name="arm-units" class="arm-line" text="In stock: 3 / 3" />
+                    </ui:ScrollView>
+                    <wg:OutlinedText name="arm-empty" class="arm-empty" text="Nothing for sale yet." />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="arm-footer" picking-mode="Ignore">
+                <wg:OutlinedText name="arm-footer" class="arm-footer-text" text="Next restock 06:00 (in 5h) · 14g" />
+                <ui:Button name="arm-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -257,6 +257,207 @@ MonoBehaviour:
     duskHour: 18
     nightHour: 20
     startHour: 8
+  lighting:
+    sunColor:
+      serializedVersion: 2
+      key0: {r: 0.4, g: 0.5, b: 0.85, a: 1}
+      key1: {r: 0.4, g: 0.5, b: 0.85, a: 1}
+      key2: {r: 1, g: 0.6, b: 0.4, a: 0}
+      key3: {r: 1, g: 0.92, b: 0.8, a: 0}
+      key4: {r: 1, g: 0.98, b: 0.94, a: 0}
+      key5: {r: 1, g: 0.9, b: 0.75, a: 0}
+      key6: {r: 1, g: 0.55, b: 0.35, a: 0}
+      key7: {r: 0.4, g: 0.5, b: 0.85, a: 0}
+      ctime0: 0
+      ctime1: 14418
+      ctime2: 17694
+      ctime3: 22937
+      ctime4: 32768
+      ctime5: 44564
+      ctime6: 49807
+      ctime7: 54394
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: -1
+      m_NumColorKeys: 8
+      m_NumAlphaKeys: 2
+    sunIntensity:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.35
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.22
+        value: 0.35
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.3
+        value: 0.9
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.5
+        value: 1.15
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.7
+        value: 0.9
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.8
+        value: 0.35
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0.35
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    sunElevation:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 40
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.22
+        value: 35
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.26
+        value: 10
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.5
+        value: 60
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.74
+        value: 10
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.78
+        value: 35
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 40
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    noonYaw: 180
+    ambientColor:
+      serializedVersion: 2
+      key0: {r: 0.16, g: 0.19, b: 0.32, a: 1}
+      key1: {r: 0.16, g: 0.19, b: 0.32, a: 1}
+      key2: {r: 0.32, g: 0.25, b: 0.24, a: 0}
+      key3: {r: 0.42, g: 0.42, b: 0.45, a: 0}
+      key4: {r: 0.42, g: 0.42, b: 0.45, a: 0}
+      key5: {r: 0.32, g: 0.23, b: 0.22, a: 0}
+      key6: {r: 0.16, g: 0.19, b: 0.32, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 14418
+      ctime2: 18350
+      ctime3: 26214
+      ctime4: 40632
+      ctime5: 49807
+      ctime6: 54394
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: -1
+      m_NumColorKeys: 7
+      m_NumAlphaKeys: 2
+    shadows: 1
   saveGame:
     autosaveAtDayStart: 1
     saveOnQuit: 1
@@ -472,15 +673,15 @@ MonoBehaviour:
     renderSize: {x: 640, y: 360}
   guildCamera:
     fieldOfView: 30
-    farDistance: 50
-    nearDistance: 25
-    farPitch: 55
-    nearPitch: 45
-    startZoom: 0
+    farDistance: 80
+    nearDistance: 50
+    farPitch: 60
+    nearPitch: 55
+    startZoom: 1
     startYaw: 45
-    zoomStep: 0.2
+    zoomStep: 0.25
     zoomSmoothTime: 0.12
-    rotationStep: 90
+    rotationStep: 45
     rotationSmoothTime: 0.15
     panSpeed: 12
     panSmoothTime: 0.08

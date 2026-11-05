@@ -36,6 +36,7 @@ namespace WanderersGuild
         [SerializeField] private IntroSettings intro = new();
         [SerializeField] private NewGuildSettings newGuild = new();
         [SerializeField] private TimeSettings time = new();
+        [SerializeField] private LightingSettings lighting = new();
         [SerializeField] private SaveGameSettings saveGame = new();
         [SerializeField] private GuildRankSettings guildRanks = new();
         [SerializeField] private ReputationSettings reputation = new();
@@ -79,6 +80,7 @@ namespace WanderersGuild
         public IntroSettings Intro => intro;
         public NewGuildSettings NewGuild => newGuild;
         public TimeSettings Time => time;
+        public LightingSettings Lighting => lighting;
         public SaveGameSettings SaveGame => saveGame;
         public GuildRankSettings GuildRanks => guildRanks;
         public ReputationSettings Reputation => reputation;
@@ -978,6 +980,75 @@ namespace WanderersGuild
     }
     #endregion
     
+    #region Lighting
+    [Serializable]
+    public class LightingSettings
+    {
+        [Tooltip("Sun colour over the day (0 = midnight, 0.5 = noon). Night stays a readable moonlit blue.")]
+        [SerializeField] private Gradient sunColor = DefaultSunColor();
+
+        [Tooltip("Sun intensity over the day (0 = midnight, 0.5 = noon).")]
+        [SerializeField] private AnimationCurve sunIntensity = new(
+            new Keyframe(0f, 0.35f), new Keyframe(0.22f, 0.35f), new Keyframe(0.3f, 0.9f), new Keyframe(0.5f, 1.15f),
+            new Keyframe(0.7f, 0.9f), new Keyframe(0.8f, 0.35f), new Keyframe(1f, 0.35f));
+
+        [Tooltip("Sun elevation in degrees over the day: low at dawn/dusk, high at noon; the night 'moon' sits mid-high.")]
+        [SerializeField] private AnimationCurve sunElevation = new(
+            new Keyframe(0f, 40f), new Keyframe(0.22f, 35f), new Keyframe(0.26f, 10f), new Keyframe(0.5f, 60f),
+            new Keyframe(0.74f, 10f), new Keyframe(0.78f, 35f), new Keyframe(1f, 40f));
+
+        [Tooltip("Compass direction (yaw) of the sun at noon; it sweeps a full circle per day (east at dawn, west at dusk).")]
+        [SerializeField] private float noonYaw = 180f;
+
+        [Tooltip("Ambient light colour over the day (URP ambient mode Flat).")]
+        [SerializeField] private Gradient ambientColor = DefaultAmbient();
+
+        [Tooltip("Hard shadows keep edges on the pixel grid; Soft blurs them.")]
+        [SerializeField] private LightShadows shadows = LightShadows.Hard;
+
+        public Gradient SunColor => sunColor;
+        public AnimationCurve SunIntensity => sunIntensity;
+        public AnimationCurve SunElevation => sunElevation;
+        public float NoonYaw => noonYaw;
+        public Gradient AmbientColor => ambientColor;
+        public LightShadows Shadows => shadows;
+
+        // NOTE: Gradients take at most 8 color keys.
+        private static Gradient DefaultSunColor()
+        {
+            Gradient gradient = new();
+            gradient.SetKeys(new[]
+            {
+                new GradientColorKey(new Color(0.40f, 0.50f, 0.85f), 0f),
+                new GradientColorKey(new Color(0.40f, 0.50f, 0.85f), 0.22f),
+                new GradientColorKey(new Color(1.00f, 0.60f, 0.40f), 0.27f),
+                new GradientColorKey(new Color(1.00f, 0.92f, 0.80f), 0.35f),
+                new GradientColorKey(new Color(1.00f, 0.98f, 0.94f), 0.50f),
+                new GradientColorKey(new Color(1.00f, 0.90f, 0.75f), 0.68f),
+                new GradientColorKey(new Color(1.00f, 0.55f, 0.35f), 0.76f),
+                new GradientColorKey(new Color(0.40f, 0.50f, 0.85f), 0.83f)
+            }, new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(1f, 1f) });
+            return gradient;
+        }
+
+        private static Gradient DefaultAmbient()
+        {
+            Gradient gradient = new();
+            gradient.SetKeys(new[]
+            {
+                new GradientColorKey(new Color(0.16f, 0.19f, 0.32f), 0f),
+                new GradientColorKey(new Color(0.16f, 0.19f, 0.32f), 0.22f),
+                new GradientColorKey(new Color(0.32f, 0.25f, 0.24f), 0.28f),
+                new GradientColorKey(new Color(0.42f, 0.42f, 0.45f), 0.40f),
+                new GradientColorKey(new Color(0.42f, 0.42f, 0.45f), 0.62f),
+                new GradientColorKey(new Color(0.32f, 0.23f, 0.22f), 0.76f),
+                new GradientColorKey(new Color(0.16f, 0.19f, 0.32f), 0.83f)
+            }, new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(1f, 1f) });
+            return gradient;
+        }
+    }
+    #endregion
+    
     #region Quests
     [Serializable]
     public class RequestSettings
@@ -1382,11 +1453,13 @@ namespace WanderersGuild
     [Serializable]
     public class WorldViewSettings
     {
-        [Tooltip("Render-texture size the world is drawn at (point-upscaled with the UI). 320×180 with 16 px/unit textures " +
-                 "shows ~20 units across at 1 texel ≈ 1 pixel at the far zoom.")]
+        [Tooltip("REFERENCE size: the height sets the pixel density (the world texture is always as tall as the UI canvas, " +
+                 "with the camera's FOV scaled to match); 320×180 is the 16:9 case. The live texture follows the canvas, " +
+                 "so any aspect shows the same pixel size — wider screens just see more.")]
         [SerializeField] private Vector2Int renderSize = new(320, 180);
 
         public Vector2Int RenderSize => new(Mathf.Max(16, renderSize.x), Mathf.Max(16, renderSize.y));
+        public int ReferenceHeight => RenderSize.y;
     }
 
     [Serializable]
@@ -1556,11 +1629,19 @@ namespace WanderersGuild
 
         [Tooltip("Share of a replaced item's price the guild pays back to the adventurer.")]
         [SerializeField, Range(0f, 1f)] private float sellBackFraction = 0.25f;
+        
+        [Tooltip("Share of an item's price the guild pays per unit restocked at dawn (rounded up).")]
+        [SerializeField, Range(0f, 1f)] private float wholesaleFraction = 0.5f;
+
+        [Tooltip("Reputation when the armory couldn't restock anything that was missing.")]
+        [SerializeField] private int restockFailReputation = -1;
 
         public EquipmentDatabase Database => database;
         public int ShoppingHour => shoppingHour;
         public float SpendFraction => spendFraction;
         public float SellBackFraction => sellBackFraction;
+        public float WholesaleFraction => wholesaleFraction;
+        public int RestockFailReputation => restockFailReputation;
     }
     #endregion
 }

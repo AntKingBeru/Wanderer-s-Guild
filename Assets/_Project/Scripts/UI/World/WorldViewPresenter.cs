@@ -1,4 +1,4 @@
-// Shows the world render texture full-canvas under the HUD (same integer scaling as the UI); maps screen ↔ view pixels
+// Shows the world render texture full-canvas under the HUD, keeps the texture sized to the canvas, maps screen ↔ view pixels
 // and tells whether the pointer is over any UI.
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,12 +17,27 @@ namespace WanderersGuild
         // This document's root (the hover label lives here, above the world image).
         public VisualElement DocumentRoot { get; private set; }
 
+        // The live world-texture size in pixels — use this, not the config's reference size.
+        public Vector2Int RenderSize => target ? target.Size : GameConfig.Instance.WorldView.RenderSize;
+
         private void OnEnable()
         {
             DocumentRoot = GetComponent<UIDocument>().rootVisualElement;
             _view = DocumentRoot?.Q<VisualElement>("world-view");
             if (_view == null)
+            {
                 Debug.LogError("[WorldViewPresenter] Missing 'world-view' in the UXML.", this);
+                return;
+            }
+
+            _view.RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
+            GameEventsRelay.OnWorldViewResized.AddListener(OnResized);
+        }
+
+        private void OnDisable()
+        {
+            _view?.UnregisterCallback<GeometryChangedEvent>(OnGeometryChanged);
+            GameEventsRelay.OnWorldViewResized.RemoveListener(OnResized);
         }
 
         // NOTE: The opaque background is added here (runtime only). In Edit mode the element stays transparent, so the
@@ -36,7 +51,8 @@ namespace WanderersGuild
             }
 
             _view.AddToClassList(LiveClass);
-            _view.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(target.Texture));
+            ShowTexture();
+            MatchCanvas();
         }
 
         // NOTE: Only the texture's contents change each frame, which doesn't dirty the element — repaint it explicitly.
@@ -55,7 +71,7 @@ namespace WanderersGuild
             if (float.IsNaN(rect.width) || rect.width <= 0f || rect.height <= 0f)
                 return false;
 
-            var size = GameConfig.Instance.WorldView.RenderSize;
+            var size = RenderSize;
             viewPixel = new Vector2(local.x / rect.width * size.x, local.y / rect.height * size.y);
             return viewPixel is { x: >= 0f, y: >= 0f } && viewPixel.x <= size.x && viewPixel.y <= size.y;
         }
@@ -64,7 +80,7 @@ namespace WanderersGuild
         public Vector2 ViewToLocal(Vector2 viewPixel)
         {
             var rect = _view.contentRect;
-            var size = GameConfig.Instance.WorldView.RenderSize;
+            var size = RenderSize;
             return new Vector2(viewPixel.x / size.x * rect.width, viewPixel.y / size.y * rect.height);
         }
 
@@ -72,6 +88,30 @@ namespace WanderersGuild
         // the HUD and all panels.
         public bool IsPointerOverUI(Vector2 screenPosition) =>
             TryPanelPoint(screenPosition, out var panelPoint) && _view.panel.Pick(panelPoint) != null;
+
+        private void OnGeometryChanged(GeometryChangedEvent _) => MatchCanvas();
+
+        // NOTE: Runtime only (Edit mode shows the camera directly). One texture pixel per UI pixel; unchanged sizes are
+        // skipped by the target.
+        private void MatchCanvas()
+        {
+            if (!Application.isPlaying || !target || _view == null)
+                return;
+
+            var rect = _view.contentRect;
+            if (float.IsNaN(rect.width) || rect.width <= 0f || rect.height <= 0f)
+                return;
+
+            target.Resize(new Vector2Int(Mathf.RoundToInt(rect.width), Mathf.RoundToInt(rect.height)));
+        }
+
+        private void OnResized(Vector2Int _) => ShowTexture();
+
+        private void ShowTexture()
+        {
+            if (_view != null && target && target.Texture)
+                _view.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(target.Texture));
+        }
 
         // NOTE: Input System screen positions have y up from the bottom; panel coordinates have y down from the top.
         private bool TryPanelPoint(Vector2 screenPosition, out Vector2 panelPoint)

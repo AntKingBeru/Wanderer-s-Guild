@@ -231,6 +231,29 @@ namespace WanderersGuild
     }
     #endregion
     
+    #region Lighting
+    // The sun's look at one moment of the day (from DayNightCycle).
+    public readonly struct SunState
+    {
+        public SunState(Quaternion rotation, Color color, float intensity, Color ambient, float daylight)
+        {
+            Rotation = rotation;
+            Color = color;
+            Intensity = intensity;
+            Ambient = ambient;
+            Daylight = daylight;
+        }
+
+        public Quaternion Rotation { get; }
+        public Color Color { get; }
+        public float Intensity { get; }
+        public Color Ambient { get; }
+
+        // 0 = deepest night … 1 = brightest noon (for interior lights later).
+        public float Daylight { get; }
+    }
+    #endregion
+    
     #region Save Slots
     // One slot as read from disk. Header is null unless State is Ready.
     public readonly struct SaveSlotInfo
@@ -849,7 +872,7 @@ namespace WanderersGuild
     public readonly struct EquipmentImportRow
     {
         public EquipmentImportRow(string id, string displayName, string description, EquipmentSlot slot, string[] classIds,
-            StatBlock stats, int price, int armoryLevel, GuildRank unlockRank, bool twoHanded)
+            StatBlock stats, int price, int armoryLevel, GuildRank unlockRank, bool twoHanded, int stock)
         {
             Id = id;
             DisplayName = displayName;
@@ -861,6 +884,7 @@ namespace WanderersGuild
             ArmoryLevel = armoryLevel;
             UnlockRank = unlockRank;
             TwoHanded = twoHanded;
+            Stock = stock;
         }
 
         public string Id { get; }
@@ -873,6 +897,23 @@ namespace WanderersGuild
         public int ArmoryLevel { get; }
         public GuildRank UnlockRank { get; }
         public bool TwoHanded { get; }
+        public int Stock { get; }
+    }
+    
+    [Serializable]
+    public struct SavedStockItem
+    {
+        [SerializeField] private string itemId;
+        [SerializeField] private int units;
+
+        public SavedStockItem(string itemId, int units)
+        {
+            this.itemId = itemId;
+            this.units = units;
+        }
+
+        public string ItemId => itemId;
+        public int Units => units;
     }
     #endregion
 }
