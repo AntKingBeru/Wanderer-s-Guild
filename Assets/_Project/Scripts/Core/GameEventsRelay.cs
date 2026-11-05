@@ -200,6 +200,12 @@ namespace WanderersGuild
         
         // Build mode opened (true) or closed (false).
         public static readonly UnityEvent<bool> OnBuildModeChanged = new();
+        
+        // An adventurer bought an item at the armory. Args: the adventurer, the item.
+        public static readonly UnityEvent<Adventurer, EquipmentData> OnEquipmentBought = new();
+
+        // A morning's armory shopping finished. Args: items sold, the guild's net gold from it.
+        public static readonly UnityEvent<int, long> OnArmorySalesCompleted = new();
         #endregion
     }
 }

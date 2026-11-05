@@ -1,4 +1,4 @@
-// Display strings for adventurers: species · class, rank · level, XP, rank progress, stats, wealth, affinities, status, promotion hint.
+// Display strings for adventurers: species · class, rank · level, XP, rank progress, stats, wealth, affinities, gear, status, promotion hint.
 using System.Text;
 using System.Globalization;
 
@@ -55,17 +55,36 @@ namespace WanderersGuild
             return text.ToString();
         }
 
+        // "Gear: Sword, Shield, Leather Armor" (slot order), or "Gear: —".
+        public static string Gear(Adventurer adventurer)
+        {
+            StringBuilder text = new("Gear: ");
+            var any = false;
+            foreach (var item in adventurer.Equipment.Worn)
+            {
+                if (any)
+                    text.Append(", ");
+                text.Append(item.DisplayName);
+                any = true;
+            }
+            return any ? text.ToString() : "Gear: —";
+        }
+
         // "Status: Idle" / "Signed up" / "On quest" / "In exam (back 1d)".
         public static string Status(Adventurer adventurer, long nowMinutes)
         {
             switch (adventurer.Status)
             {
-                case AdventurerStatus.SignedUp: return "Status: Signed up";
-                case AdventurerStatus.OnQuest: return "Status: On quest";
+                case AdventurerStatus.SignedUp:
+                    return "Status: Signed up";
+                case AdventurerStatus.OnQuest:
+                    return "Status: On quest";
                 case AdventurerStatus.InExam:
                     var left = System.Math.Max(0L, adventurer.ExamReturnsAtMinutes - nowMinutes);
                     return $"Status: In exam (back {RequestFormatter.TimeLeft(left)})";
-                default: return "Status: Idle";
+                case AdventurerStatus.Idle:
+                default:
+                    return "Status: Idle";
             }
         }
 

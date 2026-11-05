@@ -1,5 +1,5 @@
-// The roster's details pane: name, species · class, rank · level, XP and rank-progress bars, stats, wealth, affinities, status,
-// promotion hint and the Promote button.
+// The roster's details pane: name, species · class, rank · level, XP and rank-progress bars, stats (with gear), wealth,
+// affinities, gear, status, promotion hint and the Promote button.
 using UnityEngine.UIElements;
 
 namespace WanderersGuild
@@ -17,6 +17,7 @@ namespace WanderersGuild
         private readonly OutlinedText _statsBottom;
         private readonly OutlinedText _wealth;
         private readonly OutlinedText _affinities;
+        private readonly OutlinedText _gear;
         private readonly OutlinedText _status;
         private readonly OutlinedText _hint;
         private readonly ExperienceBarView _experienceBar;
@@ -37,6 +38,7 @@ namespace WanderersGuild
             _statsBottom = root.Q<OutlinedText>("adv-stats-bottom");
             _wealth = root.Q<OutlinedText>("adv-wealth");
             _affinities = root.Q<OutlinedText>("adv-affinities");
+            _gear = root.Q<OutlinedText>("adv-gear");
             _status = root.Q<OutlinedText>("adv-status");
             _hint = root.Q<OutlinedText>("adv-promote-hint");
             Promote = root.Q<Button>("adv-promote");
@@ -47,7 +49,7 @@ namespace WanderersGuild
         private bool IsComplete =>
             _content != null && _empty != null && _name != null && _speciesClass != null && _rankLevel != null &&
             _experience != null && _rankProgress != null && _statsTop != null && _statsBottom != null && _wealth != null &&
-            _affinities != null && _status != null && _hint != null && Promote != null;
+            _affinities != null && _gear != null && _status != null && _hint != null && Promote != null;
 
         public static AdventurerDetailsView Bind(VisualElement root)
         {
@@ -62,6 +64,7 @@ namespace WanderersGuild
             return view.IsComplete ? view : null;
         }
 
+        // NOTE: Stats include gear (Adventurer.Stats) — the numbers quests actually use.
         public void Show(Adventurer adventurer, ExperienceTable table, PromotionCheck check, PromotionSettings promotion, long nowMinutes)
         {
             var stats = adventurer.Stats;
@@ -77,6 +80,7 @@ namespace WanderersGuild
             _statsBottom.Text = AdventurerFormatter.StatsBottom(stats);
             _wealth.Text = AdventurerFormatter.Wealth(adventurer);
             _affinities.Text = AdventurerFormatter.Affinities(adventurer);
+            _gear.Text = AdventurerFormatter.Gear(adventurer);
             _status.Text = AdventurerFormatter.Status(adventurer, nowMinutes);
             _hint.Text = AdventurerFormatter.PromotionHint(check);
 

@@ -103,5 +103,17 @@ namespace Editor
                 return value;
             throw new FormatException($"{column} '{text.Trim()}' isn't a valid {typeof(T).Name}");
         }
+        
+        // TRUE / FALSE (also yes/no, 1/0, x; ignoring case). An empty cell is false; anything else throws.
+        public static bool Flag(CsvRow row, string column)
+        {
+            var text = Text(row, column).ToLowerInvariant();
+            return text switch
+            {
+                "" or "false" or "no" or "0" => false,
+                "true" or "yes" or "1" or "x" => true,
+                _ => throw new FormatException($"{column} '{text}' isn't TRUE or FALSE")
+            };
+        }
     }
 }

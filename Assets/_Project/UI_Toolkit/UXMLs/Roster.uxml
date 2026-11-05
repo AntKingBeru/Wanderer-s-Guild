@@ -35,6 +35,7 @@
                         <wg:OutlinedText name="adv-stats-bottom" class="adv-stats" text="INT 0  VIT 0" />
                         <wg:OutlinedText name="adv-wealth" class="adv-line adv-gap" text="Wealth: 0g" />
                         <wg:OutlinedText name="adv-affinities" class="adv-line adv-affinities" text="Good at: —" />
+                        <wg:OutlinedText name="adv-gear" class="adv-line" text="Gear: —" />
                         <wg:OutlinedText name="adv-status" class="adv-line" text="Status: Idle" />
                         <wg:OutlinedText name="adv-promote-hint" class="adv-hint" text="Needs more rank progress" />
                     </ui:VisualElement>

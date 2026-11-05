@@ -522,7 +522,7 @@ namespace WanderersGuild
         public override string ToString() => $"STR {strength}  AGI {agility}  INT {intellect}  VIT {vitality}";
     }
     
-    // An adventurer as stored in game.json (species and class by id; level comes from experience).
+    // An adventurer as stored in game.json (species, class and gear by id; level comes from experience).
     [Serializable]
     public struct SavedAdventurer
     {
@@ -538,10 +538,11 @@ namespace WanderersGuild
         [SerializeField] private StatBlock retainedGrowth;
         [SerializeField] private float rankProgress;
         [SerializeField] private long examReturnsAtMinutes;
+        [SerializeField] private string[] equipmentIds;
 
         public SavedAdventurer(int id, string name, string speciesId, string classId, long experience, GuildRank rank,
                                int wealth, AdventurerStatus status, long joinedAtMinutes, StatBlock retainedGrowth,
-                               float rankProgress, long examReturnsAtMinutes)
+                               float rankProgress, long examReturnsAtMinutes, string[] equipmentIds)
         {
             this.id = id;
             this.name = name;
@@ -555,6 +556,7 @@ namespace WanderersGuild
             this.retainedGrowth = retainedGrowth;
             this.rankProgress = rankProgress;
             this.examReturnsAtMinutes = examReturnsAtMinutes;
+            this.equipmentIds = equipmentIds;
         }
 
         public int Id => id;
@@ -573,6 +575,9 @@ namespace WanderersGuild
 
         // When a running promotion exam ends; 0 = no exam.
         public long ExamReturnsAtMinutes => examReturnsAtMinutes;
+
+        // Item ids by EquipmentSlot index (empty / null entries = nothing worn; empty in saves from before 18a).
+        public string[] EquipmentIds => equipmentIds ?? Array.Empty<string>();
     }
 
     // One validated row of the Classes sheet, handed to ClassData.ApplyImport by the importer.
@@ -775,7 +780,7 @@ namespace WanderersGuild
     {
         public WorldDoor(Vector2Int a, Vector2Int b, CardinalDirection facing)
         {
-            bool swap = b.x < a.x || (b.x == a.x && b.y < a.y);
+            var swap = b.x < a.x || (b.x == a.x && b.y < a.y);
             A = swap ? b : a;
             B = swap ? a : b;
             Facing = facing;
@@ -814,6 +819,36 @@ namespace WanderersGuild
         public string LockReason { get; }
         public bool IsLocked => LockReason.Length > 0;
         public bool Affordable { get; }
+    }
+    
+    // One validated row of the equipment sheet, handed to EquipmentData.ApplyImport by the importer
+    public readonly struct EquipmentImportRow
+    {
+        public EquipmentImportRow(string id, string displayName, string description, EquipmentSlot slot, string[] classIds,
+            StatBlock stats, int price, int armoryLevel, GuildRank unlockRank, bool twoHanded)
+        {
+            Id = id;
+            DisplayName = displayName;
+            Description = description;
+            Slot = slot;
+            ClassIds = classIds;
+            Stats = stats;
+            Price = price;
+            ArmoryLevel = armoryLevel;
+            UnlockRank = unlockRank;
+            TwoHanded = twoHanded;
+        }
+
+        public string Id { get; }
+        public string DisplayName { get; }
+        public string Description { get; }
+        public EquipmentSlot Slot { get; }
+        public string[] ClassIds { get; }
+        public StatBlock Stats { get; }
+        public int Price { get; }
+        public int ArmoryLevel { get; }
+        public GuildRank UnlockRank { get; }
+        public bool TwoHanded { get; }
     }
     #endregion
 }

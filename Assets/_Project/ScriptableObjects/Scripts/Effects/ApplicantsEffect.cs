@@ -13,7 +13,8 @@ namespace WanderersGuild
         // Waiting slots at a finished level (0 for level 0 — still being built).
         public int MaxWaitingAt(int level)
         {
-            if (level < 1 || maxWaitingPerLevel == null || maxWaitingPerLevel.Length == 0) return 0;
+            if (level < 1 || maxWaitingPerLevel == null || maxWaitingPerLevel.Length == 0)
+                return 0;
             return Mathf.Max(0, maxWaitingPerLevel[Mathf.Min(level, maxWaitingPerLevel.Length) - 1]);
         }
 

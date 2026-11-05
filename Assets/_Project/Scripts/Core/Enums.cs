@@ -143,6 +143,7 @@ namespace WanderersGuild
         FacilityUpgrade = 4,
         OperationalCost = 5,
         PromotionFee = 6,
+        EquipmentSales = 7,
         Debug = 99
     }
     #endregion
@@ -297,6 +298,14 @@ namespace WanderersGuild
         East = 1,
         South = 2,
         West = 3
+    }
+    
+    // Where an item is worn. NOTE: Values index the saved equipment ids; append new ones at the end.
+    public enum EquipmentSlot
+    {
+        Weapon = 0,
+        Offhand = 1,
+        Armor = 2
     }
     #endregion
 }

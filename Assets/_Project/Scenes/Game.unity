@@ -743,6 +743,7 @@ GameObject:
   - component: {fileID: 637456967}
   - component: {fileID: 637456968}
   - component: {fileID: 637456969}
+  - component: {fileID: 637456970}
   m_Layer: 0
   m_Name: FacilityGrid
   m_TagString: Untagged
@@ -808,6 +809,19 @@ MonoBehaviour:
   grid: {fileID: 637456967}
   footprintColor: {r: 0.2, g: 0.9, b: 1, a: 0.9}
   doorColor: {r: 1, g: 0.7, b: 0.2, a: 0.9}
+--- !u!114 &637456970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637456965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb6d9a0b6144bd24cb5bbf9ee00d6db4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ArmoryManager
+  persistAcrossScenes: 0
 --- !u!1 &682354377
 GameObject:
   m_ObjectHideFlags: 0

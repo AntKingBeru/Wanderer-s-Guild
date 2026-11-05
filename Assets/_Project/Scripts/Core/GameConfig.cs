@@ -52,6 +52,7 @@ namespace WanderersGuild
         [SerializeField] private InteractionSettings interaction = new();
         [SerializeField] private FacilitySettings facilities = new();
         [SerializeField] private BuildModeSettings buildMode = new();
+        [SerializeField] private EquipmentSettings equipment = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -94,6 +95,7 @@ namespace WanderersGuild
         public InteractionSettings Interaction => interaction;
         public FacilitySettings Facilities => facilities;
         public BuildModeSettings BuildMode => buildMode;
+        public EquipmentSettings Equipment => equipment;
     }
     
     #region Scene Management
@@ -1536,6 +1538,29 @@ namespace WanderersGuild
         public float RotationSnapPenalty => rotationSnapPenalty;
         public float FloorHeight => floorHeight;
         public Vector2 CursorLabelOffset => cursorLabelOffset;
+    }
+    #endregion
+    
+    #region Equipment
+    [Serializable]
+    public class EquipmentSettings
+    {
+        [Tooltip("The imported EquipmentDatabase (Database › Load builds it).")]
+        [SerializeField] private EquipmentDatabase database;
+
+        [Tooltip("In-game hour when idle adventurers shop at the armory (once a day).")]
+        [SerializeField, Range(0, 23)] private int shoppingHour = 9;
+
+        [Tooltip("Most of an adventurer's current wealth one purchase may cost (they keep the rest as savings).")]
+        [SerializeField, Range(0.1f, 1f)] private float spendFraction = 0.75f;
+
+        [Tooltip("Share of a replaced item's price the guild pays back to the adventurer.")]
+        [SerializeField, Range(0f, 1f)] private float sellBackFraction = 0.25f;
+
+        public EquipmentDatabase Database => database;
+        public int ShoppingHour => shoppingHour;
+        public float SpendFraction => spendFraction;
+        public float SellBackFraction => sellBackFraction;
     }
     #endregion
 }

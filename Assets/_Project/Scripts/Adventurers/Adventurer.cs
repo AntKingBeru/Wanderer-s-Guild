@@ -1,4 +1,4 @@
-// One guild adventurer: identity, species and class, experience (level derived), rank + rank progress, wealth, status, exam.
+// One guild adventurer: identity, species and class, experience (level derived), rank + progress, wealth, status, exam, gear.
 namespace WanderersGuild
 {
     public sealed class Adventurer
@@ -7,7 +7,7 @@ namespace WanderersGuild
 
         public Adventurer(int id, string name, SpeciesData species, ClassData classData, long experience, GuildRank rank,
                           int wealth, AdventurerStatus status, long joinedAtMinutes, StatBlock retainedGrowth, ExperienceTable levels,
-                          float rankProgress = 0f, long examReturnsAtMinutes = 0)
+                          float rankProgress = 0f, long examReturnsAtMinutes = 0, EquipmentData[] equipment = null)
         {
             _levels = levels;
             Id = id;
@@ -22,6 +22,15 @@ namespace WanderersGuild
             RetainedGrowth = retainedGrowth;
             RankProgress = System.Math.Max(0f, rankProgress);
             ExamReturnsAtMinutes = System.Math.Max(0L, examReturnsAtMinutes);
+
+            // NOTE: Each item goes into its own slot; nulls (unknown ids) leave the slot empty.
+            if (equipment == null)
+                return;
+            foreach (var item in equipment)
+            {
+                if (item)
+                    Equipment.Set(item.Slot, item);
+            }
         }
 
         // Unique per guild (saved).
@@ -51,10 +60,18 @@ namespace WanderersGuild
         // Stat growth kept through class advancement (0 until advancement exists).
         public StatBlock RetainedGrowth { get; }
 
+        // Worn gear (changed by the armory).
+        public AdventurerEquipment Equipment { get; } = new();
+
         public int Level => _levels.LevelFor(Experience);
         public bool IsMaxLevel => Level >= _levels.MaxLevel;
         public float LevelProgress => _levels.Progress(Experience);
-        public StatBlock Stats => AdventurerStats.Compute(Class, Species, Level, RetainedGrowth);
+
+        // The stat formula without gear (class, species, level, retained growth).
+        public StatBlock BaseStats => AdventurerStats.Compute(Class, Species, Level, RetainedGrowth);
+
+        // Stats including gear — what quests, exams and the roster use.
+        public StatBlock Stats => BaseStats + Equipment.Bonus;
 
         // Adds XP (clamped at the cap). Returns how many levels were gained.
         public int AddExperience(long amount)
@@ -74,6 +91,15 @@ namespace WanderersGuild
             if (amount <= 0)
                 return;
             Wealth = amount > int.MaxValue - Wealth ? int.MaxValue : Wealth + amount;
+        }
+
+        // Spends personal gold. False (nothing spent) if they can't pay.
+        public bool TrySpendWealth(int amount)
+        {
+            if (amount < 0 || amount > Wealth)
+                return false;
+            Wealth -= amount;
+            return true;
         }
 
         // True if this call changed it.
@@ -128,7 +154,7 @@ namespace WanderersGuild
 
         public SavedAdventurer ToSaved() =>
             new(Id, Name, Species.Id, Class.Id, Experience, Rank, Wealth, Status, JoinedAtMinutes, RetainedGrowth,
-                RankProgress, ExamReturnsAtMinutes);
+                RankProgress, ExamReturnsAtMinutes, Equipment.ToIds());
 
         private void EndExam()
         {

@@ -23,6 +23,7 @@ namespace Editor
                 var classes = await new ClassSheetImporter().ImportAsync();
                 var requests = await new RequestSheetImporter().ImportAsync();
                 var facilities = await new FacilitySheetImporter().ImportAsync();
+                var equipment = await new EquipmentSheetImporter().ImportAsync();
 
                 Debug.Log(species && classes && requests && facilities
                     ? "[Database] Load finished."

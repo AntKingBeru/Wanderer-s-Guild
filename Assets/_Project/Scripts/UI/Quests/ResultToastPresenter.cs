@@ -22,6 +22,7 @@ namespace WanderersGuild
             GameEventsRelay.OnPromotionExamEnded.AddListener(OnExamEnded);
             GameEventsRelay.OnApplicantArrived.AddListener(OnApplicantArrived);
             GameEventsRelay.OnApplicantLeft.AddListener(OnApplicantLeft);
+            GameEventsRelay.OnArmorySalesCompleted.AddListener(OnArmorySales);
         }
 
         private void OnDisable()
@@ -31,6 +32,7 @@ namespace WanderersGuild
             GameEventsRelay.OnPromotionExamEnded.RemoveListener(OnExamEnded);
             GameEventsRelay.OnApplicantArrived.RemoveListener(OnApplicantArrived);
             GameEventsRelay.OnApplicantLeft.RemoveListener(OnApplicantLeft);
+            GameEventsRelay.OnArmorySalesCompleted.RemoveListener(OnArmorySales);
             if (_wait.IsActive())
                 _wait.Kill();
             _queue.Clear();
@@ -83,6 +85,11 @@ namespace WanderersGuild
                     break;
             }
         }
+        
+        private void OnArmorySales(int sold, long net) =>
+            Enqueue(sold == 1 ? $"Armory: 1 item sold ({Signed(net)}g)" : $"Armory: {sold} items sold ({Signed(net)}g)", false);
+
+        private static string Signed(long value) => value >= 0 ? $"+{value:N0}" : $"-{-value:N0}";
 
         private void Enqueue(string message, bool isError)
         {

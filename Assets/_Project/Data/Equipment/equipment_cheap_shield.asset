@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca596db2f1f210e4899eeba125812138, type: 3}
+  m_Name: equipment_cheap_shield
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
+  id: equipment_cheap_shield
+  displayName: Used Shield
+  description: A battle worn shield at a forth of the price!
+  icon: {fileID: 0}
+  slot: 1
+  classIds: []
+  stats:
+    strength: 0
+    agility: 0
+    intellect: 0
+    vitality: 1
+  price: 12
+  armoryLevel: 2
+  unlockRank: 0
+  twoHanded: 0

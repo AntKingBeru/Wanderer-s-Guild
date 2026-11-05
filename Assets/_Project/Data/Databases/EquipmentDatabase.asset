@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 991159eee2d04114585e68c8d1cdcc86, type: 3}
+  m_Name: EquipmentDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentDatabase
+  items:
+  - {fileID: 11400000, guid: e961143bd4e43734cb7f9c3b4885d619, type: 2}
+  - {fileID: 11400000, guid: 9e65349043a05d346b0ee984ea1b913b, type: 2}
+  - {fileID: 11400000, guid: 14ab33b2e23b815468ac5fe44a23abde, type: 2}
+  - {fileID: 11400000, guid: 4364eb01bc0ae5649b2dc750c794e496, type: 2}
+  - {fileID: 11400000, guid: 35c168cee07b91c4c8f26da4f2d1df4e, type: 2}

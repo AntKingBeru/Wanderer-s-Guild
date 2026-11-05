@@ -14,6 +14,7 @@ namespace WanderersGuild
         private AdventurerSettings _settings;
         private Dictionary<string, ClassData> _classes = new();
         private Dictionary<string, SpeciesData> _species = new();
+        private Dictionary<string, EquipmentData> _equipment = new();
         private AdventurerRoster _roster;
         private AdventurerFactory _factory;
         private int _nextId = 1;
@@ -35,6 +36,9 @@ namespace WanderersGuild
                 _classes = _settings.ClassDatabase.BuildLookup();
             if (_settings.SpeciesDatabase)
                 _species = _settings.SpeciesDatabase.BuildLookup();
+            var equipment = GameConfig.Instance.Equipment.Database;
+            if (equipment)
+                _equipment = equipment.BuildLookup();
             if (_classes.Count == 0 || _species.Count == 0)
                 Debug.LogWarning("[AdventurerManager] Class or species database is empty or unassigned (run Database › Load) — nobody can arrive.", this);
 
@@ -111,6 +115,7 @@ namespace WanderersGuild
         }
 
         // Rebuilds a saved adventurer (roster or applicant). False if their species or class no longer exists.
+        // Unknown item ids are dropped with a warning (the slot stays empty).
         public bool TryRebuild(SavedAdventurer saved, out Adventurer adventurer)
         {
             adventurer = null;
@@ -122,9 +127,19 @@ namespace WanderersGuild
                 return false;
             }
 
+            var ids = saved.EquipmentIds;
+            var gear = new EquipmentData[ids.Length];
+            for (var i = 0; i < ids.Length; i++)
+            {
+                if (string.IsNullOrEmpty(ids[i]))
+                    continue;
+                if (!_equipment.TryGetValue(ids[i], out gear[i]))
+                    Debug.LogWarning($"[AdventurerManager] '{saved.Name}' wore unknown item '{ids[i]}'; dropped.", this);
+            }
+
             adventurer = new Adventurer(saved.Id, saved.Name, species, classData, saved.Experience, saved.Rank, saved.Wealth,
-                                        saved.Status, saved.JoinedAtMinutes, saved.RetainedGrowth, _settings.Experience,
-                                        saved.RankProgress, saved.ExamReturnsAtMinutes);
+                saved.Status, saved.JoinedAtMinutes, saved.RetainedGrowth, _settings.Experience,
+                saved.RankProgress, saved.ExamReturnsAtMinutes, gear);
             _nextId = Mathf.Max(_nextId, saved.Id + 1);
             return true;
         }
