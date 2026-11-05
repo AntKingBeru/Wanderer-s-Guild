@@ -1,12 +1,13 @@
-// The roster's details pane: name, species · class, rank · level, XP and rank-progress bars, stats (with gear), wealth,
-// affinities, gear, status, promotion hint and the Promote button.
+// The roster's details pane (a scroll view): name, species · class, rank · level, XP and rank-progress bars, stats (with gear),
+// wealth, affinities, gear, status, promotion hint — plus the Promote button pinned below it.
+using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace WanderersGuild
 {
     public sealed class AdventurerDetailsView
     {
-        private readonly VisualElement _content;
+        private readonly ScrollView _content;
         private readonly OutlinedText _empty;
         private readonly OutlinedText _name;
         private readonly OutlinedText _speciesClass;
@@ -22,12 +23,13 @@ namespace WanderersGuild
         private readonly OutlinedText _hint;
         private readonly ExperienceBarView _experienceBar;
         private readonly ExperienceBarView _rankBar;
+        private int _shownId = -1;
 
         public Button Promote { get; }
 
         private AdventurerDetailsView(VisualElement root, ExperienceBarView experienceBar, ExperienceBarView rankBar)
         {
-            _content = root.Q<VisualElement>("adv-content");
+            _content = root.Q<ScrollView>("adv-content");
             _empty = root.Q<OutlinedText>("adv-empty");
             _name = root.Q<OutlinedText>("adv-name");
             _speciesClass = root.Q<OutlinedText>("adv-species-class");
@@ -64,7 +66,8 @@ namespace WanderersGuild
             return view.IsComplete ? view : null;
         }
 
-        // NOTE: Stats include gear (Adventurer.Stats) — the numbers quests actually use.
+        // NOTE: Stats include gear (Adventurer.Stats). A different adventurer starts at the top of the pane; refreshing the
+        // same one keeps the reader's scroll position.
         public void Show(Adventurer adventurer, ExperienceTable table, PromotionCheck check, PromotionSettings promotion, long nowMinutes)
         {
             var stats = adventurer.Stats;
@@ -84,6 +87,12 @@ namespace WanderersGuild
             _status.Text = AdventurerFormatter.Status(adventurer, nowMinutes);
             _hint.Text = AdventurerFormatter.PromotionHint(check);
 
+            if (adventurer.Id != _shownId)
+            {
+                _shownId = adventurer.Id;
+                _content.scrollOffset = Vector2.zero;
+            }
+
             _content.style.display = DisplayStyle.Flex;
             _empty.style.display = DisplayStyle.None;
             Promote.SetEnabled(check.CanPromote);
@@ -91,6 +100,7 @@ namespace WanderersGuild
 
         public void ShowEmpty(string message)
         {
+            _shownId = -1;
             _empty.Text = message;
             _content.style.display = DisplayStyle.None;
             _empty.style.display = DisplayStyle.Flex;

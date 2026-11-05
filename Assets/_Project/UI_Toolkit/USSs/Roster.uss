@@ -1,4 +1,4 @@
-/* Adventurer roster in 320×180 UI pixels: list (left) + details (right). Mirrors the request board's layout. */
+/* Adventurer roster in 320×180 UI pixels: list (left) + scrolling details (right), Promote pinned under the details. */
 .roster-window {
     width: 300px;
     height: 164px;
@@ -61,18 +61,19 @@
     -unity-text-align: middle-center;
 }
 
-/* NOTE: Name and class are clipped at their edges; the 1px padding keeps the outline inside the clip. */
+/* NOTE: Name and class are clipped at their edges; 2px left/right padding keeps the whole outline (incl. its soft edge)
+   inside the clip. */
 .roster-row__name {
     flex-grow: 1;
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
-    padding: 1px;
+    padding: 1px 2px;
 }
 .roster-row__class {
     width: 44px;
     overflow: hidden;
-    padding: 1px;
+    padding: 1px 2px;
 }
 .roster-row__class .outlined-text__fill {
     color: var(--color-text-disabled);
@@ -82,17 +83,19 @@
     align-items: flex-end;
 }
 
-/* ---------- Details ---------- */
+/* ---------- Details (one scroll view) ---------- */
 .roster-details {
     flex-grow: 1;
     min-width: 0;
 }
-/* NOTE: Clips if a class has many affinities; the 1px padding keeps every glyph inside the clip. */
+/* NOTE: The whole pane scrolls; the content keeps the viewport's width (no horizontal scroll), so long lines wrap. The
+   content's 1px/2px padding keeps every glyph's outline inside the scroll's clip. */
 .adv-content {
     flex-grow: 1;
     min-height: 0;
-    overflow: hidden;
-    padding: 1px;
+}
+.adv-content .unity-scroll-view__content-container {
+    padding: 1px 2px;
 }
 .adv-name {
     margin-bottom: 1px;
@@ -136,14 +139,14 @@
 .adv-stats {
     margin-top: 2px;
 }
-/* NOTE: Affinities wrap if a class has many. */
-.adv-affinities {
+/* NOTE: Long lines (affinities, gear, the promotion hint) wrap inside the scroll view. */
+.adv-wrap {
     align-items: stretch;
 }
-.adv-affinities .outlined-text__stack {
+.adv-wrap .outlined-text__stack {
     align-self: stretch;
 }
-.adv-affinities .outlined-text__part {
+.adv-wrap .outlined-text__part {
     white-space: normal;
 }
 .adv-empty {
@@ -156,6 +159,7 @@
     flex-direction: row;
     justify-content: flex-end;
     flex-shrink: 0;
+    margin-top: 1px;
 }
 
 /* ---------- Footer ---------- */

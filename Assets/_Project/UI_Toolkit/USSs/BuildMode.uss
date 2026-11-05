@@ -35,7 +35,7 @@
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
-    padding: 1px;
+    padding: 1px 2px;
 }
 .room-card__title .outlined-text__fill {
     color: var(--color-accent);
@@ -114,7 +114,7 @@
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
-    padding: 1px;
+    padding: 1px 2px;
     align-items: flex-end;
 }
 .build-hint .outlined-text__fill {
@@ -171,7 +171,7 @@
     flex-grow: 1;
     min-width: 0;
     overflow: hidden;
-    padding: 1px;
+    padding: 1px 2px;
 }
 .build-card__info .outlined-text__fill,
 .build-card__reason .outlined-text__fill {

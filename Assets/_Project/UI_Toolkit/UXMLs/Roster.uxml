@@ -5,15 +5,15 @@
             <wg:OutlinedText name="roster-title" class="panel-title" text="Adventurers 0/6" />
 
             <ui:VisualElement class="roster-body" picking-mode="Ignore">
-                <!-- Left: rows are created in code (one per roster slot). -->
+                <!-- Left: rows are created in code (a fixed pool). -->
                 <ui:VisualElement class="roster-list-frame" picking-mode="Ignore">
                     <ui:ScrollView name="roster-list" class="roster-list pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" />
                     <wg:OutlinedText name="roster-list-empty" class="roster-list-empty" text="No adventurers yet." />
                 </ui:VisualElement>
 
-                <!-- Right: details of the selected adventurer. -->
+                <!-- Right: details of the selected adventurer — one scroll view; Promote stays pinned below it. -->
                 <ui:VisualElement class="roster-details" picking-mode="Ignore">
-                    <ui:VisualElement name="adv-content" class="adv-content" picking-mode="Ignore">
+                    <ui:ScrollView name="adv-content" class="adv-content pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden">
                         <wg:OutlinedText name="adv-name" class="adv-name" text="Name" />
                         <wg:OutlinedText name="adv-species-class" class="adv-line" text="Species · Class" />
                         <wg:OutlinedText name="adv-rank-level" class="adv-line" text="Rank F · Level 1" />
@@ -34,11 +34,11 @@
                         <wg:OutlinedText name="adv-stats-top" class="adv-stats" text="STR 0  AGI 0" />
                         <wg:OutlinedText name="adv-stats-bottom" class="adv-stats" text="INT 0  VIT 0" />
                         <wg:OutlinedText name="adv-wealth" class="adv-line adv-gap" text="Wealth: 0g" />
-                        <wg:OutlinedText name="adv-affinities" class="adv-line adv-affinities" text="Good at: —" />
-                        <wg:OutlinedText name="adv-gear" class="adv-line" text="Gear: —" />
+                        <wg:OutlinedText name="adv-affinities" class="adv-line adv-wrap" text="Good at: —" />
+                        <wg:OutlinedText name="adv-gear" class="adv-line adv-wrap" text="Gear: —" />
                         <wg:OutlinedText name="adv-status" class="adv-line" text="Status: Idle" />
-                        <wg:OutlinedText name="adv-promote-hint" class="adv-hint" text="Needs more rank progress" />
-                    </ui:VisualElement>
+                        <wg:OutlinedText name="adv-promote-hint" class="adv-hint adv-wrap" text="Needs more rank progress" />
+                    </ui:ScrollView>
                     <wg:OutlinedText name="adv-empty" class="adv-empty" text="No adventurers yet." />
 
                     <ui:VisualElement class="adv-buttons" picking-mode="Ignore">

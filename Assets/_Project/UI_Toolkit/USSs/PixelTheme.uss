@@ -1,3 +1,7 @@
+/* NOTE: The 8 offset copies keep the outline square and crisp; the SDF outline fattens each copy slightly so the soft
+   (anti-aliased) edges of neighbouring copies overlap and no lighter seams show. 0.3px = subtler, 0.8px = heavier.
+   Outline copies reach 1px (+0.5px soft edge) outside the glyphs — containers with overflow: hidden need padding 1px 2px
+   (2px left/right) so the first and last glyphs keep their full outline. */
 /* Shared pixel-art UI theme: variables, base text, and shared components. All sizes are in 320×180 UI pixels. */
 :root {
     --color-text: rgb(240, 232, 214);
