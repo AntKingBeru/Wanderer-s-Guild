@@ -1,0 +1,96 @@
+/* Alchemy screen in 320×180 UI pixels: a scrolling list of potions (brewing: − count +), cost/free line, Brew / Skip. */
+.alc-window {
+    width: 220px;
+    height: 160px;
+}
+/* NOTE: The theme's pixel-window centres its children — the list and footer stretch to the window's width. */
+.alc-list-frame {
+    flex-grow: 1;
+    min-height: 0;
+    align-self: stretch;
+}
+.alc-list {
+    flex-grow: 1;
+}
+.alc-list .unity-scroll-view__content-container {
+    padding: 1px 2px;
+}
+.alc-empty {
+    position: absolute;
+    top: 6px;
+    left: 0;
+    right: 0;
+    align-items: center;
+    display: none;
+}
+
+/* ---------- Rows ---------- */
+.alc-row {
+    flex-direction: row;
+    align-items: center;
+    min-height: 14px;
+    margin-bottom: 1px;
+}
+/* NOTE: Clipped text uses 2px left/right padding (the outline reaches 1.5px past each glyph). */
+.alc-row__name {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1px 2px;
+}
+.alc-row__stock {
+    flex-shrink: 0;
+    margin: 0 4px;
+}
+.alc-row__stock .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.alc-row__controls {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+}
+.pixel-button.alc-step {
+    width: 12px;
+    height: 12px;
+    min-height: 12px;
+    margin: 0;
+    padding: 0;
+    border-width: 1px;
+    align-items: center;
+    justify-content: center;
+}
+.pixel-button.alc-step:hover {
+    border-color: var(--frame-highlight-border);
+}
+.alc-row__count {
+    width: 14px;
+    align-items: center;
+}
+
+/* ---------- Footer ---------- */
+.alc-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+.alc-footer-text {
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1px 2px;
+}
+.alc-footer-text .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.alc-footer-text--warning .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}
+.alc-buttons {
+    flex-direction: row;
+    flex-shrink: 0;
+}

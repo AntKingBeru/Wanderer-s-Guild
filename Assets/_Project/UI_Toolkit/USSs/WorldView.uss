@@ -70,3 +70,19 @@
 .pixel-button.world-card__button:hover {
     border-color: var(--frame-highlight-border);
 }
+/* ---------- Opening goal (under the HUD bar, top-left) ---------- */
+.world-goal {
+    position: absolute;
+    left: 4px;
+    top: 26px;
+    padding: 1px 2px;
+    display: none;
+}
+.world-goal .outlined-text__fill {
+    color: var(--color-accent);
+}
+
+/* ---------- Room card (shares .world-card) ---------- */
+.room-card__residents {
+    margin-top: 1px;
+}

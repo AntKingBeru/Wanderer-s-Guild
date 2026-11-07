@@ -594,11 +594,12 @@ namespace WanderersGuild
         [SerializeField] private float wellFedBonus;
         [SerializeField] private InjurySeverity injury;
         [SerializeField] private long injuredUntilMinutes;
+        [SerializeField] private long returningUntilMinutes;
 
         public SavedAdventurer(int id, string name, string speciesId, string classId, long experience, GuildRank rank,
                                int wealth, AdventurerStatus status, long joinedAtMinutes, StatBlock retainedGrowth,
                                float rankProgress, long examReturnsAtMinutes, string[] equipmentIds, float wellFedBonus,
-                               InjurySeverity injury, long injuredUntilMinutes)
+                               InjurySeverity injury, long injuredUntilMinutes, long returningUntilMinutes)
         {
             this.id = id;
             this.name = name;
@@ -616,6 +617,7 @@ namespace WanderersGuild
             this.wellFedBonus = wellFedBonus;
             this.injury = injury;
             this.injuredUntilMinutes = injuredUntilMinutes;
+            this.returningUntilMinutes = returningUntilMinutes;
         }
 
         public int Id => id;
@@ -643,6 +645,9 @@ namespace WanderersGuild
         
         public InjurySeverity Injury => injury;
         public long InjuredUntilMinutes => injuredUntilMinutes;
+        
+        // When a recalled adventurer gets back (0 = not returning; 0 in saves from before Session 22).
+        public long ReturningUntilMinutes => returningUntilMinutes;
         
     }
 
@@ -942,7 +947,7 @@ namespace WanderersGuild
         public int Units => units;
     }
     
-    // One potion tier offered at approval: the party's share cut, the chance bonus, and ingredients per member.
+    // One potion tier: the party's share cut and the chance bonus at approval, and the guild's brew cost per potion.
     [Serializable]
     public struct PotionTier
     {
@@ -951,22 +956,63 @@ namespace WanderersGuild
         [SerializeField, Range(0, 100)] private int shareCutPercent;
         [Tooltip("Added to the quest's final success chance (still capped at the maximum).")]
         [SerializeField, Range(0f, 1f)] private float chanceBonus;
-        [Tooltip("Guild gold per party member for ingredients, paid at approval.")]
-        [SerializeField, Min(0)] private int ingredientCostPerMember;
+        [Tooltip("Guild gold to brew one potion of this tier (paid at the morning brew).")]
+        [SerializeField, Min(0)] private int brewCost;
 
-        public PotionTier(string name, int shareCutPercent, float chanceBonus, int ingredientCostPerMember)
+        public PotionTier(string name, int shareCutPercent, float chanceBonus, int brewCost)
         {
             this.name = name;
             this.shareCutPercent = shareCutPercent;
             this.chanceBonus = chanceBonus;
-            this.ingredientCostPerMember = ingredientCostPerMember;
+            this.brewCost = brewCost;
         }
 
         public string Name => name;
         public int ShareCutPercent => shareCutPercent;
         public float ChanceBonus => chanceBonus;
-        public int IngredientCostPerMember => ingredientCostPerMember;
+        public int BrewCost => brewCost;
     }
+    
+    // Which potion: a tier (1-based; 0 = none) for one quest category.
+    public readonly struct PotionKey : IEquatable<PotionKey>
+    {
+        public PotionKey(int tier, QuestCategory category)
+        {
+            Tier = tier;
+            Category = category;
+        }
+
+        public int Tier { get; }
+        public QuestCategory Category { get; }
+        public bool IsNone => Tier <= 0;
+
+        public static PotionKey None => default;
+
+        public bool Equals(PotionKey other) => Tier == other.Tier && Category == other.Category;
+        public override bool Equals(object obj) => obj is PotionKey other && Equals(other);
+        public override int GetHashCode() => HashCode.Combine(Tier, (int)Category);
+    }
+
+    // Potions of one kind in stock, as stored in game.json.
+    [Serializable]
+    public struct SavedPotionStock
+    {
+        [SerializeField] private int tier;
+        [SerializeField] private QuestCategory category;
+        [SerializeField] private int count;
+
+        public SavedPotionStock(int tier, QuestCategory category, int count)
+        {
+            this.tier = tier;
+            this.category = category;
+            this.count = count;
+        }
+
+        public int Tier => tier;
+        public QuestCategory Category => category;
+        public int Count => count;
+    }
+
 
     // What the Applications screen shows for the current potion choice.
     public readonly struct PotionPreview
@@ -1081,6 +1127,25 @@ namespace WanderersGuild
         // Sorted member ids, comma-separated ("3,7,12").
         public string Key => key;
         public int Successes => successes;
+    }
+    #endregion
+    
+    #region Lodging
+    // Where an adventurer sleeps, as stored in game.json (room id; 0 = outside the guild).
+    [Serializable]
+    public struct SavedLodging
+    {
+        [SerializeField] private int adventurerId;
+        [SerializeField] private int roomId;
+
+        public SavedLodging(int adventurerId, int roomId)
+        {
+            this.adventurerId = adventurerId;
+            this.roomId = roomId;
+        }
+
+        public int AdventurerId => adventurerId;
+        public int RoomId => roomId;
     }
     #endregion
 }

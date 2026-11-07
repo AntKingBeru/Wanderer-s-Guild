@@ -1,4 +1,5 @@
-// Potion rules (pure, reads the rooms and the tier settings): brewable tier, tier data, ingredient cost, who'd refuse, preview gold.
+// Potion rules (reads the rooms and the tier settings): capacity, brewable tier, tier data, stocked potions for a category,
+// who'd refuse a share cut, preview gold.
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,35 +8,33 @@ namespace WanderersGuild
 {
     public static class Alchemy
     {
-        // Highest brewable tier from every finished room's AlchemistEffect, capped by the tiers defined (0 = none).
-        public static int MaxTier
-        {
-            get
-            {
-                if (!FacilityManager.HasInstance)
-                    return 0;
+        // Stock capacity from the best finished alchemist (0 = none).
+        public static int Capacity => Best((effect, level) => effect.StockAt(level));
 
-                var tier = 0;
-                foreach (var room in FacilityManager.Instance.Rooms)
-                {
-                    AlchemistEffect effect = room.Data.Effect<AlchemistEffect>();
-                    if (effect)
-                        tier = Mathf.Max(tier, effect.MaxTierAt(room.Level));
-                }
-                return Mathf.Min(tier, GameConfig.Instance.Alchemy.Tiers.Count);
-            }
-        }
+        // Highest brewable tier from the best finished alchemist, capped by the tiers defined (0 = none).
+        public static int MaxTier => Mathf.Min(Best((effect, level) => effect.MaxTierAt(level)), GameConfig.Instance.Alchemy.Tiers.Count);
 
         // Tier data (1-based). False for 0 or a tier that isn't defined.
         public static bool TryGetTier(int tier, out PotionTier data)
         {
-            IReadOnlyList<PotionTier> tiers = GameConfig.Instance.Alchemy.Tiers;
+            var tiers = GameConfig.Instance.Alchemy.Tiers;
             var valid = tier >= 1 && tier <= tiers.Count;
             data = valid ? tiers[tier - 1] : default;
             return valid;
         }
 
-        public static long IngredientCost(PotionTier tier, int members) => (long)tier.IngredientCostPerMember * Mathf.Max(0, members);
+        // Potions in stock for this category, lowest tier first (filled into <paramref name="results"/>).
+        public static void StockedFor(QuestCategory category, PotionStock stock, List<PotionKey> results)
+        {
+            results.Clear();
+            var tiers = GameConfig.Instance.Alchemy.Tiers.Count;
+            for (var tier = 1; tier <= tiers; tier++)
+            {
+                PotionKey key = new(tier, category);
+                if (stock.Count(key) > 0)
+                    results.Add(key);
+            }
+        }
 
         // The share after a cut (never below 0).
         public static int ShareAfterCut(Quest quest, int cut) => Mathf.Max(0, quest.Terms.RewardSharePercent - cut);
@@ -52,6 +51,22 @@ namespace WanderersGuild
         {
             var gold = GoldPerMemberWith(quest, tier.ShareCutPercent);
             return members.FirstOrDefault(member => QuestCalculator.Appeal(member, quest, settings, gold) < 1f);
+        }
+
+        // NOTE: The best value of an effect over every finished alchemist (rooms don't stack).
+        private static int Best(System.Func<AlchemistEffect, int, int> value)
+        {
+            if (!FacilityManager.HasInstance)
+                return 0;
+
+            var best = 0;
+            foreach (var room in FacilityManager.Instance.Rooms)
+            {
+                var effect = room.Data.Effect<AlchemistEffect>();
+                if (effect)
+                    best = Mathf.Max(best, value(effect, room.Level));
+            }
+            return best;
         }
     }
 }

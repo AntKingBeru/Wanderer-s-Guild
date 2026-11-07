@@ -1,4 +1,5 @@
-// Quest board panel: a cork board of 10 slots (3 + guild rank open); click a note to lift it; Cancel asks first (−1 rep).
+// Quest board panel: a cork board of 10 slots (3 + guild rank open); click a note to lift it; Cancel (before departure, −1 rep)
+// or Recall (while away, −2 rep; the party returns in half the remaining time) asks first.
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,7 +22,8 @@ namespace WanderersGuild
         private Button _close;
         private InlineConfirmation _confirm;
         private int _liftedQuestId = -1;
-        private int _pendingCancelId = -1;
+        private int _pendingQuestId = -1;
+        private bool _pendingWasBeforeDeparture;
 
         protected override IReadOnlyList<Button> Buttons => _buttons;
         protected override IReadOnlyList<Button> ListButtons => _noteButtons;
@@ -71,7 +73,7 @@ namespace WanderersGuild
         {
             _close.clicked += Close;
             _detail.Back.clicked += PutBack;
-            _detail.Cancel.clicked += AskCancel;
+            _detail.Cancel.clicked += AskCancelOrRecall;
             _confirm.Initialize();
 
             // NOTE: Left/Right walks the rows, Up/Down the columns; each passes the other axis through, so every arrow
@@ -106,11 +108,11 @@ namespace WanderersGuild
             _confirm.HideImmediate();
             _detail.HideImmediate();
             _liftedQuestId = -1;
-            _pendingCancelId = -1;
+            _pendingQuestId = -1;
             Refresh();
         }
 
-        // NOTE: Esc order: the cancel prompt (No), then the lifted note (Back), then the board itself.
+        // NOTE: Esc order: the prompt (No), then the lifted note (Back), then the board itself.
         protected override void OnCancel()
         {
             if (_confirm.IsOpen)
@@ -157,33 +159,49 @@ namespace WanderersGuild
             if (!QuestManager.HasInstance)
                 return;
 
-            var members = QuestManager.Instance.MembersOf(quest);
+            IReadOnlyList<Adventurer> members = QuestManager.Instance.MembersOf(quest);
             var chance = QuestManager.Instance.SuccessChance(quest);
             _detail.Show(quest, members, chance, Now, GameConfig.Instance.GuildRanks.ColorOf(quest.Request.RecommendedRank));
         }
 
-        private void AskCancel()
+        // NOTE: The prompt remembers which action it asked about; if the quest changes state meanwhile (departs, ends), it
+        // closes (OnQuestChanged / OnQuestEnded) — Yes never does the other action. QuestManager re-checks on Yes too.
+        private void AskCancelOrRecall()
         {
-            if (!IsDetailActive || _liftedQuestId < 0 || !QuestManager.HasInstance)
+            if (!IsDetailActive || _liftedQuestId < 0 || !QuestManager.HasInstance) return;
+
+            var quest = QuestManager.Instance.Find(_liftedQuestId);
+            if (quest == null)
                 return;
 
-            var questId = _liftedQuestId;
-            var reputation = GameConfig.Instance.Requests.DismissReputation;
-            var confirmed = false;
-            _pendingCancelId = questId;
+            var questId = quest.Id;
+            var beforeDeparture = quest.IsBeforeDeparture;
+            var message = beforeDeparture
+                ? $"Cancel this quest?\n({Signed(GameConfig.Instance.Requests.DismissReputation)} reputation)"
+                : $"Recall the party?\n({Signed(GameConfig.Instance.QuestRecall.Reputation)} reputation) " +
+                  $"Back in {RequestFormatter.TimeLeft(QuestManager.Instance.RecallReturnMinutes(quest))}";
 
-            _confirm.Show($"Cancel this quest?\n({reputation:+#;-#;0} reputation)",
+            var confirmed = false;
+            _pendingQuestId = questId;
+            _pendingWasBeforeDeparture = beforeDeparture;
+
+            _confirm.Show(message,
                           onConfirm: () => confirmed = true,
                           onClosed: () =>
                           {
-                              _pendingCancelId = -1;
+                              _pendingQuestId = -1;
                               if (confirmed && QuestManager.HasInstance)
-                                  QuestManager.Instance.Cancel(questId); // Refused if it departed or ended meanwhile.
+                              {
+                                  if (beforeDeparture) QuestManager.Instance.Cancel(questId);
+                                  else QuestManager.Instance.Recall(questId);
+                              }
 
                               if (_detail.IsOpen) _detail.Cancel.Focus();
                               else FocusNoteOr(-1);
                           });
         }
+
+        private static string Signed(int value) => value.ToString("+#;-#;0");
 
         // ---------- Board ----------
 
@@ -219,7 +237,8 @@ namespace WanderersGuild
                 return;
             }
 
-            if (_confirm.IsOpen) _confirm.Cancel();
+            if (_confirm.IsOpen)
+                _confirm.Cancel();
             _detail.HideImmediate();
             _liftedQuestId = -1;
             FocusNoteOr(-1);
@@ -260,10 +279,11 @@ namespace WanderersGuild
             target?.Focus();
         }
 
-        // NOTE: Becoming Ready doesn't close the cancel prompt (a ready quest can still be canceled) — only departing does.
+        // NOTE: Becoming Ready doesn't close a Cancel prompt (a ready quest can still be canceled) — departing does, because
+        // the action would change from Cancel to Recall.
         private void OnQuestChanged(Quest quest)
         {
-            if (quest.Id == _pendingCancelId && !quest.IsBeforeDeparture && _confirm.IsOpen)
+            if (quest.Id == _pendingQuestId && quest.IsBeforeDeparture != _pendingWasBeforeDeparture && _confirm.IsOpen)
                 _confirm.Cancel();
 
             if (IsOpen)
@@ -272,7 +292,7 @@ namespace WanderersGuild
 
         private void OnQuestEnded(Quest quest, QuestEndReason _)
         {
-            if (quest.Id == _pendingCancelId && _confirm.IsOpen)
+            if (quest.Id == _pendingQuestId && _confirm.IsOpen)
                 _confirm.Cancel();
 
             if (IsOpen)

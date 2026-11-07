@@ -8,8 +8,9 @@ namespace WanderersGuild
     [Serializable]
     public class GameSaveData
     {
-        // NOTE: v2 guild state; v3 request board; v4 roster; v5 posted quests; v6 facilities; v7 applicants; v8 armory stock;  v9 parties + lineup progress.
-        public const int CurrentVersion = 9;
+        // NOTE: v2 guild state; v3 request board; v4 roster; v5 posted quests; v6 facilities; v7 applicants; v8 armory stock;
+        // v9 parties + lineup progress; v10 lodging + starter bedrooms; v11 potion stock.
+        public const int CurrentVersion = 11;
 
         // NOTE: Generous upper bound (~114 years) — anything above means a corrupted file.
         private const double MaxPlayTimeSeconds = 3.6e9;
@@ -44,6 +45,11 @@ namespace WanderersGuild
         [SerializeField] private List<SavedParty> parties = new();
         [SerializeField] private List<SavedLineup> partyLineups = new();
         [SerializeField] private int nextPartyId = 1;
+        
+        [SerializeField] private List<SavedLodging> lodgings = new();
+        [SerializeField] private int[] starterRoomIds = Array.Empty<int>();
+        
+        [SerializeField] private List<SavedPotionStock> potionStock = new();
 
         public int Version => version;
 
@@ -165,17 +171,19 @@ namespace WanderersGuild
 
         // Applicants waiting at the Guild Master's Office. Written by RecruitmentManager.
         public IReadOnlyList<SavedApplicant> Applicants => applicants ?? (IReadOnlyList<SavedApplicant>)Array.Empty<SavedApplicant>();
+
+        public void SetApplicants(IEnumerable<SavedApplicant> items) =>
+            applicants = items != null ? new List<SavedApplicant>(items) : new List<SavedApplicant>();
         
         // Units in the armory per item. Written by ArmoryManager.
         public IReadOnlyList<SavedStockItem> ArmoryStock => armoryStock ?? (IReadOnlyList<SavedStockItem>)Array.Empty<SavedStockItem>();
         
+        public void SetArmoryStock(IEnumerable<SavedStockItem> items) =>
+            armoryStock = items != null ? new List<SavedStockItem>(items) : new List<SavedStockItem>();
+        
         // Permanent parties and the groups bonding toward one. Written by PartyManager.
         public IReadOnlyList<SavedParty> Parties => parties ?? (IReadOnlyList<SavedParty>)Array.Empty<SavedParty>();
         public IReadOnlyList<SavedLineup> PartyLineups => partyLineups ?? (IReadOnlyList<SavedLineup>)Array.Empty<SavedLineup>();
-
-
-        public void SetApplicants(IEnumerable<SavedApplicant> items) =>
-            applicants = items != null ? new List<SavedApplicant>(items) : new List<SavedApplicant>();
         
         public void SetParties(IEnumerable<SavedParty> items, IEnumerable<SavedLineup> lineups)
         {
@@ -188,6 +196,23 @@ namespace WanderersGuild
             get => nextPartyId;
             set => nextPartyId = Math.Max(1, value);
         }
+        
+        // Who sleeps where, and which rooms are starter bedrooms. Written by LodgingManager (empty before v10 —
+        // everyone is re-housed on load).
+        public IReadOnlyList<SavedLodging> Lodgings => lodgings ?? (IReadOnlyList<SavedLodging>)Array.Empty<SavedLodging>();
+        public IReadOnlyList<int> StarterRoomIds => starterRoomIds ?? Array.Empty<int>();
+        
+        public void SetLodging(IEnumerable<SavedLodging> items, IEnumerable<int> starterRooms)
+        {
+            lodgings = items != null ? new List<SavedLodging>(items) : new List<SavedLodging>();
+            starterRoomIds = starterRooms != null ? new List<int>(starterRooms).ToArray() : Array.Empty<int>();
+        }
+        
+        // Potions in the alchemist's stock. Written by AlchemyManager.
+        public IReadOnlyList<SavedPotionStock> PotionStock => potionStock ?? (IReadOnlyList<SavedPotionStock>)Array.Empty<SavedPotionStock>();
+
+        public void SetPotionStock(IEnumerable<SavedPotionStock> items) =>
+            potionStock = items != null ? new List<SavedPotionStock>(items) : new List<SavedPotionStock>();
 
         public bool IsValid =>
             version is >= 1 and <= CurrentVersion &&
@@ -204,8 +229,5 @@ namespace WanderersGuild
             copy.version = CurrentVersion;
             return copy;
         }
-        
-        public void SetArmoryStock(IEnumerable<SavedStockItem> items) =>
-            armoryStock = items != null ? new List<SavedStockItem>(items) : new List<SavedStockItem>();
     }
 }

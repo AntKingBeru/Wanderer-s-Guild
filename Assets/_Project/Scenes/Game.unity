@@ -326,6 +326,7 @@ GameObject:
   m_Component:
   - component: {fileID: 408834675}
   - component: {fileID: 408834676}
+  - component: {fileID: 408834677}
   m_Layer: 0
   m_Name: BuildMode
   m_TagString: Untagged
@@ -366,6 +367,22 @@ MonoBehaviour:
   panels: {fileID: 1873610642}
   grid: {fileID: 637456967}
   document: {fileID: 1263578233}
+--- !u!114 &408834677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408834674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bf5ac713fb3dc84f849d1821ad70846, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.RoomLodgingCardController
+  persistAcrossScenes: 0
+  worldCamera: {fileID: 1904311416}
+  view: {fileID: 998846831}
+  grid: {fileID: 637456967}
 --- !u!1 &478497155
 GameObject:
   m_ObjectHideFlags: 0
@@ -747,6 +764,7 @@ GameObject:
   - component: {fileID: 637456969}
   - component: {fileID: 637456970}
   - component: {fileID: 637456971}
+  - component: {fileID: 637456972}
   m_Layer: 0
   m_Name: FacilityGrid
   m_TagString: Untagged
@@ -837,6 +855,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 782b8046b80caf04b9ec7a097ca8038f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.TavernManager
+  persistAcrossScenes: 0
+--- !u!114 &637456972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637456965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef914ebdd1367164d9c30669617bbd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AlchemyManager
   persistAcrossScenes: 0
 --- !u!1 &682354377
 GameObject:
@@ -1094,6 +1125,7 @@ Transform:
   - {fileID: 1116493042}
   - {fileID: 1385770490}
   - {fileID: 1800279067}
+  - {fileID: 1021737199}
   - {fileID: 80439398}
   - {fileID: 1160252153}
   - {fileID: 682354381}
@@ -1111,6 +1143,7 @@ GameObject:
   - component: {fileID: 998846825}
   - component: {fileID: 998846830}
   - component: {fileID: 998846831}
+  - component: {fileID: 998846832}
   m_Layer: 0
   m_Name: WorldViewUI
   m_TagString: Untagged
@@ -1169,6 +1202,88 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.WorldViewPresenter
   target: {fileID: 1904311420}
+--- !u!114 &998846832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 998846824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 376f52f1d7af4384eaca00b6891e07ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.LodgingGoalPresenter
+--- !u!1 &1021737198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1021737199}
+  - component: {fileID: 1021737201}
+  - component: {fileID: 1021737200}
+  m_Layer: 0
+  m_Name: AlchemyUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1021737199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1021737198}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 993639236}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1021737200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1021737198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b98103e8793e684e8851414027ce276, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AlchemyPanel
+  id: 13
+  hidesMenu: 1
+--- !u!114 &1021737201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1021737198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 6a12b064e5aaf24479f9d0c41e745f9e, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 257f1fb834e21fc4bb12b6bcf566eda0, type: 3}
+  m_SortingOrder: 2
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1 &1054836477
 GameObject:
   m_ObjectHideFlags: 0
@@ -1182,6 +1297,7 @@ GameObject:
   - component: {fileID: 1054836480}
   - component: {fileID: 1054836481}
   - component: {fileID: 1054836482}
+  - component: {fileID: 1054836483}
   m_Layer: 0
   m_Name: AdventuerManager
   m_TagString: Untagged
@@ -1255,6 +1371,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab81d7363b9daa24d9ecc1ab0eada131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.PartyManager
+  persistAcrossScenes: 0
+--- !u!114 &1054836483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054836477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9770bb03ed8ae434fa99738976ec4c78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.LodgingManager
   persistAcrossScenes: 0
 --- !u!1 &1116493039
 GameObject:
@@ -1492,6 +1621,7 @@ MonoBehaviour:
   worldCamera: {fileID: 1904311416}
   view: {fileID: 998846831}
   panels: {fileID: 1873610642}
+  grid: {fileID: 637456967}
 --- !u!114 &1253490076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2243,6 +2373,7 @@ MonoBehaviour:
   - {fileID: 1385770488}
   - {fileID: 1913854947}
   - {fileID: 1800279068}
+  - {fileID: 1021737200}
 --- !u!114 &1873610643
 MonoBehaviour:
   m_ObjectHideFlags: 0

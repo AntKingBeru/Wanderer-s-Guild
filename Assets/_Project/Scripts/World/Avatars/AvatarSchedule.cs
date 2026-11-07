@@ -34,5 +34,9 @@ namespace WanderersGuild
             start <= end ? minute >= start && minute < end : minute >= start || minute < end;
 
         private static int Wrap(int minute) => ((minute % MinutesPerDay) + MinutesPerDay) % MinutesPerDay;
+        
+        // True during sleep hours (outside lodgers are away then).
+        public static bool IsSleepTime(int minuteOfDay, AvatarSettings settings) =>
+            InRange(minuteOfDay, settings.SleepStartHour * 60, settings.SleepEndHour * 60);
     }
 }

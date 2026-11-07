@@ -20,6 +20,7 @@ namespace WanderersGuild
         private readonly OutlinedText _affinities;
         private readonly OutlinedText _gear;
         private readonly OutlinedText _status;
+        private readonly OutlinedText _room;
         private readonly OutlinedText _party;
         private readonly OutlinedText _hint;
         private readonly ExperienceBarView _experienceBar;
@@ -28,6 +29,7 @@ namespace WanderersGuild
 
         public Button Promote { get; }
         public Button Disband { get; }
+        public Button Move { get; }
 
         private AdventurerDetailsView(VisualElement root, ExperienceBarView experienceBar, ExperienceBarView rankBar)
         {
@@ -44,10 +46,12 @@ namespace WanderersGuild
             _affinities = root.Q<OutlinedText>("adv-affinities");
             _gear = root.Q<OutlinedText>("adv-gear");
             _status = root.Q<OutlinedText>("adv-status");
+            _room = root.Q<OutlinedText>("adv-room");
             _party = root.Q<OutlinedText>("adv-party");
             _hint = root.Q<OutlinedText>("adv-promote-hint");
             Promote = root.Q<Button>("adv-promote");
             Disband = root.Q<Button>("adv-disband");
+            Move = root.Q<Button>("adv-move");
             _experienceBar = experienceBar;
             _rankBar = rankBar;
         }
@@ -55,8 +59,8 @@ namespace WanderersGuild
         private bool IsComplete =>
             _content != null && _empty != null && _name != null && _speciesClass != null && _rankLevel != null &&
             _experience != null && _rankProgress != null && _statsTop != null && _statsBottom != null && _wealth != null &&
-            _affinities != null && _gear != null && _status != null && _party != null && _hint != null &&
-            Promote != null && Disband != null;
+            _affinities != null && _gear != null && _status != null && _room != null && _party != null && _hint != null &&
+            Promote != null && Disband != null && Move != null;
 
         public static AdventurerDetailsView Bind(VisualElement root)
         {
@@ -77,10 +81,12 @@ namespace WanderersGuild
         /// <param name="promotion"></param>
         /// <param name="nowMinutes"></param>
         /// <param name="partyLine">"Party: The Iron Wolves (3) · Teamwork +4%", or empty (hidden; Disband disabled).</param>
+        /// <param name="roomLine"></param>
+        /// <param name="canMove"></param>
         // NOTE: Stats include gear (Adventurer.Stats). A different adventurer starts at the top of the pane; refreshing the
         // same one keeps the reader's scroll position.
         public void Show(Adventurer adventurer, ExperienceTable table, PromotionCheck check, PromotionSettings promotion,
-                         long nowMinutes, string partyLine)
+            long nowMinutes, string partyLine, string roomLine, bool canMove)
         {
             var stats = adventurer.Stats;
 
@@ -100,6 +106,8 @@ namespace WanderersGuild
             _party.Text = partyLine;
             _party.style.display = string.IsNullOrEmpty(partyLine) ? DisplayStyle.None : DisplayStyle.Flex;
             _hint.Text = AdventurerFormatter.PromotionHint(check);
+            _room.Text = roomLine;
+            _room.style.display = string.IsNullOrEmpty(roomLine) ? DisplayStyle.None : DisplayStyle.Flex;
 
             if (adventurer.Id != _shownId)
             {
@@ -111,6 +119,7 @@ namespace WanderersGuild
             _empty.style.display = DisplayStyle.None;
             Promote.SetEnabled(check.CanPromote);
             Disband.SetEnabled(!string.IsNullOrEmpty(partyLine));
+            Move.SetEnabled(canMove);
         }
 
         public void ShowEmpty(string message)
@@ -121,6 +130,7 @@ namespace WanderersGuild
             _empty.style.display = DisplayStyle.Flex;
             Promote.SetEnabled(false);
             Disband.SetEnabled(false);
+            Move.SetEnabled(false);
         }
     }
 }

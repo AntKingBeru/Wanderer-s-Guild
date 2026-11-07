@@ -66,7 +66,8 @@ namespace WanderersGuild
         ReceptionDesk = 9,
         Applications = 10,
         Recruits = 11,
-        Armory = 12
+        Armory = 12,
+        Alchemy = 13
     }
     
     // How a ParallaxGroup reacts to the pointer (strength + follow speed set in GameConfig › Parallax).
@@ -132,6 +133,7 @@ namespace WanderersGuild
         AdventurerDeparted = 7,
         RequestDismissed = 8,
         ArmoryRestockFailed = 9,
+        QuestRecalled = 10,
         Debug = 99
     }
     
@@ -263,7 +265,8 @@ namespace WanderersGuild
         Succeeded = 0,
         Failed = 1,
         Expired = 2,
-        Cancelled = 3
+        Cancelled = 3,
+        Recalled = 4
     }
     #endregion
     
@@ -275,7 +278,8 @@ namespace WanderersGuild
         SignedUp = 1,
         OnQuest = 2,
         InExam = 3,
-        Injured = 4
+        Injured = 4,
+        Returning
     }
     
     // Why an applicant stopped waiting.

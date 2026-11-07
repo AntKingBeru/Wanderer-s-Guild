@@ -1,4 +1,5 @@
-// Shows the floating card for a clicked adventurer, keeps it beside them, and closes it on click-away, Esc, panels or leaving.
+// Shows the floating card for a clicked adventurer, keeps it beside them, outlines their room, and closes it on click-away,
+// Esc, panels, a room card, or them leaving.
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,6 +16,7 @@ namespace WanderersGuild
         private ScopedActionListener _escapeListener;
         private InputAction _point, _click;
         private AdventurerCardView _card;
+        private PlacedFacility _outlinedRoom;
         private int _adventurerId = -1;
         private int _openedFrame = -1;
         private int _escapeFrame = -1;
@@ -37,6 +39,9 @@ namespace WanderersGuild
             GameEventsRelay.OnHourStarted.AddListener(OnHourStarted);
             GameEventsRelay.OnMenuPanelOpened.AddListener(OnPanelOpened);
             GameEventsRelay.OnBuildModeChanged.AddListener(OnBuildModeChanged);
+            GameEventsRelay.OnLodgingChanged.AddListener(OnLodgingChanged);
+            GameEventsRelay.OnRoomCardRequested.AddListener(OnRoomCardRequested);
+            GameEventsRelay.OnFacilityRemoved.AddListener(OnFacilityRemoved);
         }
 
         private void OnDisable()
@@ -48,6 +53,10 @@ namespace WanderersGuild
             GameEventsRelay.OnHourStarted.RemoveListener(OnHourStarted);
             GameEventsRelay.OnMenuPanelOpened.RemoveListener(OnPanelOpened);
             GameEventsRelay.OnBuildModeChanged.RemoveListener(OnBuildModeChanged);
+            GameEventsRelay.OnLodgingChanged.RemoveListener(OnLodgingChanged);
+            GameEventsRelay.OnRoomCardRequested.RemoveListener(OnRoomCardRequested);
+            GameEventsRelay.OnFacilityRemoved.RemoveListener(OnFacilityRemoved);
+            Close();
         }
 
         private void Start()
@@ -57,7 +66,7 @@ namespace WanderersGuild
                 Debug.LogError("[AdventurerCardController] Missing 'world-card' elements in WorldView.uxml.", this);
         }
 
-        // Shows (or moves) the card to this adventurer.
+        // Shows (or moves) the card to this adventurer and outlines their room.
         public void Open(int adventurerId)
         {
             if (_card == null || !AdventurerManager.HasInstance)
@@ -69,13 +78,15 @@ namespace WanderersGuild
 
             _adventurerId = adventurerId;
             _openedFrame = Time.frameCount;
-            _card.SetContent(adventurer, RequestManager.NowMinutes, PartyName(adventurer));
+            RefreshContent(adventurer);
             _card.Show();
             Follow();
+            OutlineRoomOf(adventurerId);
         }
 
         public void Close()
         {
+            ClearRoomOutline();
             _adventurerId = -1;
             _card?.Hide();
         }
@@ -84,11 +95,15 @@ namespace WanderersGuild
         // click re-targets it first, through the event).
         private void LateUpdate()
         {
-            if (!IsOpen)
-                return;
+            if (!IsOpen) return;
 
-            if (!AvatarManager.HasInstance || !AvatarManager.Instance.TryGet(_adventurerId, out _) || _click != null
-                && _click.WasPressedThisFrame() && Time.frameCount != _openedFrame &&
+            if (!AvatarManager.HasInstance || !AvatarManager.Instance.TryGet(_adventurerId, out _))
+            {
+                Close();
+                return;
+            }
+
+            if (_click != null && _click.WasPressedThisFrame() && Time.frameCount != _openedFrame &&
                 !view.IsPointerOverUI(_point.ReadValue<Vector2>()))
             {
                 Close();
@@ -97,6 +112,9 @@ namespace WanderersGuild
 
             Follow();
         }
+
+        private void RefreshContent(Adventurer adventurer) =>
+            _card.SetContent(adventurer, RequestManager.NowMinutes, PartyName(adventurer), RoomLabel(adventurer));
 
         private void Follow()
         {
@@ -121,6 +139,30 @@ namespace WanderersGuild
             _card.Place(local, area, view.ViewToLocal(new Vector2(0f, settings.CardTopMargin)).y);
         }
 
+        // ---------- Room outline ----------
+
+        // NOTE: Through RoomHighlights, so hovering and leaving the same room never clears this outline.
+        private void OutlineRoomOf(int adventurerId)
+        {
+            ClearRoomOutline();
+            if (!LodgingManager.HasInstance || !FacilityManager.HasInstance)
+                return;
+
+            var roomId = LodgingManager.Instance.RoomOf(adventurerId);
+            _outlinedRoom = roomId > 0 ? LodgingRules.FindRoom(FacilityManager.Instance.Rooms, roomId) : null;
+            if (_outlinedRoom != null)
+                RoomHighlights.Add(_outlinedRoom);
+        }
+
+        private void ClearRoomOutline()
+        {
+            if (_outlinedRoom != null)
+                RoomHighlights.Remove(_outlinedRoom);
+            _outlinedRoom = null;
+        }
+
+        // ---------- Buttons / input ----------
+
         // NOTE: Opens the roster with this adventurer selected (one-shot), then closes the card.
         private void OpenDetails()
         {
@@ -141,10 +183,11 @@ namespace WanderersGuild
             Close();
         }
 
+        // ---------- Events ----------
+
         private void OnAdventurerEvent(Adventurer adventurer)
         {
-            if (IsOpen && adventurer.Id == _adventurerId)
-                _card.SetContent(adventurer, RequestManager.NowMinutes, PartyName(adventurer));
+            if (IsOpen && adventurer.Id == _adventurerId) RefreshContent(adventurer);
         }
 
         private void OnHourStarted(GameDateTime _)
@@ -154,7 +197,30 @@ namespace WanderersGuild
 
             var adventurer = AdventurerManager.Instance.Find(_adventurerId);
             if (adventurer != null)
-                _card.SetContent(adventurer, RequestManager.NowMinutes, PartyName(adventurer));
+                RefreshContent(adventurer);
+        }
+
+        // NOTE: Their room changed (moved, re-housed): new text and the new room outlined.
+        private void OnLodgingChanged(Adventurer adventurer, int roomId, bool fromOutside)
+        {
+            if (!IsOpen || adventurer.Id != _adventurerId)
+                return;
+
+            RefreshContent(adventurer);
+            OutlineRoomOf(_adventurerId);
+        }
+
+        // NOTE: Only one world card at a time.
+        private void OnRoomCardRequested(int roomId) => Close();
+
+        // NOTE: The outlined room is gone — its views (and outline) went with it; just forget the count.
+        private void OnFacilityRemoved(PlacedFacility room)
+        {
+            if (room != _outlinedRoom)
+                return;
+
+            RoomHighlights.Forget(room);
+            _outlinedRoom = null;
         }
 
         private void OnPanelOpened(MenuPanelId _) => Close();
@@ -165,17 +231,20 @@ namespace WanderersGuild
                 Close();
         }
 
+        private static string PartyName(Adventurer adventurer)
+        {
+            var party = PartyManager.HasInstance ? PartyManager.Instance.PartyOf(adventurer.Id) : null;
+            return party != null ? party.Name : string.Empty;
+        }
+
+        private static string RoomLabel(Adventurer adventurer) =>
+            LodgingManager.HasInstance ? $"Room: {LodgingManager.Instance.LabelFor(adventurer.Id)}" : string.Empty;
+
         private static InputAction Enable(InputActionReference reference)
         {
             var action = reference ? reference.action : null;
             action?.Enable();
             return action;
-        }
-        
-        private static string PartyName(Adventurer adventurer)
-        {
-            var party = PartyManager.HasInstance ? PartyManager.Instance.PartyOf(adventurer.Id) : null;
-            return party != null ? party.Name : string.Empty;
         }
     }
 }

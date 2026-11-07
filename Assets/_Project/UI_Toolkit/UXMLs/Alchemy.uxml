@@ -1,0 +1,22 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Alchemy.uss?fileID=7433441132597879392&amp;guid=5c71f5ea73e8d6848ba7a7e36da031b5&amp;type=3#Alchemy"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="pixel-window alc-window">
+            <wg:OutlinedText name="alc-title" class="panel-title" text="Morning Brew" />
+
+            <!-- Rows created in code (pooled): name · in stock · − count + (brewing only). -->
+            <ui:VisualElement class="alc-list-frame" picking-mode="Ignore">
+                <ui:ScrollView name="alc-list" class="alc-list pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" />
+                <wg:OutlinedText name="alc-empty" class="alc-empty" text="No potions in stock." />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="alc-footer" picking-mode="Ignore">
+                <wg:OutlinedText name="alc-footer" class="alc-footer-text" text="Free 4/4 · Cost 0g" />
+                <ui:VisualElement class="alc-buttons" picking-mode="Ignore">
+                    <ui:Button name="alc-brew" class="pixel-button panel-button"><wg:OutlinedText text="Brew" /></ui:Button>
+                    <ui:Button name="alc-close" class="pixel-button panel-button"><wg:OutlinedText text="Skip" /></ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

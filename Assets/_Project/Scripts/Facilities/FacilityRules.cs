@@ -26,14 +26,27 @@ namespace WanderersGuild
         }
 
         // Position-independent reasons a facility can't be built at all right now (rank, limit), or null.
+        // NOTE: An open starter slot skips the limit; otherwise only non-starter rooms of the type count toward it.
         public static string LockReason(FacilityData data, IReadOnlyList<PlacedFacility> rooms, GuildRank guildRank)
         {
             var unlock = data.UnlockRankFor(1);
             if (unlock > guildRank)
                 return $"Needs guild rank {unlock}";
-            if (data.Limit > 0 && CountOf(data, rooms) >= data.Limit)
+
+            var starterSlot = LodgingManager.HasInstance && LodgingManager.Instance.StarterSlotOpen(data);
+            if (!starterSlot && data.Limit > 0 && CountNonStarter(data, rooms) >= data.Limit)
                 return $"Limit reached ({data.Limit})";
             return null;
+        }
+
+        private static int CountNonStarter(FacilityData data, IReadOnlyList<PlacedFacility> rooms)
+        {
+            int count = 0;
+            foreach (PlacedFacility room in rooms)
+            {
+                if (room.Data == data && !(LodgingManager.HasInstance && LodgingManager.Instance.IsStarter(room))) count++;
+            }
+            return count;
         }
 
         // Why this spot doesn't work (outside the area, overlap, not connected), or null if it fits.

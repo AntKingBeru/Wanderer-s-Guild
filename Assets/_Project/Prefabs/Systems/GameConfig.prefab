@@ -730,15 +730,16 @@ MonoBehaviour:
     - name: Minor
       shareCutPercent: 10
       chanceBonus: 0.08
-      ingredientCostPerMember: 3
+      brewCost: 6
     - name: Greater
       shareCutPercent: 20
       chanceBonus: 0.15
-      ingredientCostPerMember: 8
+      brewCost: 16
     - name: Superior
       shareCutPercent: 30
       chanceBonus: 0.22
-      ingredientCostPerMember: 15
+      brewCost: 30
+    brewHour: 5
   avatars:
     material: {fileID: 2100000, guid: bb553b0d6d7a4e442b0a3612c88a681e, type: 2}
     catalog: {fileID: 11400000, guid: 7e0efa6f175e9e5418a176f211f79f4b, type: 2}
@@ -746,5 +747,61 @@ MonoBehaviour:
     worldHeight: 2.5
     walkSpeed: 3
     dwellMinutes: {x: 30, y: 120}
+    seatChance: 0.5
+    sleepStartHour: 22
+    sleepEndHour: 6
+    supperLeadMinutes: 30
+    supperStayMinutes: 90
+    shopLeadMinutes: 60
+    shopStayMinutes: 60
     floorHeight: 0
     maxPathNodes: 5000
+    cardOffset: {x: 8, y: -10}
+    cardTopMargin: 26
+  injuries:
+    failureInjuryChance: 0.4
+    failureInjuryPerOutmatch: 0.4
+    deathRatioThreshold: 0.6
+    deathChancePerDeficit: 0.5
+    maxDeathChance: 0.25
+    successInjuryChance: 0.05
+    evenWeights: {x: 60, y: 30, z: 10}
+    outmatchedWeights: {x: 20, y: 40, z: 40}
+    lightDays: {x: 1, y: 2}
+    seriousDays: {x: 3, y: 5}
+    graveDays: {x: 6, y: 10}
+    deathReputation: -3
+  parties:
+    formationSuccesses: 2
+    minimumSize: 2
+    teamworkPerSuccess: 0.02
+    teamworkCap: 0.1
+    disbandAfterFailures: 2
+    nameAdjectives:
+    - Iron
+    - Silver
+    - Crimson
+    - Wandering
+    - Golden
+    - Ashen
+    - Swift
+    - Stout
+    - Merry
+    - Grim
+    nameNouns:
+    - Wolves
+    - Lanterns
+    - Blades
+    - Ravens
+    - Oaks
+    - Foxes
+    - Shields
+    - Stags
+    - Embers
+    - Badgers
+  lodging:
+    starterFacility: {fileID: 11400000, guid: fedfa58c7197c8844bbfd5cf38369e62, type: 2}
+    starterCount: 3
+  questRecall:
+    reputation: -2
+    returnFraction: 0.5

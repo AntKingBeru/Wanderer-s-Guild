@@ -11,7 +11,7 @@
                     <wg:OutlinedText name="roster-list-empty" class="roster-list-empty" text="No adventurers yet." />
                 </ui:VisualElement>
 
-                <!-- Right: details of the selected adventurer — one scroll view; Promote stays pinned below it. -->
+                <!-- Right: details of the selected adventurer — one scroll view; Move + Promote stay pinned below it. -->
                 <ui:VisualElement class="roster-details" picking-mode="Ignore">
                     <ui:ScrollView name="adv-content" class="adv-content pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden">
                         <wg:OutlinedText name="adv-name" class="adv-name" text="Name" />
@@ -22,7 +22,7 @@
                             <ui:VisualElement name="adv-xp-track" class="adv-bar-track" picking-mode="Ignore">
                                 <ui:VisualElement name="adv-xp-fill" class="adv-bar-fill" picking-mode="Ignore" />
                             </ui:VisualElement>
-                            <wg:OutlinedText name="adv-xp-text" class="adv-bar-text" text="XP 0 / 300" />
+                            <wg:OutlinedText name="adv-xp-text" class="adv-bar-text" text="XP 0 / 200" />
                         </ui:VisualElement>
                         <ui:VisualElement class="adv-bar" picking-mode="Ignore">
                             <ui:VisualElement name="adv-rankp-track" class="adv-bar-track" picking-mode="Ignore">
@@ -38,23 +38,26 @@
                         <wg:OutlinedText name="adv-gear" class="adv-line adv-wrap" text="Gear: —" />
                         <wg:OutlinedText name="adv-status" class="adv-line" text="Status: Idle" />
                         <wg:OutlinedText name="adv-party" class="adv-line adv-wrap" text="Party: The Iron Wolves (3) · Teamwork +4%" />
+                        <wg:OutlinedText name="adv-room" class="adv-line" text="Room: Bedroom 2" />
                         <wg:OutlinedText name="adv-promote-hint" class="adv-hint adv-wrap" text="Needs more rank progress" />
                     </ui:ScrollView>
                     <wg:OutlinedText name="adv-empty" class="adv-empty" text="No adventurers yet." />
 
                     <ui:VisualElement class="adv-buttons" picking-mode="Ignore">
-                        <ui:Button name="adv-disband" class="pixel-button panel-button"><wg:OutlinedText text="Disband" /></ui:Button>
+                        <ui:Button name="adv-move" class="pixel-button panel-button"><wg:OutlinedText text="Move" /></ui:Button>
                         <ui:Button name="adv-promote" class="pixel-button panel-button"><wg:OutlinedText text="Promote" /></ui:Button>
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
 
+            <!-- Disband sits next to Close (it ends the selected adventurer's party; disabled when they have none). -->
             <ui:VisualElement class="roster-footer" picking-mode="Ignore">
+                <ui:Button name="adv-disband" class="pixel-button panel-button"><wg:OutlinedText text="Disband" /></ui:Button>
                 <ui:Button name="roster-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
 
-        <!-- Shared confirmation overlay (PixelTheme.uss › confirm-*), used for Promote. -->
+        <!-- Shared confirmation overlay (PixelTheme.uss › confirm-*), used for Promote and Disband. -->
         <ui:VisualElement name="confirm-overlay" class="confirm-overlay">
             <ui:VisualElement class="pixel-window confirm-window">
                 <wg:OutlinedText name="confirm-message" class="confirm-message" text="Take the exam?" />

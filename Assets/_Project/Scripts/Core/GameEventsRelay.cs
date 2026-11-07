@@ -225,9 +225,18 @@ namespace WanderersGuild
         // Supper was served. Args: adventurers who ate, adventurers who couldn't pay, gold the guild took.
         public static readonly UnityEvent<int, int, long> OnSupperServed = new();
         
-        // A party refused its potions at approval (the share would fall below a member's expectation) and left
-        // without them. Args: the quest, the first member who refused.
+        // A party refused its potion at approval (the share would fall below a member's expectation) and left
+        // without it (it stays in stock). Args: the quest, the first member who refused.
         public static readonly UnityEvent<Quest, Adventurer> OnPotionsRefused = new();
+
+        // Morning brew time with free stock slots — the brewing screen answers it (23b). Arg: free slots.
+        public static readonly UnityEvent<int> OnBrewPromptRequested = new();
+
+        // Potions were brewed. Args: how many, gold spent.
+        public static readonly UnityEvent<int, long> OnPotionsBrewed = new();
+
+        // The potion stock changed (brewed, used, cleared).
+        public static readonly UnityEvent OnPotionStockChanged = new();
         #endregion
         
         #region Avatars
@@ -256,6 +265,22 @@ namespace WanderersGuild
         public static readonly UnityEvent<GuildParty> OnPartyChanged = new();
         
         public static readonly UnityEvent<GuildParty, PartyEndReason> OnPartyDisbanded = new();
+        #endregion
+        
+        #region Lodging
+        // An adventurer's lodging changed. Args: adventurer, room id (0 = outside), whether they moved in from outside.
+        public static readonly UnityEvent<Adventurer, int, bool> OnLodgingChanged = new();
+
+        // Finished starter bedrooms changed. Args: finished, total wanted.
+        public static readonly UnityEvent<int, int> OnStarterLodgingsChanged = new();
+        
+        // A bedroom was clicked in the world: show its room card. Arg: the room id.
+        public static readonly UnityEvent<int> OnRoomCardRequested = new();
+        #endregion
+        
+        #region Recall
+        // A recalled adventurer arrived back at the guild (now Idle).
+        public static readonly UnityEvent<Adventurer> OnAdventurerReturned = new();
         #endregion
     }
 }

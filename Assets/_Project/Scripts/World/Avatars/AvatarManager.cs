@@ -31,6 +31,18 @@ namespace WanderersGuild
         private static long Now => RequestManager.NowMinutes;
         private static bool IsAtGuild(Adventurer a) =>
             a.Status is AdventurerStatus.Idle or AdventurerStatus.SignedUp or AdventurerStatus.Injured;
+        
+        // NOTE: At the guild and not lodging outside during sleep hours.
+        private bool IsPresent(Adventurer a)
+        {
+            if (!IsAtGuild(a))
+                return false;
+            if (!LodgingManager.HasInstance || !LodgingManager.Instance.LodgesOutside(a.Id))
+                return true;
+
+            var minuteOfDay = (int)(Now % GameCalendar.MinutesPerDay);
+            return !AvatarSchedule.IsSleepTime(minuteOfDay, _settings);
+        }
 
         protected override void OnSingletonAwake() => _settings = GameConfig.Instance.Avatars;
 
@@ -42,6 +54,8 @@ namespace WanderersGuild
             GameEventsRelay.OnFacilityPlaced.AddListener(OnFacilitiesChanged);
             GameEventsRelay.OnFacilityCompleted.AddListener(OnFacilitiesChanged);
             GameEventsRelay.OnFacilityRemoved.AddListener(OnFacilitiesChanged);
+            GameEventsRelay.OnHourStarted.AddListener(OnHourStarted);
+            GameEventsRelay.OnLodgingChanged.AddListener(OnLodgingChanged);
         }
 
         private void OnDisable()
@@ -52,6 +66,8 @@ namespace WanderersGuild
             GameEventsRelay.OnFacilityPlaced.RemoveListener(OnFacilitiesChanged);
             GameEventsRelay.OnFacilityCompleted.RemoveListener(OnFacilitiesChanged);
             GameEventsRelay.OnFacilityRemoved.RemoveListener(OnFacilitiesChanged);
+            GameEventsRelay.OnHourStarted.RemoveListener(OnHourStarted);
+            GameEventsRelay.OnLodgingChanged.RemoveListener(OnLodgingChanged);
         }
 
         // NOTE: On load everyone at the guild appears at a random cell, then plans their first activity next frame.
@@ -64,7 +80,7 @@ namespace WanderersGuild
                 return;
             foreach (var adventurer in AdventurerManager.Instance.Adventurers)
             {
-                if (IsAtGuild(adventurer))
+                if (IsPresent(adventurer))
                     Spawn(adventurer, atEntrance: false);
             }
         }
@@ -134,7 +150,7 @@ namespace WanderersGuild
 
             var atSpot = activity switch
             {
-                AvatarActivity.Sleep or AvatarActivity.Rest => TryGoToSpot(avatar, SpotKind.Bed) || TryGoToSpot(avatar, SpotKind.Seat),
+                AvatarActivity.Sleep or AvatarActivity.Rest => TryGoToSpot(avatar, SpotKind.Bed, OwnRoom(avatar)) || TryGoToSpot(avatar, SpotKind.Seat),
                 AvatarActivity.Supper => TryGoToSpot(avatar, SpotKind.Table),
                 AvatarActivity.Shop => TryGoToSpot(avatar, SpotKind.Counter),
                 _ => Random.value < _settings.SeatChance && TryGoToSpot(avatar, SpotKind.Seat)
@@ -146,12 +162,23 @@ namespace WanderersGuild
             if (!atSpot)
                 WanderTo(avatar);
         }
-
-        // NOTE: Only spots whose cell is walkable are offered; on arrival the avatar stands on the marker, facing its arrow.
-        private bool TryGoToSpot(AdventurerAvatar avatar, SpotKind kind)
+        
+        // NOTE: −1 = any room (outside lodgers / unhoused never get someone else's bed: they get a seat).
+        private static int OwnRoom(AdventurerAvatar avatar)
         {
-            if (!ActivitySpotRegistry.TryReserve(kind, avatar.AdventurerId, spot => _nav.IsWalkable(CellOf(spot.Position)),
-                                                 out var target))
+            var room = LodgingManager.HasInstance ? LodgingManager.Instance.RoomOf(avatar.AdventurerId) : -1;
+            return room > 0 ? room : int.MinValue;
+        }
+
+        // NOTE: Only spots whose cell is walkable (and, for a room id ≥ 0, inside that room — int.MinValue matches none)
+        // are offered; on arrival the avatar stands on the marker, facing its arrow.
+        private bool TryGoToSpot(AdventurerAvatar avatar, SpotKind kind, int roomId = -1)
+        {
+            if (!ActivitySpotRegistry.TryReserve(kind, avatar.AdventurerId, spot =>
+                {
+                    var cell = CellOf(spot.Position);
+                    return _nav.IsWalkable(cell) && (roomId == -1 || _nav.RoomOf(cell) == roomId);
+                }, out var target))
                 return false;
 
             if (!_pathfinder.TryFind(_nav, avatar.Cell, CellOf(target.Position), _settings.MaxPathNodes, _path))
@@ -161,7 +188,11 @@ namespace WanderersGuild
             }
 
             var facing = target.Facing;
-            avatar.Walk(_path, target.Position, () => { if (avatar) avatar.FaceTowards(facing); });
+            avatar.Walk(_path, target.Position, () =>
+            {
+                if (avatar)
+                    avatar.FaceTowards(facing);
+            });
             return true;
         }
 
@@ -181,7 +212,7 @@ namespace WanderersGuild
 
         private void OnAdventurerJoined(Adventurer adventurer)
         {
-            if (_isReady && IsAtGuild(adventurer))
+            if (_isReady && IsPresent(adventurer))
                 Spawn(adventurer, atEntrance: true);
         }
 
@@ -193,7 +224,7 @@ namespace WanderersGuild
             if (!_isReady)
                 return;
 
-            var here = IsAtGuild(adventurer);
+            var here = IsPresent(adventurer);
             var hasAvatar = _avatars.TryGetValue(adventurer.Id, out var avatar);
 
             switch (here)
@@ -285,6 +316,23 @@ namespace WanderersGuild
                     avatar.PlannedFor = AvatarActivity.None;
                 }
             }
+        }
+        
+        // NOTE: Outside lodgers walk out at bedtime and come back at dawn (OnAdventurerChanged does the spawn/leave).
+        private void OnHourStarted(GameDateTime _)
+        {
+            if (!_isReady || !AdventurerManager.HasInstance)
+                return;
+            foreach (var adventurer in AdventurerManager.Instance.Adventurers)
+                OnAdventurerChanged(adventurer);
+        }
+
+        // NOTE: Re-checks presence first (an outside lodger housed at night walks out now), then re-plans where they sleep.
+        private void OnLodgingChanged(Adventurer adventurer, int _, bool __)
+        {
+            OnAdventurerChanged(adventurer);
+            if (_avatars.TryGetValue(adventurer.Id, out var avatar) && !avatar.IsLeaving)
+                avatar.PlannedFor = AvatarActivity.None;
         }
 
         private void RebuildNav()

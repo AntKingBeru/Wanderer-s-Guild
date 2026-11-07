@@ -95,6 +95,19 @@ namespace Editor
             }
             Debug.Log($"[Quests] {QuestManager.Instance.Quests.Count}/{QuestManager.Instance.OpenSlots} slots used.");
         }
+        
+        [MenuItem(MenuRoot + "Recall First Active Quest")]
+        private static void RecallFirstActive()
+        {
+            foreach (var quest in QuestManager.Instance.Quests)
+            {
+                if (quest.State != QuestState.InProgress)
+                    continue;
+                QuestManager.Instance.Recall(quest.Id);
+                return;
+            }
+            Debug.Log("[Quests] No quest in progress to recall.");
+        }
 
         [MenuItem(MenuRoot + "Open Quest Board", true)]
         [MenuItem(MenuRoot + "Post First Request (Defaults)", true)]
@@ -104,6 +117,7 @@ namespace Editor
         [MenuItem(MenuRoot + "Resolve Active Quests Now", true)]
         [MenuItem(MenuRoot + "Cancel First Waiting Quest", true)]
         [MenuItem(MenuRoot + "Log Quests", true)]
+        [MenuItem(MenuRoot + "Recall First Active Quest", true)]
         private static bool CanUse() => EditorApplication.isPlaying && QuestManager.HasInstance && RequestManager.HasInstance;
     }
 }

@@ -1,4 +1,5 @@
-// Makes an avatar hoverable and clickable: name label, silhouette outline, and a click asks for its floating card.
+// Makes an avatar hoverable and clickable: name label, silhouette outline (hover or selected by a card), and a click asks
+// for its floating card.
 using UnityEngine;
 
 namespace WanderersGuild
@@ -10,7 +11,9 @@ namespace WanderersGuild
 
         private Renderer _renderer;
         private uint _originalLayers;
-        private bool _isHighlighted;
+        private bool _isHovered;
+        private bool _isSelected;
+        private bool _isOutlined;
         private int _adventurerId;
         private string _name;
 
@@ -35,28 +38,48 @@ namespace WanderersGuild
             _originalLayers = spriteRenderer.renderingLayerMask;
         }
 
-        // Turns the outline bit on/off on the sprite (the mask clips it to the sprite's silhouette).
+        // Hover outline (the interaction controller).
         public void SetHighlighted(bool highlighted)
         {
-            if (_isHighlighted == highlighted)
+            _isHovered = highlighted;
+            ApplyOutline();
+        }
+
+        // Selected by a card (e.g. a room card outlining its residents) — independent of hover.
+        public void SetSelected(bool selected)
+        {
+            _isSelected = selected;
+            ApplyOutline();
+        }
+
+        public void Interact(GamePanelHost panels) => GameEventsRelay.OnAdventurerCardRequested.Invoke(_adventurerId);
+
+        // NOTE: One outline (and one outline-pass request) whether hovered, selected or both.
+        private void ApplyOutline()
+        {
+            var outlined = _isHovered || _isSelected;
+            if (outlined == _isOutlined)
                 return;
-            _isHighlighted = highlighted;
+            _isOutlined = outlined;
 
             if (_renderer)
             {
                 var bit = GameConfig.Instance.Interaction.OutlineBit;
-                _renderer.renderingLayerMask = highlighted ? _originalLayers | bit : _originalLayers;
+                _renderer.renderingLayerMask = outlined ? _originalLayers | bit : _originalLayers;
             }
 
-            if (highlighted)
+            if (outlined)
                 PixelOutlineRequests.Add();
             else
                 PixelOutlineRequests.Remove();
         }
 
-        public void Interact(GamePanelHost panels) => GameEventsRelay.OnAdventurerCardRequested.Invoke(_adventurerId);
-
         // NOTE: Never leave the outline passes running after the avatar is despawned.
-        private void OnDisable() => SetHighlighted(false);
+        private void OnDisable()
+        {
+            _isHovered = false;
+            _isSelected = false;
+            ApplyOutline();
+        }
     }
 }

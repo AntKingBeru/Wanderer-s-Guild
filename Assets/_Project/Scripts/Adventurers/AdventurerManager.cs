@@ -110,6 +110,26 @@ namespace WanderersGuild
             GameEventsRelay.OnAdventurerJoined.Invoke(adventurer);
             return true;
         }
+        
+        // The starting party joins regardless of beds (they may lodge outside) — raises OnAdventurerJoined.
+        private void TryAddStartingMember(Adventurer adventurer)
+        {
+            if (!_roster.AddRestored(adventurer))
+                return;
+
+            GameEventsRelay.OnAdventurerJoined.Invoke(adventurer);
+        }
+
+        // Re-reads capacity and raises OnAdventurerCapacityChanged if it changed (rooms, outside lodgers).
+        public void RefreshCapacity()
+        {
+            var capacity = Capacity;
+            if (capacity == _lastCapacity)
+                return;
+
+            _lastCapacity = capacity;
+            GameEventsRelay.OnAdventurerCapacityChanged.Invoke(capacity);
+        }
 
         // Rebuilds a saved adventurer (roster or applicant). False if their species or class no longer exists.
         // Unknown item ids are dropped with a warning (the slot stays empty).
@@ -137,7 +157,7 @@ namespace WanderersGuild
             adventurer = new Adventurer(saved.Id, saved.Name, species, classData, saved.Experience, saved.Rank, saved.Wealth,
                                         saved.Status, saved.JoinedAtMinutes, saved.RetainedGrowth, _settings.Experience,
                                         saved.RankProgress, saved.ExamReturnsAtMinutes, gear, saved.WellFedBonus,
-                                        saved.Injury, saved.InjuredUntilMinutes);
+                                        saved.Injury, saved.InjuredUntilMinutes, saved.ReturningUntilMinutes);
             _nextId = Mathf.Max(_nextId, saved.Id + 1);
             return true;
         }
@@ -168,10 +188,10 @@ namespace WanderersGuild
                 }
 
                 FillTakenNames();
-                if (_factory.TryCreateStarting(_nextId, party[i], RequestManager.NowMinutes, _takenNames, out Adventurer adventurer))
+                if (_factory.TryCreateStarting(_nextId, party[i], RequestManager.NowMinutes, _takenNames, out var adventurer))
                 {
                     _nextId++;
-                    TryAddMember(adventurer);
+                    TryAddStartingMember(adventurer);
                 }
             }
         }
@@ -183,7 +203,9 @@ namespace WanderersGuild
             if (FacilityManager.HasInstance)
             {
                 var (total, anyProvider) = FacilityEffects.Capacity(FacilityManager.Instance.Rooms);
-                if (anyProvider) return total;
+                var outside = LodgingManager.HasInstance ? LodgingManager.Instance.OutsideCount : 0;
+                if (anyProvider)
+                    return total + outside;
 
                 if (!_warnedNoCapacityEffects)
                 {
@@ -198,12 +220,7 @@ namespace WanderersGuild
         // NOTE: Only finished levels count, so only completion and removal can change capacity.
         private void OnFacilityChanged(PlacedFacility _)
         {
-            var capacity = Capacity;
-            if (capacity == _lastCapacity)
-                return;
-
-            _lastCapacity = capacity;
-            GameEventsRelay.OnAdventurerCapacityChanged.Invoke(capacity);
+            RefreshCapacity();
         }
 
         // NOTE: One roll per day at dawn. With an office, the waiting list's room matters (a full guild still gets

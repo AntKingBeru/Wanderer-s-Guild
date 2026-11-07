@@ -49,6 +49,8 @@ namespace WanderersGuild
                 return;
             if (AdventurerCardController.HasInstance && AdventurerCardController.Instance.BlocksEscape)
                 return;
+            if (RoomLodgingCardController.HasInstance && RoomLodgingCardController.Instance.BlocksEscape)
+                return;
             TryOpen();
         }
 

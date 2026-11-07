@@ -1,4 +1,5 @@
-// Applications screen: quests with applicants (ready first) + details; decline one or all, choose potions, approve a full party.
+// Applications screen: quests with applicants (ready first) + details; decline one or all, choose a stocked potion of the
+// quest's category, approve a full party.
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,13 +13,14 @@ namespace WanderersGuild
         private readonly List<Button> _buttons = new();
         private readonly List<VisualElement> _navigationOrder = new();
         private readonly List<Quest> _sorted = new();
+        private readonly List<PotionKey> _stocked = new();
         private OutlinedText _title;
         private ApplicationListView _list;
         private ApplicationDetailsView _details;
         private Button _close;
         private int _selectedId = -1;
         private int _selectedIndex;
-        private int _potionTier;
+        private PotionKey _potion;
 
         protected override IReadOnlyList<Button> Buttons => _buttons;
         protected override IReadOnlyList<Button> ListButtons => _list.Buttons;
@@ -81,9 +83,7 @@ namespace WanderersGuild
             GameEventsRelay.OnHourStarted.AddListener(OnHourStarted);
             GameEventsRelay.OnAdventurerLeveledUp.AddListener(OnAdventurerEvent);
             GameEventsRelay.OnAdventurerChanged.AddListener(OnAdventurerEvent);
-            GameEventsRelay.OnGoldChanged.AddListener(OnGoldChanged);
-            GameEventsRelay.OnFacilityCompleted.AddListener(OnFacilityChanged);
-            GameEventsRelay.OnFacilityRemoved.AddListener(OnFacilityChanged);
+            GameEventsRelay.OnPotionStockChanged.AddListener(RefreshIfOpen);
         }
 
         protected override void OnDestroy()
@@ -95,15 +95,13 @@ namespace WanderersGuild
             GameEventsRelay.OnHourStarted.RemoveListener(OnHourStarted);
             GameEventsRelay.OnAdventurerLeveledUp.RemoveListener(OnAdventurerEvent);
             GameEventsRelay.OnAdventurerChanged.RemoveListener(OnAdventurerEvent);
-            GameEventsRelay.OnGoldChanged.RemoveListener(OnGoldChanged);
-            GameEventsRelay.OnFacilityCompleted.RemoveListener(OnFacilityChanged);
-            GameEventsRelay.OnFacilityRemoved.RemoveListener(OnFacilityChanged);
+            GameEventsRelay.OnPotionStockChanged.RemoveListener(RefreshIfOpen);
             base.OnDestroy();
         }
 
         protected override void OnOpening()
         {
-            _potionTier = 0;
+            _potion = PotionKey.None;
             Refresh();
         }
 
@@ -116,24 +114,31 @@ namespace WanderersGuild
                 Host.Close(Id);
         }
 
-        // NOTE: Selection only changes on click/Submit (not on hover-focus). A new quest starts with no potions.
+        // NOTE: Selection only changes on click/Submit (not on hover-focus). A new quest starts with no potion.
         private void Select(Quest quest)
         {
             if (!IsInteractable || quest == null)
                 return;
 
-            if (quest.Id != _selectedId) _potionTier = 0;
+            if (quest.Id != _selectedId)
+                _potion = PotionKey.None;
             _selectedId = quest.Id;
             Refresh();
         }
 
+        // NOTE: None → each stocked potion of this quest's category (lowest tier first) → None.
         private void CyclePotion()
         {
-            if (!IsInteractable)
+            if (!IsInteractable || !QuestManager.HasInstance || !AlchemyManager.HasInstance)
                 return;
 
-            var max = Alchemy.MaxTier;
-            _potionTier = max <= 0 ? 0 : (_potionTier + 1) % (max + 1);
+            var quest = QuestManager.Instance.Find(_selectedId);
+            if (quest == null)
+                return;
+
+            Alchemy.StockedFor(quest.Request.Category, AlchemyManager.Instance.Stock, _stocked);
+            var index = _potion.IsNone ? -1 : _stocked.IndexOf(_potion);
+            _potion = index + 1 < _stocked.Count ? _stocked[index + 1] : PotionKey.None;
             Refresh();
         }
 
@@ -155,13 +160,13 @@ namespace WanderersGuild
             RefreshAndKeepFocus();
         }
 
-        // NOTE: Approve re-checks the tier and gold; after it the choice goes back to None.
+        // NOTE: Approve re-checks the potion (category, stock); after it the choice goes back to None.
         private void Approve()
         {
             if (!IsInteractable || !QuestManager.HasInstance)
                 return;
-            if (QuestManager.Instance.Approve(_selectedId, _potionTier))
-                _potionTier = 0;
+            if (QuestManager.Instance.Approve(_selectedId, _potion))
+                _potion = PotionKey.None;
             RefreshAndKeepFocus();
         }
 
@@ -189,33 +194,37 @@ namespace WanderersGuild
                 return;
             }
 
-            var applicants = QuestManager.Instance.MembersOf(selected);
-            List<Adventurer> members = new(applicants);
-            ShowDetails(selected, members);
+            ShowDetails(selected, QuestManager.Instance.MembersOf(selected));
         }
 
-        // NOTE: The preview uses the same rules as Approve: a refusal shows the unchanged split/chance (they'd go without).
+        // NOTE: The row shows when the alchemist exists or this category has potions in stock. A selected potion that's no
+        // longer in stock falls back to None. A refusal shows the unchanged split/chance (they'd go without).
         private void ShowDetails(Quest quest, List<Adventurer> members)
         {
-            var max = Alchemy.MaxTier;
-            if (_potionTier > max)
-                _potionTier = 0;
+            var stock = AlchemyManager.HasInstance ? AlchemyManager.Instance.Stock : null;
+            if (stock != null)
+                Alchemy.StockedFor(quest.Request.Category, stock, _stocked);
+            else
+                _stocked.Clear();
+            if (!_potion.IsNone && (_potion.Category != quest.Request.Category || !_stocked.Contains(_potion)))
+                _potion = PotionKey.None;
 
             var split = QuestFormatter.GoldSplit(quest.Request, quest.Terms);
             var chance = QuestManager.Instance.SuccessChanceWith(quest, 0f);
             var preview = PotionPreview.Hidden;
 
-            if (max > 0)
+            var showRow = Alchemy.Capacity > 0 || _stocked.Count > 0;
+            if (showRow)
             {
-                var label = ApplicationFormatter.PotionLabel(0, default);
-                string effect = string.Empty, warning = string.Empty;
-                var canAfford = true;
+                var label = PotionFormatter.Label(PotionKey.None, default, 0);
+                var effect = _stocked.Count == 0 ? $"No {quest.Request.Category} potions in stock" : string.Empty;
+                var warning = string.Empty;
 
-                if (_potionTier > 0 && Alchemy.TryGetTier(_potionTier, out var tier))
+                if (!_potion.IsNone && Alchemy.TryGetTier(_potion.Tier, out var tier))
                 {
-                    var cost = Alchemy.IngredientCost(tier, members.Count);
-                    label = ApplicationFormatter.PotionLabel(_potionTier, tier);
-                    effect = ApplicationFormatter.PotionEffect(_potionTier, tier, cost);
+                    if (stock != null)
+                        label = PotionFormatter.Label(_potion, tier, stock.Count(_potion));
+                    effect = PotionFormatter.Effect(_potion, tier);
 
                     var refuser = Alchemy.FindRefuser(quest, members, tier, GameConfig.Instance.Quests);
                     if (refuser != null)
@@ -224,18 +233,13 @@ namespace WanderersGuild
                     }
                     else
                     {
-                        var gold = GuildManager.HasInstance ? GuildManager.Instance.Wallet.Gold : 0;
-                        canAfford = gold >= cost;
-                        if (!canAfford)
-                            warning = ApplicationFormatter.PotionUnaffordable;
-
                         QuestTerms cut = new(Alchemy.ShareAfterCut(quest, tier.ShareCutPercent), quest.Terms.MinRank, quest.Terms.PartySize);
                         split = QuestFormatter.GoldSplit(quest.Request, cut);
                         chance = QuestManager.Instance.SuccessChanceWith(quest, tier.ChanceBonus);
                     }
                 }
 
-                preview = new PotionPreview(true, label, effect, warning, canAfford);
+                preview = new PotionPreview(true, label, effect, warning, true);
             }
 
             _details.Show(quest, members, split, chance, Now, preview);
@@ -271,7 +275,7 @@ namespace WanderersGuild
                 return _sorted[i];
             }
 
-            _potionTier = 0;
+            _potion = PotionKey.None;
             if (_sorted.Count == 0)
             {
                 _selectedId = -1;
@@ -288,8 +292,6 @@ namespace WanderersGuild
         private void OnQuestEnded(Quest _, QuestEndReason __) => RefreshIfOpen();
         private void OnHourStarted(GameDateTime _) => RefreshIfOpen();
         private void OnAdventurerEvent(Adventurer _) => RefreshIfOpen();
-        private void OnGoldChanged(long _, long __) => RefreshIfOpen();
-        private void OnFacilityChanged(PlacedFacility _) => RefreshIfOpen();
 
         private void RefreshIfOpen()
         {

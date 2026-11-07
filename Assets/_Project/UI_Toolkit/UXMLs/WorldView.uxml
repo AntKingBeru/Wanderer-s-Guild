@@ -3,7 +3,10 @@
     <!-- The world render texture, full canvas (same integer scale + letterbox as the UI). Never picks. -->
     <ui:VisualElement name="world-view" class="world-view" picking-mode="Ignore" />
 
-    <!-- Name of the hovered guild object or adventurer, centred above it (positioned in code). -->
+    <!-- Opening goal under the HUD bar (hidden once done). -->
+    <wg:OutlinedText name="world-goal" class="world-goal" text="Build lodgings: 0/3" />
+
+    <!-- Name of the hovered guild object, adventurer or bedroom, centred above it (positioned in code). -->
     <ui:VisualElement name="world-label" class="pixel-window world-label" picking-mode="Ignore">
         <wg:OutlinedText name="world-label-text" text="Reception Desk" />
     </ui:VisualElement>
@@ -16,9 +19,21 @@
         </ui:VisualElement>
         <wg:OutlinedText name="world-card-info" class="world-card__line" text="Elf · Archer · Lv 2 · Rank F" />
         <wg:OutlinedText name="world-card-status" class="world-card__line" text="Idle · Well fed (+6%)" />
+        <wg:OutlinedText name="world-card-room" class="world-card__line" text="Room: Bedroom 2" />
         <wg:OutlinedText name="world-card-party" class="world-card__line" text="The Iron Wolves" />
         <ui:VisualElement class="world-card__buttons" picking-mode="Ignore">
             <ui:Button name="world-card-details" class="pixel-button world-card__button"><wg:OutlinedText text="Details" /></ui:Button>
         </ui:VisualElement>
+    </ui:VisualElement>
+
+    <!-- Floating room card above a clicked bedroom (positioned in code): beds + residents (lines created in code). -->
+    <ui:VisualElement name="room-card" class="pixel-window world-card" picking-mode="Position">
+        <ui:VisualElement class="world-card__header" picking-mode="Ignore">
+            <wg:OutlinedText name="room-card-title" class="world-card__name" text="Bedroom 2 · Lv 1" />
+            <ui:Button name="room-card-close" class="pixel-button world-card__close"><wg:OutlinedText text="x" /></ui:Button>
+        </ui:VisualElement>
+        <wg:OutlinedText name="room-card-beds" class="world-card__line" text="Beds 1/2" />
+        <ui:VisualElement name="room-card-residents" class="room-card__residents" picking-mode="Ignore" />
+        <wg:OutlinedText name="room-card-empty" class="world-card__line" text="No residents" />
     </ui:VisualElement>
 </ui:UXML>

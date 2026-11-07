@@ -1,4 +1,4 @@
-// The lifted note: a large readable copy of a pinned quest over the dimmed board, with Back and Cancel; scales up and back.
+// The lifted note: a large readable copy of a pinned quest over the dimmed board, with Back and Cancel/Recall; scales up and back.
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -26,6 +26,7 @@ namespace WanderersGuild
         private readonly OutlinedText _time;
         private readonly OutlinedText _chance;
         private readonly OutlinedText _stamp;
+        private readonly OutlinedText _cancelLabel;
         private readonly VisualElement _members;
         private readonly List<OutlinedText> _memberLines = new();
         private readonly GameObject _linkTarget;
@@ -33,6 +34,8 @@ namespace WanderersGuild
         private float _shown;
 
         public Button Back { get; }
+
+        // "Cancel" before departure, "Recall" while the party is away.
         public Button Cancel { get; }
         public bool IsOpen { get; private set; }
 
@@ -57,12 +60,13 @@ namespace WanderersGuild
             _members = root.Q<VisualElement>("note-members");
             Back = root.Q<Button>("note-back");
             Cancel = root.Q<Button>("note-cancel");
+            _cancelLabel = Cancel?.Q<OutlinedText>();
         }
 
         private bool IsComplete =>
             _layer != null && _note != null && _badge != null && _badgeLabel != null && _title != null && _objective != null &&
             _meta != null && _terms != null && _split != null && _time != null && _chance != null && _stamp != null &&
-            _members != null && Back != null && Cancel != null;
+            _members != null && Back != null && Cancel != null && _cancelLabel != null;
 
         public static QuestNoteDetailView Bind(VisualElement root, GameObject linkTarget)
         {
@@ -79,6 +83,7 @@ namespace WanderersGuild
         /// <param name="successChance"></param>
         /// <param name="nowMinutes"></param>
         /// <param name="rankColor"></param>
+        // NOTE: The split shows what the party actually gets (after any potion cut).
         public void Show(Quest quest, IReadOnlyList<Adventurer> members, float successChance, long nowMinutes, Color rankColor)
         {
             var request = quest.Request;
@@ -90,7 +95,7 @@ namespace WanderersGuild
             _objective.Text = request.Objective;
             _meta.Text = QuestFormatter.Meta(request);
             _terms.Text = QuestFormatter.Terms(quest);
-            _split.Text = QuestFormatter.GoldSplit(request, quest.Terms);
+            _split.Text = QuestFormatter.GoldSplit(request, new QuestTerms(quest.EffectiveSharePercent, quest.Terms.MinRank, quest.Terms.PartySize));
             _time.Text = QuestFormatter.TimeLine(quest, nowMinutes);
             _time.EnableInClassList(UrgentClass, QuestFormatter.IsUrgent(quest, nowMinutes));
             _chance.Text = QuestFormatter.Chance(successChance, members.Count > 0);
@@ -99,7 +104,8 @@ namespace WanderersGuild
 
             _note.EnableInClassList(StampedClass, stamp.Length > 0);
             _note.EnableInClassList(ReadyClass, quest.State == QuestState.Ready);
-            Cancel.SetEnabled(quest.IsBeforeDeparture);
+            _cancelLabel.Text = quest.IsBeforeDeparture ? "Cancel" : "Recall";
+            Cancel.SetEnabled(true);
         }
 
         public void HideImmediate()

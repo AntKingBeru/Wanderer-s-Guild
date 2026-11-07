@@ -60,6 +60,8 @@ namespace WanderersGuild
         [SerializeField] private AvatarSettings avatars = new();
         [SerializeField] private InjurySettings injuries = new();
         [SerializeField] private PartySettings parties = new();
+        [SerializeField] private LodgingSettings lodging = new();
+        [SerializeField] private QuestRecallSettings questRecall = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -109,6 +111,8 @@ namespace WanderersGuild
         public AvatarSettings Avatars => avatars;
         public InjurySettings Injuries => injuries;
         public PartySettings Parties => parties;
+        public LodgingSettings Lodging => lodging;
+        public QuestRecallSettings QuestRecall => questRecall;
     }
     
     #region Scene Management
@@ -1670,15 +1674,20 @@ namespace WanderersGuild
     [Serializable]
     public class AlchemySettings
     {
-        [Tooltip("Potion tiers in order (tier 1 = first). The alchemist's level decides how many are brewable.")]
+        [Tooltip("Potion tiers in order (tier 1 = first). Each exists for every quest category; the alchemist's level decides " +
+                 "which tiers can be brewed.")]
         [SerializeField] private PotionTier[] tiers =
         {
-            new("Minor", 10, 0.08f, 3),
-            new("Greater", 20, 0.15f, 8),
-            new("Superior", 30, 0.22f, 15)
+            new("Minor", 10, 0.08f, 6),
+            new("Greater", 20, 0.15f, 16),
+            new("Superior", 30, 0.22f, 30)
         };
 
+        [Tooltip("In-game hour of the morning brew prompt (only when the stock isn't full).")]
+        [SerializeField, Range(0, 23)] private int brewHour = 5;
+
         public IReadOnlyList<PotionTier> Tiers => tiers ?? Array.Empty<PotionTier>();
+        public int BrewHour => brewHour;
     }
     #endregion
     
@@ -1838,6 +1847,36 @@ namespace WanderersGuild
         public IReadOnlyList<string> NameNouns => nameNouns ?? Array.Empty<string>();
 
         public float Teamwork(int sharedSuccesses) => Mathf.Min(teamworkCap, teamworkPerSuccess * Mathf.Max(0, sharedSuccesses));
+    }
+    #endregion
+    
+    #region Lodging
+    [Serializable]
+    public class LodgingSettings
+    {
+        [Tooltip("The bedroom facility (fac_bedroom). The first rooms of it are starter lodgings, exempt from its LIMIT.")]
+        [SerializeField] private FacilityData starterFacility;
+
+        [Tooltip("How many starter bedrooms (exempt from the limit; the opening goal).")]
+        [SerializeField, Min(0)] private int starterCount = 3;
+
+        public FacilityData StarterFacility => starterFacility;
+        public int StarterCount => starterCount;
+    }
+    #endregion
+    
+    #region Quest Recall
+    [Serializable]
+    public class QuestRecallSettings
+    {
+        [Tooltip("Reputation change when the player recalls a party mid-quest (the only penalty).")]
+        [SerializeField] private int reputation = -2;
+
+        [Tooltip("Share of the quest's remaining time the party needs to get back (0.5 = half, rounded up).")]
+        [SerializeField, Range(0f, 1f)] private float returnFraction = 0.5f;
+
+        public int Reputation => reputation;
+        public float ReturnFraction => returnFraction;
     }
     #endregion
 }

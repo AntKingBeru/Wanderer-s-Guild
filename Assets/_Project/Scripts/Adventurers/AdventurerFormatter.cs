@@ -83,6 +83,8 @@ namespace WanderersGuild
                 AdventurerStatus.Injured =>
                     $"Status: Injured ({adventurer.Injury.ToString().ToLowerInvariant()}, " +
                     $"{RequestFormatter.TimeLeft(System.Math.Max(0L, adventurer.InjuredUntilMinutes - nowMinutes))})",
+                AdventurerStatus.Returning =>
+                    $"Status: Returning (back {RequestFormatter.TimeLeft(System.Math.Max(0L, adventurer.ReturningUntilMinutes - nowMinutes))})",
                 _ => "Status: Idle"
             };
 

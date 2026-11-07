@@ -12,17 +12,19 @@ namespace WanderersGuild
         private readonly OutlinedText _info;
         private readonly OutlinedText _status;
         private readonly OutlinedText _party;
+        private readonly OutlinedText _room;
 
         public VisualElement Root => _root;
 
-        private AdventurerCardView(VisualElement root, OutlinedText name, OutlinedText info, OutlinedText status,
-                                   OutlinedText party, Button details, Button close, Action onDetails, Action onClose)
+        private AdventurerCardView(VisualElement root, OutlinedText name, OutlinedText info, OutlinedText status, OutlinedText party,
+                                   OutlinedText room, Button details, Button close, Action onDetails, Action onClose)
         {
             _root = root;
             _name = name;
             _info = info;
             _status = status;
             _party = party;
+            _room = room;
 
             // NOTE: Never focusable — Space is UI Submit and the time-pause hotkey.
             details.focusable = false;
@@ -39,22 +41,25 @@ namespace WanderersGuild
             var info = documentRoot?.Q<OutlinedText>("world-card-info");
             var status = documentRoot?.Q<OutlinedText>("world-card-status");
             var party = documentRoot?.Q<OutlinedText>("world-card-party");
+            var room = documentRoot?.Q<OutlinedText>("world-card-room");
             var details = documentRoot?.Q<Button>("world-card-details");
             var close = documentRoot?.Q<Button>("world-card-close");
 
             return root != null && name != null && info != null && status != null && party != null && details != null && close != null
-                ? new AdventurerCardView(root, name, info, status, party, details, close, onDetails, onClose)
+                ? new AdventurerCardView(root, name, info, status, party, room, details, close, onDetails, onClose)
                 : null;
         }
 
         public bool IsVisible => _root.resolvedStyle.display != DisplayStyle.None;
 
         // "Bran" / "Elf · Archer · Lv 2 · Rank F" / "Idle · Well fed (+6%)".
-        public void SetContent(Adventurer adventurer, long nowMinutes, string partyName)
+        public void SetContent(Adventurer adventurer, long nowMinutes, string partyName, string roomLabel)
         {
             _name.Text = adventurer.Name;
             _info.Text = $"{AdventurerFormatter.SpeciesAndClass(adventurer)} · {AdventurerFormatter.ShortLevel(adventurer)} · Rank {adventurer.Rank}";
             _status.Text = AdventurerFormatter.Status(adventurer, nowMinutes).Replace("Status: ", string.Empty);
+            _room.Text = roomLabel;
+            _room.style.display = string.IsNullOrEmpty(roomLabel) ? DisplayStyle.None : DisplayStyle.Flex;
             _party.Text = partyName;
             _party.style.display = string.IsNullOrEmpty(partyName) ? DisplayStyle.None : DisplayStyle.Flex;
         }

@@ -15,6 +15,7 @@ namespace WanderersGuild
         private Tween _wait;
         private bool _isShowing;
         private int _officeClosedFrame = -1;
+        private int _lastLodgingsToasted = -1;
 
         private void OnEnable()
         {
@@ -26,12 +27,16 @@ namespace WanderersGuild
             GameEventsRelay.OnArmorySalesCompleted.AddListener(OnArmorySales);
             GameEventsRelay.OnArmoryRestocked.AddListener(OnArmoryRestocked);
             GameEventsRelay.OnSupperServed.AddListener(OnSupperServed);
+            GameEventsRelay.OnPotionsBrewed.AddListener(OnPotionsBrewed);
             GameEventsRelay.OnPotionsRefused.AddListener(OnPotionsRefused);
             GameEventsRelay.OnAdventurerInjured.AddListener(OnInjured);
             GameEventsRelay.OnAdventurerRecovered.AddListener(OnRecovered);
             GameEventsRelay.OnAdventurerDied.AddListener(OnDied);
             GameEventsRelay.OnPartyFormed.AddListener(OnPartyFormed);
             GameEventsRelay.OnPartyDisbanded.AddListener(OnPartyDisbanded);
+            GameEventsRelay.OnLodgingChanged.AddListener(OnLodgingChanged);
+            GameEventsRelay.OnStarterLodgingsChanged.AddListener(OnStarterLodgingsChanged);
+            GameEventsRelay.OnAdventurerReturned.AddListener(OnReturned);
         }
 
         private void OnDisable()
@@ -44,12 +49,16 @@ namespace WanderersGuild
             GameEventsRelay.OnArmorySalesCompleted.RemoveListener(OnArmorySales);
             GameEventsRelay.OnArmoryRestocked.RemoveListener(OnArmoryRestocked);
             GameEventsRelay.OnSupperServed.RemoveListener(OnSupperServed);
+            GameEventsRelay.OnPotionsBrewed.RemoveListener(OnPotionsBrewed);
             GameEventsRelay.OnPotionsRefused.RemoveListener(OnPotionsRefused);
             GameEventsRelay.OnAdventurerInjured.RemoveListener(OnInjured);
             GameEventsRelay.OnAdventurerRecovered.RemoveListener(OnRecovered);
             GameEventsRelay.OnAdventurerDied.RemoveListener(OnDied);
             GameEventsRelay.OnPartyFormed.RemoveListener(OnPartyFormed);
             GameEventsRelay.OnPartyDisbanded.RemoveListener(OnPartyDisbanded);
+            GameEventsRelay.OnLodgingChanged.RemoveListener(OnLodgingChanged);
+            GameEventsRelay.OnStarterLodgingsChanged.RemoveListener(OnStarterLodgingsChanged);
+            GameEventsRelay.OnAdventurerReturned.RemoveListener(OnReturned);
             if (_wait.IsActive())
                 _wait.Kill();
             _queue.Clear();
@@ -130,8 +139,10 @@ namespace WanderersGuild
             Enqueue(text, served == 0);
         }
         
+        private void OnPotionsBrewed(int count, long cost) => Enqueue(PotionFormatter.Brewed(count, cost), false);
+
         private void OnPotionsRefused(Quest quest, Adventurer refuser) =>
-            Enqueue($"{refuser.Name} refused the potions; the party left without them", true);
+            Enqueue($"{refuser.Name} refused the potion; the party left without it", true);
         
         private void OnInjured(Adventurer adventurer, InjurySeverity severity, int days) =>
             Enqueue($"{adventurer.Name} was {severity.ToString().ToLowerInvariant()}ly injured ({days}d)", true);
@@ -166,6 +177,27 @@ namespace WanderersGuild
                     break;
             }
         }
+        
+        // NOTE: Only automatic moves in from outside are announced (the player's own moves aren't).
+        private void OnLodgingChanged(Adventurer adventurer, int roomId, bool fromOutside)
+        {
+            if (fromOutside && LodgingManager.HasInstance)
+                Enqueue($"{adventurer.Name} moved into {LodgingManager.Instance.LabelFor(adventurer.Id)}", false);
+        }
+
+        // NOTE: Toasts only on progress (the first report at load just records the count).
+        private void OnStarterLodgingsChanged(int built, int total)
+        {
+            var first = _lastLodgingsToasted < 0;
+            var progressed = built > _lastLodgingsToasted;
+            _lastLodgingsToasted = built;
+            if (first || !progressed || total <= 0)
+                return;
+
+            Enqueue(built >= total ? "All starter lodgings are ready" : $"Lodgings {built}/{total} ready", false);
+        }
+        
+        private void OnReturned(Adventurer adventurer) => Enqueue($"{adventurer.Name} is back", false);
 
         private static string Signed(long value) => value >= 0 ? $"+{value:N0}" : $"-{-value:N0}";
 

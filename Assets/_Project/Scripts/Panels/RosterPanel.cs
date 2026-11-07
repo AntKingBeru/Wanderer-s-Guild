@@ -51,13 +51,15 @@ namespace WanderersGuild
             _list = new RosterListView(scroll, listEmpty, RowPool, Select);
 
             _buttons.Clear();
+            _buttons.Add(_details.Move);
             _buttons.Add(_details.Promote);
+            _buttons.Add(_details.Disband);
             _buttons.Add(_close);
             _buttons.AddRange(_confirm.Buttons);
-            _buttons.Add(_details.Disband);
 
             _navigationOrder.Clear();
             _navigationOrder.AddRange(_list.Buttons);
+            _navigationOrder.Add(_details.Move);
             _navigationOrder.Add(_details.Promote);
             _navigationOrder.Add(_details.Disband);
             _navigationOrder.Add(_close);
@@ -71,6 +73,7 @@ namespace WanderersGuild
             _close.clicked += Close;
             _confirm.Initialize();
             _details.Disband.clicked += AskDisband;
+            _details.Move.clicked += MoveRoom;
 
             AddPanelManipulator(new MenuNavigation(_navigationOrder, () => IsPanelActive, null));
             AddPanelManipulator(new MenuNavigation(_confirm.Buttons, () => IsConfirmActive, null, NavigationAxis.Horizontal));
@@ -86,6 +89,7 @@ namespace WanderersGuild
             GameEventsRelay.OnPartyFormed.AddListener(OnPartyEvent);
             GameEventsRelay.OnPartyChanged.AddListener(OnPartyEvent);
             GameEventsRelay.OnPartyDisbanded.AddListener(OnPartyDisbanded);
+            GameEventsRelay.OnLodgingChanged.AddListener(OnLodgingChanged);
         }
 
         protected override void OnDestroy()
@@ -101,6 +105,7 @@ namespace WanderersGuild
             GameEventsRelay.OnPartyFormed.RemoveListener(OnPartyEvent);
             GameEventsRelay.OnPartyChanged.RemoveListener(OnPartyEvent);
             GameEventsRelay.OnPartyDisbanded.RemoveListener(OnPartyDisbanded);
+            GameEventsRelay.OnLodgingChanged.RemoveListener(OnLodgingChanged);
             base.OnDestroy();
         }
         
@@ -201,7 +206,11 @@ namespace WanderersGuild
 
             var check = PromotionManager.HasInstance ? PromotionManager.Instance.Check(selected) : PromotionCheck.HighestRank();
             var partyLine = PartyManager.HasInstance ? PartyManager.Instance.LineFor(selected) : string.Empty;
-            _details.Show(selected, Settings.Experience, check, GameConfig.Instance.Promotion, RequestManager.NowMinutes, partyLine);
+            var roomLine = LodgingManager.HasInstance ? $"Room: {LodgingManager.Instance.LabelFor(selected.Id)}" : string.Empty;
+            var canMove = LodgingManager.HasInstance && LodgingManager.Instance.NextFreeRoomFor(selected.Id) != null;
+            _details.Show(selected, Settings.Experience, check, GameConfig.Instance.Promotion, RequestManager.NowMinutes,
+                partyLine, roomLine, canMove);
+            _details.Show(selected, Settings.Experience, check, GameConfig.Instance.Promotion, RequestManager.NowMinutes, partyLine, roomLine, canMove);
         }
 
         private static int CompareForRoster(Adventurer a, Adventurer b)
@@ -267,6 +276,18 @@ namespace WanderersGuild
         
         private void OnPartyEvent(GuildParty _) => RefreshIfOpen();
         private void OnPartyDisbanded(GuildParty _, PartyEndReason __) => RefreshIfOpen();
+        
+        // NOTE: Someone moved rooms (Move, re-housing after a demolish, moving in from outside) — the "Room:" line changes.
+        private void OnLodgingChanged(Adventurer _, int __, bool ___) => RefreshIfOpen();
+        
+        // NOTE: Moves straight away (no confirm — it's easily undone by pressing again); re-checked inside LodgingManager.
+        private void MoveRoom()
+        {
+            if (!IsPanelActive || !LodgingManager.HasInstance)
+                return;
+            LodgingManager.Instance.TryMoveToNext(_selectedId);
+            Refresh();
+        }
 
         private void RefreshIfOpen()
         {

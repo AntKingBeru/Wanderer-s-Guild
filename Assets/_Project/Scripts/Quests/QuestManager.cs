@@ -93,40 +93,43 @@ namespace WanderersGuild
             return true;
         }
 
-        // Sends a ready (full) party off — the duration starts now. With a potion tier: if a member would refuse the
-        // lower share, the party leaves without potions (nothing paid, OnPotionsRefused); otherwise the guild pays the
-        // ingredients. False (nothing happens) unless Ready, the tier is brewable, and the guild can pay.
-        // NOTE: Refusal is checked before paying, so a refusal never costs anything.
-        public bool Approve(int questId, int potionTier = 0)
+        // Sends a ready (full) party off — the duration starts now. With a potion (of the quest's category, in
+        // stock): if a member would refuse the lower share, the party leaves without it (it stays in stock;
+        // OnPotionsRefused); otherwise one unit is taken and applied. False (nothing happens) unless Ready and the potion
+        // is valid and in stock.
+        // NOTE: Refusal is checked before taking the potion; the potion is taken before it's applied and the party departs.
+        public bool Approve(int questId, PotionKey potion)
         {
             var quest = Find(questId);
             if (quest is not { State: QuestState.Ready })
                 return false;
 
-            if (potionTier > 0)
+            if (!potion.IsNone)
             {
-                if (potionTier > Alchemy.MaxTier || !Alchemy.TryGetTier(potionTier, out var tier))
+                if (potion.Category != quest.Request.Category || !Alchemy.TryGetTier(potion.Tier, out var tier))
+                    return false;
+                if (!AlchemyManager.HasInstance || AlchemyManager.Instance.Stock.Count(potion) <= 0)
                     return false;
 
-                var members = MembersOf(quest);
-                var refuser = Alchemy.FindRefuser(quest, members, tier, _settings);
+                var refuser = Alchemy.FindRefuser(quest, MembersOf(quest), tier, _settings);
                 if (refuser != null)
                 {
                     GameEventsRelay.OnPotionsRefused.Invoke(quest, refuser);
                 }
                 else
                 {
-                    var cost = Alchemy.IngredientCost(tier, members.Count);
-                    if (cost > 0 && !(GuildManager.HasInstance && GuildManager.Instance.Wallet.TrySpend(cost, GoldReason.PotionIngredients)))
+                    if (!AlchemyManager.Instance.TryTake(potion))
                         return false;
-
-                    quest.SetPotions(potionTier, tier.ShareCutPercent, tier.ChanceBonus);
+                    quest.SetPotions(potion.Tier, tier.ShareCutPercent, tier.ChanceBonus);
                 }
             }
 
             Depart(quest, Now);
             return true;
         }
+
+        // Approve without a potion.
+        public bool Approve(int questId) => Approve(questId, PotionKey.None);
 
         // Declines one applicant: they go idle and can't re-apply to this quest for the cooldown; a ready quest
         // reopens. False after departure or if they aren't an applicant.
@@ -164,6 +167,35 @@ namespace WanderersGuild
 
             ChangeReputation(GameConfig.Instance.Requests.DismissReputation, ReputationSource.RequestDismissed);
             End(quest, QuestEndReason.Cancelled);
+            return true;
+        }
+        
+        // Minutes a recalled party would need to get back now: ⌈remaining × ReturnFraction⌉ (0 if overdue).
+        public long RecallReturnMinutes(Quest quest)
+        {
+            var remaining = System.Math.Max(0L, quest.ReturnsAtMinutes - Now);
+            return (long)System.Math.Ceiling(remaining * GameConfig.Instance.QuestRecall.ReturnFraction);
+        }
+
+        // Recalls a party mid-quest: the quest leaves the board now (no rewards, no injuries, no party record);
+        // members become Returning and get back after half the remaining time; the only penalty is the recall reputation.
+        // False (nothing happens) unless the quest is in progress.
+        // NOTE: Members switch to Returning BEFORE End, which only releases Signed up / On quest — so they stay away.
+        public bool Recall(int questId)
+        {
+            var quest = Find(questId);
+            if (quest is not { State: QuestState.InProgress })
+                return false;
+
+            var backAt = Now + RecallReturnMinutes(quest);
+            foreach (var member in MembersOf(quest).Where(member => member.Status == AdventurerStatus.OnQuest))
+            {
+                member.StartReturn(backAt);
+                GameEventsRelay.OnAdventurerChanged.Invoke(member);
+            }
+
+            ChangeReputation(GameConfig.Instance.QuestRecall.Reputation, ReputationSource.QuestRecalled);
+            End(quest, QuestEndReason.Recalled);
             return true;
         }
 
@@ -219,6 +251,8 @@ namespace WanderersGuild
         // Anything not yet departed (waiting or ready) expires at the request's expiry.
         private void OnTimeTick(GameDateTime now)
         {
+            ReturningAdventurers.ReleaseDue(now.TotalMinutes);
+            
             List<Quest> due = null;
             foreach (var quest in from quest in _quests
                      let expired = quest.IsBeforeDeparture && now.TotalMinutes >= quest.ExpiresAtMinutes

@@ -1,4 +1,5 @@
-// Hover + click for anything interactable in the world (guild objects, adventurers): outline + name label; click → Interact.
+// Hover + click for anything interactable in the world (guild objects, adventurers — by ray; bedrooms — by floor cell):
+// outline + name label; click → Interact.
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,10 +12,13 @@ namespace WanderersGuild
         [SerializeField] private Camera worldCamera;
         [SerializeField] private WorldViewPresenter view;
         [SerializeField] private GamePanelHost panels;
+        [Tooltip("The facility grid (bedrooms are picked by their floor cell).")]
+        [SerializeField] private Grid grid;
 
         private InputAction _point;
         private InputAction _click;
         private WorldHoverLabel _label;
+        private BedroomPicker _bedrooms;
         private IWorldInteractable _hovered;
 
         // NOTE: Also off in build mode — clicks there place rooms, not open screens.
@@ -28,18 +32,24 @@ namespace WanderersGuild
             var bindings = GameConfig.Instance.InputBindings;
             _point = Enable(bindings.Point);
             _click = Enable(bindings.WorldClick);
+            GameEventsRelay.OnFacilityRemoved.AddListener(OnFacilityRemoved);
         }
 
         private void Start()
         {
+            _bedrooms = new BedroomPicker(grid);
             _label = view ? WorldHoverLabel.Bind(view.DocumentRoot) : null;
             if (_label == null)
                 Debug.LogError("[GuildInteractionController] Missing the world label in WorldView.uxml.", this);
         }
 
-        private void OnDisable() => SetHovered(null);
+        private void OnDisable()
+        {
+            GameEventsRelay.OnFacilityRemoved.RemoveListener(OnFacilityRemoved);
+            SetHovered(null);
+        }
 
-        // NOTE: A hovered target can be destroyed (an adventurer leaving) — dropped here before it's touched.
+        // NOTE: A hovered target can be destroyed (an adventurer leaving, a room demolished) — dropped before it's touched.
         private void LateUpdate()
         {
             if (!IsAlive(_hovered))
@@ -59,8 +69,8 @@ namespace WanderersGuild
             UpdateLabel();
         }
 
-        // NOTE: Nothing under UI (any pickable element — the HUD bar, the card) or outside the view (letterbox). The ray uses
-        // the view's live size (the texture follows the canvas).
+        // NOTE: Nothing under UI (any pickable element — the HUD bar, the cards) or outside the view (letterbox). Colliders
+        // (furniture, adventurers) win; only when the ray hits none is the bedroom under the pointer's floor cell used.
         private IWorldInteractable FindUnderPointer()
         {
             if (_point == null || !view || !worldCamera)
@@ -74,9 +84,14 @@ namespace WanderersGuild
             var ray = worldCamera.ViewportPointToRay(new Vector3(pixel.x / size.x, 1f - pixel.y / size.y, 0f));
 
             var settings = GameConfig.Instance.Interaction;
-            return Physics.Raycast(ray, out var hit, settings.MaxRayDistance, settings.InteractableMask, QueryTriggerInteraction.Collide)
-                ? hit.collider.GetComponentInParent<IWorldInteractable>()
-                : null;
+            if (Physics.Raycast(ray, out var hit, settings.MaxRayDistance, settings.InteractableMask, QueryTriggerInteraction.Collide))
+            {
+                var hitTarget = hit.collider.GetComponentInParent<IWorldInteractable>();
+                if (hitTarget != null)
+                    return hitTarget;
+            }
+
+            return _bedrooms?.Find(worldCamera, view, screen);
         }
 
         private void SetHovered(IWorldInteractable target)
@@ -111,9 +126,27 @@ namespace WanderersGuild
             _label.Show(_hovered.DisplayName, view.ViewToLocal(pixel));
         }
 
-        // NOTE: Interface references bypass Unity's destroyed-object null — check through UnityEngine.Object.
-        private static bool IsAlive(IWorldInteractable target) =>
-            target as Object ?? target != null;
+        // NOTE: A removed room's hover target is dropped (and its outline count forgotten — its views are gone).
+        private void OnFacilityRemoved(PlacedFacility room)
+        {
+            if (_hovered is BedroomTarget target && target.Room == room)
+            {
+                _hovered = null;
+                _label?.Hide();
+            }
+            RoomHighlights.Forget(room);
+            _bedrooms?.Forget(room);
+        }
+
+        // NOTE: Interface references bypass Unity's destroyed-object null — Unity objects check through it; bedroom targets
+        // check that their room still exists.
+        private static bool IsAlive(IWorldInteractable target) => target switch
+        {
+            null => false,
+            Object unityObject => unityObject,
+            BedroomTarget bedroom => bedroom.IsValid,
+            _ => true
+        };
 
         private static InputAction Enable(InputActionReference reference)
         {
