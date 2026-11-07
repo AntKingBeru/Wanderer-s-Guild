@@ -1,4 +1,4 @@
-// A posted quest: its request, terms, state (waiting → ready → in progress), applicants by id, decline cooldowns, timing.
+// A posted quest: its request, terms, state (waiting → ready → in progress), applicants by id, decline cooldowns, timing, potions.
 using System.Linq;
 using System.Collections.Generic;
 
@@ -12,7 +12,8 @@ namespace WanderersGuild
         public Quest(int id, RequestData request, long postedAtMinutes, long expiresAtMinutes, QuestTerms terms,
                      QuestState state = QuestState.Waiting, IEnumerable<int> memberIds = null,
                      long departedAtMinutes = 0, long returnsAtMinutes = 0,
-                     int[] declinedIds = null, long[] declinedUntilMinutes = null)
+                     int[] declinedIds = null, long[] declinedUntilMinutes = null,
+                     int potionTier = 0, int potionShareCut = 0, float potionChanceBonus = 0f)
         {
             Id = id;
             Request = request;
@@ -23,6 +24,9 @@ namespace WanderersGuild
             _memberIds = memberIds != null ? new List<int>(memberIds) : new List<int>();
             DepartedAtMinutes = departedAtMinutes;
             ReturnsAtMinutes = returnsAtMinutes;
+            PotionTier = System.Math.Max(0, potionTier);
+            PotionShareCut = System.Math.Max(0, potionShareCut);
+            PotionChanceBonus = System.Math.Max(0f, potionChanceBonus);
 
             // NOTE: Cooldown arrays are paired by index; a length mismatch (edited save) keeps only the matched pairs.
             if (declinedIds != null && declinedUntilMinutes != null)
@@ -44,6 +48,12 @@ namespace WanderersGuild
         public long DepartedAtMinutes { get; private set; }
         public long ReturnsAtMinutes { get; private set; }
 
+        // Potions taken at departure (0 = none). The cut and bonus are copied then, so later tier edits don't
+        // change a quest that's already out.
+        public int PotionTier { get; private set; }
+        public int PotionShareCut { get; private set; }
+        public float PotionChanceBonus { get; private set; }
+
         // Applicant / member ids — resolved through AdventurerManager when needed (never held as objects).
         public IReadOnlyList<int> MemberIds => _memberIds;
         public bool IsFull => _memberIds.Count >= Terms.PartySize;
@@ -51,8 +61,11 @@ namespace WanderersGuild
         // True until the party leaves (waiting or ready) — declines, cancels and expiry apply.
         public bool IsBeforeDeparture => State != QuestState.InProgress;
 
+        // The share the party actually gets: the posted share minus any potion cut (never below 0).
+        public int EffectiveSharePercent => System.Math.Max(0, Terms.RewardSharePercent - PotionShareCut);
+
         // The party's total share of the request's gold.
-        public int PartyGold => (int)((long)Request.Reward.Gold * Terms.RewardSharePercent / 100);
+        public int PartyGold => (int)((long)Request.Reward.Gold * EffectiveSharePercent / 100);
 
         // What each member of a full party receives (the rounding remainder goes to the guild).
         public int GoldPerMember => PartyGold / System.Math.Max(1, Terms.PartySize);
@@ -89,7 +102,8 @@ namespace WanderersGuild
                 return false;
 
             _declinedUntil[adventurerId] = blockedUntilMinutes;
-            if (State == QuestState.Ready) State = QuestState.Waiting;
+            if (State == QuestState.Ready)
+                State = QuestState.Waiting;
             return true;
         }
 
@@ -99,6 +113,17 @@ namespace WanderersGuild
             _memberIds.RemoveAll(id => !exists(id));
             if (State == QuestState.Ready && !IsFull)
                 State = QuestState.Waiting;
+        }
+
+        // Takes potions along (only before departure — QuestManager calls it right before Depart).
+        public void SetPotions(int tier, int shareCut, float chanceBonus)
+        {
+            if (!IsBeforeDeparture)
+                return;
+
+            PotionTier = System.Math.Max(0, tier);
+            PotionShareCut = System.Math.Max(0, shareCut);
+            PotionChanceBonus = System.Math.Max(0f, chanceBonus);
         }
 
         public void Depart(long nowMinutes, long returnsAtMinutes)
@@ -120,7 +145,8 @@ namespace WanderersGuild
             }
 
             return new SavedQuest(Id, Request.Id, PostedAtMinutes, ExpiresAtMinutes, Terms, State, _memberIds.ToArray(),
-                                  DepartedAtMinutes, ReturnsAtMinutes, ids.ToArray(), until.ToArray());
+                                  DepartedAtMinutes, ReturnsAtMinutes, ids.ToArray(), until.ToArray(),
+                                  PotionTier, PotionShareCut, PotionChanceBonus);
         }
     }
 }

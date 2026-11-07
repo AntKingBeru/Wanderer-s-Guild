@@ -136,7 +136,7 @@ namespace WanderersGuild
 
             adventurer = new Adventurer(saved.Id, saved.Name, species, classData, saved.Experience, saved.Rank, saved.Wealth,
                                         saved.Status, saved.JoinedAtMinutes, saved.RetainedGrowth, _settings.Experience,
-                                        saved.RankProgress, saved.ExamReturnsAtMinutes, gear);
+                                        saved.RankProgress, saved.ExamReturnsAtMinutes, gear, saved.WellFedBonus);
             _nextId = Mathf.Max(_nextId, saved.Id + 1);
             return true;
         }

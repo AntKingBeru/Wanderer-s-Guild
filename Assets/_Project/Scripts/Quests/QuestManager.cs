@@ -1,4 +1,4 @@
-// Game-scene owner of posted quests: board slots, posting, sign-ups, approval/declines, departure, expiry, cancel, resolution, save.
+// Game-scene owner of posted quests: board slots, posting, sign-ups, approval (with potions)/declines, departure, expiry, cancel, resolution, save.
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +10,6 @@ namespace WanderersGuild
     public class QuestManager : Singleton<QuestManager>, ISaveContributor
     {
         private readonly List<Quest> _quests = new();
-        private readonly List<Adventurer> _members = new();
         private QuestSettings _settings;
         private Dictionary<string, RequestData> _requests = new();
         private IReadOnlyList<SavedQuest> _pendingRestore;
@@ -94,12 +93,36 @@ namespace WanderersGuild
             return true;
         }
 
-        // Sends a ready (full) party off — the duration starts now. False unless the quest is Ready.
-        public bool Approve(int questId)
+        // Sends a ready (full) party off — the duration starts now. With a potion tier: if a member would refuse the
+        // lower share, the party leaves without potions (nothing paid, OnPotionsRefused); otherwise the guild pays the
+        // ingredients. False (nothing happens) unless Ready, the tier is brewable, and the guild can pay.
+        // NOTE: Refusal is checked before paying, so a refusal never costs anything.
+        public bool Approve(int questId, int potionTier = 0)
         {
             var quest = Find(questId);
             if (quest is not { State: QuestState.Ready })
                 return false;
+
+            if (potionTier > 0)
+            {
+                if (potionTier > Alchemy.MaxTier || !Alchemy.TryGetTier(potionTier, out var tier))
+                    return false;
+
+                var members = MembersOf(quest);
+                var refuser = Alchemy.FindRefuser(quest, members, tier, _settings);
+                if (refuser != null)
+                {
+                    GameEventsRelay.OnPotionsRefused.Invoke(quest, refuser);
+                }
+                else
+                {
+                    var cost = Alchemy.IngredientCost(tier, members.Count);
+                    if (cost > 0 && !(GuildManager.HasInstance && GuildManager.Instance.Wallet.TrySpend(cost, GoldReason.PotionIngredients)))
+                        return false;
+
+                    quest.SetPotions(potionTier, tier.ShareCutPercent, tier.ChanceBonus);
+                }
+            }
 
             Depart(quest, Now);
             return true;
@@ -149,26 +172,26 @@ namespace WanderersGuild
             return _quests.FirstOrDefault(quest => quest.Id == questId);
         }
 
-        // Members that still exist in the roster (filled into a reused list — copy it to keep it).
-        public IReadOnlyList<Adventurer> MembersOf(Quest quest)
+        // Members that still exist in the roster — a NEW list each call.
+        // NOTE: Never a shared/reused list: callers loop over it while raising events (SetStatus → OnAdventurerChanged), and
+        // listeners (the Applications screen) call this again mid-loop. A shared list would be cleared under the loop.
+        public List<Adventurer> MembersOf(Quest quest)
         {
-            _members.Clear();
+            List<Adventurer> members = new(quest.MemberIds.Count);
             if (!AdventurerManager.HasInstance)
-                return _members;
+                return members;
 
-            foreach (var id in quest.MemberIds)
-            {
-                var adventurer = AdventurerManager.Instance.Find(id);
-                if (adventurer != null)
-                    _members.Add(adventurer);
-            }
-            return _members;
+            members.AddRange(quest.MemberIds.Select(id => AdventurerManager.Instance.Find(id)).Where(adventurer => adventurer != null));
+            return members;
         }
 
-        // The success chance with the current (or would-be) members.
-        public float SuccessChance(Quest quest) =>
+        // The success chance with the current (or would-be) members and any potions taken.
+        public float SuccessChance(Quest quest) => SuccessChanceWith(quest, quest.PotionChanceBonus);
+
+        // The chance with a given potion bonus (the Applications preview).
+        public float SuccessChanceWith(Quest quest, float potionBonus) =>
             QuestCalculator.SuccessChance(QuestCalculator.PartyPower(MembersOf(quest), quest.Request.Category, _settings),
-                                          QuestCalculator.Difficulty(quest.Request, _settings), _settings);
+                                          QuestCalculator.Difficulty(quest.Request, _settings), _settings, potionBonus);
 
         // Debug and testing: run the sign-up pass now / resolve every quest in progress now.
         public void RunSignUpsNow() => RunSignUps(Now);
@@ -254,10 +277,11 @@ namespace WanderersGuild
             GameEventsRelay.OnQuestUpdated.Invoke(quest);
         }
 
-        // NOTE: A quest whose members are all gone (dropped on load) fails without the reputation penalty.
+        // NOTE: A quest whose members are all gone (dropped on load) fails without the reputation penalty. Potions taken
+        // at departure add their bonus to the roll.
         private void Resolve(Quest quest)
         {
-            List<Adventurer> members = new(MembersOf(quest));
+            var members = MembersOf(quest);
             if (members.Count == 0)
             {
                 End(quest, QuestEndReason.Failed);
@@ -265,7 +289,8 @@ namespace WanderersGuild
             }
 
             var chance = QuestCalculator.SuccessChance(QuestCalculator.PartyPower(members, quest.Request.Category, _settings),
-                                                         QuestCalculator.Difficulty(quest.Request, _settings), _settings);
+                                                         QuestCalculator.Difficulty(quest.Request, _settings), _settings,
+                                                         quest.PotionChanceBonus);
             var success = Random.value < chance;
 
             if (success)
@@ -276,8 +301,8 @@ namespace WanderersGuild
             End(quest, success ? QuestEndReason.Succeeded : QuestEndReason.Failed);
         }
 
-        // NOTE: The party share is split evenly; the guild keeps the rest of the request's gold plus the rounding remainder.
-        // Rank progress is granted by PromotionManager when it hears OnQuestEnded (Succeeded).
+        // NOTE: The party share (after any potion cut) is split evenly; the guild keeps the rest of the request's gold plus
+        // the rounding remainder. Rank progress is granted by PromotionManager when it hears OnQuestEnded (Succeeded).
         private void PaySuccess(Quest quest, List<Adventurer> members)
         {
             var questRank = quest.Request.RecommendedRank;
@@ -324,7 +349,7 @@ namespace WanderersGuild
         }
 
         // NOTE: Quests whose request no longer exists are dropped with a warning. Member ids no longer in the roster are
-        // pruned (a ready quest that's no longer full reopens).
+        // pruned (a ready quest that's no longer full reopens). Potions come back as saved (0 in older saves).
         private void Restore()
         {
             if (_pendingRestore == null)
@@ -332,7 +357,7 @@ namespace WanderersGuild
 
             foreach (var saved in _pendingRestore)
             {
-                if (string.IsNullOrEmpty(saved.RequestId) || !_requests.TryGetValue(saved.RequestId, out RequestData request))
+                if (string.IsNullOrEmpty(saved.RequestId) || !_requests.TryGetValue(saved.RequestId, out var request))
                 {
                     Debug.LogWarning($"[QuestManager] Saved quest #{saved.Id} uses request '{saved.RequestId}', which isn't in the database any more; dropped.", this);
                     continue;
@@ -340,7 +365,8 @@ namespace WanderersGuild
 
                 Quest quest = new(saved.Id, request, saved.PostedAtMinutes, saved.ExpiresAtMinutes, saved.Terms, saved.State,
                                   saved.MemberIds, saved.DepartedAtMinutes, saved.ReturnsAtMinutes,
-                                  saved.DeclinedIds, saved.DeclinedUntilMinutes);
+                                  saved.DeclinedIds, saved.DeclinedUntilMinutes,
+                                  saved.PotionTier, saved.PotionShareCut, saved.PotionChanceBonus);
                 if (AdventurerManager.HasInstance)
                     quest.PruneMembers(id => AdventurerManager.Instance.Find(id) != null);
 

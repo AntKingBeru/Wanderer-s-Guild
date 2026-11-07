@@ -73,19 +73,18 @@ namespace WanderersGuild
         // "Status: Idle" / "Signed up" / "On quest" / "In exam (back 1d)".
         public static string Status(Adventurer adventurer, long nowMinutes)
         {
-            switch (adventurer.Status)
+            var status = adventurer.Status switch
             {
-                case AdventurerStatus.SignedUp:
-                    return "Status: Signed up";
-                case AdventurerStatus.OnQuest:
-                    return "Status: On quest";
-                case AdventurerStatus.InExam:
-                    var left = System.Math.Max(0L, adventurer.ExamReturnsAtMinutes - nowMinutes);
-                    return $"Status: In exam (back {RequestFormatter.TimeLeft(left)})";
-                case AdventurerStatus.Idle:
-                default:
-                    return "Status: Idle";
-            }
+                AdventurerStatus.SignedUp => "Status: Signed up",
+                AdventurerStatus.OnQuest => "Status: On quest",
+                AdventurerStatus.InExam =>
+                    $"Status: In exam (back {RequestFormatter.TimeLeft(System.Math.Max(0L, adventurer.ExamReturnsAtMinutes - nowMinutes))})",
+                _ => "Status: Idle"
+            };
+
+            return adventurer.IsWellFed
+                ? $"{status} · Well fed (+{UnityEngine.Mathf.RoundToInt(adventurer.WellFedBonus * 100f)}%)"
+                : status;
         }
 
         // "Rank E exam ready: 50g", or why not.

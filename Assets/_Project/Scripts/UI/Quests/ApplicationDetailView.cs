@@ -1,5 +1,5 @@
 // The applications details pane: one scroll view with the quest summary and every applicant (each with Decline);
-// Decline all and Approve stay below it.
+// the potion choice, Decline all and Approve stay below it.
 using System;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
@@ -8,6 +8,8 @@ namespace WanderersGuild
 {
     public sealed class ApplicationDetailsView
     {
+        private const string WarningClass = "app-potion-effect--warning";
+
         private readonly ScrollView _content;
         private readonly OutlinedText _empty;
         private readonly OutlinedText _title;
@@ -16,12 +18,16 @@ namespace WanderersGuild
         private readonly OutlinedText _split;
         private readonly OutlinedText _timeChance;
         private readonly OutlinedText _hint;
+        private readonly VisualElement _potionRow;
+        private readonly OutlinedText _potionLabel;
+        private readonly OutlinedText _potionEffect;
         private readonly VisualElement _applicantList;
         private readonly List<ApplicantRowView> _applicants = new();
         private readonly List<Button> _declineButtons = new();
 
         public Button DeclineAll { get; }
         public Button Approve { get; }
+        public Button Potion { get; }
 
         // The pooled per-applicant Decline buttons, in list order (for setup and navigation).
         public IReadOnlyList<Button> DeclineButtons => _declineButtons;
@@ -36,14 +42,19 @@ namespace WanderersGuild
             _split = root.Q<OutlinedText>("app-split");
             _timeChance = root.Q<OutlinedText>("app-time-chance");
             _hint = root.Q<OutlinedText>("app-hint");
+            _potionRow = root.Q<VisualElement>("app-potion-row");
+            _potionEffect = root.Q<OutlinedText>("app-potion-effect");
             _applicantList = root.Q<VisualElement>("app-applicants");
             DeclineAll = root.Q<Button>("app-decline-all");
             Approve = root.Q<Button>("app-approve");
+            Potion = root.Q<Button>("app-potion");
+            _potionLabel = Potion?.Q<OutlinedText>();
         }
 
         private bool IsComplete =>
             _content != null && _empty != null && _title != null && _meta != null && _terms != null && _split != null &&
-            _timeChance != null && _hint != null && _applicantList != null && DeclineAll != null && Approve != null;
+            _timeChance != null && _hint != null && _potionRow != null && _potionEffect != null && _potionLabel != null &&
+            _applicantList != null && DeclineAll != null && Approve != null && Potion != null;
 
         /// <param name="root"></param>
         /// <param name="maxApplicants">Pooled applicant rows — the largest party size the settings allow.</param>
@@ -66,14 +77,21 @@ namespace WanderersGuild
             return view;
         }
 
-        public void Show(Quest quest, IReadOnlyList<Adventurer> applicants, float successChance, long nowMinutes)
+        /// <param name="quest"></param>
+        /// <param name="applicants"></param>
+        /// <param name="split">The gold-split line for the current potion choice.</param>
+        /// <param name="successChance">The chance for the current potion choice.</param>
+        /// <param name="nowMinutes"></param>
+        /// <param name="potion"></param>
+        public void Show(Quest quest, IReadOnlyList<Adventurer> applicants, string split, float successChance, long nowMinutes,
+                         PotionPreview potion)
         {
             var request = quest.Request;
 
             _title.Text = request.DisplayName;
             _meta.Text = QuestFormatter.Meta(request);
             _terms.Text = QuestFormatter.Terms(quest);
-            _split.Text = QuestFormatter.GoldSplit(request, quest.Terms);
+            _split.Text = split;
             _timeChance.Text = ApplicationFormatter.TimeAndChance(quest, successChance, applicants.Count > 0, nowMinutes);
 
             var hint = ApplicationFormatter.ApproveHint(quest);
@@ -88,10 +106,12 @@ namespace WanderersGuild
                     _applicants[i].Hide();
             }
 
+            ShowPotion(potion, quest.State == QuestState.Ready);
+
             _content.style.display = DisplayStyle.Flex;
             _empty.style.display = DisplayStyle.None;
             DeclineAll.SetEnabled(applicants.Count > 0);
-            Approve.SetEnabled(quest.State == QuestState.Ready);
+            Approve.SetEnabled(quest.State == QuestState.Ready && potion.CanAfford);
         }
 
         public void ShowEmpty(string message)
@@ -100,12 +120,28 @@ namespace WanderersGuild
             _content.style.display = DisplayStyle.None;
             _empty.style.display = DisplayStyle.Flex;
             _hint.style.display = DisplayStyle.None;
+            ShowPotion(PotionPreview.Hidden, false);
 
             foreach (var row in _applicants)
                 row.Hide();
 
             DeclineAll.SetEnabled(false);
             Approve.SetEnabled(false);
+        }
+
+        // NOTE: The warning (refusal / can't afford) replaces the effect line, in red.
+        private void ShowPotion(PotionPreview potion, bool isReady)
+        {
+            _potionRow.style.display = potion.Visible ? DisplayStyle.Flex : DisplayStyle.None;
+            Potion.SetEnabled(potion.Visible && isReady);
+            if (!potion.Visible)
+                return;
+
+            _potionLabel.Text = potion.Label;
+            var warn = potion.Warning.Length > 0;
+            _potionEffect.Text = warn ? potion.Warning : potion.Effect;
+            _potionEffect.EnableInClassList(WarningClass, warn);
+            _potionEffect.style.display = _potionEffect.Text.Length > 0 ? DisplayStyle.Flex : DisplayStyle.None;
         }
     }
 }

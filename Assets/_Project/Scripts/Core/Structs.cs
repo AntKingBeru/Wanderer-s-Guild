@@ -439,7 +439,8 @@ namespace WanderersGuild
             stats.Strength * strength + stats.Agility * agility + stats.Intellect * intellect + stats.Vitality * vitality;
     }
     
-    // A posted quest as stored in game.json (request by template id; members by adventurer id; decline cooldowns).
+    // A posted quest as stored in game.json (request by template id; members by adventurer id; decline cooldowns;
+    // potions taken at departure).
     [Serializable]
     public struct SavedQuest
     {
@@ -456,10 +457,13 @@ namespace WanderersGuild
         [SerializeField] private long returnsAtMinutes;
         [SerializeField] private int[] declinedIds;
         [SerializeField] private long[] declinedUntilMinutes;
+        [SerializeField] private int potionTier;
+        [SerializeField] private int potionShareCut;
+        [SerializeField] private float potionChanceBonus;
 
         public SavedQuest(int id, string requestId, long postedAtMinutes, long expiresAtMinutes, QuestTerms terms,
                           QuestState state, int[] memberIds, long departedAtMinutes, long returnsAtMinutes,
-                          int[] declinedIds, long[] declinedUntilMinutes)
+                          int[] declinedIds, long[] declinedUntilMinutes, int potionTier, int potionShareCut, float potionChanceBonus)
         {
             this.id = id;
             this.requestId = requestId;
@@ -474,6 +478,9 @@ namespace WanderersGuild
             this.returnsAtMinutes = returnsAtMinutes;
             this.declinedIds = declinedIds;
             this.declinedUntilMinutes = declinedUntilMinutes;
+            this.potionTier = potionTier;
+            this.potionShareCut = potionShareCut;
+            this.potionChanceBonus = potionChanceBonus;
         }
 
         public int Id => id;
@@ -489,6 +496,11 @@ namespace WanderersGuild
         // Adventurers declined for this quest, and until when they can't re-apply (paired by index).
         public int[] DeclinedIds => declinedIds ?? Array.Empty<int>();
         public long[] DeclinedUntilMinutes => declinedUntilMinutes ?? Array.Empty<long>();
+
+        // Potions taken at departure (0 = none).
+        public int PotionTier => potionTier;
+        public int PotionShareCut => potionShareCut;
+        public float PotionChanceBonus => potionChanceBonus;
     }
     
     // One entry of the QuestCategoryIcons asset: a category and its 12×12 icon.
@@ -579,10 +591,11 @@ namespace WanderersGuild
         [SerializeField] private float rankProgress;
         [SerializeField] private long examReturnsAtMinutes;
         [SerializeField] private string[] equipmentIds;
+        [SerializeField] private float wellFedBonus;
 
         public SavedAdventurer(int id, string name, string speciesId, string classId, long experience, GuildRank rank,
                                int wealth, AdventurerStatus status, long joinedAtMinutes, StatBlock retainedGrowth,
-                               float rankProgress, long examReturnsAtMinutes, string[] equipmentIds)
+                               float rankProgress, long examReturnsAtMinutes, string[] equipmentIds, float wellFedBonus)
         {
             this.id = id;
             this.name = name;
@@ -597,6 +610,7 @@ namespace WanderersGuild
             this.rankProgress = rankProgress;
             this.examReturnsAtMinutes = examReturnsAtMinutes;
             this.equipmentIds = equipmentIds;
+            this.wellFedBonus = wellFedBonus;
         }
 
         public int Id => id;
@@ -610,14 +624,18 @@ namespace WanderersGuild
         public long JoinedAtMinutes => joinedAtMinutes;
         public StatBlock RetainedGrowth => retainedGrowth;
 
-        // Progress toward the next rank (0 in saves from before Session 13).
+        // Progress toward the next rank.
         public float RankProgress => rankProgress;
 
         // When a running promotion exam ends; 0 = no exam.
         public long ExamReturnsAtMinutes => examReturnsAtMinutes;
 
-        // Item ids by EquipmentSlot index (empty / null entries = nothing worn; empty in saves from before 18a).
+        // Item ids by EquipmentSlot index (empty / null entries = nothing worn).
         public string[] EquipmentIds => equipmentIds ?? Array.Empty<string>();
+        
+        // The supper bonus they're carrying (0 = not well-fed)
+        public float WellFedBonus => wellFedBonus;
+        
     }
 
     // One validated row of the Classes sheet, handed to ClassData.ApplyImport by the importer.
@@ -914,6 +932,53 @@ namespace WanderersGuild
 
         public string ItemId => itemId;
         public int Units => units;
+    }
+    
+    // One potion tier offered at approval: the party's share cut, the chance bonus, and ingredients per member.
+    [Serializable]
+    public struct PotionTier
+    {
+        [SerializeField] private string name;
+        [Tooltip("Percentage points taken off the party's reward share (70% → 60% for 10).")]
+        [SerializeField, Range(0, 100)] private int shareCutPercent;
+        [Tooltip("Added to the quest's final success chance (still capped at the maximum).")]
+        [SerializeField, Range(0f, 1f)] private float chanceBonus;
+        [Tooltip("Guild gold per party member for ingredients, paid at approval.")]
+        [SerializeField, Min(0)] private int ingredientCostPerMember;
+
+        public PotionTier(string name, int shareCutPercent, float chanceBonus, int ingredientCostPerMember)
+        {
+            this.name = name;
+            this.shareCutPercent = shareCutPercent;
+            this.chanceBonus = chanceBonus;
+            this.ingredientCostPerMember = ingredientCostPerMember;
+        }
+
+        public string Name => name;
+        public int ShareCutPercent => shareCutPercent;
+        public float ChanceBonus => chanceBonus;
+        public int IngredientCostPerMember => ingredientCostPerMember;
+    }
+
+    // What the Applications screen shows for the current potion choice.
+    public readonly struct PotionPreview
+    {
+        public PotionPreview(bool visible, string label, string effect, string warning, bool canAfford)
+        {
+            Visible = visible;
+            Label = label;
+            Effect = effect;
+            Warning = warning;
+            CanAfford = canAfford;
+        }
+
+        public bool Visible { get; }
+        public string Label { get; }
+        public string Effect { get; }
+        public string Warning { get; }
+        public bool CanAfford { get; }
+
+        public static PotionPreview Hidden => new(false, string.Empty, string.Empty, string.Empty, true);
     }
     #endregion
 }

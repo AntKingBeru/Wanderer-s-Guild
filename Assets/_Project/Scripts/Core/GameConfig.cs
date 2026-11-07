@@ -55,6 +55,8 @@ namespace WanderersGuild
         [SerializeField] private FacilitySettings facilities = new();
         [SerializeField] private BuildModeSettings buildMode = new();
         [SerializeField] private EquipmentSettings equipment = new();
+        [SerializeField] private TavernSettings tavern = new();
+        [SerializeField] private AlchemySettings alchemy = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -99,6 +101,8 @@ namespace WanderersGuild
         public FacilitySettings Facilities => facilities;
         public BuildModeSettings BuildMode => buildMode;
         public EquipmentSettings Equipment => equipment;
+        public TavernSettings Tavern => tavern;
+        public AlchemySettings Alchemy => alchemy;
     }
     
     #region Scene Management
@@ -1642,6 +1646,33 @@ namespace WanderersGuild
         public float SellBackFraction => sellBackFraction;
         public float WholesaleFraction => wholesaleFraction;
         public int RestockFailReputation => restockFailReputation;
+    }
+    #endregion
+    
+    #region Tavern
+    [Serializable]
+    public class TavernSettings
+    {
+        [Tooltip("In-game hour of supper (once a day): everyone at the guild eats if they can pay.")]
+        [SerializeField, Range(0, 23)] private int supperHour = 19;
+        
+        public int SupperHour => supperHour;
+    }
+    #endregion
+    
+    #region Alchemy
+    [Serializable]
+    public class AlchemySettings
+    {
+        [Tooltip("Potion tiers in order (tier 1 = first). The alchemist's level decides how many are brewable.")]
+        [SerializeField] private PotionTier[] tiers =
+        {
+            new("Minor", 10, 0.08f, 3),
+            new("Greater", 20, 0.15f, 8),
+            new("Superior", 30, 0.22f, 15)
+        };
+
+        public IReadOnlyList<PotionTier> Tiers => tiers ?? Array.Empty<PotionTier>();
     }
     #endregion
 }

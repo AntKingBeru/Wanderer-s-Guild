@@ -147,6 +147,8 @@ namespace WanderersGuild
         PromotionFee = 6,
         EquipmentSales = 7,
         ArmoryRestock = 8,
+        TavernMeals = 9,
+        PotionIngredients = 10,
         Debug = 99
     }
     #endregion

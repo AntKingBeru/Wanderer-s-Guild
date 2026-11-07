@@ -1,4 +1,4 @@
-// Applications screen: quests with applicants (ready first) + details; decline one or all applicants, approve a full party.
+// Applications screen: quests with applicants (ready first) + details; decline one or all, choose potions, approve a full party.
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -18,6 +18,7 @@ namespace WanderersGuild
         private Button _close;
         private int _selectedId = -1;
         private int _selectedIndex;
+        private int _potionTier;
 
         protected override IReadOnlyList<Button> Buttons => _buttons;
         protected override IReadOnlyList<Button> ListButtons => _list.Buttons;
@@ -32,7 +33,7 @@ namespace WanderersGuild
             var listEmpty = documentRoot.Q<OutlinedText>("app-list-empty");
             _close = documentRoot.Q<Button>("app-close");
 
-            QuestSettings settings = GameConfig.HasInstance ? GameConfig.Instance.Quests : null;
+            var settings = GameConfig.HasInstance ? GameConfig.Instance.Quests : null;
             var rows = settings?.BoardSlots ?? 10;
             var maxApplicants = settings != null
                 ? Mathf.Max(settings.PartySizeLimits(GuildRank.F).y, settings.PartySizeLimits(GuildRank.National).y)
@@ -47,14 +48,17 @@ namespace WanderersGuild
 
             _buttons.Clear();
             _buttons.AddRange(_details.DeclineButtons);
+            _buttons.Add(_details.Potion);
             _buttons.Add(_details.DeclineAll);
             _buttons.Add(_details.Approve);
             _buttons.Add(_close);
 
-            // NOTE: Up/Down walks quests → applicants' Decline → Decline all → Approve → Close; hidden/disabled ones are skipped.
+            // NOTE: Up/Down walks quests → applicants' Decline → Potions → Decline all → Approve → Close; hidden/disabled
+            // ones are skipped.
             _navigationOrder.Clear();
             _navigationOrder.AddRange(_list.Buttons);
             _navigationOrder.AddRange(_details.DeclineButtons);
+            _navigationOrder.Add(_details.Potion);
             _navigationOrder.Add(_details.DeclineAll);
             _navigationOrder.Add(_details.Approve);
             _navigationOrder.Add(_close);
@@ -65,6 +69,7 @@ namespace WanderersGuild
         {
             _details.DeclineAll.clicked += DeclineAll;
             _details.Approve.clicked += Approve;
+            _details.Potion.clicked += CyclePotion;
             _close.clicked += Close;
 
             AddPanelManipulator(new MenuNavigation(_navigationOrder, () => IsInteractable, null));
@@ -75,6 +80,10 @@ namespace WanderersGuild
             GameEventsRelay.OnQuestEnded.AddListener(OnQuestEnded);
             GameEventsRelay.OnHourStarted.AddListener(OnHourStarted);
             GameEventsRelay.OnAdventurerLeveledUp.AddListener(OnAdventurerEvent);
+            GameEventsRelay.OnAdventurerChanged.AddListener(OnAdventurerEvent);
+            GameEventsRelay.OnGoldChanged.AddListener(OnGoldChanged);
+            GameEventsRelay.OnFacilityCompleted.AddListener(OnFacilityChanged);
+            GameEventsRelay.OnFacilityRemoved.AddListener(OnFacilityChanged);
         }
 
         protected override void OnDestroy()
@@ -85,10 +94,18 @@ namespace WanderersGuild
             GameEventsRelay.OnQuestEnded.RemoveListener(OnQuestEnded);
             GameEventsRelay.OnHourStarted.RemoveListener(OnHourStarted);
             GameEventsRelay.OnAdventurerLeveledUp.RemoveListener(OnAdventurerEvent);
+            GameEventsRelay.OnAdventurerChanged.RemoveListener(OnAdventurerEvent);
+            GameEventsRelay.OnGoldChanged.RemoveListener(OnGoldChanged);
+            GameEventsRelay.OnFacilityCompleted.RemoveListener(OnFacilityChanged);
+            GameEventsRelay.OnFacilityRemoved.RemoveListener(OnFacilityChanged);
             base.OnDestroy();
         }
 
-        protected override void OnOpening() => Refresh();
+        protected override void OnOpening()
+        {
+            _potionTier = 0;
+            Refresh();
+        }
 
         // NOTE: Esc/Close closes this screen — when opened from the reception desk, the host returns there.
         protected override void OnCancel() => Close();
@@ -99,13 +116,24 @@ namespace WanderersGuild
                 Host.Close(Id);
         }
 
-        // NOTE: Selection only changes on click/Submit (not on hover-focus).
+        // NOTE: Selection only changes on click/Submit (not on hover-focus). A new quest starts with no potions.
         private void Select(Quest quest)
         {
             if (!IsInteractable || quest == null)
                 return;
 
+            if (quest.Id != _selectedId) _potionTier = 0;
             _selectedId = quest.Id;
+            Refresh();
+        }
+
+        private void CyclePotion()
+        {
+            if (!IsInteractable)
+                return;
+
+            var max = Alchemy.MaxTier;
+            _potionTier = max <= 0 ? 0 : (_potionTier + 1) % (max + 1);
             Refresh();
         }
 
@@ -127,11 +155,13 @@ namespace WanderersGuild
             RefreshAndKeepFocus();
         }
 
+        // NOTE: Approve re-checks the tier and gold; after it the choice goes back to None.
         private void Approve()
         {
             if (!IsInteractable || !QuestManager.HasInstance)
                 return;
-            QuestManager.Instance.Approve(_selectedId);
+            if (QuestManager.Instance.Approve(_selectedId, _potionTier))
+                _potionTier = 0;
             RefreshAndKeepFocus();
         }
 
@@ -153,16 +183,62 @@ namespace WanderersGuild
             _title.Text = $"Applications {_sorted.Count}";
             _list.Show(_sorted, _selectedId, GameConfig.Instance.GuildRanks);
 
-            if (selected != null && QuestManager.HasInstance)
-            {
-                var applicants = QuestManager.Instance.MembersOf(selected);
-                var chance = QuestManager.Instance.SuccessChance(selected);
-                _details.Show(selected, applicants, chance, Now);
-            }
-            else
+            if (selected == null || !QuestManager.HasInstance)
             {
                 _details.ShowEmpty(EmptyMessage);
+                return;
             }
+
+            var applicants = QuestManager.Instance.MembersOf(selected);
+            List<Adventurer> members = new(applicants);
+            ShowDetails(selected, members);
+        }
+
+        // NOTE: The preview uses the same rules as Approve: a refusal shows the unchanged split/chance (they'd go without).
+        private void ShowDetails(Quest quest, List<Adventurer> members)
+        {
+            var max = Alchemy.MaxTier;
+            if (_potionTier > max)
+                _potionTier = 0;
+
+            var split = QuestFormatter.GoldSplit(quest.Request, quest.Terms);
+            var chance = QuestManager.Instance.SuccessChanceWith(quest, 0f);
+            var preview = PotionPreview.Hidden;
+
+            if (max > 0)
+            {
+                var label = ApplicationFormatter.PotionLabel(0, default);
+                string effect = string.Empty, warning = string.Empty;
+                var canAfford = true;
+
+                if (_potionTier > 0 && Alchemy.TryGetTier(_potionTier, out var tier))
+                {
+                    var cost = Alchemy.IngredientCost(tier, members.Count);
+                    label = ApplicationFormatter.PotionLabel(_potionTier, tier);
+                    effect = ApplicationFormatter.PotionEffect(_potionTier, tier, cost);
+
+                    var refuser = Alchemy.FindRefuser(quest, members, tier, GameConfig.Instance.Quests);
+                    if (refuser != null)
+                    {
+                        warning = ApplicationFormatter.PotionRefusal(refuser);
+                    }
+                    else
+                    {
+                        var gold = GuildManager.HasInstance ? GuildManager.Instance.Wallet.Gold : 0;
+                        canAfford = gold >= cost;
+                        if (!canAfford)
+                            warning = ApplicationFormatter.PotionUnaffordable;
+
+                        QuestTerms cut = new(Alchemy.ShareAfterCut(quest, tier.ShareCutPercent), quest.Terms.MinRank, quest.Terms.PartySize);
+                        split = QuestFormatter.GoldSplit(quest.Request, cut);
+                        chance = QuestManager.Instance.SuccessChanceWith(quest, tier.ChanceBonus);
+                    }
+                }
+
+                preview = new PotionPreview(true, label, effect, warning, canAfford);
+            }
+
+            _details.Show(quest, members, split, chance, Now, preview);
         }
 
         // NOTE: Declining or approving can hide the focused row/button; a disabled focused element would strand the
@@ -195,6 +271,7 @@ namespace WanderersGuild
                 return _sorted[i];
             }
 
+            _potionTier = 0;
             if (_sorted.Count == 0)
             {
                 _selectedId = -1;
@@ -211,6 +288,8 @@ namespace WanderersGuild
         private void OnQuestEnded(Quest _, QuestEndReason __) => RefreshIfOpen();
         private void OnHourStarted(GameDateTime _) => RefreshIfOpen();
         private void OnAdventurerEvent(Adventurer _) => RefreshIfOpen();
+        private void OnGoldChanged(long _, long __) => RefreshIfOpen();
+        private void OnFacilityChanged(PlacedFacility _) => RefreshIfOpen();
 
         private void RefreshIfOpen()
         {

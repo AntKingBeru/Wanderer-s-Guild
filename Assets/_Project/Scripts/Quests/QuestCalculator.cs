@@ -1,4 +1,4 @@
-// Quest maths (one place, all tunable in GameConfig › Quests): terms limits, appeal, duration, difficulty, power, success chance.
+// Quest maths (pure): default/clamped terms, who qualifies, appeal, duration, difficulty, member/party power, success chance.
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,10 +27,14 @@ namespace WanderersGuild
         public static bool Qualifies(Adventurer adventurer, Quest quest) => adventurer.Rank >= quest.Terms.MinRank;
 
         // Offered gold per member ÷ the adventurer's expectation (affinity makes the offer look bigger). ≥ 1 = willing.
-        public static float Appeal(Adventurer adventurer, Quest quest, QuestSettings settings)
+        public static float Appeal(Adventurer adventurer, Quest quest, QuestSettings settings) =>
+            Appeal(adventurer, quest, settings, quest.GoldPerMember);
+
+        // The same appeal test at a given gold per member (e.g. after a potion share cut).
+        public static float Appeal(Adventurer adventurer, Quest quest, QuestSettings settings, int goldPerMember)
         {
             var expectation = Mathf.Max(1f, settings.ExpectedGoldPerLevel * adventurer.Level);
-            var offered = quest.GoldPerMember * (adventurer.Class.HasAffinity(quest.Request.Category) ? settings.AffinityAcceptFactor : 1f);
+            var offered = goldPerMember * (adventurer.Class.HasAffinity(quest.Request.Category) ? settings.AffinityAcceptFactor : 1f);
             return offered / expectation;
         }
 
@@ -41,10 +45,13 @@ namespace WanderersGuild
         public static float Difficulty(RequestData request, QuestSettings settings) =>
             settings.DifficultyPerMember(request.RecommendedRank) * request.RecommendedPartySize;
 
+        // NOTE: Weighted stats (incl. gear) × affinity bonus × the supper bonus they carry (Well fed).
         public static float MemberPower(Adventurer adventurer, QuestCategory category, QuestSettings settings)
         {
             var power = settings.Weights(category).Apply(adventurer.Stats);
-            return adventurer.Class.HasAffinity(category) ? power * (1f + settings.AffinityPowerBonus) : power;
+            if (adventurer.Class.HasAffinity(category))
+                power *= 1f + settings.AffinityPowerBonus;
+            return power * (1f + adventurer.WellFedBonus);
         }
 
         public static float PartyPower(IEnumerable<Adventurer> members, QuestCategory category, QuestSettings settings)
@@ -52,13 +59,16 @@ namespace WanderersGuild
             return members.Sum(member => MemberPower(member, category, settings));
         }
 
-        // chanceAtEven at power = difficulty, moving chancePerRatio per 1.0 of power ÷ difficulty; clamped.
-        public static float SuccessChance(float partyPower, float difficulty, QuestSettings settings)
+        // chanceAtEven at power = difficulty, moving chancePerRatio per 1.0 of power ÷ difficulty; plus a flat bonus
+        // (potions) added before clamping.
+        public static float SuccessChance(float partyPower, float difficulty, QuestSettings settings, float flatBonus = 0f)
         {
-            if (difficulty <= 0f) return settings.MaxChance;
+            if (difficulty <= 0f)
+                return settings.MaxChance;
 
             var ratio = partyPower / difficulty;
-            return Mathf.Clamp(settings.ChanceAtEven + (ratio - 1f) * settings.ChancePerRatio, settings.MinChance, settings.MaxChance);
+            var chance = settings.ChanceAtEven + (ratio - 1f) * settings.ChancePerRatio + flatBonus;
+            return Mathf.Clamp(chance, settings.MinChance, settings.MaxChance);
         }
     }
 }

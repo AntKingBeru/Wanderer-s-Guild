@@ -25,6 +25,11 @@
                     <wg:OutlinedText name="app-empty" class="app-empty" text="No applications right now." />
 
                     <wg:OutlinedText name="app-hint" class="app-hint" text="Waiting for 1 more" />
+                    <!-- Potions (only with a finished alchemist): cycles None → Minor → …; effect or warning beside it. -->
+                    <ui:VisualElement name="app-potion-row" class="app-potion-row" picking-mode="Ignore">
+                        <ui:Button name="app-potion" class="pixel-button app-potion"><wg:OutlinedText text="Potions: None" /></ui:Button>
+                        <wg:OutlinedText name="app-potion-effect" class="app-potion-effect" text="-10% share · +8% chance" />
+                    </ui:VisualElement>
                     <ui:VisualElement class="app-buttons" picking-mode="Ignore">
                         <ui:Button name="app-decline-all" class="pixel-button panel-button"><wg:OutlinedText text="Decline all" /></ui:Button>
                         <ui:Button name="app-approve" class="pixel-button panel-button"><wg:OutlinedText text="Approve" /></ui:Button>

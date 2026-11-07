@@ -161,3 +161,38 @@
     flex-shrink: 0;
     margin-top: 3px;
 }
+/* ---------- Potions (pinned above the buttons) ---------- */
+.app-potion-row {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: none;
+}
+.pixel-button.app-potion {
+    flex-shrink: 0;
+    height: 12px;
+    min-height: 12px;
+    margin: 0 3px 0 0;
+    padding: 0 3px;
+    border-width: 1px;
+    align-items: center;
+    justify-content: center;
+}
+.pixel-button.app-potion:hover {
+    border-color: var(--frame-highlight-border);
+}
+/* NOTE: Clipped beside the button; 2px left/right padding keeps the outline inside the clip. Red when it's a warning. */
+.app-potion-effect {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1px 2px;
+}
+.app-potion-effect .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.app-potion-effect--warning .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}

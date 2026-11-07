@@ -220,6 +220,13 @@ namespace WanderersGuild
 
         // The armory's stock changed (a sale, a restocking, the armory removed).
         public static readonly UnityEvent OnArmoryStockChanged = new();
+        
+        // Supper was served. Args: adventurers who ate, adventurers who couldn't pay, gold the guild took.
+        public static readonly UnityEvent<int, int, long> OnSupperServed = new();
+        
+        // A party refused its potions at approval (the share would fall below a member's expectation) and left
+        // without them. Args: the quest, the first member who refused.
+        public static readonly UnityEvent<Quest, Adventurer> OnPotionsRefused = new();
         #endregion
     }
 }

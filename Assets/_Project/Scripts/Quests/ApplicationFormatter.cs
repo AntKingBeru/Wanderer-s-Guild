@@ -1,4 +1,4 @@
-// Display strings for the reception desk and applications: desk detail lines, row status, applicant line, approve hint.
+// Display strings for the reception desk and applications: desk detail lines, row status, applicant line, approve hint, potions.
 namespace WanderersGuild
 {
     public static class ApplicationFormatter
@@ -38,5 +38,20 @@ namespace WanderersGuild
             var missing = quest.Terms.PartySize - quest.MemberIds.Count;
             return quest.State == QuestState.Ready || missing <= 0 ? string.Empty : $"Waiting for {missing} more";
         }
+
+        // "Potions: None" / "Potions: Minor".
+        public static string PotionLabel(int tier, PotionTier data) => tier <= 0 ? "Potions: None" : $"Potions: {data.Name}";
+
+        // "−10% share · +8% chance · 6g ingredients" (empty for None).
+        public static string PotionEffect(int tier, PotionTier data, long cost) =>
+            tier <= 0
+                ? string.Empty
+                : $"-{data.ShareCutPercent}% share · +{UnityEngine.Mathf.RoundToInt(data.ChanceBonus * 100f)}% chance · {cost:N0}g ingredients";
+
+        // "Bran won't take the lower share: the party goes without potions".
+        public static string PotionRefusal(Adventurer refuser) =>
+            $"{refuser.Name} won't take the lower share: the party goes without potions";
+
+        public const string PotionUnaffordable = "Not enough gold for potions";
     }
 }

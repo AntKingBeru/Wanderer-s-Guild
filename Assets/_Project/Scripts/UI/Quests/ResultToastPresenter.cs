@@ -24,6 +24,8 @@ namespace WanderersGuild
             GameEventsRelay.OnApplicantLeft.AddListener(OnApplicantLeft);
             GameEventsRelay.OnArmorySalesCompleted.AddListener(OnArmorySales);
             GameEventsRelay.OnArmoryRestocked.AddListener(OnArmoryRestocked);
+            GameEventsRelay.OnSupperServed.AddListener(OnSupperServed);
+            GameEventsRelay.OnPotionsRefused.AddListener(OnPotionsRefused);
         }
 
         private void OnDisable()
@@ -35,6 +37,8 @@ namespace WanderersGuild
             GameEventsRelay.OnApplicantLeft.RemoveListener(OnApplicantLeft);
             GameEventsRelay.OnArmorySalesCompleted.RemoveListener(OnArmorySales);
             GameEventsRelay.OnArmoryRestocked.RemoveListener(OnArmoryRestocked);
+            GameEventsRelay.OnSupperServed.RemoveListener(OnSupperServed);
+            GameEventsRelay.OnPotionsRefused.RemoveListener(OnPotionsRefused);
             if (_wait.IsActive())
                 _wait.Kill();
             _queue.Clear();
@@ -101,6 +105,22 @@ namespace WanderersGuild
             else
                 Enqueue($"Armory restocked: {bought} items (-{cost:N0}g)", false);
         }
+        
+        // NOTE: Nobody at the guild → no toast.
+        private void OnSupperServed(int served, int skipped, long gold)
+        {
+            if (served == 0 && skipped == 0)
+                return;
+
+            var meals = served == 1 ? "1 meal served" : $"{served} meals served";
+            var text = served > 0 ? $"Tavern: {meals} (+{gold:N0}g)" : "Tavern: nobody could pay for supper";
+            if (served > 0 && skipped > 0)
+                text += $" · {skipped} couldn't pay";
+            Enqueue(text, served == 0);
+        }
+        
+        private void OnPotionsRefused(Quest quest, Adventurer refuser) =>
+            Enqueue($"{refuser.Name} refused the potions; the party left without them", true);
 
         private static string Signed(long value) => value >= 0 ? $"+{value:N0}" : $"-{-value:N0}";
 

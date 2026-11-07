@@ -1,4 +1,4 @@
-// One guild adventurer: identity, species and class, experience (level derived), rank + progress, wealth, status, exam, gear.
+// One guild adventurer: identity, species and class, experience (level derived), rank + progress, wealth, status, exam, gear, supper buff.
 namespace WanderersGuild
 {
     public sealed class Adventurer
@@ -7,7 +7,8 @@ namespace WanderersGuild
 
         public Adventurer(int id, string name, SpeciesData species, ClassData classData, long experience, GuildRank rank,
                           int wealth, AdventurerStatus status, long joinedAtMinutes, StatBlock retainedGrowth, ExperienceTable levels,
-                          float rankProgress = 0f, long examReturnsAtMinutes = 0, EquipmentData[] equipment = null)
+                          float rankProgress = 0f, long examReturnsAtMinutes = 0, EquipmentData[] equipment = null,
+                          float wellFedBonus = 0f)
         {
             _levels = levels;
             Id = id;
@@ -22,6 +23,7 @@ namespace WanderersGuild
             RetainedGrowth = retainedGrowth;
             RankProgress = System.Math.Max(0f, rankProgress);
             ExamReturnsAtMinutes = System.Math.Max(0L, examReturnsAtMinutes);
+            WellFedBonus = System.Math.Max(0f, wellFedBonus);
 
             // NOTE: Each item goes into its own slot; nulls (unknown ids) leave the slot empty.
             if (equipment == null)
@@ -39,7 +41,7 @@ namespace WanderersGuild
         public SpeciesData Species { get; }
         public ClassData Class { get; }
 
-        // Total XP in the current class (D&D-style cumulative table); clamped at the level cap.
+        // Total XP in the current class (cumulative table); clamped at the level cap.
         public long Experience { get; private set; }
 
         // Adventurer rank — raised only by passing a promotion exam.
@@ -62,6 +64,11 @@ namespace WanderersGuild
 
         // Worn gear (changed by the armory).
         public AdventurerEquipment Equipment { get; } = new();
+
+        // Quest power bonus from supper (0 = not well-fed). Set only by the tavern at supper.
+        public float WellFedBonus { get; private set; }
+
+        public bool IsWellFed => WellFedBonus > 0f;
 
         public int Level => _levels.LevelFor(Experience);
         public bool IsMaxLevel => Level >= _levels.MaxLevel;
@@ -101,6 +108,9 @@ namespace WanderersGuild
             Wealth -= amount;
             return true;
         }
+
+        // Sets the supper buff (0 clears it). Only the tavern calls this.
+        public void SetWellFed(float bonus) => WellFedBonus = System.Math.Max(0f, bonus);
 
         // True if this call changed it.
         public bool SetStatus(AdventurerStatus status)
@@ -148,13 +158,12 @@ namespace WanderersGuild
         public void ClearExam(bool resetStatus)
         {
             ExamReturnsAtMinutes = 0;
-            if (resetStatus)
-                Status = AdventurerStatus.Idle;
+            if (resetStatus) Status = AdventurerStatus.Idle;
         }
 
         public SavedAdventurer ToSaved() =>
             new(Id, Name, Species.Id, Class.Id, Experience, Rank, Wealth, Status, JoinedAtMinutes, RetainedGrowth,
-                RankProgress, ExamReturnsAtMinutes, Equipment.ToIds());
+                RankProgress, ExamReturnsAtMinutes, Equipment.ToIds(), WellFedBonus);
 
         private void EndExam()
         {
