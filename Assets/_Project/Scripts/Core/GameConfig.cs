@@ -57,6 +57,7 @@ namespace WanderersGuild
         [SerializeField] private EquipmentSettings equipment = new();
         [SerializeField] private TavernSettings tavern = new();
         [SerializeField] private AlchemySettings alchemy = new();
+        [SerializeField] private AvatarSettings avatars = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -103,6 +104,7 @@ namespace WanderersGuild
         public EquipmentSettings Equipment => equipment;
         public TavernSettings Tavern => tavern;
         public AlchemySettings Alchemy => alchemy;
+        public AvatarSettings Avatars => avatars;
     }
     
     #region Scene Management
@@ -1673,6 +1675,79 @@ namespace WanderersGuild
         };
 
         public IReadOnlyList<PotionTier> Tiers => tiers ?? Array.Empty<PotionTier>();
+    }
+    #endregion
+    
+    #region Avatars
+    [Serializable]
+    public class AvatarSettings
+    {
+        [Tooltip("Lit, alpha-clipped material for avatar quads (URP Simple Lit: Alpha Clipping on, Render Face Both). The " +
+                 "sheet texture and frame are set per avatar with a property block.")]
+        [SerializeField] private Material material;
+
+        [Tooltip("Which sheet each species + class combination uses (most specific entry wins).")]
+        [SerializeField] private AvatarSheetCatalog catalog;
+
+        [Tooltip("Pixel size of one frame in every sheet (sheets are frame width × columns by frame height × 4).")]
+        [SerializeField] private Vector2Int frameSize = new(48, 52);
+
+        [Tooltip("Height of a character in world units (one unit = one grid cell); the width follows the frame's aspect.")]
+        [SerializeField, Min(0.1f)] private float worldHeight = 2.5f;
+
+        [Tooltip("Walking speed in world units per second at Normal speed (Fast/Very Fast scale it).")]
+        [SerializeField, Min(0.1f)] private float walkSpeed = 3f;
+
+        [Tooltip("Leisure: in-game minutes before picking something else (random in this range).")]
+        [SerializeField] private Vector2Int dwellMinutes = new(30, 120);
+
+        [Tooltip("Leisure: chance to go sit on a free Seat instead of wandering.")]
+        [SerializeField, Range(0f, 1f)] private float seatChance = 0.5f;
+
+        [Header("Schedule (visual only — meals and purchases still happen at their hours)")]
+        [Tooltip("Sleep from this hour (wraps past midnight)…")]
+        [SerializeField, Range(0, 23)] private int sleepStartHour = 22;
+        [Tooltip("…until this hour.")]
+        [SerializeField, Range(0, 23)] private int sleepEndHour = 6;
+
+        [Tooltip("Head to a tavern Table this many minutes before supper, and stay this long after it starts.")]
+        [SerializeField, Min(0)] private int supperLeadMinutes = 30;
+        [SerializeField, Min(1)] private int supperStayMinutes = 90;
+
+        [Tooltip("Head to the armory Counter this many minutes before the shopping hour, and stay this long after it.")]
+        [SerializeField, Min(0)] private int shopLeadMinutes = 60;
+        [SerializeField, Min(1)] private int shopStayMinutes = 60;
+
+        [Header("World")]
+        [Tooltip("Height of the floor avatars stand on.")]
+        [SerializeField] private float floorHeight;
+
+        [Tooltip("Most cells A* may visit before giving up (keeps a broken layout from stalling a frame).")]
+        [SerializeField, Min(100)] private int maxPathNodes = 5000;
+        
+        [Header("Card")]
+        [Tooltip("The floating card's offset from the avatar's label anchor (render pixels; +x = right).")]
+        [SerializeField] private Vector2 cardOffset = new(8f, -10f);
+        [Tooltip("Keep the card at least this far below the top of the view (clears the HUD bar).")]
+        [SerializeField, Min(0f)] private float cardTopMargin = 26f;
+
+        public Material Material => material;
+        public AvatarSheetCatalog Catalog => catalog;
+        public Vector2Int FrameSize => new(Mathf.Max(1, frameSize.x), Mathf.Max(1, frameSize.y));
+        public float WorldHeight => worldHeight;
+        public float WalkSpeed => walkSpeed;
+        public Vector2Int DwellMinutes => new(Mathf.Max(1, dwellMinutes.x), Mathf.Max(dwellMinutes.x, dwellMinutes.y));
+        public float SeatChance => seatChance;
+        public int SleepStartHour => sleepStartHour;
+        public int SleepEndHour => sleepEndHour;
+        public int SupperLeadMinutes => supperLeadMinutes;
+        public int SupperStayMinutes => supperStayMinutes;
+        public int ShopLeadMinutes => shopLeadMinutes;
+        public int ShopStayMinutes => shopStayMinutes;
+        public float FloorHeight => floorHeight;
+        public int MaxPathNodes => maxPathNodes;
+        public Vector2 CardOffset => cardOffset;
+        public float CardTopMargin => cardTopMargin;
     }
     #endregion
 }

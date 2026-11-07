@@ -313,4 +313,34 @@ namespace WanderersGuild
         Armor = 2
     }
     #endregion
+    
+    #region Avatars
+    // Which row of an avatar sprite sheet to show, relative to the camera. NOTE: Order = sheet rows top → bottom.
+    public enum AvatarFacing
+    {
+        Down = 0,
+        Left = 1,
+        Right = 2,
+        Up = 3
+    }
+    
+    // What an activity spot is for (a marker in a room prefab).
+    public enum SpotKind
+    {
+        Seat = 0,
+        Table = 1,
+        Counter = 2,
+        Bed = 3
+    }
+
+    // What the schedule wants an avatar doing right now. None = not planned yet (fresh avatar, after a change).
+    public enum AvatarActivity
+    {
+        None = 0,
+        Leisure = 1,
+        Shop = 2,
+        Supper = 3,
+        Sleep = 4
+    }
+    #endregion
 }

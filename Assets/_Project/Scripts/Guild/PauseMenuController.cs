@@ -41,11 +41,13 @@ namespace WanderersGuild
             return true;
         }
 
-        // NOTE: Only ever opens — Esc inside the menu is UI Cancel. Esc belongs to build mode while it's open, or if build
-        // mode used it this frame (the two listeners can fire in either order).
+        // NOTE: Only ever opens — Esc inside the menu is UI Cancel. Esc belongs to build mode or the adventurer card while
+        // they're open, or if they used it this frame (the listeners can fire in any order).
         private void OnPauseMenuPressed(InputAction.CallbackContext _)
         {
             if (BuildModeController.HasInstance && BuildModeController.Instance.BlocksEscape)
+                return;
+            if (AdventurerCardController.HasInstance && AdventurerCardController.Instance.BlocksEscape)
                 return;
             TryOpen();
         }

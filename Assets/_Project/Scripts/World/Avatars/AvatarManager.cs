@@ -1,0 +1,315 @@
+// Game-scene owner of avatars: one per adventurer at the guild; enter/leave through the entrance; daily schedule at activity
+// spots (sleep, supper, shopping, leisure); grid upkeep.
+using System.Linq;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace WanderersGuild
+{
+    // NOTE: Scene-scoped — untick "Persist Across Scenes". Builds the grid and syncs everyone in Start (after the managers
+    // have loaded and the Guild Hall exists); join events before then are ignored — Start catches them.
+    public class AvatarManager : Singleton<AvatarManager>
+    {
+        [SerializeField] private Grid grid;
+        [SerializeField] private Camera worldCamera;
+        [Tooltip("Spawned avatars go under this.")]
+        [SerializeField] private Transform avatarsParent;
+
+        private readonly Dictionary<int, AdventurerAvatar> _avatars = new();
+        private readonly List<AdventurerAvatar> _snapshot = new();
+        private readonly GuildNavGrid _nav = new();
+        private readonly GridPathfinder _pathfinder = new();
+        private readonly List<Vector2Int> _path = new();
+        private AvatarSettings _settings;
+        private Vector2Int _entrance;
+        private bool _hasEntrance;
+        private bool _isReady;
+        private bool _warnedEntrance;
+
+        public IReadOnlyDictionary<int, AdventurerAvatar> Avatars => _avatars;
+        public GuildNavGrid Nav => _nav;
+
+        private static long Now => RequestManager.NowMinutes;
+        private static bool IsAtGuild(Adventurer a) => a.Status == AdventurerStatus.Idle || a.Status == AdventurerStatus.SignedUp;
+
+        protected override void OnSingletonAwake() => _settings = GameConfig.Instance.Avatars;
+
+        private void OnEnable()
+        {
+            GameEventsRelay.OnAdventurerJoined.AddListener(OnAdventurerJoined);
+            GameEventsRelay.OnAdventurerLeft.AddListener(OnAdventurerLeft);
+            GameEventsRelay.OnAdventurerChanged.AddListener(OnAdventurerChanged);
+            GameEventsRelay.OnFacilityPlaced.AddListener(OnFacilitiesChanged);
+            GameEventsRelay.OnFacilityCompleted.AddListener(OnFacilitiesChanged);
+            GameEventsRelay.OnFacilityRemoved.AddListener(OnFacilitiesChanged);
+        }
+
+        private void OnDisable()
+        {
+            GameEventsRelay.OnAdventurerJoined.RemoveListener(OnAdventurerJoined);
+            GameEventsRelay.OnAdventurerLeft.RemoveListener(OnAdventurerLeft);
+            GameEventsRelay.OnAdventurerChanged.RemoveListener(OnAdventurerChanged);
+            GameEventsRelay.OnFacilityPlaced.RemoveListener(OnFacilitiesChanged);
+            GameEventsRelay.OnFacilityCompleted.RemoveListener(OnFacilitiesChanged);
+            GameEventsRelay.OnFacilityRemoved.RemoveListener(OnFacilitiesChanged);
+        }
+
+        // NOTE: On load everyone at the guild appears at a random cell, then plans their first activity next frame.
+        private void Start()
+        {
+            RebuildNav();
+            _isReady = true;
+
+            if (!AdventurerManager.HasInstance)
+                return;
+            foreach (var adventurer in AdventurerManager.Instance.Adventurers)
+            {
+                if (IsAtGuild(adventurer))
+                    Spawn(adventurer, atEntrance: false);
+            }
+        }
+
+        protected override void OnDestroy()
+        {
+            ActivitySpotRegistry.ClearReservations();
+            PlaceholderAvatarSheets.Clear();
+            AvatarFactory.ResetWarnings();
+            base.OnDestroy();
+        }
+
+        public bool TryGet(int adventurerId, out AdventurerAvatar avatar) => _avatars.TryGetValue(adventurerId, out avatar);
+
+        // Debug and testing: removes every avatar and spawns everyone at the guild again.
+        public void RespawnAll()
+        {
+            foreach (var avatar in new List<AdventurerAvatar>(_avatars.Values))
+                Despawn(avatar.AdventurerId);
+            Start();
+        }
+
+        // ---------- Frame: the schedule ----------
+
+        // NOTE: One schedule read per frame. An avatar re-plans when the schedule's activity differs from what it planned for
+        // (even mid-walk — 18:30 sends a wanderer to supper), or when its leisure dwell runs out.
+        private void Update()
+        {
+            if (!_isReady || _avatars.Count == 0)
+                return;
+
+            var now = Now;
+            var desired = DesiredNow(now);
+
+            _snapshot.Clear();
+            _snapshot.AddRange(_avatars.Values);
+            foreach (var avatar in from avatar in _snapshot
+                     where avatar && !avatar.IsLeaving
+                     let scheduleChanged = avatar.PlannedFor != desired
+                     let dwellOver = !avatar.IsWalking && now >= avatar.NextDecisionAt
+                     where scheduleChanged || dwellOver select avatar)
+            {
+                Plan(avatar, desired, now);
+            }
+        }
+
+        private AvatarActivity DesiredNow(long now)
+        {
+            var minuteOfDay = (int)(now % GameCalendar.MinutesPerDay);
+            var hasTavern = TavernManager.HasInstance && TavernManager.Instance.Best.effect;
+            var hasArmory = ArmoryManager.HasInstance && ArmoryManager.Instance.StockTier > 0;
+            return AvatarSchedule.Desired(minuteOfDay, _settings, hasTavern, hasArmory,
+                                          GameConfig.Instance.Tavern.SupperHour, GameConfig.Instance.Equipment.ShoppingHour);
+        }
+
+        // NOTE: Spot kind by activity; Sleep falls back to a Seat, everything falls back to wandering. Spot activities hold
+        // until the schedule changes; leisure re-decides after its dwell.
+        private void Plan(AdventurerAvatar avatar, AvatarActivity activity, long now)
+        {
+            ActivitySpotRegistry.Release(avatar.AdventurerId);
+            avatar.PlannedFor = activity;
+
+            var atSpot = activity switch
+            {
+                AvatarActivity.Sleep => TryGoToSpot(avatar, SpotKind.Bed) || TryGoToSpot(avatar, SpotKind.Seat),
+                AvatarActivity.Supper => TryGoToSpot(avatar, SpotKind.Table),
+                AvatarActivity.Shop => TryGoToSpot(avatar, SpotKind.Counter),
+                _ => Random.value < _settings.SeatChance && TryGoToSpot(avatar, SpotKind.Seat)
+            };
+
+            var holds = atSpot && activity != AvatarActivity.Leisure;
+            avatar.NextDecisionAt = holds ? long.MaxValue : now + Random.Range(_settings.DwellMinutes.x, _settings.DwellMinutes.y + 1);
+
+            if (!atSpot) WanderTo(avatar);
+        }
+
+        // NOTE: Only spots whose cell is walkable are offered; on arrival the avatar stands on the marker, facing its arrow.
+        private bool TryGoToSpot(AdventurerAvatar avatar, SpotKind kind)
+        {
+            if (!ActivitySpotRegistry.TryReserve(kind, avatar.AdventurerId, spot => _nav.IsWalkable(CellOf(spot.Position)),
+                                                 out var target))
+                return false;
+
+            if (!_pathfinder.TryFind(_nav, avatar.Cell, CellOf(target.Position), _settings.MaxPathNodes, _path))
+            {
+                ActivitySpotRegistry.Release(avatar.AdventurerId);
+                return false;
+            }
+
+            var facing = target.Facing;
+            avatar.Walk(_path, target.Position, () => { if (avatar) avatar.FaceTowards(facing); });
+            return true;
+        }
+
+        // NOTE: No path → just stand; the next dwell or schedule change tries again.
+        private void WanderTo(AdventurerAvatar avatar)
+        {
+            if (!_nav.TryRandomCell(out var target))
+                return;
+
+            if (_pathfinder.TryFind(_nav, avatar.Cell, target, _settings.MaxPathNodes, _path))
+                avatar.Walk(_path, null, null);
+            else
+                avatar.Stop();
+        }
+
+        // ---------- Arrivals / departures ----------
+
+        private void OnAdventurerJoined(Adventurer adventurer)
+        {
+            if (_isReady && IsAtGuild(adventurer))
+                Spawn(adventurer, atEntrance: true);
+        }
+
+        private void OnAdventurerLeft(Adventurer adventurer) => Despawn(adventurer.Id);
+
+        // NOTE: Only at-guild ↔ away transitions matter (Signed up ↔ Idle keeps them here).
+        private void OnAdventurerChanged(Adventurer adventurer)
+        {
+            if (!_isReady)
+                return;
+
+            var here = IsAtGuild(adventurer);
+            var hasAvatar = _avatars.TryGetValue(adventurer.Id, out var avatar);
+
+            switch (here)
+            {
+                case true when !hasAvatar:
+                    Spawn(adventurer, atEntrance: true);
+                    break;
+                case true when avatar.IsLeaving:
+                    avatar.IsLeaving = false; // Called back before reaching the door.
+                    avatar.PlannedFor = AvatarActivity.None;
+                    break;
+                case false when hasAvatar && !avatar.IsLeaving:
+                    Leave(avatar);
+                    break;
+            }
+        }
+
+        private void Spawn(Adventurer adventurer, bool atEntrance)
+        {
+            if (_avatars.ContainsKey(adventurer.Id))
+                return;
+
+            Vector2Int cell;
+            if (atEntrance && _hasEntrance)
+                cell = _entrance;
+            else if (!_nav.TryRandomCell(out cell))
+                return;
+
+            var avatar = AvatarFactory.Create(adventurer, avatarsParent ? avatarsParent : transform,
+                                                           worldCamera, grid, _settings);
+            avatar.PlaceAt(cell);
+            avatar.PlannedFor = AvatarActivity.None;
+            avatar.NextDecisionAt = Now;
+            _avatars[adventurer.Id] = avatar;
+        }
+
+        // NOTE: Frees their spot, walks to the entrance, then disappears; with no path, disappears right away.
+        private void Leave(AdventurerAvatar avatar)
+        {
+            ActivitySpotRegistry.Release(avatar.AdventurerId);
+            avatar.IsLeaving = true;
+            var id = avatar.AdventurerId;
+
+            if (_hasEntrance && _pathfinder.TryFind(_nav, avatar.Cell, _entrance, _settings.MaxPathNodes, _path))
+                avatar.Walk(_path, null, () => { if (avatar && avatar.IsLeaving) Despawn(id); });
+            else
+                Despawn(id);
+        }
+
+        private void Despawn(int adventurerId)
+        {
+            ActivitySpotRegistry.Release(adventurerId);
+            if (!_avatars.Remove(adventurerId, out var avatar))
+                return;
+
+            if (avatar)
+                Destroy(avatar.gameObject);
+        }
+
+        // ---------- Grid upkeep ----------
+
+        // NOTE: Avatars on cells that are no longer walkable go to the entrance; everyone re-plans (spots may have vanished
+        // or appeared, and paths may cross a removed room). Leavers re-path to the door.
+        private void OnFacilitiesChanged(PlacedFacility _)
+        {
+            if (!_isReady)
+                return;
+
+            RebuildNav();
+            foreach (var avatar in new List<AdventurerAvatar>(_avatars.Values))
+            {
+                if (!_nav.IsWalkable(avatar.Cell))
+                {
+                    if (_hasEntrance)
+                        avatar.PlaceAt(_entrance);
+                    else
+                    {
+                        Despawn(avatar.AdventurerId);
+                        continue;
+                    }
+                }
+
+                if (avatar.IsLeaving)
+                    Leave(avatar);
+                else
+                {
+                    ActivitySpotRegistry.Release(avatar.AdventurerId);
+                    avatar.Stop();
+                    avatar.PlannedFor = AvatarActivity.None;
+                }
+            }
+        }
+
+        private void RebuildNav()
+        {
+            if (FacilityManager.HasInstance)
+                _nav.Rebuild(FacilityManager.Instance.Rooms);
+            ResolveEntrance();
+        }
+
+        // NOTE: The entrance marker's cell (snapped to the nearest walkable one); without a marker, any walkable cell (warned once).
+        private void ResolveEntrance()
+        {
+            _hasEntrance = false;
+            if (GuildEntrance.Current && grid)
+            {
+                _hasEntrance = _nav.TryNearest(CellOf(GuildEntrance.Current.transform.position), out _entrance);
+                return;
+            }
+
+            if (!_warnedEntrance)
+            {
+                _warnedEntrance = true;
+                Debug.LogWarning("[AvatarManager] No GuildEntrance in the Guild Hall prefab — adventurers enter at a random cell.", this);
+            }
+            _hasEntrance = _nav.TryRandomCell(out _entrance);
+        }
+
+        private Vector2Int CellOf(Vector3 position)
+        {
+            var cell = grid.WorldToCell(position);
+            return new Vector2Int(cell.x, cell.y);
+        }
+    }
+}

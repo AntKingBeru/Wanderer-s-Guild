@@ -728,6 +728,7 @@ Transform:
   - {fileID: 1253490074}
   - {fileID: 408834675}
   - {fileID: 637456966}
+  - {fileID: 1149269684}
   - {fileID: 1873610641}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1265,6 +1266,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ApplicationsPanel
   id: 10
   hidesMenu: 1
+--- !u!1 &1149269683
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1149269684}
+  - component: {fileID: 1149269685}
+  m_Layer: 0
+  m_Name: AvatarManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1149269684
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149269683}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 606351659}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1149269685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149269683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e0218d1dfa624e4ca8fb478a78668e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AvatarManager
+  persistAcrossScenes: 0
+  grid: {fileID: 637456967}
+  worldCamera: {fileID: 1904311416}
+  avatarsParent: {fileID: 1581658126}
 --- !u!1 &1160252150
 GameObject:
   m_ObjectHideFlags: 0
@@ -1345,6 +1394,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1253490074}
   - component: {fileID: 1253490075}
+  - component: {fileID: 1253490076}
   m_Layer: 0
   m_Name: InteractionController
   m_TagString: Untagged
@@ -1379,6 +1429,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f030588731e28f45b101c5aaf0727e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.GuildInteractionController
+  worldCamera: {fileID: 1904311416}
+  view: {fileID: 998846831}
+  panels: {fileID: 1873610642}
+--- !u!114 &1253490076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253490073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 148cefd1e543e304b88db33cbb213ffa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AdventurerCardController
+  persistAcrossScenes: 0
   worldCamera: {fileID: 1904311416}
   view: {fileID: 998846831}
   panels: {fileID: 1873610642}
@@ -1891,6 +1957,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 993639236}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1581658125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1581658126}
+  m_Layer: 0
+  m_Name: Avatars
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1581658126
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1581658125}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1669214135
 GameObject:
   m_ObjectHideFlags: 0
@@ -2392,3 +2489,4 @@ SceneRoots:
   - {fileID: 606351659}
   - {fileID: 993639236}
   - {fileID: 1931201566}
+  - {fileID: 1581658126}

@@ -1,4 +1,4 @@
-/* The world render texture stretched over the 320×180 canvas; the panel's integer scaling keeps its pixels square. */
+/* The world render texture stretched over the canvas; the panel's integer scaling keeps its pixels square. */
 .world-view {
     position: absolute;
     left: 0; top: 0; right: 0; bottom: 0;
@@ -15,4 +15,58 @@
     padding: 1px 4px;
     translate: -50% -100%;
     display: none;
+}
+
+/* ---------- Floating adventurer card ---------- */
+/* NOTE: left/top set in code (whole pixels, clamped inside the view and below the HUD bar). Children stretch (the theme's
+   window centres them by default). */
+.world-card {
+    position: absolute;
+    width: 128px;
+    padding: 2px 4px 3px 4px;
+    align-items: stretch;
+    display: none;
+}
+.world-card__header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.world-card__name {
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1px 2px;
+}
+.world-card__name .outlined-text__fill {
+    color: var(--color-accent);
+}
+.world-card__line {
+    overflow: hidden;
+    padding: 1px 2px;
+}
+.world-card__line .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.pixel-button.world-card__close {
+    width: 11px;
+    height: 11px;
+    margin: 0 0 0 2px;
+    padding: 0;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+}
+.world-card__buttons {
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 2px;
+}
+.pixel-button.world-card__button {
+    margin: 0;
+    padding: 1px 4px;
+}
+.pixel-button.world-card__close:hover,
+.pixel-button.world-card__button:hover {
+    border-color: var(--frame-highlight-border);
 }

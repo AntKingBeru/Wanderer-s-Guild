@@ -12,7 +12,9 @@ namespace WanderersGuild
         // NOTE: Rows are created once and can't grow afterward (MenuPanel sets them up in Initialize) — far more than any
         // realistic guild; past this, the extra adventurers aren't listed and a warning says to raise it.
         private const int RowPool = 48;
-
+        
+        private static int _selectOnNextOpen = -1;
+        
         private readonly List<Button> _buttons = new();
         private readonly List<VisualElement> _navigationOrder = new();
         private readonly List<Adventurer> _sorted = new();
@@ -92,10 +94,18 @@ namespace WanderersGuild
             GameEventsRelay.OnHourStarted.RemoveListener(OnHourStarted);
             base.OnDestroy();
         }
+        
+        // The next time the roster opens, select this adventurer (one-shot — e.g. from the world card).
+        public static void SelectOnNextOpen(int adventurerId) => _selectOnNextOpen = adventurerId;
 
         protected override void OnOpening()
         {
             _confirm.HideImmediate();
+            if (_selectOnNextOpen >= 0)
+            {
+                _selectedId = _selectOnNextOpen;
+                _selectOnNextOpen = -1;
+            }
             Refresh();
         }
 

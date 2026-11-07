@@ -1,10 +1,10 @@
-// A clickable guild object (desk, quest board, lounge): its name, the screen it opens, its colliders, and its hover outline.
+// A clickable guild object (desk, quest board, lounge…): its name, the screen it opens, its colliders, and its hover outline.
 using UnityEngine;
 
 namespace WanderersGuild
 {
     [DisallowMultipleComponent]
-    public class GuildInteractable : MonoBehaviour
+    public class GuildInteractable : MonoBehaviour, IWorldInteractable
     {
         [Tooltip("Shown in the label above the object while hovered.")]
         [SerializeField] private string displayName = "Reception Desk";
@@ -64,8 +64,16 @@ namespace WanderersGuild
                     _renderers[i].renderingLayerMask = highlighted ? _originalLayers[i] | bit : _originalLayers[i];
             }
 
-            if (highlighted) PixelOutlineRequests.Add();
-            else PixelOutlineRequests.Remove();
+            if (highlighted)
+                PixelOutlineRequests.Add();
+            else
+                PixelOutlineRequests.Remove();
+        }
+
+        public void Interact(GamePanelHost panels)
+        {
+            if (panels)
+                panels.Open(opens);
         }
 
         // NOTE: Never leave a model outlined, or the outline passes running, after it's disabled or destroyed.

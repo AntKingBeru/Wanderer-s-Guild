@@ -35,6 +35,10 @@ namespace WanderersGuild
         [Header("Gear")]
         [Tooltip("Equipment ids every new adventurer of this class arrives wearing (starter items: ARMORY_LEVEL 0).")]
         [SerializeField] private string[] startingGearIds = Array.Empty<string>();
+        
+        [Header("Look (not set by the importer)")]
+        [Tooltip("This class's avatar sprite sheet. Empty = GameConfig › Avatars › Default Sheet, or a generated placeholder.")]
+        [SerializeField] private AdventurerSpriteSheet avatarSheet;
 
         public string Id => id;
         public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? id : displayName;
@@ -47,6 +51,7 @@ namespace WanderersGuild
         public IReadOnlyList<string> AdvancesToIds => advancesToIds ?? Array.Empty<string>();
         public IReadOnlyList<QuestCategory> CategoryAffinities => categoryAffinities ?? Array.Empty<QuestCategory>();
         public IReadOnlyList<string> StartingGearIds => startingGearIds ?? Array.Empty<string>();
+        public AdventurerSpriteSheet AvatarSheet => avatarSheet;
 
         public bool HasAffinity(QuestCategory category) => Array.IndexOf(categoryAffinities ?? Array.Empty<QuestCategory>(), category) >= 0;
 

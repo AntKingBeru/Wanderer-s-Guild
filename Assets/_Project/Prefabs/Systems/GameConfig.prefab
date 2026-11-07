@@ -721,3 +721,30 @@ MonoBehaviour:
     shoppingHour: 9
     spendFraction: 0.75
     sellBackFraction: 0.25
+    wholesaleFraction: 0.5
+    restockFailReputation: -1
+  tavern:
+    supperHour: 19
+  alchemy:
+    tiers:
+    - name: Minor
+      shareCutPercent: 10
+      chanceBonus: 0.08
+      ingredientCostPerMember: 3
+    - name: Greater
+      shareCutPercent: 20
+      chanceBonus: 0.15
+      ingredientCostPerMember: 8
+    - name: Superior
+      shareCutPercent: 30
+      chanceBonus: 0.22
+      ingredientCostPerMember: 15
+  avatars:
+    material: {fileID: 2100000, guid: bb553b0d6d7a4e442b0a3612c88a681e, type: 2}
+    catalog: {fileID: 11400000, guid: 7e0efa6f175e9e5418a176f211f79f4b, type: 2}
+    frameSize: {x: 48, y: 52}
+    worldHeight: 2.5
+    walkSpeed: 3
+    dwellMinutes: {x: 30, y: 120}
+    floorHeight: 0
+    maxPathNodes: 5000

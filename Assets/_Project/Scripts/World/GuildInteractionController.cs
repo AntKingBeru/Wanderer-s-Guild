@@ -1,4 +1,4 @@
-// Hover + click for guild objects: rays through the world view, outline + name label on hover, click opens its screen.
+// Hover + click for anything interactable in the world (guild objects, adventurers): outline + name label; click → Interact.
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,7 +15,7 @@ namespace WanderersGuild
         private InputAction _point;
         private InputAction _click;
         private WorldHoverLabel _label;
-        private GuildInteractable _hovered;
+        private IWorldInteractable _hovered;
 
         // NOTE: Also off in build mode — clicks there place rooms, not open screens.
         private bool IsBlocked =>
@@ -39,25 +39,29 @@ namespace WanderersGuild
 
         private void OnDisable() => SetHovered(null);
 
+        // NOTE: A hovered target can be destroyed (an adventurer leaving) — dropped here before it's touched.
         private void LateUpdate()
         {
+            if (!IsAlive(_hovered))
+                _hovered = null;
+
             var target = IsBlocked ? null : FindUnderPointer();
             SetHovered(target);
 
-            if (_hovered && _click != null && _click.WasPressedThisFrame())
+            if (_hovered != null && _click != null && _click.WasPressedThisFrame())
             {
-                var opens = _hovered.Opens;
+                var clicked = _hovered;
                 SetHovered(null);
-                panels.Open(opens);
+                clicked.Interact(panels);
                 return;
             }
 
             UpdateLabel();
         }
 
-        // NOTE: Nothing under UI (any pickable element — the HUD bar, buttons) or outside the view (letterbox). The ray uses
+        // NOTE: Nothing under UI (any pickable element — the HUD bar, the card) or outside the view (letterbox). The ray uses
         // the view's live size (the texture follows the canvas).
-        private GuildInteractable FindUnderPointer()
+        private IWorldInteractable FindUnderPointer()
         {
             if (_point == null || !view || !worldCamera)
                 return null;
@@ -71,29 +75,28 @@ namespace WanderersGuild
 
             var settings = GameConfig.Instance.Interaction;
             return Physics.Raycast(ray, out var hit, settings.MaxRayDistance, settings.InteractableMask, QueryTriggerInteraction.Collide)
-                ? hit.collider.GetComponentInParent<GuildInteractable>()
+                ? hit.collider.GetComponentInParent<IWorldInteractable>()
                 : null;
         }
 
-        private void SetHovered(GuildInteractable target)
+        private void SetHovered(IWorldInteractable target)
         {
-            if (target == _hovered)
+            if (ReferenceEquals(target, _hovered))
                 return;
 
-            if (_hovered)
+            if (IsAlive(_hovered))
                 _hovered.SetHighlighted(false);
             _hovered = target;
-            if (_hovered)
-                _hovered.SetHighlighted(true);
+            _hovered?.SetHighlighted(true);
 
-            if (!_hovered)
+            if (_hovered == null)
                 _label?.Hide();
         }
 
         // NOTE: Hidden when the anchor is behind the camera; otherwise centred above it with a small gap.
         private void UpdateLabel()
         {
-            if (!_hovered || _label == null)
+            if (_hovered == null || _label == null)
                 return;
 
             var viewport = worldCamera.WorldToViewportPoint(_hovered.LabelAnchor);
@@ -107,6 +110,10 @@ namespace WanderersGuild
             Vector2 pixel = new(viewport.x * size.x, (1f - viewport.y) * size.y - GameConfig.Instance.Interaction.LabelGap);
             _label.Show(_hovered.DisplayName, view.ViewToLocal(pixel));
         }
+
+        // NOTE: Interface references bypass Unity's destroyed-object null — check through UnityEngine.Object.
+        private static bool IsAlive(IWorldInteractable target) =>
+            target as Object ?? target != null;
 
         private static InputAction Enable(InputActionReference reference)
         {

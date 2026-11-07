@@ -981,4 +981,33 @@ namespace WanderersGuild
         public static PotionPreview Hidden => new(false, string.Empty, string.Empty, string.Empty, true);
     }
     #endregion
+    
+    #region Avatars
+    // One catalog entry: which sheet a species + class combination uses. Empty species or class = any.
+    [Serializable]
+    public struct AvatarSheetEntry
+    {
+        [Tooltip("Empty = any species.")]
+        [SerializeField] private SpeciesData species;
+        [Tooltip("Empty = any class.")]
+        [SerializeField] private ClassData classData;
+        [SerializeField] private AdventurerSpriteSheet sheet;
+
+        public SpeciesData Species => species;
+        public ClassData Class => classData;
+        public AdventurerSpriteSheet Sheet => sheet;
+
+        // −1 if it doesn't apply to this combination; otherwise 2 = exact, 1 = one side matched, 0 = matches anyone.
+        public int Specificity(SpeciesData forSpecies, ClassData forClass)
+        {
+            if (!sheet)
+                return -1;
+            if (species && species != forSpecies)
+                return -1;
+            if (classData && classData != forClass)
+                return -1;
+            return (species ? 1 : 0) + (classData ? 1 : 0);
+        }
+    }
+    #endregion
 }

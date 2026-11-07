@@ -228,5 +228,10 @@ namespace WanderersGuild
         // without them. Args: the quest, the first member who refused.
         public static readonly UnityEvent<Quest, Adventurer> OnPotionsRefused = new();
         #endregion
+        
+        #region Avatars
+        // An adventurer's avatar was clicked: show their floating card. Arg: the adventurer id.
+        public static readonly UnityEvent<int> OnAdventurerCardRequested = new();
+        #endregion
     }
 }

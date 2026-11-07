@@ -3,8 +3,21 @@
     <!-- The world render texture, full canvas (same integer scale + letterbox as the UI). Never picks. -->
     <ui:VisualElement name="world-view" class="world-view" picking-mode="Ignore" />
 
-    <!-- Name of the hovered guild object, centred above it (positioned in code). -->
+    <!-- Name of the hovered guild object or adventurer, centred above it (positioned in code). -->
     <ui:VisualElement name="world-label" class="pixel-window world-label" picking-mode="Ignore">
         <wg:OutlinedText name="world-label-text" text="Reception Desk" />
+    </ui:VisualElement>
+
+    <!-- Floating adventurer card beside a clicked adventurer (positioned in code). Picks, so the world under it doesn't. -->
+    <ui:VisualElement name="world-card" class="pixel-window world-card" picking-mode="Position">
+        <ui:VisualElement class="world-card__header" picking-mode="Ignore">
+            <wg:OutlinedText name="world-card-name" class="world-card__name" text="Bran" />
+            <ui:Button name="world-card-close" class="pixel-button world-card__close"><wg:OutlinedText text="x" /></ui:Button>
+        </ui:VisualElement>
+        <wg:OutlinedText name="world-card-info" class="world-card__line" text="Elf · Archer · Lv 2 · Rank F" />
+        <wg:OutlinedText name="world-card-status" class="world-card__line" text="Idle · Well fed (+6%)" />
+        <ui:VisualElement class="world-card__buttons" picking-mode="Ignore">
+            <ui:Button name="world-card-details" class="pixel-button world-card__button"><wg:OutlinedText text="Details" /></ui:Button>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
