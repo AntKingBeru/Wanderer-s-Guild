@@ -136,7 +136,8 @@ namespace WanderersGuild
 
             adventurer = new Adventurer(saved.Id, saved.Name, species, classData, saved.Experience, saved.Rank, saved.Wealth,
                                         saved.Status, saved.JoinedAtMinutes, saved.RetainedGrowth, _settings.Experience,
-                                        saved.RankProgress, saved.ExamReturnsAtMinutes, gear, saved.WellFedBonus);
+                                        saved.RankProgress, saved.ExamReturnsAtMinutes, gear, saved.WellFedBonus,
+                                        saved.Injury, saved.InjuredUntilMinutes);
             _nextId = Mathf.Max(_nextId, saved.Id + 1);
             return true;
         }
@@ -268,6 +269,17 @@ namespace WanderersGuild
                 if (TryRebuild(saved, out var adventurer))
                     _roster.AddRestored(adventurer);
             }
+        }
+        
+        // Removes an adventurer for good (death) and raises OnAdventurerLeft. False if they're not in the roster.
+        public bool RemoveMember(int adventurerId)
+        {
+            var adventurer = _roster.Find(adventurerId);
+            if (adventurer == null || !_roster.Remove(adventurerId))
+                return false;
+
+            GameEventsRelay.OnAdventurerLeft.Invoke(adventurer);
+            return true;
         }
     }
 }

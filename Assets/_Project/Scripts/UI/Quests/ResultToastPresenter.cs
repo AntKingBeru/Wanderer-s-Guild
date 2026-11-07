@@ -1,5 +1,6 @@
 // Queues a toast for each result — quests, promotion exams, and applicants arriving / giving up.
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
@@ -26,6 +27,11 @@ namespace WanderersGuild
             GameEventsRelay.OnArmoryRestocked.AddListener(OnArmoryRestocked);
             GameEventsRelay.OnSupperServed.AddListener(OnSupperServed);
             GameEventsRelay.OnPotionsRefused.AddListener(OnPotionsRefused);
+            GameEventsRelay.OnAdventurerInjured.AddListener(OnInjured);
+            GameEventsRelay.OnAdventurerRecovered.AddListener(OnRecovered);
+            GameEventsRelay.OnAdventurerDied.AddListener(OnDied);
+            GameEventsRelay.OnPartyFormed.AddListener(OnPartyFormed);
+            GameEventsRelay.OnPartyDisbanded.AddListener(OnPartyDisbanded);
         }
 
         private void OnDisable()
@@ -39,6 +45,11 @@ namespace WanderersGuild
             GameEventsRelay.OnArmoryRestocked.RemoveListener(OnArmoryRestocked);
             GameEventsRelay.OnSupperServed.RemoveListener(OnSupperServed);
             GameEventsRelay.OnPotionsRefused.RemoveListener(OnPotionsRefused);
+            GameEventsRelay.OnAdventurerInjured.RemoveListener(OnInjured);
+            GameEventsRelay.OnAdventurerRecovered.RemoveListener(OnRecovered);
+            GameEventsRelay.OnAdventurerDied.RemoveListener(OnDied);
+            GameEventsRelay.OnPartyFormed.RemoveListener(OnPartyFormed);
+            GameEventsRelay.OnPartyDisbanded.RemoveListener(OnPartyDisbanded);
             if (_wait.IsActive())
                 _wait.Kill();
             _queue.Clear();
@@ -121,6 +132,40 @@ namespace WanderersGuild
         
         private void OnPotionsRefused(Quest quest, Adventurer refuser) =>
             Enqueue($"{refuser.Name} refused the potions; the party left without them", true);
+        
+        private void OnInjured(Adventurer adventurer, InjurySeverity severity, int days) =>
+            Enqueue($"{adventurer.Name} was {severity.ToString().ToLowerInvariant()}ly injured ({days}d)", true);
+
+        private void OnRecovered(Adventurer adventurer) => Enqueue($"{adventurer.Name} has recovered", false);
+
+        private void OnDied(Adventurer adventurer, Quest quest) =>
+            Enqueue($"{adventurer.Name} died on {quest.Request.DisplayName}", true);
+        
+        // NOTE: "Bran, Ada and Kel formed The Iron Wolves".
+        private void OnPartyFormed(GuildParty party)
+        {
+            var names = (from id in party.MemberIds
+                select AdventurerManager.HasInstance ? AdventurerManager.Instance.Find(id) : null
+                into member where member != null select member.Name).ToList();
+
+            var who = names.Count <= 1 ? string.Join("", names)
+                : string.Join(", ", names.GetRange(0, names.Count - 1)) + " and " + names[^1];
+            Enqueue($"{who} formed {party.Name}", false);
+        }
+
+        // NOTE: Disbanding by the player is their own action — no toast.
+        private void OnPartyDisbanded(GuildParty party, PartyEndReason reason)
+        {
+            switch (reason)
+            {
+                case PartyEndReason.Death:
+                    Enqueue($"{party.Name} broke up (a member died)", true);
+                    break;
+                case PartyEndReason.Failures:
+                    Enqueue($"{party.Name} broke up (two failures)", true);
+                    break;
+            }
+        }
 
         private static string Signed(long value) => value >= 0 ? $"+{value:N0}" : $"-{-value:N0}";
 

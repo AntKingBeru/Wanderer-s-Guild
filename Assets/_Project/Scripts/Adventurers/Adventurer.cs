@@ -1,4 +1,5 @@
-// One guild adventurer: identity, species and class, experience (level derived), rank + progress, wealth, status, exam, gear, supper buff.
+// One guild adventurer: identity, species and class, experience (level derived), rank + progress, wealth, status, exam, gear,
+// supper buff, injury.
 namespace WanderersGuild
 {
     public sealed class Adventurer
@@ -8,7 +9,7 @@ namespace WanderersGuild
         public Adventurer(int id, string name, SpeciesData species, ClassData classData, long experience, GuildRank rank,
                           int wealth, AdventurerStatus status, long joinedAtMinutes, StatBlock retainedGrowth, ExperienceTable levels,
                           float rankProgress = 0f, long examReturnsAtMinutes = 0, EquipmentData[] equipment = null,
-                          float wellFedBonus = 0f)
+                          float wellFedBonus = 0f, InjurySeverity injury = InjurySeverity.None, long injuredUntilMinutes = 0)
         {
             _levels = levels;
             Id = id;
@@ -24,6 +25,8 @@ namespace WanderersGuild
             RankProgress = System.Math.Max(0f, rankProgress);
             ExamReturnsAtMinutes = System.Math.Max(0L, examReturnsAtMinutes);
             WellFedBonus = System.Math.Max(0f, wellFedBonus);
+            Injury = injury;
+            InjuredUntilMinutes = System.Math.Max(0L, injuredUntilMinutes);
 
             // NOTE: Each item goes into its own slot; nulls (unknown ids) leave the slot empty.
             if (equipment == null)
@@ -52,7 +55,7 @@ namespace WanderersGuild
 
         public int Wealth { get; private set; }
 
-        // Idle, signed up, on a quest, or in an exam. Changed by the quest and promotion systems.
+        // Idle, signed up, on a quest, in an exam, or injured. Changed by the quest, promotion and injury systems.
         public AdventurerStatus Status { get; private set; }
         public long JoinedAtMinutes { get; }
 
@@ -69,6 +72,15 @@ namespace WanderersGuild
         public float WellFedBonus { get; private set; }
 
         public bool IsWellFed => WellFedBonus > 0f;
+
+        // Current injury (None when healthy) and when it heals.
+        public InjurySeverity Injury { get; private set; }
+        public long InjuredUntilMinutes { get; private set; }
+        
+        // The party they belong to (0 = none) and its teamwork power bonus. Set only by PartyManager.
+        public int PartyId { get; private set; }
+        public float TeamworkBonus { get; private set; }
+        public bool IsInParty => PartyId != 0;
 
         public int Level => _levels.LevelFor(Experience);
         public bool IsMaxLevel => Level >= _levels.MaxLevel;
@@ -132,6 +144,41 @@ namespace WanderersGuild
             return true;
         }
 
+        // NOTE: Injury lifecycle — only the injury system calls these. A new injury replaces a lighter or shorter one only
+        // if it's worse or lasts longer (never shortens a recovery).
+        public void Injure(InjurySeverity severity, long untilMinutes)
+        {
+            if (severity == InjurySeverity.None)
+                return;
+
+            if (severity > Injury)
+                Injury = severity;
+            InjuredUntilMinutes = System.Math.Max(InjuredUntilMinutes, untilMinutes);
+            Status = AdventurerStatus.Injured;
+        }
+
+        // Healed: back to Idle.
+        public void Recover()
+        {
+            ClearInjury();
+            Status = AdventurerStatus.Idle;
+        }
+
+        // Clears the injury without touching the status (load repair).
+        public void ClearInjury()
+        {
+            Injury = InjurySeverity.None;
+            InjuredUntilMinutes = 0;
+        }
+        
+        public void SetParty(int partyId, float teamworkBonus)
+        {
+            PartyId = partyId;
+            TeamworkBonus = System.Math.Max(0f, teamworkBonus);
+        }
+
+        public void ClearParty() => SetParty(0, 0f);
+
         // NOTE: Exam lifecycle — only the promotion system calls these.
         public void StartExam(long returnsAtMinutes)
         {
@@ -158,12 +205,13 @@ namespace WanderersGuild
         public void ClearExam(bool resetStatus)
         {
             ExamReturnsAtMinutes = 0;
-            if (resetStatus) Status = AdventurerStatus.Idle;
+            if (resetStatus)
+                Status = AdventurerStatus.Idle;
         }
 
         public SavedAdventurer ToSaved() =>
             new(Id, Name, Species.Id, Class.Id, Experience, Rank, Wealth, Status, JoinedAtMinutes, RetainedGrowth,
-                RankProgress, ExamReturnsAtMinutes, Equipment.ToIds(), WellFedBonus);
+                RankProgress, ExamReturnsAtMinutes, Equipment.ToIds(), WellFedBonus, Injury, InjuredUntilMinutes);
 
         private void EndExam()
         {

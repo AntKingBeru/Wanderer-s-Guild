@@ -729,6 +729,7 @@ Transform:
   - {fileID: 408834675}
   - {fileID: 637456966}
   - {fileID: 1149269684}
+  - {fileID: 991142209}
   - {fileID: 1873610641}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1009,6 +1010,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 606351659}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &991142208
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 991142209}
+  - component: {fileID: 991142210}
+  m_Layer: 0
+  m_Name: InjuryManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &991142209
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991142208}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 606351659}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &991142210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991142208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85cb96e640bceeb4889b98c96b6376d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.InjuryManager
+  persistAcrossScenes: 0
 --- !u!1 &993639235
 GameObject:
   m_ObjectHideFlags: 0
@@ -1135,6 +1181,7 @@ GameObject:
   - component: {fileID: 1054836478}
   - component: {fileID: 1054836480}
   - component: {fileID: 1054836481}
+  - component: {fileID: 1054836482}
   m_Layer: 0
   m_Name: AdventuerManager
   m_TagString: Untagged
@@ -1195,6 +1242,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88fd2680fd91fbb4da804f77ae25a0d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.RecruitmentManager
+  persistAcrossScenes: 0
+--- !u!114 &1054836482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054836477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab81d7363b9daa24d9ecc1ab0eada131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.PartyManager
   persistAcrossScenes: 0
 --- !u!1 &1116493039
 GameObject:

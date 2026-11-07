@@ -8,8 +8,8 @@ namespace WanderersGuild
     [Serializable]
     public class GameSaveData
     {
-        // NOTE: v2 guild state; v3 request board; v4 roster; v5 posted quests; v6 facilities; v7 applicants; v8 armory stock.
-        public const int CurrentVersion = 8;
+        // NOTE: v2 guild state; v3 request board; v4 roster; v5 posted quests; v6 facilities; v7 applicants; v8 armory stock;  v9 parties + lineup progress.
+        public const int CurrentVersion = 9;
 
         // NOTE: Generous upper bound (~114 years) — anything above means a corrupted file.
         private const double MaxPlayTimeSeconds = 3.6e9;
@@ -40,6 +40,10 @@ namespace WanderersGuild
 
         [SerializeField] private List<SavedApplicant> applicants = new();
         [SerializeField] private List<SavedStockItem> armoryStock = new();
+        
+        [SerializeField] private List<SavedParty> parties = new();
+        [SerializeField] private List<SavedLineup> partyLineups = new();
+        [SerializeField] private int nextPartyId = 1;
 
         public int Version => version;
 
@@ -164,9 +168,26 @@ namespace WanderersGuild
         
         // Units in the armory per item. Written by ArmoryManager.
         public IReadOnlyList<SavedStockItem> ArmoryStock => armoryStock ?? (IReadOnlyList<SavedStockItem>)Array.Empty<SavedStockItem>();
+        
+        // Permanent parties and the groups bonding toward one. Written by PartyManager.
+        public IReadOnlyList<SavedParty> Parties => parties ?? (IReadOnlyList<SavedParty>)Array.Empty<SavedParty>();
+        public IReadOnlyList<SavedLineup> PartyLineups => partyLineups ?? (IReadOnlyList<SavedLineup>)Array.Empty<SavedLineup>();
+
 
         public void SetApplicants(IEnumerable<SavedApplicant> items) =>
             applicants = items != null ? new List<SavedApplicant>(items) : new List<SavedApplicant>();
+        
+        public void SetParties(IEnumerable<SavedParty> items, IEnumerable<SavedLineup> lineups)
+        {
+            parties = items != null ? new List<SavedParty>(items) : new List<SavedParty>();
+            partyLineups = lineups != null ? new List<SavedLineup>(lineups) : new List<SavedLineup>();
+        }
+
+        public int NextPartyId
+        {
+            get => nextPartyId;
+            set => nextPartyId = Math.Max(1, value);
+        }
 
         public bool IsValid =>
             version is >= 1 and <= CurrentVersion &&

@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -232,6 +233,29 @@ namespace WanderersGuild
         #region Avatars
         // An adventurer's avatar was clicked: show their floating card. Arg: the adventurer id.
         public static readonly UnityEvent<int> OnAdventurerCardRequested = new();
+        #endregion
+        
+        #region Risks
+        // A quest was rolled (before its members are released). Args: quest, members, success, party power ÷ difficulty.
+        public static readonly UnityEvent<Quest, List<Adventurer>, bool, float> OnQuestOutcome = new();
+
+        // An adventurer was injured. Args: adventurer, severity, recovery days.
+        public static readonly UnityEvent<Adventurer, InjurySeverity, int> OnAdventurerInjured = new();
+
+        // An injured adventurer recovered.
+        public static readonly UnityEvent<Adventurer> OnAdventurerRecovered = new();
+
+        // An adventurer died on a quest (already removed from the roster). Args: adventurer, quest.
+        public static readonly UnityEvent<Adventurer, Quest> OnAdventurerDied = new();
+        #endregion
+        
+        #region Parties
+        public static readonly UnityEvent<GuildParty> OnPartyFormed = new();
+        
+        // Teamwork or record changed.
+        public static readonly UnityEvent<GuildParty> OnPartyChanged = new();
+        
+        public static readonly UnityEvent<GuildParty, PartyEndReason> OnPartyDisbanded = new();
         #endregion
     }
 }

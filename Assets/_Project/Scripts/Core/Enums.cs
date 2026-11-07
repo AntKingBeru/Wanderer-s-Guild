@@ -274,7 +274,8 @@ namespace WanderersGuild
         Idle = 0,
         SignedUp = 1,
         OnQuest = 2,
-        InExam = 3
+        InExam = 3,
+        Injured = 4
     }
     
     // Why an applicant stopped waiting.
@@ -340,7 +341,29 @@ namespace WanderersGuild
         Leisure = 1,
         Shop = 2,
         Supper = 3,
-        Sleep = 4
+        Sleep = 4,
+        Rest = 5
+    }
+    #endregion
+    
+    #region Risks
+    // How badly an adventurer is hurt. NOTE: Saved by value; append new ones at the end.
+    public enum InjurySeverity
+    {
+        None = 0,
+        Light = 1,
+        Serious = 2,
+        Grave = 3
+    }
+    #endregion
+    
+    #region Parties
+    // Why a party broke up.
+    public enum PartyEndReason
+    {
+        Death = 0,
+        Failures = 1,
+        Player = 2
     }
     #endregion
 }

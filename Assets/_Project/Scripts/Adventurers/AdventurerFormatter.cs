@@ -70,7 +70,8 @@ namespace WanderersGuild
             return any ? text.ToString() : "Gear: —";
         }
 
-        // "Status: Idle" / "Signed up" / "On quest" / "In exam (back 1d)".
+        // "Status: Idle" / "Signed up" / "On quest" / "In exam (back 1d)" / "Injured (serious, 3d)", plus
+        // " · Well fed (+6%)" when fed.
         public static string Status(Adventurer adventurer, long nowMinutes)
         {
             var status = adventurer.Status switch
@@ -79,6 +80,9 @@ namespace WanderersGuild
                 AdventurerStatus.OnQuest => "Status: On quest",
                 AdventurerStatus.InExam =>
                     $"Status: In exam (back {RequestFormatter.TimeLeft(System.Math.Max(0L, adventurer.ExamReturnsAtMinutes - nowMinutes))})",
+                AdventurerStatus.Injured =>
+                    $"Status: Injured ({adventurer.Injury.ToString().ToLowerInvariant()}, " +
+                    $"{RequestFormatter.TimeLeft(System.Math.Max(0L, adventurer.InjuredUntilMinutes - nowMinutes))})",
                 _ => "Status: Idle"
             };
 

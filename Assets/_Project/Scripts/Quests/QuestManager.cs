@@ -251,7 +251,9 @@ namespace WanderersGuild
             if (!AdventurerManager.HasInstance || _quests.Count == 0)
                 return;
 
-            var filled = QuestSignUps.Run(AdventurerManager.Instance.Adventurers, _quests, _settings, nowMinutes, OnSignedUp);
+            var parties = PartyManager.HasInstance ? PartyManager.Instance.Parties : System.Array.Empty<GuildParty>();
+            var filled = QuestSignUps.Run(AdventurerManager.Instance.Adventurers, _quests, parties,
+                AdventurerManager.Instance.Find, _settings, nowMinutes, OnSignedUp);
             foreach (var quest in filled.Where(quest => quest.MarkReadyIfFull()))
             {
                 GameEventsRelay.OnQuestUpdated.Invoke(quest);
@@ -278,7 +280,8 @@ namespace WanderersGuild
         }
 
         // NOTE: A quest whose members are all gone (dropped on load) fails without the reputation penalty. Potions taken
-        // at departure add their bonus to the roll.
+        // at departure add their bonus to the roll. OnQuestOutcome fires after the payout and before the members are
+        // released, so injuries/deaths (InjuryManager) apply to the members and stick.
         private void Resolve(Quest quest)
         {
             var members = MembersOf(quest);
@@ -288,15 +291,18 @@ namespace WanderersGuild
                 return;
             }
 
-            var chance = QuestCalculator.SuccessChance(QuestCalculator.PartyPower(members, quest.Request.Category, _settings),
-                                                         QuestCalculator.Difficulty(quest.Request, _settings), _settings,
-                                                         quest.PotionChanceBonus);
+            var power = QuestCalculator.PartyPower(members, quest.Request.Category, _settings);
+            var difficulty = QuestCalculator.Difficulty(quest.Request, _settings);
+            var chance = QuestCalculator.SuccessChance(power, difficulty, _settings, quest.PotionChanceBonus);
             var success = Random.value < chance;
 
             if (success)
                 PaySuccess(quest, members);
             else
                 ChangeReputation(_settings.FailureReputation, ReputationSource.QuestFailed);
+
+            var ratio = difficulty > 0f ? power / difficulty : 1f;
+            GameEventsRelay.OnQuestOutcome.Invoke(quest, members, success, ratio);
 
             End(quest, success ? QuestEndReason.Succeeded : QuestEndReason.Failed);
         }
@@ -326,11 +332,14 @@ namespace WanderersGuild
             ChangeReputation(_settings.SuccessReputation, ReputationSource.QuestSucceeded);
         }
 
-        // NOTE: Every way out of the list goes through here — members are always released back to idle.
+        // NOTE: Every way out of the list goes through here. Only quest-owned statuses (Signed up / On quest) are released
+        // back to idle — an injury applied during the outcome stays.
         private void End(Quest quest, QuestEndReason reason)
         {
-            foreach (var member in MembersOf(quest))
+            foreach (var member in MembersOf(quest).Where(member => member.Status is AdventurerStatus.SignedUp or AdventurerStatus.OnQuest))
+            {
                 SetStatus(member, AdventurerStatus.Idle);
+            }
 
             _quests.Remove(quest);
             GameEventsRelay.OnQuestEnded.Invoke(quest, reason);

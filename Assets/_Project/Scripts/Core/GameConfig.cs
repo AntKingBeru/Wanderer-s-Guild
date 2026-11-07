@@ -58,6 +58,8 @@ namespace WanderersGuild
         [SerializeField] private TavernSettings tavern = new();
         [SerializeField] private AlchemySettings alchemy = new();
         [SerializeField] private AvatarSettings avatars = new();
+        [SerializeField] private InjurySettings injuries = new();
+        [SerializeField] private PartySettings parties = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -105,6 +107,8 @@ namespace WanderersGuild
         public TavernSettings Tavern => tavern;
         public AlchemySettings Alchemy => alchemy;
         public AvatarSettings Avatars => avatars;
+        public InjurySettings Injuries => injuries;
+        public PartySettings Parties => parties;
     }
     
     #region Scene Management
@@ -1748,6 +1752,92 @@ namespace WanderersGuild
         public int MaxPathNodes => maxPathNodes;
         public Vector2 CardOffset => cardOffset;
         public float CardTopMargin => cardTopMargin;
+    }
+    #endregion
+    
+    #region Risks
+    [Serializable]
+    public class InjurySettings
+    {
+        [Header("Failure")]
+        [Tooltip("Injury chance per member on a failed quest, plus the next value × how outmatched (1 − power ÷ difficulty).")]
+        [SerializeField, Range(0f, 1f)] private float failureInjuryChance = 0.4f;
+        [SerializeField, Range(0f, 1f)] private float failureInjuryPerOutmatch = 0.4f;
+
+        [Tooltip("Deaths only happen when party power ÷ difficulty is below this.")]
+        [SerializeField, Range(0f, 1f)] private float deathRatioThreshold = 0.6f;
+        [Tooltip("Death chance per member = (threshold − ratio) × this, capped below.")]
+        [SerializeField, Min(0f)] private float deathChancePerDeficit = 0.5f;
+        [SerializeField, Range(0f, 1f)] private float maxDeathChance = 0.25f;
+
+        [Header("Success")]
+        [Tooltip("Chance per member of a Light injury on a successful quest.")]
+        [SerializeField, Range(0f, 1f)] private float successInjuryChance = 0.05f;
+
+        [Header("Severity (weights Light, Serious, Grave)")]
+        [Tooltip("At an even fight (ratio ≥ 1).")]
+        [SerializeField] private Vector3 evenWeights = new(60f, 30f, 10f);
+        [Tooltip("Fully outmatched (ratio 0); in between, the weights blend.")]
+        [SerializeField] private Vector3 outmatchedWeights = new(20f, 40f, 40f);
+
+        [Header("Recovery (in-game days, inclusive)")]
+        [SerializeField] private Vector2Int lightDays = new(1, 2);
+        [SerializeField] private Vector2Int seriousDays = new(3, 5);
+        [SerializeField] private Vector2Int graveDays = new(6, 10);
+
+        [Header("Death")]
+        [SerializeField] private int deathReputation = -3;
+
+        public float FailureInjuryChance => failureInjuryChance;
+        public float FailureInjuryPerOutmatch => failureInjuryPerOutmatch;
+        public float DeathRatioThreshold => deathRatioThreshold;
+        public float DeathChancePerDeficit => deathChancePerDeficit;
+        public float MaxDeathChance => maxDeathChance;
+        public float SuccessInjuryChance => successInjuryChance;
+        public Vector3 EvenWeights => evenWeights;
+        public Vector3 OutmatchedWeights => outmatchedWeights;
+        public int DeathReputation => deathReputation;
+
+        public Vector2Int RecoveryDays(InjurySeverity severity)
+        {
+            var range = severity switch
+            {
+                InjurySeverity.Light => lightDays,
+                InjurySeverity.Serious => seriousDays,
+                InjurySeverity.Grave => graveDays,
+                _ => Vector2Int.zero
+            };
+            return new Vector2Int(Mathf.Max(0, range.x), Mathf.Max(range.x, range.y));
+        }
+    }
+    #endregion
+    
+    #region Parties
+    [Serializable]
+    public class PartySettings
+    {
+        [Tooltip("Successes the same group (none in a party) needs together to form a party.")]
+        [SerializeField, Min(1)] private int formationSuccesses = 2;
+        [SerializeField, Min(2)] private int minimumSize = 2;
+
+        [Tooltip("Power bonus per success together after forming, capped below.")]
+        [SerializeField, Range(0f, 0.2f)] private float teamworkPerSuccess = 0.02f;
+        [SerializeField, Range(0f, 1f)] private float teamworkCap = 0.10f;
+
+        [Tooltip("Failures in a row that break a party up.")]
+        [SerializeField, Min(1)] private int disbandAfterFailures = 2;
+
+        [Tooltip("Party names are 'The <adjective> <noun>'.")]
+        [SerializeField] private string[] nameAdjectives = { "Iron", "Silver", "Crimson", "Wandering", "Golden", "Ashen", "Swift", "Stout", "Merry", "Grim" };
+        [SerializeField] private string[] nameNouns = { "Wolves", "Lanterns", "Blades", "Ravens", "Oaks", "Foxes", "Shields", "Stags", "Embers", "Badgers" };
+
+        public int FormationSuccesses => formationSuccesses;
+        public int MinimumSize => minimumSize;
+        public int DisbandAfterFailures => disbandAfterFailures;
+        public IReadOnlyList<string> NameAdjectives => nameAdjectives ?? Array.Empty<string>();
+        public IReadOnlyList<string> NameNouns => nameNouns ?? Array.Empty<string>();
+
+        public float Teamwork(int sharedSuccesses) => Mathf.Min(teamworkCap, teamworkPerSuccess * Mathf.Max(0, sharedSuccesses));
     }
     #endregion
 }

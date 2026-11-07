@@ -69,7 +69,7 @@ namespace WanderersGuild
 
             _adventurerId = adventurerId;
             _openedFrame = Time.frameCount;
-            _card.SetContent(adventurer, RequestManager.NowMinutes);
+            _card.SetContent(adventurer, RequestManager.NowMinutes, PartyName(adventurer));
             _card.Show();
             Follow();
         }
@@ -100,7 +100,7 @@ namespace WanderersGuild
 
         private void Follow()
         {
-            if (!AvatarManager.Instance.TryGet(_adventurerId, out AdventurerAvatar avatar) ||
+            if (!AvatarManager.Instance.TryGet(_adventurerId, out var avatar) ||
                 !avatar.TryGetComponent(out AvatarInteractable interactable))
                 return;
 
@@ -143,7 +143,8 @@ namespace WanderersGuild
 
         private void OnAdventurerEvent(Adventurer adventurer)
         {
-            if (IsOpen && adventurer.Id == _adventurerId) _card.SetContent(adventurer, RequestManager.NowMinutes);
+            if (IsOpen && adventurer.Id == _adventurerId)
+                _card.SetContent(adventurer, RequestManager.NowMinutes, PartyName(adventurer));
         }
 
         private void OnHourStarted(GameDateTime _)
@@ -153,7 +154,7 @@ namespace WanderersGuild
 
             var adventurer = AdventurerManager.Instance.Find(_adventurerId);
             if (adventurer != null)
-                _card.SetContent(adventurer, RequestManager.NowMinutes);
+                _card.SetContent(adventurer, RequestManager.NowMinutes, PartyName(adventurer));
         }
 
         private void OnPanelOpened(MenuPanelId _) => Close();
@@ -169,6 +170,12 @@ namespace WanderersGuild
             var action = reference ? reference.action : null;
             action?.Enable();
             return action;
+        }
+        
+        private static string PartyName(Adventurer adventurer)
+        {
+            var party = PartyManager.HasInstance ? PartyManager.Instance.PartyOf(adventurer.Id) : null;
+            return party != null ? party.Name : string.Empty;
         }
     }
 }

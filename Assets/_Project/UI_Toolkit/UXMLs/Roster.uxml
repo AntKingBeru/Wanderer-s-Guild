@@ -37,11 +37,13 @@
                         <wg:OutlinedText name="adv-affinities" class="adv-line adv-wrap" text="Good at: —" />
                         <wg:OutlinedText name="adv-gear" class="adv-line adv-wrap" text="Gear: —" />
                         <wg:OutlinedText name="adv-status" class="adv-line" text="Status: Idle" />
+                        <wg:OutlinedText name="adv-party" class="adv-line adv-wrap" text="Party: The Iron Wolves (3) · Teamwork +4%" />
                         <wg:OutlinedText name="adv-promote-hint" class="adv-hint adv-wrap" text="Needs more rank progress" />
                     </ui:ScrollView>
                     <wg:OutlinedText name="adv-empty" class="adv-empty" text="No adventurers yet." />
 
                     <ui:VisualElement class="adv-buttons" picking-mode="Ignore">
+                        <ui:Button name="adv-disband" class="pixel-button panel-button"><wg:OutlinedText text="Disband" /></ui:Button>
                         <ui:Button name="adv-promote" class="pixel-button panel-button"><wg:OutlinedText text="Promote" /></ui:Button>
                     </ui:VisualElement>
                 </ui:VisualElement>

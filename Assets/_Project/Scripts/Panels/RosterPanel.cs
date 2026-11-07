@@ -54,10 +54,12 @@ namespace WanderersGuild
             _buttons.Add(_details.Promote);
             _buttons.Add(_close);
             _buttons.AddRange(_confirm.Buttons);
+            _buttons.Add(_details.Disband);
 
             _navigationOrder.Clear();
             _navigationOrder.AddRange(_list.Buttons);
             _navigationOrder.Add(_details.Promote);
+            _navigationOrder.Add(_details.Disband);
             _navigationOrder.Add(_close);
             return true;
         }
@@ -68,6 +70,7 @@ namespace WanderersGuild
             _details.Promote.clicked += AskPromote;
             _close.clicked += Close;
             _confirm.Initialize();
+            _details.Disband.clicked += AskDisband;
 
             AddPanelManipulator(new MenuNavigation(_navigationOrder, () => IsPanelActive, null));
             AddPanelManipulator(new MenuNavigation(_confirm.Buttons, () => IsConfirmActive, null, NavigationAxis.Horizontal));
@@ -80,6 +83,9 @@ namespace WanderersGuild
             GameEventsRelay.OnGoldChanged.AddListener(OnGoldChanged);
             GameEventsRelay.OnGuildRankUp.AddListener(OnGuildRankUp);
             GameEventsRelay.OnHourStarted.AddListener(OnHourStarted);
+            GameEventsRelay.OnPartyFormed.AddListener(OnPartyEvent);
+            GameEventsRelay.OnPartyChanged.AddListener(OnPartyEvent);
+            GameEventsRelay.OnPartyDisbanded.AddListener(OnPartyDisbanded);
         }
 
         protected override void OnDestroy()
@@ -92,6 +98,9 @@ namespace WanderersGuild
             GameEventsRelay.OnGoldChanged.RemoveListener(OnGoldChanged);
             GameEventsRelay.OnGuildRankUp.RemoveListener(OnGuildRankUp);
             GameEventsRelay.OnHourStarted.RemoveListener(OnHourStarted);
+            GameEventsRelay.OnPartyFormed.RemoveListener(OnPartyEvent);
+            GameEventsRelay.OnPartyChanged.RemoveListener(OnPartyEvent);
+            GameEventsRelay.OnPartyDisbanded.RemoveListener(OnPartyDisbanded);
             base.OnDestroy();
         }
         
@@ -191,7 +200,8 @@ namespace WanderersGuild
             }
 
             var check = PromotionManager.HasInstance ? PromotionManager.Instance.Check(selected) : PromotionCheck.HighestRank();
-            _details.Show(selected, Settings.Experience, check, GameConfig.Instance.Promotion, RequestManager.NowMinutes);
+            var partyLine = PartyManager.HasInstance ? PartyManager.Instance.LineFor(selected) : string.Empty;
+            _details.Show(selected, Settings.Experience, check, GameConfig.Instance.Promotion, RequestManager.NowMinutes, partyLine);
         }
 
         private static int CompareForRoster(Adventurer a, Adventurer b)
@@ -231,6 +241,32 @@ namespace WanderersGuild
         private void OnGoldChanged(long _, long __) => RefreshIfOpen();
         private void OnGuildRankUp(GuildRank _) => RefreshIfOpen();
         private void OnHourStarted(GameDateTime _) => RefreshIfOpen();
+        
+        // NOTE: Asks first; the party may have broken up meanwhile — Disband is a no-op then.
+        private void AskDisband()
+        {
+            if (!IsPanelActive || !PartyManager.HasInstance)
+                return;
+
+            var party = PartyManager.Instance.PartyOf(_selectedId);
+            if (party == null)
+                return;
+
+            var partyId = party.Id;
+            var confirmed = false;
+            _confirm.Show($"Disband {party.Name}?",
+                onConfirm: () => confirmed = true,
+                onClosed: () =>
+                {
+                    if (confirmed && PartyManager.HasInstance)
+                        PartyManager.Instance.Disband(partyId);
+                    Refresh();
+                    Focus((Focusable)_list.ButtonFor(_selectedId) ?? _close);
+                });
+        }
+        
+        private void OnPartyEvent(GuildParty _) => RefreshIfOpen();
+        private void OnPartyDisbanded(GuildParty _, PartyEndReason __) => RefreshIfOpen();
 
         private void RefreshIfOpen()
         {

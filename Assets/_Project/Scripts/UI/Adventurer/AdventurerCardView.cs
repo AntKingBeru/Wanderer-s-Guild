@@ -11,16 +11,18 @@ namespace WanderersGuild
         private readonly OutlinedText _name;
         private readonly OutlinedText _info;
         private readonly OutlinedText _status;
+        private readonly OutlinedText _party;
 
         public VisualElement Root => _root;
 
         private AdventurerCardView(VisualElement root, OutlinedText name, OutlinedText info, OutlinedText status,
-                                   Button details, Button close, Action onDetails, Action onClose)
+                                   OutlinedText party, Button details, Button close, Action onDetails, Action onClose)
         {
             _root = root;
             _name = name;
             _info = info;
             _status = status;
+            _party = party;
 
             // NOTE: Never focusable — Space is UI Submit and the time-pause hotkey.
             details.focusable = false;
@@ -36,22 +38,25 @@ namespace WanderersGuild
             var name = documentRoot?.Q<OutlinedText>("world-card-name");
             var info = documentRoot?.Q<OutlinedText>("world-card-info");
             var status = documentRoot?.Q<OutlinedText>("world-card-status");
+            var party = documentRoot?.Q<OutlinedText>("world-card-party");
             var details = documentRoot?.Q<Button>("world-card-details");
             var close = documentRoot?.Q<Button>("world-card-close");
 
-            return root != null && name != null && info != null && status != null && details != null && close != null
-                ? new AdventurerCardView(root, name, info, status, details, close, onDetails, onClose)
+            return root != null && name != null && info != null && status != null && party != null && details != null && close != null
+                ? new AdventurerCardView(root, name, info, status, party, details, close, onDetails, onClose)
                 : null;
         }
 
         public bool IsVisible => _root.resolvedStyle.display != DisplayStyle.None;
 
         // "Bran" / "Elf · Archer · Lv 2 · Rank F" / "Idle · Well fed (+6%)".
-        public void SetContent(Adventurer adventurer, long nowMinutes)
+        public void SetContent(Adventurer adventurer, long nowMinutes, string partyName)
         {
             _name.Text = adventurer.Name;
             _info.Text = $"{AdventurerFormatter.SpeciesAndClass(adventurer)} · {AdventurerFormatter.ShortLevel(adventurer)} · Rank {adventurer.Rank}";
             _status.Text = AdventurerFormatter.Status(adventurer, nowMinutes).Replace("Status: ", string.Empty);
+            _party.Text = partyName;
+            _party.style.display = string.IsNullOrEmpty(partyName) ? DisplayStyle.None : DisplayStyle.Flex;
         }
 
         // Places the card's top-left at a local position, clamped inside the area (whole pixels).

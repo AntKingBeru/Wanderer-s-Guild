@@ -16,6 +16,7 @@
         </ui:VisualElement>
         <wg:OutlinedText name="world-card-info" class="world-card__line" text="Elf · Archer · Lv 2 · Rank F" />
         <wg:OutlinedText name="world-card-status" class="world-card__line" text="Idle · Well fed (+6%)" />
+        <wg:OutlinedText name="world-card-party" class="world-card__line" text="The Iron Wolves" />
         <ui:VisualElement class="world-card__buttons" picking-mode="Ignore">
             <ui:Button name="world-card-details" class="pixel-button world-card__button"><wg:OutlinedText text="Details" /></ui:Button>
         </ui:VisualElement>

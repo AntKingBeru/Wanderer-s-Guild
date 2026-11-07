@@ -50,5 +50,17 @@ namespace WanderersGuild
             _adventurers.Add(adventurer);
             _names.Add(adventurer.Name);
         }
+        
+        // Removes a member (death, later: leaving) and frees their name. False if not in the roster.
+        public bool Remove(int id)
+        {
+            var adventurer = Find(id);
+            if (adventurer == null)
+                return false;
+
+            _adventurers.Remove(adventurer);
+            _names.Remove(adventurer.Name);
+            return true;
+        }
     }
 }

@@ -1,6 +1,5 @@
 // Game-scene owner of avatars: one per adventurer at the guild; enter/leave through the entrance; daily schedule at activity
 // spots (sleep, supper, shopping, leisure); grid upkeep.
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,7 +29,8 @@ namespace WanderersGuild
         public GuildNavGrid Nav => _nav;
 
         private static long Now => RequestManager.NowMinutes;
-        private static bool IsAtGuild(Adventurer a) => a.Status == AdventurerStatus.Idle || a.Status == AdventurerStatus.SignedUp;
+        private static bool IsAtGuild(Adventurer a) =>
+            a.Status is AdventurerStatus.Idle or AdventurerStatus.SignedUp or AdventurerStatus.Injured;
 
         protected override void OnSingletonAwake() => _settings = GameConfig.Instance.Avatars;
 
@@ -101,13 +101,18 @@ namespace WanderersGuild
 
             _snapshot.Clear();
             _snapshot.AddRange(_avatars.Values);
-            foreach (var avatar in from avatar in _snapshot
-                     where avatar && !avatar.IsLeaving
-                     let scheduleChanged = avatar.PlannedFor != desired
-                     let dwellOver = !avatar.IsWalking && now >= avatar.NextDecisionAt
-                     where scheduleChanged || dwellOver select avatar)
+            foreach (var avatar in _snapshot)
             {
-                Plan(avatar, desired, now);
+                if (!avatar || avatar.IsLeaving)
+                    continue;
+
+                var adventurer = AdventurerManager.HasInstance ? AdventurerManager.Instance.Find(avatar.AdventurerId) : null;
+                var wanted = adventurer is { Status: AdventurerStatus.Injured } ? AvatarActivity.Rest : desired;
+
+                var scheduleChanged = avatar.PlannedFor != wanted;
+                var dwellOver = !avatar.IsWalking && now >= avatar.NextDecisionAt;
+                if (scheduleChanged || dwellOver)
+                    Plan(avatar, wanted, now);
             }
         }
 
@@ -129,7 +134,7 @@ namespace WanderersGuild
 
             var atSpot = activity switch
             {
-                AvatarActivity.Sleep => TryGoToSpot(avatar, SpotKind.Bed) || TryGoToSpot(avatar, SpotKind.Seat),
+                AvatarActivity.Sleep or AvatarActivity.Rest => TryGoToSpot(avatar, SpotKind.Bed) || TryGoToSpot(avatar, SpotKind.Seat),
                 AvatarActivity.Supper => TryGoToSpot(avatar, SpotKind.Table),
                 AvatarActivity.Shop => TryGoToSpot(avatar, SpotKind.Counter),
                 _ => Random.value < _settings.SeatChance && TryGoToSpot(avatar, SpotKind.Seat)
@@ -138,7 +143,8 @@ namespace WanderersGuild
             var holds = atSpot && activity != AvatarActivity.Leisure;
             avatar.NextDecisionAt = holds ? long.MaxValue : now + Random.Range(_settings.DwellMinutes.x, _settings.DwellMinutes.y + 1);
 
-            if (!atSpot) WanderTo(avatar);
+            if (!atSpot)
+                WanderTo(avatar);
         }
 
         // NOTE: Only spots whose cell is walkable are offered; on arrival the avatar stands on the marker, facing its arrow.

@@ -592,10 +592,13 @@ namespace WanderersGuild
         [SerializeField] private long examReturnsAtMinutes;
         [SerializeField] private string[] equipmentIds;
         [SerializeField] private float wellFedBonus;
+        [SerializeField] private InjurySeverity injury;
+        [SerializeField] private long injuredUntilMinutes;
 
         public SavedAdventurer(int id, string name, string speciesId, string classId, long experience, GuildRank rank,
                                int wealth, AdventurerStatus status, long joinedAtMinutes, StatBlock retainedGrowth,
-                               float rankProgress, long examReturnsAtMinutes, string[] equipmentIds, float wellFedBonus)
+                               float rankProgress, long examReturnsAtMinutes, string[] equipmentIds, float wellFedBonus,
+                               InjurySeverity injury, long injuredUntilMinutes)
         {
             this.id = id;
             this.name = name;
@@ -611,6 +614,8 @@ namespace WanderersGuild
             this.examReturnsAtMinutes = examReturnsAtMinutes;
             this.equipmentIds = equipmentIds;
             this.wellFedBonus = wellFedBonus;
+            this.injury = injury;
+            this.injuredUntilMinutes = injuredUntilMinutes;
         }
 
         public int Id => id;
@@ -635,6 +640,9 @@ namespace WanderersGuild
         
         // The supper bonus they're carrying (0 = not well-fed)
         public float WellFedBonus => wellFedBonus;
+        
+        public InjurySeverity Injury => injury;
+        public long InjuredUntilMinutes => injuredUntilMinutes;
         
     }
 
@@ -1008,6 +1016,71 @@ namespace WanderersGuild
                 return -1;
             return (species ? 1 : 0) + (classData ? 1 : 0);
         }
+    }
+    #endregion
+    
+    #region Risks
+    // What a quest did to one member: died, or an injury with its recovery days (None = unharmed).
+    public readonly struct RiskResult
+    {
+        public RiskResult(Adventurer adventurer, bool died, InjurySeverity injury, int recoveryDays)
+        {
+            Adventurer = adventurer;
+            Died = died;
+            Injury = injury;
+            RecoveryDays = recoveryDays;
+        }
+
+        public Adventurer Adventurer { get; }
+        public bool Died { get; }
+        public InjurySeverity Injury { get; }
+        public int RecoveryDays { get; }
+    }
+    #endregion
+    
+    #region Parties
+    // A party as stored in game.json.
+    [Serializable]
+    public struct SavedParty
+    {
+        [SerializeField] private int id;
+        [SerializeField] private string name;
+        [SerializeField] private int[] memberIds;
+        [SerializeField] private int sharedSuccesses;
+        [SerializeField] private int failStreak;
+        
+        public SavedParty(int id, string name, int[] memberIds, int sharedSuccesses, int failStreak)
+        {
+            this.id = id;
+            this.name = name;
+            this.memberIds = memberIds;
+            this.sharedSuccesses = sharedSuccesses;
+            this.failStreak = failStreak;
+        }
+
+        public int Id => id;
+        public string Name => name;
+        public int[] MemberIds => memberIds ?? Array.Empty<int>();
+        public int SharedSuccesses => sharedSuccesses;
+        public int FailStreak => failStreak;
+    }
+    
+    // A group's successes together while not in a "party" (forms one at the threshold).
+    [Serializable]
+    public struct SavedLineup
+    {
+        [SerializeField] private string key;
+        [SerializeField] private int successes;
+
+        public SavedLineup(string key, int successes)
+        {
+            this.key = key;
+            this.successes = successes;
+        }
+
+        // Sorted member ids, comma-separated ("3,7,12").
+        public string Key => key;
+        public int Successes => successes;
     }
     #endregion
 }

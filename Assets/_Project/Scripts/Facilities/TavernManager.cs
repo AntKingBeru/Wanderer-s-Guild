@@ -59,7 +59,8 @@ namespace WanderersGuild
             long gold = 0;
             foreach (var adventurer in AdventurerManager.Instance.Adventurers)
             {
-                if (adventurer.Status != AdventurerStatus.Idle && adventurer.Status != AdventurerStatus.SignedUp)
+                if (adventurer.Status != AdventurerStatus.Idle && adventurer.Status != AdventurerStatus.SignedUp &&
+                    adventurer.Status != AdventurerStatus.Injured)
                     continue;
 
                 var before = adventurer.WellFedBonus;
