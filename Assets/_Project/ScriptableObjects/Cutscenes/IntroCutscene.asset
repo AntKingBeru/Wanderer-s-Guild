@@ -13,46 +13,21 @@ MonoBehaviour:
   m_Name: IntroCutscene
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.CutsceneData
   slides:
-  - image: {fileID: 0}
+  - image: {fileID: -5535600325075252965, guid: a475514e5ab859f4c8971da67e63c3c2, type: 3}
     placeholderColor: {r: 0, g: 0, b: 0, a: 0}
-    text: In a fantastical world filled with monsters and various dangers, exist adventurers to fight against those who seek to disrupt humanity's peace.
-  - image: {fileID: 0}
+    text: You are one of the best adventurers there ever were!
+  - image: {fileID: -1443998411, guid: a475514e5ab859f4c8971da67e63c3c2, type: 3}
     placeholderColor: {r: 0, g: 0, b: 0, a: 0}
-    text: 'Those that decide to take that path must register at a guild in order to be rewarded for their efforts....
+    text: 'But you got a bad case of...
 
 
 
 
 
-      Including you.'
-  - image: {fileID: 0}
+      Machete-to-the-knee-itis!'
+  - image: {fileID: -1248839094, guid: a475514e5ab859f4c8971da67e63c3c2, type: 3}
     placeholderColor: {r: 0, g: 0, b: 0, a: 0}
-    text: 'Now retired, you start wandering the world, trying to help when you can.
-
-      In your travels, you reach a faraway region, filled with monsters, dungeons, and people in need.'
-  - image: {fileID: 0}
+    text: The adventurer life is for machete-knee free people.
+  - image: {fileID: 603799659, guid: a475514e5ab859f4c8971da67e63c3c2, type: 3}
     placeholderColor: {r: 0, g: 0, b: 0, a: 0}
-    text: There are few adventurers in the area, especially capable ones, so you decide to take matters into your own hand.
-  - image: {fileID: 0}
-    placeholderColor: {r: 0, g: 0, b: 0, a: 0}
-    text: 'Though you are old, there are other ways you can contribute to the fight.
-
-      You decide to open your very own guild, so you can help the younger adventurers better survive and prosper.'
-  - image: {fileID: 0}
-    placeholderColor: {r: 0, g: 0, b: 0, a: 0}
-    text: With your humble shack now converted into a make-shift guildhall, you can start your journey.
-  - image: {fileID: 0}
-    placeholderColor: {r: 0, g: 0, b: 0, a: 0}
-    text: 'Welcome adventurers!
-
-      ...
-
-      ...
-
-      ...
-
-      ...
-
-      ...
-
-      To the Wanderer''s Guild!'
+    text: So you open your own guild!

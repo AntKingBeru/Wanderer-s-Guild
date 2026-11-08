@@ -219,7 +219,7 @@ MonoBehaviour:
     keyScrollStep: 12
     wheelScrollStep: 12
   intro:
-    charactersPerSecond: 40
+    charactersPerSecond: 10
     slideCrossfadeDuration: 0.6
     endFadeDuration: 0.6
     skipHoldDuration: 1
