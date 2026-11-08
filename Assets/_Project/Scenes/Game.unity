@@ -765,6 +765,7 @@ GameObject:
   - component: {fileID: 637456970}
   - component: {fileID: 637456971}
   - component: {fileID: 637456972}
+  - component: {fileID: 637456973}
   m_Layer: 0
   m_Name: FacilityGrid
   m_TagString: Untagged
@@ -869,6 +870,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AlchemyManager
   persistAcrossScenes: 0
+--- !u!114 &637456973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637456965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0baa2396b04132346a1a297e05017d71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AlchemyPromptController
+  host: {fileID: 1873610642}
 --- !u!1 &682354377
 GameObject:
   m_ObjectHideFlags: 0
