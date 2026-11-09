@@ -163,6 +163,9 @@ namespace WanderersGuild
             data.NextFacilityId = _nextId;
             data.FacilitiesInitialized = HasGuildHall;
         }
+        
+        // The room's current model, or null (under construction / no prefab).
+        public GameObject ModelOf(PlacedFacility room) => room != null ? _views.ModelOf(room.Id) : null;
 
         // NOTE: Due constructions are collected first, then finished — never modifies the list while iterating it.
         private void OnTimeTick(GameDateTime now)

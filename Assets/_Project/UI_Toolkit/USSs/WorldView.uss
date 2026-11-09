@@ -87,3 +87,15 @@
 .room-card__residents {
     margin-top: 1px;
 }
+.world-card__icon-row {
+    flex-direction: row;
+    align-items: center;
+}
+.world-card__class-icon {
+    margin: 0 1px 0 2px;
+}
+.world-card__line--fill {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+}

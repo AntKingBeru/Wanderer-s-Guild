@@ -94,3 +94,6 @@
     flex-direction: row;
     flex-shrink: 0;
 }
+.alc-row__icon {
+    margin-right: 2px;
+}

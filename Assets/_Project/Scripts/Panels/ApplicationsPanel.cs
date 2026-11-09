@@ -239,7 +239,7 @@ namespace WanderersGuild
                     }
                 }
 
-                preview = new PotionPreview(true, label, effect, warning, true);
+                preview = new PotionPreview(true, label, effect, warning, true, _potion);
             }
 
             _details.Show(quest, members, split, chance, Now, preview);

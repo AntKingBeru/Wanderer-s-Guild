@@ -14,7 +14,10 @@
                 <!-- Right: the selected item. -->
                 <ui:VisualElement class="arm-details" picking-mode="Ignore">
                     <ui:ScrollView name="arm-content" class="arm-content pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden">
-                        <wg:OutlinedText name="arm-name" class="arm-name" text="Blunt Sword" />
+                        <ui:VisualElement class="arm-name-row" picking-mode="Ignore">
+                            <ui:VisualElement name="arm-icon" class="arm-icon" />
+                            <wg:OutlinedText name="arm-name" class="arm-name" text="Blunt Sword" />
+                        </ui:VisualElement>
                         <wg:OutlinedText name="arm-desc" class="arm-line arm-wrap" text="A sword that was never sharpened." />
                         <wg:OutlinedText name="arm-slot" class="arm-line arm-gap" text="Weapon" />
                         <wg:OutlinedText name="arm-users" class="arm-line arm-wrap" text="For: Fighter" />

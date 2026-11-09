@@ -97,6 +97,9 @@ namespace WanderersGuild
 
         // World position of a cell's min corner (Grid with Cell Swizzle XZY: grid y = world z).
         public Vector3 CellToWorld(Vector2Int cell) => _grid.CellToWorld(new Vector3Int(cell.x, cell.y, 0));
+        
+        // The room's current model (null while a new room is still being built, or if it has no prefab).
+        public GameObject ModelOf(int roomId) => _views.TryGetValue(roomId, out var view) ? view.Model : null;
 
         // NOTE: Originals are stored once per renderer and restored exactly; destroyed renderers are simply forgotten.
         private static void ApplyHighlight(View view, bool on)

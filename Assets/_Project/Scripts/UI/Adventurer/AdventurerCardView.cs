@@ -13,15 +13,17 @@ namespace WanderersGuild
         private readonly OutlinedText _status;
         private readonly OutlinedText _party;
         private readonly OutlinedText _room;
+        private readonly IconSlot _classIcon;
 
         public VisualElement Root => _root;
 
-        private AdventurerCardView(VisualElement root, OutlinedText name, OutlinedText info, OutlinedText status, OutlinedText party,
+        private AdventurerCardView(VisualElement root, OutlinedText name, OutlinedText info, IconSlot classIcon, OutlinedText status, OutlinedText party,
                                    OutlinedText room, Button details, Button close, Action onDetails, Action onClose)
         {
             _root = root;
             _name = name;
             _info = info;
+            _classIcon = classIcon;
             _status = status;
             _party = party;
             _room = room;
@@ -39,14 +41,15 @@ namespace WanderersGuild
             var root = documentRoot?.Q<VisualElement>("world-card");
             var name = documentRoot?.Q<OutlinedText>("world-card-name");
             var info = documentRoot?.Q<OutlinedText>("world-card-info");
+            var classIcon = IconSlot.Bind(documentRoot, "world-card-class-icon");
             var status = documentRoot?.Q<OutlinedText>("world-card-status");
             var party = documentRoot?.Q<OutlinedText>("world-card-party");
             var room = documentRoot?.Q<OutlinedText>("world-card-room");
             var details = documentRoot?.Q<Button>("world-card-details");
             var close = documentRoot?.Q<Button>("world-card-close");
 
-            return root != null && name != null && info != null && status != null && party != null && details != null && close != null
-                ? new AdventurerCardView(root, name, info, status, party, room, details, close, onDetails, onClose)
+            return root != null && name != null && info != null && classIcon != null && status != null && party != null && details != null && close != null
+                ? new AdventurerCardView(root, name, info, classIcon, status, party, room, details, close, onDetails, onClose)
                 : null;
         }
 
@@ -57,6 +60,7 @@ namespace WanderersGuild
         {
             _name.Text = adventurer.Name;
             _info.Text = $"{AdventurerFormatter.SpeciesAndClass(adventurer)} · {AdventurerFormatter.ShortLevel(adventurer)} · Rank {adventurer.Rank}";
+            _classIcon.Set(adventurer.Class.Icon, adventurer.Class.DisplayName);
             _status.Text = AdventurerFormatter.Status(adventurer, nowMinutes).Replace("Status: ", string.Empty);
             _room.Text = roomLabel;
             _room.style.display = string.IsNullOrEmpty(roomLabel) ? DisplayStyle.None : DisplayStyle.Flex;

@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'A fighter that chooses to defend rather than attack.
 
     What a nerd.'
-  icon: {fileID: 0}
+  icon: {fileID: 1787125161, guid: 447a2b2701cb8db4b9704ac8244ee22f, type: 3}
   baseStats:
     strength: 1
     agility: 0

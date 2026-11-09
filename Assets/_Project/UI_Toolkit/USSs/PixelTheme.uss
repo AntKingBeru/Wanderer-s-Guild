@@ -179,3 +179,23 @@
     flex-direction: row;
     justify-content: center;
 }
+/* ---------- Icon slot (IconSlot) ---------- */
+/* NOTE: 12×12 at 1× — a 12×12 Point-filtered sprite is pixel-perfect. Without a sprite: a thin frame + one outlined letter. */
+.icon-slot {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+    align-items: center;
+    justify-content: center;
+}
+.icon-slot--placeholder {
+    border-width: 1px;
+    border-color: var(--frame-normal-border);
+}
+.icon-slot__letter {
+    display: none;
+}
+.icon-slot--placeholder .icon-slot__letter {
+    display: flex;
+}

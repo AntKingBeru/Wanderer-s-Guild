@@ -64,6 +64,7 @@ namespace WanderersGuild
         [SerializeField] private QuestRecallSettings questRecall = new();
         [SerializeField] private AdvancementSettings advancement = new();
         [SerializeField] private MarqueeSettings marquee = new();
+        [SerializeField] private DoorSettings doors = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -117,6 +118,7 @@ namespace WanderersGuild
         public QuestRecallSettings QuestRecall => questRecall;
         public AdvancementSettings Advancement => advancement;
         public MarqueeSettings Marquee => marquee;
+        public DoorSettings Doors => doors;
     }
     
     #region Scene Management
@@ -1689,9 +1691,20 @@ namespace WanderersGuild
 
         [Tooltip("In-game hour of the morning brew prompt (only when the stock isn't full).")]
         [SerializeField, Range(0, 23)] private int brewHour = 5;
+        
+        [Tooltip("One icon per quest category (12×12, Point). The tier shows in the label. Missing = lettered placeholder.")]
+        [SerializeField] private PotionIconEntry[] potionIcons = Array.Empty<PotionIconEntry>();
 
         public IReadOnlyList<PotionTier> Tiers => tiers ?? Array.Empty<PotionTier>();
         public int BrewHour => brewHour;
+        
+        // The category's potion icon (first matching entry), or null.
+        public Sprite PotionIcon(QuestCategory category)
+        {
+            return potionIcons == null
+                ? null
+                : (from entry in potionIcons where entry.Category == category select entry.Icon).FirstOrDefault();
+        }
     }
     #endregion
     
@@ -1915,6 +1928,21 @@ namespace WanderersGuild
 
         public float Speed => speed;
         public float Pause => pause;
+    }
+    #endregion
+    
+    #region Doors
+    [Serializable]
+    public class DoorSettings
+    {
+        [Tooltip("A door opens while an adventurer is within this many units (flat distance) of it.")]
+        [SerializeField, Min(0.1f)] private float openRadius = 1.6f;
+
+        [Tooltip("Degrees per second a door leaf swings.")]
+        [SerializeField, Min(1f)] private float swingSpeed = 300f;
+
+        public float OpenRadius => openRadius;
+        public float SwingSpeed => swingSpeed;
     }
     #endregion
 }

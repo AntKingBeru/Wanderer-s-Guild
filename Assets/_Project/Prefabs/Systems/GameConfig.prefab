@@ -740,6 +740,23 @@ MonoBehaviour:
       chanceBonus: 0.22
       brewCost: 30
     brewHour: 5
+    potionIcons:
+    - category: 1
+      icon: {fileID: -691558263, guid: 26a303a39411e79409a157b9e378ea59, type: 3}
+    - category: 7
+      icon: {fileID: 516315543, guid: 26a303a39411e79409a157b9e378ea59, type: 3}
+    - category: 0
+      icon: {fileID: -211395796, guid: 26a303a39411e79409a157b9e378ea59, type: 3}
+    - category: 4
+      icon: {fileID: -1968361640, guid: 26a303a39411e79409a157b9e378ea59, type: 3}
+    - category: 3
+      icon: {fileID: -204489666, guid: 26a303a39411e79409a157b9e378ea59, type: 3}
+    - category: 5
+      icon: {fileID: 796568532, guid: 26a303a39411e79409a157b9e378ea59, type: 3}
+    - category: 6
+      icon: {fileID: 1610761481, guid: 26a303a39411e79409a157b9e378ea59, type: 3}
+    - category: 2
+      icon: {fileID: -1363439395, guid: 26a303a39411e79409a157b9e378ea59, type: 3}
   avatars:
     material: {fileID: 2100000, guid: bb553b0d6d7a4e442b0a3612c88a681e, type: 2}
     catalog: {fileID: 11400000, guid: 7e0efa6f175e9e5418a176f211f79f4b, type: 2}
@@ -805,3 +822,10 @@ MonoBehaviour:
   questRecall:
     reputation: -2
     returnFraction: 0.5
+  advancement:
+    feeMultiplier: 1
+    trialDays: 2
+    passReputation: 1
+  marquee:
+    speed: 20
+    pause: 1

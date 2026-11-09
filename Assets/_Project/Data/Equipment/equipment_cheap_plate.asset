@@ -15,7 +15,7 @@ MonoBehaviour:
   id: equipment_cheap_plate
   displayName: Bog Iron Plate
   description: "A heavy plate armor made from low quality bog iron. \nWith extra bog flavoring!"
-  icon: {fileID: 0}
+  icon: {fileID: -1213505162, guid: 04b85aef8eed30d4a963bd033f215d67, type: 3}
   slot: 2
   classIds:
   - fighter_class

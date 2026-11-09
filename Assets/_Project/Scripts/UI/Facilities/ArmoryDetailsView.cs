@@ -15,6 +15,7 @@ namespace WanderersGuild
         private readonly OutlinedText _stats;
         private readonly OutlinedText _price;
         private readonly OutlinedText _units;
+        private readonly IconSlot _icon;
 
         private ArmoryDetailsView(VisualElement root)
         {
@@ -27,11 +28,12 @@ namespace WanderersGuild
             _stats = root.Q<OutlinedText>("arm-stats");
             _price = root.Q<OutlinedText>("arm-price");
             _units = root.Q<OutlinedText>("arm-units");
+            _icon = IconSlot.Bind(root, "arm-icon");
         }
 
         private bool IsComplete =>
             _content != null && _empty != null && _name != null && _description != null && _slot != null && _users != null &&
-            _stats != null && _price != null && _units != null;
+            _stats != null && _price != null && _units != null && _icon != null;
 
         public static ArmoryDetailsView Bind(VisualElement root)
         {
@@ -42,6 +44,7 @@ namespace WanderersGuild
         public void Show(EquipmentData item, int units, IReadOnlyDictionary<string, ClassData> classes)
         {
             _name.Text = item.DisplayName;
+            _icon.Set(item.Icon, item.DisplayName);
             _description.Text = item.Description;
             _description.style.display = string.IsNullOrEmpty(item.Description) ? DisplayStyle.None : DisplayStyle.Flex;
             _slot.Text = ArmoryFormatter.Slot(item);

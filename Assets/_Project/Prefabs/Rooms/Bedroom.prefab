@@ -127,6 +127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.FacilityConnector
   facing: 2
+  wall: {fileID: 0}
+  doorway: {fileID: 0}
 --- !u!1 &2513199757670844714
 GameObject:
   m_ObjectHideFlags: 0
@@ -726,6 +728,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 749841f616c37c44ab86147240fc7e24, type: 3}
       propertyPath: m_Name
       value: Bedroom
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 749841f616c37c44ab86147240fc7e24, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 749841f616c37c44ab86147240fc7e24, type: 3}
       propertyPath: m_StaticEditorFlags

@@ -1,4 +1,4 @@
-// One pooled roster row: rank badge, name, class and level; hidden rows are disabled so keyboard navigation skips them.
+// One pooled roster row: rank badge, name, class icon + class, level; hidden rows are disabled so keyboard navigation skips them.
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,6 +12,7 @@ namespace WanderersGuild
         private readonly VisualElement _badge;
         private readonly OutlinedText _badgeLabel;
         private readonly OutlinedText _name;
+        private readonly IconSlot _classIcon;
         private readonly OutlinedText _class;
         private readonly OutlinedText _level;
 
@@ -30,11 +31,13 @@ namespace WanderersGuild
             _badge.Add(_badgeLabel);
 
             _name = Part("roster-row__name");
+            _classIcon = IconSlot.Create("roster-row__class-icon");
             _class = Part("roster-row__class");
             _level = Part("roster-row__level");
 
             Button.Add(_badge);
             Button.Add(_name);
+            Button.Add(_classIcon.Root);
             Button.Add(_class);
             Button.Add(_level);
 
@@ -48,6 +51,7 @@ namespace WanderersGuild
             _badge.style.backgroundColor = rankColor;
             _badgeLabel.Text = RankFormatter.BadgeLabel(adventurer.Rank);
             _name.Text = adventurer.Name;
+            _classIcon.Set(adventurer.Class.Icon, adventurer.Class.DisplayName);
             _class.Text = adventurer.Class.DisplayName;
             _level.Text = AdventurerFormatter.ShortLevel(adventurer);
 

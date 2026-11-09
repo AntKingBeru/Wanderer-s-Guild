@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'Likes to go hunt in the dungeon.
 
     Makes small monsters quiver.'
-  icon: {fileID: 0}
+  icon: {fileID: -593710947, guid: 447a2b2701cb8db4b9704ac8244ee22f, type: 3}
   baseStats:
     strength: 0
     agility: 4

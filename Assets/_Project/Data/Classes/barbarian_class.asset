@@ -15,7 +15,7 @@ MonoBehaviour:
   id: barbarian_class
   displayName: Barbarian
   description: Likes to attack EVEN MORE!!!
-  icon: {fileID: 0}
+  icon: {fileID: 1129040932, guid: 447a2b2701cb8db4b9704ac8244ee22f, type: 3}
   baseStats:
     strength: 4
     agility: 0

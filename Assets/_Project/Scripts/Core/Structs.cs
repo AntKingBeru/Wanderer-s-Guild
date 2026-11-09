@@ -1026,13 +1026,14 @@ namespace WanderersGuild
     // What the Applications screen shows for the current potion choice.
     public readonly struct PotionPreview
     {
-        public PotionPreview(bool visible, string label, string effect, string warning, bool canAfford)
+        public PotionPreview(bool visible, string label, string effect, string warning, bool canAfford, PotionKey potion = default)
         {
             Visible = visible;
             Label = label;
             Effect = effect;
             Warning = warning;
             CanAfford = canAfford;
+            Potion = potion;
         }
 
         public bool Visible { get; }
@@ -1041,7 +1042,21 @@ namespace WanderersGuild
         public string Warning { get; }
         public bool CanAfford { get; }
 
+        // The chosen potion (None = no icon).
+        public PotionKey Potion { get; }
+
         public static PotionPreview Hidden => new(false, string.Empty, string.Empty, string.Empty, true);
+    }
+    
+    // The icon for one quest category's potions (GameConfig › Alchemy).
+    [Serializable]
+    public struct PotionIconEntry
+    {
+        [SerializeField] private QuestCategory category;
+        [SerializeField] private Sprite icon;
+
+        public QuestCategory Category => category;
+        public Sprite Icon => icon;
     }
     #endregion
     

@@ -196,3 +196,14 @@
 .app-potion-effect--warning .outlined-text__fill {
     color: rgb(224, 112, 96);
 }
+/* NOTE: The potion icon sits left of the Potions button (blank, but still taking its space, for "None"). */
+.app-potion-line {
+    flex-direction: row;
+    align-items: center;
+}
+.app-potion__icon {
+    margin-right: 2px;
+}
+.app-potion__label .outlined-text__part {
+    white-space: nowrap;
+}

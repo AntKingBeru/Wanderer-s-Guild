@@ -200,3 +200,23 @@
     padding: 1px 4px;
     align-items: flex-start;
 }
+.adv-icon-row {
+    flex-direction: row;
+    align-items: center;
+}
+.adv-class-icon {
+    margin-right: 2px;
+}
+/* NOTE: Class icon (12) + gap (2) left of the class name; the name column absorbs the difference. */
+.roster-row__class-icon {
+    margin-right: 2px;
+}
+/* NOTE: Only the name column shrinks (it clips); the badge, class and level keep their widths, and the level never wraps. */
+.roster-row__badge,
+.roster-row__class,
+.roster-row__level {
+    flex-shrink: 0;
+}
+.roster-row__level .outlined-text__part {
+    white-space: nowrap;
+}

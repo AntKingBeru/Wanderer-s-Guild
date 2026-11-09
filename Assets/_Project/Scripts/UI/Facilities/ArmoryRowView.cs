@@ -1,4 +1,4 @@
-// One pooled row of the armory list: name, "Slot · price", units left (red when sold out); hidden rows are disabled.
+// One pooled row of the armory list: item icon, name, "Slot · price", units left (red when sold out); hidden rows are disabled.
 using System;
 using UnityEngine.UIElements;
 
@@ -9,6 +9,7 @@ namespace WanderersGuild
         private const string SelectedClass = "arm-row--selected";
         private const string SoldOutClass = "arm-row--soldout";
 
+        private readonly IconSlot _icon;
         private readonly OutlinedText _name;
         private readonly OutlinedText _info;
         private readonly OutlinedText _units;
@@ -22,6 +23,8 @@ namespace WanderersGuild
             Button.AddToClassList("pixel-button");
             Button.AddToClassList("arm-row");
 
+            _icon = IconSlot.Create("arm-row__icon");
+
             VisualElement text = new() { pickingMode = PickingMode.Ignore };
             text.AddToClassList("arm-row__text");
             _name = Part("arm-row__name");
@@ -30,6 +33,7 @@ namespace WanderersGuild
             text.Add(_info);
 
             _units = Part("arm-row__units");
+            Button.Add(_icon.Root);
             Button.Add(text);
             Button.Add(_units);
             Hide();
@@ -38,6 +42,7 @@ namespace WanderersGuild
         public void Show(EquipmentData item, int units, bool isSelected)
         {
             Item = item;
+            _icon.Set(item.Icon, item.DisplayName);
             _name.Text = item.DisplayName;
             _info.Text = ArmoryFormatter.RowInfo(item);
             _units.Text = ArmoryFormatter.Units(units, item.MaxStock);

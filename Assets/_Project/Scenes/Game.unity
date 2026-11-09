@@ -767,6 +767,7 @@ GameObject:
   - component: {fileID: 637456971}
   - component: {fileID: 637456972}
   - component: {fileID: 637456973}
+  - component: {fileID: 637456974}
   m_Layer: 0
   m_Name: FacilityGrid
   m_TagString: Untagged
@@ -884,6 +885,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AlchemyPromptController
   host: {fileID: 1873610642}
+--- !u!114 &637456974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637456965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b4157a40578ed645b67479f89392c67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ConnectorStateUpdater
+  grid: {fileID: 637456967}
 --- !u!1 &682354377
 GameObject:
   m_ObjectHideFlags: 0
@@ -1494,6 +1508,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1149269684}
   - component: {fileID: 1149269685}
+  - component: {fileID: 1149269686}
   m_Layer: 0
   m_Name: AvatarManager
   m_TagString: Untagged
@@ -1532,6 +1547,18 @@ MonoBehaviour:
   grid: {fileID: 637456967}
   worldCamera: {fileID: 1904311416}
   avatarsParent: {fileID: 1581658126}
+--- !u!114 &1149269686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149269683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2aad9719b391b4eae4d190daf818b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.DoorSwingController
 --- !u!1 &1160252150
 GameObject:
   m_ObjectHideFlags: 0

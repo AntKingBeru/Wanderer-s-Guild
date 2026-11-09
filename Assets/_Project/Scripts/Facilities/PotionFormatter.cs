@@ -6,9 +6,9 @@ namespace WanderersGuild
         // "Minor Combat Potion".
         public static string Name(PotionKey key, PotionTier tier) => $"{tier.Name} {key.Category} Potion";
 
-        // "Potions: None" / "Potions: Minor (2)".
+        // "None" / "Minor (2)" — short enough for the Potions button (the icon sits beside it).
         public static string Label(PotionKey key, PotionTier tier, int inStock) =>
-            key.IsNone ? "Potions: None" : $"Potions: {tier.Name} ({inStock})";
+            key.IsNone ? "None" : $"{tier.Name} ({inStock})";
 
         // "−10% share · +8% chance" (empty for None).
         public static string Effect(PotionKey key, PotionTier tier) =>

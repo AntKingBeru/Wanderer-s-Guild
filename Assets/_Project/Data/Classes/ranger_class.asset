@@ -15,7 +15,7 @@ MonoBehaviour:
   id: ranger_class
   displayName: Ranger
   description: Ironically, not a lot of range.
-  icon: {fileID: 0}
+  icon: {fileID: -2076724415, guid: 447a2b2701cb8db4b9704ac8244ee22f, type: 3}
   baseStats:
     strength: 0
     agility: 2

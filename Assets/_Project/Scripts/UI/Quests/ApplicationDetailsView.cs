@@ -22,6 +22,7 @@ namespace WanderersGuild
         private readonly OutlinedText _potionLabel;
         private readonly OutlinedText _potionEffect;
         private readonly VisualElement _applicantList;
+        private readonly IconSlot _potionIcon;
         private readonly List<ApplicantRowView> _applicants = new();
         private readonly List<Button> _declineButtons = new();
 
@@ -45,16 +46,17 @@ namespace WanderersGuild
             _potionRow = root.Q<VisualElement>("app-potion-row");
             _potionEffect = root.Q<OutlinedText>("app-potion-effect");
             _applicantList = root.Q<VisualElement>("app-applicants");
+            _potionIcon = IconSlot.Bind(root, "app-potion-icon");
             DeclineAll = root.Q<Button>("app-decline-all");
             Approve = root.Q<Button>("app-approve");
             Potion = root.Q<Button>("app-potion");
-            _potionLabel = Potion?.Q<OutlinedText>();
+            _potionLabel = root.Q<OutlinedText>("app-potion-label");
         }
 
         private bool IsComplete =>
             _content != null && _empty != null && _title != null && _meta != null && _terms != null && _split != null &&
             _timeChance != null && _hint != null && _potionRow != null && _potionEffect != null && _potionLabel != null &&
-            _applicantList != null && DeclineAll != null && Approve != null && Potion != null;
+            _applicantList != null && _potionIcon != null && DeclineAll != null && Approve != null && Potion != null;
 
         /// <param name="root"></param>
         /// <param name="maxApplicants">Pooled applicant rows — the largest party size the settings allow.</param>
@@ -107,6 +109,12 @@ namespace WanderersGuild
             }
 
             ShowPotion(potion, quest.State == QuestState.Ready);
+            
+            // NOTE: "None" keeps the icon's space (blank) so the button doesn't shift while cycling.
+            if (potion.Potion.IsNone)
+                _potionIcon.Blank();
+            else
+                _potionIcon.Set(GameConfig.Instance.Alchemy.PotionIcon(potion.Potion.Category), potion.Potion.Category.ToString());
 
             _content.style.display = DisplayStyle.Flex;
             _empty.style.display = DisplayStyle.None;

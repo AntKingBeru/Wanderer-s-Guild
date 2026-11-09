@@ -10,6 +10,7 @@ namespace WanderersGuild
         private readonly ScrollView _content;
         private readonly OutlinedText _empty;
         private readonly OutlinedText _name;
+        private readonly IconSlot _classIcon;
         private readonly OutlinedText _speciesClass;
         private readonly OutlinedText _rankLevel;
         private readonly OutlinedText _experience;
@@ -40,6 +41,7 @@ namespace WanderersGuild
             _content = root.Q<ScrollView>("adv-content");
             _empty = root.Q<OutlinedText>("adv-empty");
             _name = root.Q<OutlinedText>("adv-name");
+            _classIcon = IconSlot.Bind(root, "adv-class-icon");
             _speciesClass = root.Q<OutlinedText>("adv-species-class");
             _rankLevel = root.Q<OutlinedText>("adv-rank-level");
             _experience = root.Q<OutlinedText>("adv-xp-text");
@@ -62,7 +64,7 @@ namespace WanderersGuild
         }
 
         private bool IsComplete =>
-            _content != null && _empty != null && _name != null && _speciesClass != null && _rankLevel != null &&
+            _content != null && _empty != null && _name != null && _classIcon != null && _speciesClass != null && _rankLevel != null &&
             _experience != null && _rankProgress != null && _statsTop != null && _statsBottom != null && _wealth != null &&
             _affinities != null && _gear != null && _status != null && _party != null && _room != null && _hint != null &&
             Promote != null && _promoteLabel != null && Disband != null && Move != null;
@@ -98,6 +100,7 @@ namespace WanderersGuild
 
             _name.Text = adventurer.Name;
             _speciesClass.Text = AdventurerFormatter.SpeciesAndClass(adventurer);
+            _classIcon.Set(adventurer.Class.Icon, adventurer.Class.DisplayName);
             _rankLevel.Text = AdventurerFormatter.RankAndLevel(adventurer);
             _experience.Text = AdventurerFormatter.Experience(adventurer, table);
             _experienceBar.SetProgress(adventurer.LevelProgress);

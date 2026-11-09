@@ -17,7 +17,10 @@
             <wg:OutlinedText name="world-card-name" class="world-card__name" text="Bran" />
             <ui:Button name="world-card-close" class="pixel-button world-card__close"><wg:OutlinedText text="x" /></ui:Button>
         </ui:VisualElement>
-        <wg:OutlinedText name="world-card-info" class="world-card__line" text="Elf · Archer · Lv 2 · Rank F" />
+        <ui:VisualElement class="world-card__icon-row" picking-mode="Ignore">
+            <ui:VisualElement name="world-card-class-icon" class="world-card__class-icon" />
+            <wg:OutlinedText name="world-card-info" class="world-card__line world-card__line--fill" text="Elf · Archer · Lv 2 · Rank F" />
+        </ui:VisualElement>
         <wg:OutlinedText name="world-card-status" class="world-card__line" text="Idle · Well fed (+6%)" />
         <wg:OutlinedText name="world-card-room" class="world-card__line" text="Room: Bedroom 2" />
         <wg:OutlinedText name="world-card-party" class="world-card__line" text="The Iron Wolves" />

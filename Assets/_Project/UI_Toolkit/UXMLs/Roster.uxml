@@ -15,7 +15,10 @@
                 <ui:VisualElement class="roster-details" picking-mode="Ignore">
                     <ui:ScrollView name="adv-content" class="adv-content pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden">
                         <wg:OutlinedText name="adv-name" class="adv-name" text="Name" />
-                        <wg:OutlinedText name="adv-species-class" class="adv-line" text="Species · Class" />
+                        <ui:VisualElement class="adv-icon-row" picking-mode="Ignore">
+                            <ui:VisualElement name="adv-class-icon" class="adv-class-icon" />
+                            <wg:OutlinedText name="adv-species-class" class="adv-line" text="Species · Class" />
+                        </ui:VisualElement>
                         <wg:OutlinedText name="adv-rank-level" class="adv-line" text="Rank F · Level 1" />
 
                         <ui:VisualElement class="adv-bar" picking-mode="Ignore">

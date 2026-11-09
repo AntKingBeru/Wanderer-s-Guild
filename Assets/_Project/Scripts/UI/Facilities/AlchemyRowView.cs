@@ -1,4 +1,4 @@
-// One pooled row of the alchemy screen: potion name, how many are in stock, and (when brewing) − count + controls.
+// One pooled row of the alchemy screen: potion icon, name, how many are in stock, and (when brewing) − count + controls.
 using System;
 using UnityEngine.UIElements;
 
@@ -6,6 +6,7 @@ namespace WanderersGuild
 {
     public sealed class AlchemyRowView
     {
+        private readonly IconSlot _icon;
         private readonly OutlinedText _name;
         private readonly OutlinedText _stock;
         private readonly OutlinedText _count;
@@ -22,6 +23,7 @@ namespace WanderersGuild
             Root = new VisualElement { pickingMode = PickingMode.Ignore };
             Root.AddToClassList("alc-row");
 
+            _icon = IconSlot.Create("alc-row__icon");
             _name = Text("alc-row__name");
             _stock = Text("alc-row__stock");
 
@@ -34,6 +36,7 @@ namespace WanderersGuild
             _controls.Add(_count);
             _controls.Add(Plus);
 
+            Root.Add(_icon.Root);
             Root.Add(_name);
             Root.Add(_stock);
             Root.Add(_controls);
@@ -49,6 +52,7 @@ namespace WanderersGuild
         public void Show(PotionKey key, string name, int inStock, int ordered, bool brewing, bool canAdd)
         {
             Key = key;
+            _icon.Set(GameConfig.Instance.Alchemy.PotionIcon(key.Category), key.Category.ToString());
             _name.Text = name;
             _stock.Text = brewing ? $"In stock {inStock}" : inStock.ToString();
             _count.Text = ordered.ToString();

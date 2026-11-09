@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'The common archer.
 
     Shoots from afar and is afraid of confrontations.'
-  icon: {fileID: 0}
+  icon: {fileID: 4623519729335281693, guid: 447a2b2701cb8db4b9704ac8244ee22f, type: 3}
   baseStats:
     strength: 0
     agility: 1

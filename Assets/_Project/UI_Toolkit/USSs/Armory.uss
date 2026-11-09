@@ -118,3 +118,13 @@
 .arm-footer-text .outlined-text__fill {
     color: var(--color-text-disabled);
 }
+.arm-name-row {
+    flex-direction: row;
+    align-items: center;
+}
+.arm-icon {
+    margin-right: 2px;
+}
+.arm-row__icon {
+    margin-right: 2px;
+}

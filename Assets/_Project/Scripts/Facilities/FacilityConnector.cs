@@ -8,6 +8,11 @@ namespace WanderersGuild
     {
         [Tooltip("Which way the door faces (out of the room). The door sits on that edge of the footprint.")]
         [SerializeField] private CardinalDirection facing = CardinalDirection.North;
+        [Header("Wall / doorway (optional)")]
+        [Tooltip("Solid wall piece shown when no finished room meets this door.")]
+        [SerializeField] private GameObject wall;
+        [Tooltip("Opening (with its door leaf) shown when a finished room meets this door.")]
+        [SerializeField] private GameObject doorway;
 
         public CardinalDirection Facing => facing;
 
@@ -28,6 +33,15 @@ namespace WanderersGuild
                 CardinalDirection.East => new Vector2Int(size.x - 1, start),
                 _ => new Vector2Int(0, start)
             };
+        }
+        
+        // Linked → doorway on, wall off; not linked → wall on, doorway off. Set by ConnectorStateUpdater.
+        public void SetLinked(bool linked)
+        {
+            if (wall && wall.activeSelf == linked)
+                wall.SetActive(!linked);
+            if (doorway && doorway.activeSelf != linked)
+                doorway.SetActive(linked);
         }
 
         // NOTE: Shows the 2-cell span the marker resolves to along its edge (snapped to whole cells), plus the facing.

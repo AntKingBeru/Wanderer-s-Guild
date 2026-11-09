@@ -15,7 +15,7 @@ MonoBehaviour:
   id: warrior_class
   displayName: Warrior
   description: Likes to attack... A LOT.
-  icon: {fileID: 0}
+  icon: {fileID: 1787125161, guid: 447a2b2701cb8db4b9704ac8244ee22f, type: 3}
   baseStats:
     strength: 2
     agility: 0
