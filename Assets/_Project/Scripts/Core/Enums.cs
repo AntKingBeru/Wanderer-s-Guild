@@ -279,7 +279,8 @@ namespace WanderersGuild
         OnQuest = 2,
         InExam = 3,
         Injured = 4,
-        Returning
+        Returning = 5,
+        InTrial = 6
     }
     
     // Why an applicant stopped waiting.

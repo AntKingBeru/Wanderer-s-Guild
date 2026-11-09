@@ -1,5 +1,5 @@
 // One guild adventurer: identity, species and class, experience (level derived), rank + progress, wealth, status, exam, gear,
-// supper buff, injury, party, return from a recall.
+// supper buff, injury, party, return from a recall, class trial and advancement.
 namespace WanderersGuild
 {
     public sealed class Adventurer
@@ -10,7 +10,7 @@ namespace WanderersGuild
                           int wealth, AdventurerStatus status, long joinedAtMinutes, StatBlock retainedGrowth, ExperienceTable levels,
                           float rankProgress = 0f, long examReturnsAtMinutes = 0, EquipmentData[] equipment = null,
                           float wellFedBonus = 0f, InjurySeverity injury = InjurySeverity.None, long injuredUntilMinutes = 0,
-                          long returningUntilMinutes = 0)
+                          long returningUntilMinutes = 0, string trialClassId = null, long trialReturnsAtMinutes = 0)
         {
             _levels = levels;
             Id = id;
@@ -29,6 +29,8 @@ namespace WanderersGuild
             Injury = injury;
             InjuredUntilMinutes = System.Math.Max(0L, injuredUntilMinutes);
             ReturningUntilMinutes = System.Math.Max(0L, returningUntilMinutes);
+            TrialClassId = trialClassId ?? string.Empty;
+            TrialReturnsAtMinutes = System.Math.Max(0L, trialReturnsAtMinutes);
 
             // NOTE: Each item goes into its own slot; nulls (unknown ids) leave the slot empty.
             if (equipment == null)
@@ -44,9 +46,11 @@ namespace WanderersGuild
         public int Id { get; }
         public string Name { get; }
         public SpeciesData Species { get; }
-        public ClassData Class { get; }
 
-        // Total XP in the current class (cumulative table); clamped at the level cap.
+        // Current class — changes only by passing a class trial (AdvanceTo).
+        public ClassData Class { get; private set; }
+
+        // Total XP in the current class (cumulative table); clamped at the level cap; 0 after advancing.
         public long Experience { get; private set; }
 
         // Adventurer rank — raised only by passing a promotion exam.
@@ -57,17 +61,17 @@ namespace WanderersGuild
 
         public int Wealth { get; private set; }
 
-        // Idle, signed up, on a quest, in an exam, injured or returning. Changed by the quest, promotion and injury systems.
+        // Idle, signed up, on a quest, in an exam, injured, returning or in a trial.
         public AdventurerStatus Status { get; private set; }
         public long JoinedAtMinutes { get; }
 
         // When a running promotion exam ends; 0 = none.
         public long ExamReturnsAtMinutes { get; private set; }
 
-        // Stat growth kept through class advancement (0 until advancement exists).
-        public StatBlock RetainedGrowth { get; }
+        // Stat growth kept through class advancement (set only by AdvanceTo).
+        public StatBlock RetainedGrowth { get; private set; }
 
-        // Worn gear (changed by the armory).
+        // Worn gear (changed by the armory and class advancement).
         public AdventurerEquipment Equipment { get; } = new();
 
         // Quest power bonus from supper (0 = not well-fed). Set only by the tavern at supper.
@@ -81,6 +85,10 @@ namespace WanderersGuild
 
         // When a recalled adventurer gets back (meaningful only while Returning).
         public long ReturningUntilMinutes { get; private set; }
+
+        // A running class trial: the target class id and when they're back (meaningful only while InTrial).
+        public string TrialClassId { get; private set; }
+        public long TrialReturnsAtMinutes { get; private set; }
 
         // The party they belong to (0 = none) and its teamwork power bonus. Set only by PartyManager (not saved
         // here — rebuilt from the saved parties on load).
@@ -158,6 +166,40 @@ namespace WanderersGuild
             return true;
         }
 
+        // NOTE: Class trial + advancement — only the advancement system calls these.
+        public void StartTrial(string classId, long returnsAtMinutes)
+        {
+            TrialClassId = classId ?? string.Empty;
+            TrialReturnsAtMinutes = System.Math.Max(0L, returnsAtMinutes);
+            Status = AdventurerStatus.InTrial;
+        }
+
+        // Back from a trial (passed or not): Idle, trial data cleared.
+        public void EndTrial()
+        {
+            ClearTrial();
+            Status = AdventurerStatus.Idle;
+        }
+
+        // Clears trial data without touching the status (load repair).
+        public void ClearTrial()
+        {
+            TrialClassId = string.Empty;
+            TrialReturnsAtMinutes = 0;
+        }
+
+        // Becomes the new class at level 1 (XP 0) with the given retained growth; rank kept, rank progress reset.
+        public void AdvanceTo(ClassData newClass, StatBlock retainedGrowth)
+        {
+            if (!newClass)
+                return;
+
+            Class = newClass;
+            Experience = 0;
+            RetainedGrowth = retainedGrowth;
+            RankProgress = 0f;
+        }
+
         // NOTE: Recall lifecycle — only the quest system calls these.
         public void StartReturn(long untilMinutes)
         {
@@ -225,14 +267,18 @@ namespace WanderersGuild
         public void ClearExam(bool resetStatus)
         {
             ExamReturnsAtMinutes = 0;
-            if (resetStatus)
-                Status = AdventurerStatus.Idle;
+            if (resetStatus) Status = AdventurerStatus.Idle;
         }
+
+#if UNITY_EDITOR
+        // Editor debug only: sets the rank directly (testing advancement).
+        public void DebugSetRank(GuildRank rank) => Rank = rank;
+#endif
 
         public SavedAdventurer ToSaved() =>
             new(Id, Name, Species.Id, Class.Id, Experience, Rank, Wealth, Status, JoinedAtMinutes, RetainedGrowth,
                 RankProgress, ExamReturnsAtMinutes, Equipment.ToIds(), WellFedBonus, Injury, InjuredUntilMinutes,
-                ReturningUntilMinutes);
+                ReturningUntilMinutes, TrialClassId, TrialReturnsAtMinutes);
 
         private void EndExam()
         {

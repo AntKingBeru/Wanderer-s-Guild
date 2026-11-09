@@ -85,6 +85,9 @@ namespace WanderersGuild
                     $"{RequestFormatter.TimeLeft(System.Math.Max(0L, adventurer.InjuredUntilMinutes - nowMinutes))})",
                 AdventurerStatus.Returning =>
                     $"Status: Returning (back {RequestFormatter.TimeLeft(System.Math.Max(0L, adventurer.ReturningUntilMinutes - nowMinutes))})",
+                AdventurerStatus.InTrial =>
+                    $"Status: In trial ({TrialClassName(adventurer)}, back " +
+                    $"{RequestFormatter.TimeLeft(System.Math.Max(0L, adventurer.TrialReturnsAtMinutes - nowMinutes))})",
                 _ => "Status: Idle"
             };
 
@@ -98,5 +101,10 @@ namespace WanderersGuild
             check.CanPromote ? $"Rank {check.Target} exam ready: {check.Fee:N0}g" : check.Reason;
 
         private static string Number(long value) => value.ToString("N0", CultureInfo.InvariantCulture);
+        
+        private static string TrialClassName(Adventurer adventurer) =>
+            AdventurerManager.HasInstance && AdventurerManager.Instance.TryGetClass(adventurer.TrialClassId, out var c)
+                ? c.DisplayName
+                : adventurer.TrialClassId;
     }
 }

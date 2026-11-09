@@ -14,11 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
   id: equipment_cheap_bow
   displayName: Rotwood Bow
-  description: A bow made in bulk from rotwood.
+  description: 'A bow made in bulk from rotwood.
+
+    Mold included!'
   icon: {fileID: 0}
   slot: 0
   classIds:
   - archer_class
+  - ranger_class
+  - tamer_class
+  - hunter_class
+  - marksman_class
+  - beastmaster_class
+  - swarmmaster_class
   stats:
     strength: 0
     agility: 3

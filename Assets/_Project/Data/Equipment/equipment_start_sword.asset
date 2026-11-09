@@ -13,20 +13,26 @@ MonoBehaviour:
   m_Name: equipment_start_sword
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
   id: equipment_start_sword
-  displayName: Basic Sword
+  displayName: Starter Sword
   description: 'The most basic sword around.
 
-    Nothing special about it.'
+    Got more metal then a stick!'
   icon: {fileID: 0}
   slot: 0
   classIds:
   - fighter_class
+  - knight_class
+  - warrior_class
+  - paladin_class
+  - bulwark_class
+  - barbarian_class
+  - soldier_class
   stats:
     strength: 1
     agility: 0
     intellect: 0
     vitality: 0
-  price: 0
+  price: 3
   armoryLevel: 0
   unlockRank: 0
   twoHanded: 0

@@ -170,3 +170,33 @@
     flex-shrink: 0;
     margin-top: 3px;
 }
+/* ---------- Class chooser (Advance) ---------- */
+/* NOTE: Display is set in code (none until opened); it dims the roster like the confirm overlay. */
+.chooser-overlay {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background-color: var(--color-dim);
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+.chooser-window {
+    width: 200px;
+    align-items: stretch;
+}
+.chooser-title {
+    align-self: center;
+    margin-bottom: 3px;
+}
+.chooser-title .outlined-text__fill {
+    color: var(--color-accent);
+}
+.chooser-options {
+    align-items: stretch;
+    margin-bottom: 3px;
+}
+.pixel-button.chooser-option {
+    margin: 0 0 2px 0;
+    padding: 1px 4px;
+    align-items: flex-start;
+}

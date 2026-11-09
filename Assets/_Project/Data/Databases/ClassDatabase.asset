@@ -14,4 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ClassDatabase
   classes:
   - {fileID: 11400000, guid: 7e16d1dcd825423409cbec5b211cfde9, type: 2}
+  - {fileID: 11400000, guid: ab60d5dd8b08da44396ba187be81b557, type: 2}
+  - {fileID: 11400000, guid: abe5e8785bba83c41800ae92fbdbdf03, type: 2}
+  - {fileID: 11400000, guid: f2baf09d1b4a4934fbcf674f242a079c, type: 2}
+  - {fileID: 11400000, guid: 47cbf0640bd74b54d8288f459ba0804c, type: 2}
+  - {fileID: 11400000, guid: c114dfbdd9498594ca15eece5b978cb2, type: 2}
+  - {fileID: 11400000, guid: 73efb9a06d8193545b24a72d737c1e94, type: 2}
   - {fileID: 11400000, guid: 215f3f74669f23a4da6ca5854dcd0b60, type: 2}
+  - {fileID: 11400000, guid: fa330d242fe506445badd02be5b9386c, type: 2}
+  - {fileID: 11400000, guid: d95542d92a7fc5248a2220301a63bcee, type: 2}
+  - {fileID: 11400000, guid: d39114cd3744e924198f0304b0d68570, type: 2}
+  - {fileID: 11400000, guid: 46922365fc153ba4090cf53ca9388fb4, type: 2}
+  - {fileID: 11400000, guid: dbedce4500b1da04aa1f3b66fb41d28e, type: 2}
+  - {fileID: 11400000, guid: e00be23d2a6312146857cffb25a9664a, type: 2}
+  - {fileID: 11400000, guid: b75a84831424e67449525c551c78cf8b, type: 2}
+  - {fileID: 11400000, guid: b904e442a1ec26c40bc6de781cdcde9a, type: 2}
+  - {fileID: 11400000, guid: 27b9efd00911d9646850610d726aa52a, type: 2}
+  - {fileID: 11400000, guid: cb4437e3e97ce9948b0c589116184928, type: 2}
+  - {fileID: 11400000, guid: c1541d356ab61754f89758694ea34cbf, type: 2}
+  - {fileID: 11400000, guid: bf8386f29de451546babb615564400c3, type: 2}
+  - {fileID: 11400000, guid: c87ebb0cab9c27749915427d6cd49efc, type: 2}

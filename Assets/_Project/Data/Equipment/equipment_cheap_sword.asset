@@ -14,11 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
   id: equipment_cheap_sword
   displayName: Blunt Sword
-  description: A sword that was never sharpened, and is sold in bulk.
+  description: 'A sword that was never sharpened, and is sold in bulk.
+
+    Better then a stick with metal!'
   icon: {fileID: 0}
   slot: 0
   classIds:
   - fighter_class
+  - knight_class
+  - warrior_class
+  - paladin_class
+  - bulwark_class
+  - barbarian_class
+  - soldier_class
   stats:
     strength: 2
     agility: 0

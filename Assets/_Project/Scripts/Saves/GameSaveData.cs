@@ -9,8 +9,8 @@ namespace WanderersGuild
     public class GameSaveData
     {
         // NOTE: v2 guild state; v3 request board; v4 roster; v5 posted quests; v6 facilities; v7 applicants; v8 armory stock;
-        // v9 parties + lineup progress; v10 lodging + starter bedrooms; v11 potion stock.
-        public const int CurrentVersion = 11;
+        // v9 parties + lineup progress; v10 lodging + starter bedrooms; v11 potion stock; v12 unlocked advanced classes.
+        public const int CurrentVersion = 12;
 
         // NOTE: Generous upper bound (~114 years) — anything above means a corrupted file.
         private const double MaxPlayTimeSeconds = 3.6e9;
@@ -50,6 +50,8 @@ namespace WanderersGuild
         [SerializeField] private int[] starterRoomIds = Array.Empty<int>();
         
         [SerializeField] private List<SavedPotionStock> potionStock = new();
+        
+        [SerializeField] private string[] unlockedClassIds = Array.Empty<string>();
 
         public int Version => version;
 
@@ -213,6 +215,12 @@ namespace WanderersGuild
 
         public void SetPotionStock(IEnumerable<SavedPotionStock> items) =>
             potionStock = items != null ? new List<SavedPotionStock>(items) : new List<SavedPotionStock>();
+        
+        // Advanced classes someone has advanced into (they may now arrive). Written by AdvancementManager.
+        public IReadOnlyList<string> UnlockedClassIds => unlockedClassIds ?? Array.Empty<string>();
+        
+        public void SetUnlockedClasses(IEnumerable<string> ids) =>
+            unlockedClassIds = ids != null ? new List<string>(ids).ToArray() : Array.Empty<string>();
 
         public bool IsValid =>
             version is >= 1 and <= CurrentVersion &&

@@ -10,21 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca596db2f1f210e4899eeba125812138, type: 3}
-  m_Name: equipment_cheap_sheild
+  m_Name: equipment_cheap_offaxe
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
-  id: equipment_cheap_sheild
-  displayName: Used Shield
-  description: 'A shield left behind from a battle. It''s owner did not make it.
+  id: equipment_cheap_offaxe
+  displayName: Small Axe
+  description: 'An axe that has a chipped blade.
 
-    Very cheap though!'
+    Almost half off!'
   icon: {fileID: 0}
   slot: 1
-  classIds: []
+  classIds:
+  - warrior_class
+  - barbarian_class
   stats:
-    strength: 0
+    strength: 2
     agility: 0
     intellect: 0
-    vitality: 2
+    vitality: 0
   price: 12
   armoryLevel: 1
   unlockRank: 2

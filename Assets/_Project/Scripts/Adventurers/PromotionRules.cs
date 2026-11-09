@@ -1,4 +1,5 @@
-// Promotion rules (pure): whether an adventurer can take the next rank's exam, its fee, and the exam's pass chance.
+// Promotion rules (pure): whether an adventurer can take the next rank's exam, its fee, and the solo pass chance used by exams
+// and class trials (stats + Well fed vs a rank's per-member difficulty).
 namespace WanderersGuild
 {
     public static class PromotionRules
@@ -14,6 +15,8 @@ namespace WanderersGuild
 
             if (adventurer.Status == AdventurerStatus.InExam)
                 return PromotionCheck.Blocked(target, fee, "Taking an exam");
+            if (adventurer.Status == AdventurerStatus.InTrial)
+                return PromotionCheck.Blocked(target, fee, "Taking a class trial");
             if (adventurer.Status != AdventurerStatus.Idle)
                 return PromotionCheck.Blocked(target, fee, "Busy with a quest");
 
@@ -32,11 +35,13 @@ namespace WanderersGuild
             return guildGold < fee ? PromotionCheck.Blocked(target, fee, $"Exam fee {fee:N0}g: not enough gold") : PromotionCheck.Eligible(target, fee);
         }
 
-        // Pass chance: all four stats weighted evenly vs one member of the target rank (the quest formula).
-        public static float ExamChance(Adventurer adventurer, GuildRank target, QuestSettings quests)
+        // Solo pass chance (exams and class trials): all four stats weighted evenly, × (1 + Well fed), vs one member
+        // of the given rank — the quest formula.
+        // NOTE: Rolled when they return; supper never touches someone away, so the buff they left with is the one that counts.
+        public static float ExamChance(Adventurer adventurer, GuildRank against, QuestSettings quests)
         {
-            var power = adventurer.Stats.Total * 0.25f;
-            return QuestCalculator.SuccessChance(power, quests.DifficultyPerMember(target), quests);
+            var power = adventurer.Stats.Total * 0.25f * (1f + adventurer.WellFedBonus);
+            return QuestCalculator.SuccessChance(power, quests.DifficultyPerMember(against), quests);
         }
     }
 }

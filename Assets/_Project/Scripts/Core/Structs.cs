@@ -595,11 +595,14 @@ namespace WanderersGuild
         [SerializeField] private InjurySeverity injury;
         [SerializeField] private long injuredUntilMinutes;
         [SerializeField] private long returningUntilMinutes;
+        [SerializeField] private string trialClassId;
+        [SerializeField] private long trialReturnsAtMinutes;
 
         public SavedAdventurer(int id, string name, string speciesId, string classId, long experience, GuildRank rank,
                                int wealth, AdventurerStatus status, long joinedAtMinutes, StatBlock retainedGrowth,
                                float rankProgress, long examReturnsAtMinutes, string[] equipmentIds, float wellFedBonus,
-                               InjurySeverity injury, long injuredUntilMinutes, long returningUntilMinutes)
+                               InjurySeverity injury, long injuredUntilMinutes, long returningUntilMinutes,
+                               string trialClassId, long trialReturnsAtMinutes)
         {
             this.id = id;
             this.name = name;
@@ -618,6 +621,8 @@ namespace WanderersGuild
             this.injury = injury;
             this.injuredUntilMinutes = injuredUntilMinutes;
             this.returningUntilMinutes = returningUntilMinutes;
+            this.trialClassId = trialClassId;
+            this.trialReturnsAtMinutes = trialReturnsAtMinutes;
         }
 
         public int Id => id;
@@ -648,6 +653,10 @@ namespace WanderersGuild
         
         // When a recalled adventurer gets back (0 = not returning; 0 in saves from before Session 22).
         public long ReturningUntilMinutes => returningUntilMinutes;
+        
+        // A running class trial: the class they're trying for and when they're back (empty / 0 = none).
+        public string TrialClassId => trialClassId;
+        public long TrialReturnsAtMinutes => trialReturnsAtMinutes;
         
     }
 
@@ -1146,6 +1155,35 @@ namespace WanderersGuild
 
         public int AdventurerId => adventurerId;
         public int RoomId => roomId;
+    }
+    #endregion
+    
+    #region Advancement
+    // Whether an adventurer can start a class trial now: the classes they can choose, the fee, or why not.
+    public readonly struct AdvancementCheck
+    {
+        private AdvancementCheck(bool canAdvance, bool atCap, IReadOnlyList<ClassData> options, long fee, string reason)
+        {
+            CanAdvance = canAdvance;
+            IsAtClassCap = atCap;
+            Options = options;
+            Fee = fee;
+            Reason = reason;
+        }
+
+        public bool CanAdvance { get; }
+
+        // True when they've reached their class's level and rank caps (advancement is the way forward).
+        public bool IsAtClassCap { get; }
+
+        // The upgrades the guild's rank allows (empty when blocked).
+        public IReadOnlyList<ClassData> Options { get; }
+        public long Fee { get; }
+        public string Reason { get; }
+
+        public static AdvancementCheck NotAtCap() => new(false, false, Array.Empty<ClassData>(), 0, string.Empty);
+        public static AdvancementCheck Blocked(long fee, string reason) => new(false, true, Array.Empty<ClassData>(), fee, reason);
+        public static AdvancementCheck Eligible(IReadOnlyList<ClassData> options, long fee) => new(true, true, options, fee, string.Empty);
     }
     #endregion
 }

@@ -192,6 +192,9 @@ namespace WanderersGuild
 
         // An applicant stopped waiting. Args: the applicant, and why (accepted, declined, expired, office closed).
         public static readonly UnityEvent<Applicant, ApplicantEndReason> OnApplicantLeft = new();
+        
+        // An advanced class became available to arrivals (someone advanced into it). Arg: the class.
+        public static readonly UnityEvent<ClassData> OnClassUnlocked = new();
         #endregion
         
         #region Facilities
@@ -281,6 +284,14 @@ namespace WanderersGuild
         #region Recall
         // A recalled adventurer arrived back at the guild (now Idle).
         public static readonly UnityEvent<Adventurer> OnAdventurerReturned = new();
+        #endregion
+        
+        #region Advancement
+        // An adventurer passed a class trial. Args: adventurer, old class, new class.
+        public static readonly UnityEvent<Adventurer, ClassData, ClassData> OnClassAdvanced = new();
+
+        // An adventurer failed a class trial. Args: adventurer, the class they tried for.
+        public static readonly UnityEvent<Adventurer, ClassData> OnClassTrialFailed = new();
         #endregion
     }
 }

@@ -36,11 +36,20 @@ namespace WanderersGuild
             UpdateScrollerVisibility();
         }
 
+        // NOTE: The fill keeps the untyped tail (transparent) so wrapping never changes; the outline copies get that tail
+        // blanked with non-breaking spaces — the SDF outline ignores <alpha>, so a transparent tail still drew its outline.
+        // monogram is monospaced, so an NBSP is exactly one glyph wide and spaces/line breaks keep the same word breaks.
         public void Show(string full, int shown)
         {
             full ??= string.Empty;
             var count = Mathf.Clamp(shown, 0, full.Length);
-            _text.Text = count >= full.Length ? full : full[..count] + HiddenTag + full[count..];
+
+            if (count >= full.Length) _text.Text = full;
+            else
+            {
+                string visible = full[..count], tail = full[count..];
+                _text.SetTexts(visible + HiddenTag + tail, visible + Blank(tail));
+            }
 
             if (count == 0)
             {
@@ -57,8 +66,21 @@ namespace WanderersGuild
                 return;
             }
 
-            var height = Mathf.Ceil(_text.MeasureTextHeight(full.Substring(0, WordEnd(full, count)), width));
+            var height = Mathf.Ceil(_text.MeasureTextHeight(full[..WordEnd(full, count)], width));
             SetClipHeight(height);
+        }
+        
+        // NOTE: Every character except spaces and line breaks becomes a non-breaking space (same width, draws nothing,
+        // never a break point — so the words wrap exactly where the fill's do).
+        private static string Blank(string tail)
+        {
+            var chars = tail.ToCharArray();
+            for (var i = 0; i < chars.Length; i++)
+            {
+                if (chars[i] != ' ' && chars[i] != '\n')
+                    chars[i] = '\u00A0';
+            }
+            return new string(chars);
         }
 
         public void Clear()

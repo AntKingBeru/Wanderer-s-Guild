@@ -71,10 +71,11 @@
     border-color: var(--frame-highlight-border);
 }
 /* ---------- Opening goal (under the HUD bar, top-left) ---------- */
+/* NOTE: Below the HUD top bar with a small gap (the bar covers the first ~30 UI pixels). */
 .world-goal {
     position: absolute;
     left: 4px;
-    top: 26px;
+    top: 34px;
     padding: 1px 2px;
     display: none;
 }

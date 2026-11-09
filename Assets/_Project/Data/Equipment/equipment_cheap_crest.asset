@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca596db2f1f210e4899eeba125812138, type: 3}
+  m_Name: equipment_cheap_crest
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
+  id: equipment_cheap_crest
+  displayName: Copper Holy Symbol
+  description: 'A low quality coin, embroided with the symbol of a deity.
+
+    Not clear what deity.'
+  icon: {fileID: 0}
+  slot: 0
+  classIds:
+  - cleric_class
+  - priest_class
+  - spiritualist_class
+  - oracle_class
+  - bishop_class
+  - exorcist_class
+  - shaman_class
+  stats:
+    strength: 0
+    agility: 0
+    intellect: 3
+    vitality: 0
+  price: 12
+  armoryLevel: 1
+  unlockRank: 2
+  twoHanded: 0
+  stock: 3

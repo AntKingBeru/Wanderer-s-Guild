@@ -85,5 +85,17 @@ namespace WanderersGuild
             label.pickingMode = PickingMode.Ignore;
             return label;
         }
+        
+        // Sets different strings for the fill and the 8 outline copies (e.g. a typewriter: the fill keeps the hidden
+        // tail with a transparent tag, the outlines get it blanked, because the SDF outline ignores rich-text alpha).
+        // NOTE: Both strings must lay out identically (same length per line, same break points), or the outline drifts.
+        public void SetTexts(string fill, string outline)
+        {
+            _text = fill ?? string.Empty;
+            var outlineText = outline ?? _text;
+            foreach (var copy in _outlines)
+                copy.text = outlineText;
+            _fill.text = _text;
+        }
     }
 }

@@ -1,5 +1,5 @@
 // The roster's details pane: name, species · class, rank · level, XP and rank-progress bars, stats (with gear), wealth,
-// affinities, gear, status, party, promotion hint; Promote and Disband buttons.
+// affinities, gear, status, party, room, promotion / advancement hint; Promote (or Advance), Disband and Move buttons.
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -20,9 +20,10 @@ namespace WanderersGuild
         private readonly OutlinedText _affinities;
         private readonly OutlinedText _gear;
         private readonly OutlinedText _status;
-        private readonly OutlinedText _room;
         private readonly OutlinedText _party;
+        private readonly OutlinedText _room;
         private readonly OutlinedText _hint;
+        private readonly OutlinedText _promoteLabel;
         private readonly ExperienceBarView _experienceBar;
         private readonly ExperienceBarView _rankBar;
         private int _shownId = -1;
@@ -30,6 +31,9 @@ namespace WanderersGuild
         public Button Promote { get; }
         public Button Disband { get; }
         public Button Move { get; }
+
+        // True when the Promote button currently means "Advance" (the adventurer is at their class cap).
+        public bool IsAdvanceMode { get; private set; }
 
         private AdventurerDetailsView(VisualElement root, ExperienceBarView experienceBar, ExperienceBarView rankBar)
         {
@@ -46,12 +50,13 @@ namespace WanderersGuild
             _affinities = root.Q<OutlinedText>("adv-affinities");
             _gear = root.Q<OutlinedText>("adv-gear");
             _status = root.Q<OutlinedText>("adv-status");
-            _room = root.Q<OutlinedText>("adv-room");
             _party = root.Q<OutlinedText>("adv-party");
+            _room = root.Q<OutlinedText>("adv-room");
             _hint = root.Q<OutlinedText>("adv-promote-hint");
             Promote = root.Q<Button>("adv-promote");
             Disband = root.Q<Button>("adv-disband");
             Move = root.Q<Button>("adv-move");
+            _promoteLabel = Promote?.Q<OutlinedText>();
             _experienceBar = experienceBar;
             _rankBar = rankBar;
         }
@@ -59,8 +64,8 @@ namespace WanderersGuild
         private bool IsComplete =>
             _content != null && _empty != null && _name != null && _speciesClass != null && _rankLevel != null &&
             _experience != null && _rankProgress != null && _statsTop != null && _statsBottom != null && _wealth != null &&
-            _affinities != null && _gear != null && _status != null && _room != null && _party != null && _hint != null &&
-            Promote != null && Disband != null && Move != null;
+            _affinities != null && _gear != null && _status != null && _party != null && _room != null && _hint != null &&
+            Promote != null && _promoteLabel != null && Disband != null && Move != null;
 
         public static AdventurerDetailsView Bind(VisualElement root)
         {
@@ -81,12 +86,13 @@ namespace WanderersGuild
         /// <param name="promotion"></param>
         /// <param name="nowMinutes"></param>
         /// <param name="partyLine">"Party: The Iron Wolves (3) · Teamwork +4%", or empty (hidden; Disband disabled).</param>
-        /// <param name="roomLine"></param>
-        /// <param name="canMove"></param>
+        /// <param name="roomLine">"Room: Bedroom 2" / "Room: Lodging outside", or empty (hidden).</param>
+        /// <param name="canMove">Another bedroom has a free bed (Move enabled).</param>
+        /// <param name="advancement">At the class cap the button becomes "Advance" with this check's hint.</param>
         // NOTE: Stats include gear (Adventurer.Stats). A different adventurer starts at the top of the pane; refreshing the
         // same one keeps the reader's scroll position.
         public void Show(Adventurer adventurer, ExperienceTable table, PromotionCheck check, PromotionSettings promotion,
-            long nowMinutes, string partyLine, string roomLine, bool canMove)
+                         long nowMinutes, string partyLine, string roomLine, bool canMove, AdvancementCheck advancement)
         {
             var stats = adventurer.Stats;
 
@@ -105,9 +111,12 @@ namespace WanderersGuild
             _status.Text = AdventurerFormatter.Status(adventurer, nowMinutes);
             _party.Text = partyLine;
             _party.style.display = string.IsNullOrEmpty(partyLine) ? DisplayStyle.None : DisplayStyle.Flex;
-            _hint.Text = AdventurerFormatter.PromotionHint(check);
             _room.Text = roomLine;
             _room.style.display = string.IsNullOrEmpty(roomLine) ? DisplayStyle.None : DisplayStyle.Flex;
+
+            IsAdvanceMode = advancement.IsAtClassCap;
+            _promoteLabel.Text = IsAdvanceMode ? "Advance" : "Promote";
+            _hint.Text = IsAdvanceMode ? AdvancementFormatter.Hint(advancement) : AdventurerFormatter.PromotionHint(check);
 
             if (adventurer.Id != _shownId)
             {
@@ -117,7 +126,7 @@ namespace WanderersGuild
 
             _content.style.display = DisplayStyle.Flex;
             _empty.style.display = DisplayStyle.None;
-            Promote.SetEnabled(check.CanPromote);
+            Promote.SetEnabled(IsAdvanceMode ? advancement.CanAdvance : check.CanPromote);
             Disband.SetEnabled(!string.IsNullOrEmpty(partyLine));
             Move.SetEnabled(canMove);
         }
@@ -125,6 +134,8 @@ namespace WanderersGuild
         public void ShowEmpty(string message)
         {
             _shownId = -1;
+            IsAdvanceMode = false;
+            _promoteLabel.Text = "Promote";
             _empty.Text = message;
             _content.style.display = DisplayStyle.None;
             _empty.style.display = DisplayStyle.Flex;

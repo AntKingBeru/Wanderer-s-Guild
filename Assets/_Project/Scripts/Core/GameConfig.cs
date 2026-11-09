@@ -62,6 +62,7 @@ namespace WanderersGuild
         [SerializeField] private PartySettings parties = new();
         [SerializeField] private LodgingSettings lodging = new();
         [SerializeField] private QuestRecallSettings questRecall = new();
+        [SerializeField] private AdvancementSettings advancement = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -113,6 +114,7 @@ namespace WanderersGuild
         public PartySettings Parties => parties;
         public LodgingSettings Lodging => lodging;
         public QuestRecallSettings QuestRecall => questRecall;
+        public AdvancementSettings Advancement => advancement;
     }
     
     #region Scene Management
@@ -1877,6 +1879,25 @@ namespace WanderersGuild
 
         public int Reputation => reputation;
         public float ReturnFraction => returnFraction;
+    }
+    #endregion
+    
+    #region Advancement
+    [Serializable]
+    public class AdvancementSettings
+    {
+        [Tooltip("Trial fee = the promotion fee of the next rank × this.")]
+        [SerializeField, Min(0f)] private float feeMultiplier = 1f;
+
+        [Tooltip("In-game days a class trial takes (away, like an exam).")]
+        [SerializeField, Min(1)] private int trialDays = 2;
+
+        [Tooltip("Reputation when someone passes a class trial.")]
+        [SerializeField] private int passReputation = 1;
+
+        public float FeeMultiplier => feeMultiplier;
+        public int TrialDays => trialDays;
+        public int PassReputation => passReputation;
     }
     #endregion
 }

@@ -23,6 +23,7 @@ namespace WanderersGuild
         private AdventurerDetailsView _details;
         private InlineConfirmation _confirm;
         private Button _close;
+        private ClassChooserView _chooser;
         private int _selectedId = -1;
         private int _selectedIndex;
         private bool _warnedPool;
@@ -31,7 +32,7 @@ namespace WanderersGuild
         protected override IReadOnlyList<Button> ListButtons => _list.Buttons;
         protected override Focusable DefaultFocus => (Focusable)_list.ButtonFor(_selectedId) ?? _close;
 
-        private bool IsPanelActive => IsInteractable && !_confirm.IsOpen;
+        private bool IsPanelActive => IsInteractable && !_confirm.IsOpen && !_chooser.IsOpen;
         private bool IsConfirmActive => IsInteractable && _confirm.IsOpen;
 
         private static AdventurerSettings Settings => GameConfig.Instance.Adventurers;
@@ -44,8 +45,12 @@ namespace WanderersGuild
             _close = documentRoot.Q<Button>("roster-close");
             _details = AdventurerDetailsView.Bind(documentRoot);
             _confirm = InlineConfirmation.Bind(documentRoot);
+            _chooser = ClassChooserView.Bind(documentRoot);
 
             if (_title == null || scroll == null || listEmpty == null || _close == null || _details == null || _confirm == null)
+                return false;
+            
+            if (_chooser == null)
                 return false;
 
             _list = new RosterListView(scroll, listEmpty, RowPool, Select);
@@ -56,6 +61,7 @@ namespace WanderersGuild
             _buttons.Add(_details.Disband);
             _buttons.Add(_close);
             _buttons.AddRange(_confirm.Buttons);
+            _buttons.AddRange(_chooser.Buttons);
 
             _navigationOrder.Clear();
             _navigationOrder.AddRange(_list.Buttons);
@@ -69,14 +75,17 @@ namespace WanderersGuild
         // NOTE: Promotion eligibility depends on gold, guild rank, level and status — all of these refresh the panel.
         protected override void OnInitialize()
         {
-            _details.Promote.clicked += AskPromote;
+            _details.Promote.clicked += OnPromoteClicked;
             _close.clicked += Close;
             _confirm.Initialize();
             _details.Disband.clicked += AskDisband;
             _details.Move.clicked += MoveRoom;
+            _chooser.Cancel.clicked += CloseChooser;
 
             AddPanelManipulator(new MenuNavigation(_navigationOrder, () => IsPanelActive, null));
             AddPanelManipulator(new MenuNavigation(_confirm.Buttons, () => IsConfirmActive, null, NavigationAxis.Horizontal));
+            AddPanelManipulator(new MenuNavigation(new List<VisualElement>(_chooser.Buttons),
+                () => IsInteractable && _chooser.IsOpen && !_confirm.IsOpen, null));
 
             GameEventsRelay.OnAdventurerJoined.AddListener(OnAdventurerEvent);
             GameEventsRelay.OnAdventurerLeveledUp.AddListener(OnAdventurerEvent);
@@ -115,6 +124,7 @@ namespace WanderersGuild
         protected override void OnOpening()
         {
             _confirm.HideImmediate();
+            _chooser.HideImmediate();
             if (_selectOnNextOpen >= 0)
             {
                 _selectedId = _selectOnNextOpen;
@@ -128,6 +138,8 @@ namespace WanderersGuild
         {
             if (_confirm.IsOpen)
                 _confirm.Cancel();
+            else if (_chooser.IsOpen)
+                CloseChooser();
             else
                 Close();
         }
@@ -146,6 +158,47 @@ namespace WanderersGuild
 
             _selectedId = adventurer.Id;
             Refresh();
+        }
+        
+        // NOTE: At the class cap the same button advances (chooser → confirm → trial); otherwise it's the promotion exam.
+        private void OnPromoteClicked()
+        {
+            if (!IsPanelActive)
+                return;
+
+            var adventurer = AdventurerManager.HasInstance ? AdventurerManager.Instance.Find(_selectedId) : null;
+            if (adventurer == null)
+                return;
+
+            var advancement = AdvancementManager.HasInstance ? AdvancementManager.Instance.Check(adventurer) : AdvancementCheck.NotAtCap();
+            if (advancement.IsAtClassCap)
+            {
+                if (advancement.CanAdvance)
+                    _chooser.Show(adventurer.Id, advancement.Options, option => AskAdvance(adventurer.Id, option));
+                return;
+            }
+
+            AskPromote();
+        }
+        
+        // NOTE: The fee and days are re-read now; AdvancementManager re-checks everything on Yes.
+        private void AskAdvance(int adventurerId, ClassData option)
+        {
+            var adventurer = AdventurerManager.HasInstance ? AdventurerManager.Instance.Find(adventurerId) : null;
+            if (adventurer == null || !AdvancementManager.HasInstance)
+                return;
+
+            var fee = AdvancementRules.Fee(adventurer, GameConfig.Instance.Promotion, GameConfig.Instance.Advancement);
+            var confirmed = false;
+            _confirm.Show(AdvancementFormatter.Confirm(option, fee, GameConfig.Instance.Advancement.TrialDays),
+                onConfirm: () => confirmed = true,
+                onClosed: () =>
+                {
+                    if (confirmed && AdvancementManager.HasInstance)
+                        AdvancementManager.Instance.StartTrial(adventurerId, option.Id);
+                    Refresh();
+                    Focus((Focusable)_list.ButtonFor(_selectedId) ?? _close);
+                });
         }
 
         // NOTE: StartExam re-checks eligibility and spends with TrySpend — if anything changed meanwhile, nothing happens
@@ -175,6 +228,14 @@ namespace WanderersGuild
                               Refresh();
                               Focus((Focusable)_list.ButtonFor(_selectedId) ?? _close);
                           });
+        }
+        
+        private void CloseChooser()
+        {
+            if (!_chooser.IsOpen)
+                return;
+            _chooser.HideImmediate();
+            Focus(_details.Promote.enabledSelf ? _details.Promote : (Focusable)_close);
         }
 
         // NOTE: Sorted by rank, then level (highest first), then name. The selection is kept by adventurer id, among the
@@ -208,9 +269,13 @@ namespace WanderersGuild
             var partyLine = PartyManager.HasInstance ? PartyManager.Instance.LineFor(selected) : string.Empty;
             var roomLine = LodgingManager.HasInstance ? $"Room: {LodgingManager.Instance.LabelFor(selected.Id)}" : string.Empty;
             var canMove = LodgingManager.HasInstance && LodgingManager.Instance.NextFreeRoomFor(selected.Id) != null;
+            var advancement = AdvancementManager.HasInstance ? AdvancementManager.Instance.Check(selected) : AdvancementCheck.NotAtCap();
             _details.Show(selected, Settings.Experience, check, GameConfig.Instance.Promotion, RequestManager.NowMinutes,
-                partyLine, roomLine, canMove);
-            _details.Show(selected, Settings.Experience, check, GameConfig.Instance.Promotion, RequestManager.NowMinutes, partyLine, roomLine, canMove);
+                partyLine, roomLine, canMove, advancement);
+            
+            // NOTE: The chooser belongs to one adventurer — if they're no longer selected or can't advance, it closes.
+            if (_chooser.IsOpen && (_chooser.AdventurerId != selected.Id || !advancement.CanAdvance))
+                _chooser.HideImmediate();
         }
 
         private static int CompareForRoster(Adventurer a, Adventurer b)

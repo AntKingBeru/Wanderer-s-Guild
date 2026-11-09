@@ -13,12 +13,18 @@ MonoBehaviour:
   m_Name: equipment_cheap_leather
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
   id: equipment_cheap_leather
-  displayName: Boar-Leather Armor
-  description: A low quality armor made from a board's cured leather.
+  displayName: Pig-Leather Armor
+  description: A low quality armor made from a pig's cured leather.
   icon: {fileID: 0}
   slot: 2
   classIds:
   - archer_class
+  - ranger_class
+  - tamer_class
+  - hunter_class
+  - marksman_class
+  - beastmaster_class
+  - swarmmaster_class
   stats:
     strength: 0
     agility: 0

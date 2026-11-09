@@ -30,8 +30,11 @@ MonoBehaviour:
     vitality: 0
   requiredGuildRank: 0
   maxRank: 2
-  advancesToIds: []
+  advancesToIds:
+  - ranger_class
+  - tamer_class
   categoryAffinities: 010000000200000005000000i
   startingGearIds:
   - equipment_start_bow
   - equipment_start_armor_archer
+  avatarSheet: {fileID: 0}

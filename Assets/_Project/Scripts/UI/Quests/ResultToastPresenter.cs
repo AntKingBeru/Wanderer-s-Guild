@@ -1,6 +1,6 @@
 // Queues a toast for each result — quests, promotion exams, and applicants arriving / giving up.
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
@@ -37,6 +37,9 @@ namespace WanderersGuild
             GameEventsRelay.OnLodgingChanged.AddListener(OnLodgingChanged);
             GameEventsRelay.OnStarterLodgingsChanged.AddListener(OnStarterLodgingsChanged);
             GameEventsRelay.OnAdventurerReturned.AddListener(OnReturned);
+            GameEventsRelay.OnClassAdvanced.AddListener(OnClassAdvanced);
+            GameEventsRelay.OnClassTrialFailed.AddListener(OnClassTrialFailed);
+            GameEventsRelay.OnClassUnlocked.AddListener(OnClassUnlocked);
         }
 
         private void OnDisable()
@@ -59,6 +62,9 @@ namespace WanderersGuild
             GameEventsRelay.OnLodgingChanged.RemoveListener(OnLodgingChanged);
             GameEventsRelay.OnStarterLodgingsChanged.RemoveListener(OnStarterLodgingsChanged);
             GameEventsRelay.OnAdventurerReturned.RemoveListener(OnReturned);
+            GameEventsRelay.OnClassAdvanced.RemoveListener(OnClassAdvanced);
+            GameEventsRelay.OnClassTrialFailed.RemoveListener(OnClassTrialFailed);
+            GameEventsRelay.OnClassUnlocked.RemoveListener(OnClassUnlocked);
             if (_wait.IsActive())
                 _wait.Kill();
             _queue.Clear();
@@ -198,6 +204,15 @@ namespace WanderersGuild
         }
         
         private void OnReturned(Adventurer adventurer) => Enqueue($"{adventurer.Name} is back", false);
+        
+        private void OnClassAdvanced(Adventurer adventurer, ClassData from, ClassData to) =>
+            Enqueue($"{adventurer.Name} is now a {to.DisplayName}!", false);
+
+        private void OnClassTrialFailed(Adventurer adventurer, ClassData target) =>
+            Enqueue($"{adventurer.Name} failed the {target.DisplayName} trial", true);
+        
+        private void OnClassUnlocked(ClassData classData) =>
+            Enqueue($"{classData.DisplayName} adventurers may now join your guild", false);
 
         private static string Signed(long value) => value >= 0 ? $"+{value:N0}" : $"-{-value:N0}";
 

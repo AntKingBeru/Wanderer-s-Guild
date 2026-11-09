@@ -14,11 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
   id: equipment_cheap_plate
   displayName: Bog Iron Plate
-  description: A heavy plate armor made from low quality bog iron.
+  description: "A heavy plate armor made from low quality bog iron. \nWith extra bog flavoring!"
   icon: {fileID: 0}
   slot: 2
   classIds:
   - fighter_class
+  - knight_class
+  - warrior_class
+  - paladin_class
+  - bulwark_class
+  - barbarian_class
+  - soldier_class
   stats:
     strength: 0
     agility: 0

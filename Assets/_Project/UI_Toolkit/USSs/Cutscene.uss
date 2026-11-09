@@ -17,11 +17,15 @@
     position: absolute;
     left: 0; top: 0; right: 0; bottom: 0;
 }
+/* NOTE: A slight zoom anchored at the top centre — the extra size goes under the narration box. A non-integer zoom makes
+   a few pixel rows/columns one screen pixel wider; author larger art (or use a whole-number zoom) for perfectly even pixels. */
 .cutscene-image {
     position: absolute;
     left: 0; top: 0; right: 0; bottom: 0;
     opacity: 0;
     -unity-background-scale-mode: scale-to-fit;
+    transform-origin: top;
+    scale: 1.12 1.12;
 }
 
 /* ---------- Narration box ---------- */

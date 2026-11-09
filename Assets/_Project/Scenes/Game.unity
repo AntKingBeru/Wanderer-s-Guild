@@ -1312,6 +1312,7 @@ GameObject:
   - component: {fileID: 1054836481}
   - component: {fileID: 1054836482}
   - component: {fileID: 1054836483}
+  - component: {fileID: 1054836484}
   m_Layer: 0
   m_Name: AdventuerManager
   m_TagString: Untagged
@@ -1398,6 +1399,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9770bb03ed8ae434fa99738976ec4c78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.LodgingManager
+  persistAcrossScenes: 0
+--- !u!114 &1054836484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054836477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24b87363c75d28e40b22dc9834d78296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AdvancementManager
   persistAcrossScenes: 0
 --- !u!1 &1116493039
 GameObject:

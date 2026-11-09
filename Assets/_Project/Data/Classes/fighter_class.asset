@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ClassData
   id: fighter_class
   displayName: Fighter
-  description: 'You basic fighter.
+  description: 'A basic fighter.
 
     Uses martial weapons, maybe a shield.'
   icon: {fileID: 0}
@@ -30,8 +30,11 @@ MonoBehaviour:
     vitality: 1
   requiredGuildRank: 0
   maxRank: 2
-  advancesToIds: []
+  advancesToIds:
+  - knight_class
+  - warrior_class
   categoryAffinities: 000000000400000007000000i
   startingGearIds:
   - equipment_start_sword
   - equipment_start_armor_fighter
+  avatarSheet: {fileID: 0}

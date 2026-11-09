@@ -56,7 +56,14 @@
                 <ui:Button name="roster-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
-
+        <!-- Class chooser (Advance): one button per offered class (created in code) + Cancel. -->
+        <ui:VisualElement name="chooser-overlay" class="chooser-overlay">
+            <ui:VisualElement class="pixel-window chooser-window">
+                <wg:OutlinedText class="chooser-title" text="Advance to…" />
+                <ui:VisualElement name="chooser-options" class="chooser-options" picking-mode="Ignore" />
+                <ui:Button name="chooser-cancel" class="pixel-button panel-button"><wg:OutlinedText text="Cancel" /></ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
         <!-- Shared confirmation overlay (PixelTheme.uss › confirm-*), used for Promote and Disband. -->
         <ui:VisualElement name="confirm-overlay" class="confirm-overlay">
             <ui:VisualElement class="pixel-window confirm-window">

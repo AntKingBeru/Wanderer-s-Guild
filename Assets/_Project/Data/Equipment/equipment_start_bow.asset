@@ -13,20 +13,26 @@ MonoBehaviour:
   m_Name: equipment_start_bow
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
   id: equipment_start_bow
-  displayName: Basic Wooden Bow
+  displayName: Starter Bow
   description: 'The most basic bow around.
 
-    The oak bow and simple string maker it usable, but not very effective.'
+    Better then throwing the arrow!'
   icon: {fileID: 0}
   slot: 0
   classIds:
   - archer_class
+  - ranger_class
+  - tamer_class
+  - hunter_class
+  - marksman_class
+  - beastmaster_class
+  - swarmmaster_class
   stats:
     strength: 0
     agility: 2
     intellect: 0
     vitality: 0
-  price: 0
+  price: 4
   armoryLevel: 0
   unlockRank: 0
   twoHanded: 1

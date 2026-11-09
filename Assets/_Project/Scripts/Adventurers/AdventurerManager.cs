@@ -25,6 +25,12 @@ namespace WanderersGuild
         public IReadOnlyList<Adventurer> Adventurers => _roster.Adventurers;
         public int Capacity => _roster.Capacity;
         public bool IsFull => _roster.IsFull;
+        
+        // Every class by id (advancement offers, trials).
+        public IReadOnlyDictionary<string, ClassData> Classes => _classes;
+
+        // Every item by id (class gear swaps).
+        public IReadOnlyDictionary<string, EquipmentData> Equipment => _equipment;
 
         private static bool UsesApplicants => RecruitmentManager.HasInstance && RecruitmentManager.Instance.AcceptsApplicants;
 
@@ -44,7 +50,10 @@ namespace WanderersGuild
 
             var baseClasses = _settings.ClassDatabase ? _settings.ClassDatabase.BaseClasses(_classes) : new List<ClassData>();
             _roster = new AdventurerRoster(CurrentCapacity);
-            _factory = new AdventurerFactory(_settings, new List<SpeciesData>(_species.Values), baseClasses, _equipment);
+            var allClasses = _settings.ClassDatabase ? new List<ClassData>(_settings.ClassDatabase.Classes) : new List<ClassData>();
+            _factory = new AdventurerFactory(_settings, new List<SpeciesData>(_species.Values), baseClasses, allClasses,
+                id => AdvancementManager.HasInstance && AdvancementManager.Instance.IsUnlocked(id),
+                _equipment);
 
             Restore(SaveGameService.HasInstance ? SaveGameService.Instance.LoadedData : null);
         }
@@ -157,7 +166,8 @@ namespace WanderersGuild
             adventurer = new Adventurer(saved.Id, saved.Name, species, classData, saved.Experience, saved.Rank, saved.Wealth,
                                         saved.Status, saved.JoinedAtMinutes, saved.RetainedGrowth, _settings.Experience,
                                         saved.RankProgress, saved.ExamReturnsAtMinutes, gear, saved.WellFedBonus,
-                                        saved.Injury, saved.InjuredUntilMinutes, saved.ReturningUntilMinutes);
+                                        saved.Injury, saved.InjuredUntilMinutes, saved.ReturningUntilMinutes,
+                                        saved.TrialClassId, saved.TrialReturnsAtMinutes);
             _nextId = Mathf.Max(_nextId, saved.Id + 1);
             return true;
         }
@@ -297,6 +307,12 @@ namespace WanderersGuild
 
             GameEventsRelay.OnAdventurerLeft.Invoke(adventurer);
             return true;
+        }
+
+        public bool TryGetClass(string classId, out ClassData classData)
+        {
+            classData = null;
+            return !string.IsNullOrEmpty(classId) && _classes.TryGetValue(classId, out classData);
         }
     }
 }

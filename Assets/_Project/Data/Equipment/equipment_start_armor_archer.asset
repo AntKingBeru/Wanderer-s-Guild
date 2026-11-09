@@ -13,22 +13,28 @@ MonoBehaviour:
   m_Name: equipment_start_armor_archer
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
   id: equipment_start_armor_archer
-  displayName: Basic Leather Armor
+  displayName: Starter Leather Armor
   description: 'The most basic leather armor around.
 
     Some say it''s cow, some say it''s horse.
 
-    It smells either way.'
+    It''s squirrel.'
   icon: {fileID: 0}
   slot: 2
   classIds:
   - archer_class
+  - ranger_class
+  - tamer_class
+  - hunter_class
+  - marksman_class
+  - beastmaster_class
+  - swarmmaster_class
   stats:
     strength: 0
     agility: 0
     intellect: 0
     vitality: 1
-  price: 0
+  price: 3
   armoryLevel: 0
   unlockRank: 0
   twoHanded: 0
