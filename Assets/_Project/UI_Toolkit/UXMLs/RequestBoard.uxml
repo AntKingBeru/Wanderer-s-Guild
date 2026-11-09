@@ -20,7 +20,10 @@
                         <wg:OutlinedText name="detail-reward" class="detail-line" text="Reward: 0g" />
                         <wg:OutlinedText name="detail-time" class="detail-line" text="Expires in 0d" />
                         <wg:OutlinedText name="detail-board" class="detail-line detail-board" text="Quest board full" />
-                        <wg:OutlinedText name="detail-objective" class="detail-objective" text="Objective" />
+                        <ui:ScrollView name="detail-objective-scroll" class="detail-objective-scroll pixel-scroll" mode="Vertical"
+                                       horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto" focusable="false">
+                            <wg:OutlinedText name="detail-objective" class="detail-objective" text="Objective" />
+                        </ui:ScrollView>
                     </ui:VisualElement>
                     <wg:OutlinedText name="detail-empty" class="detail-empty" text="No requests right now." />
 

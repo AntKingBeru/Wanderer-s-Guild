@@ -30,8 +30,10 @@ namespace WanderersGuild
         private readonly VisualElement _members;
         private readonly List<OutlinedText> _memberLines = new();
         private readonly GameObject _linkTarget;
+        private readonly ScrollView _objectiveScroll;
         private Sequence _sequence;
         private float _shown;
+        private int _shownQuestId = -1;
 
         public Button Back { get; }
 
@@ -61,12 +63,13 @@ namespace WanderersGuild
             Back = root.Q<Button>("note-back");
             Cancel = root.Q<Button>("note-cancel");
             _cancelLabel = Cancel?.Q<OutlinedText>();
+            _objectiveScroll = root.Q<ScrollView>("note-objective-scroll");
         }
 
         private bool IsComplete =>
             _layer != null && _note != null && _badge != null && _badgeLabel != null && _title != null && _objective != null &&
             _meta != null && _terms != null && _split != null && _time != null && _chance != null && _stamp != null &&
-            _members != null && Back != null && Cancel != null && _cancelLabel != null;
+            _members != null && Back != null && Cancel != null && _cancelLabel != null && _objectiveScroll != null;
 
         public static QuestNoteDetailView Bind(VisualElement root, GameObject linkTarget)
         {
@@ -88,6 +91,12 @@ namespace WanderersGuild
         {
             var request = quest.Request;
             var stamp = QuestFormatter.Stamp(quest);
+            
+            if (quest.Id != _shownQuestId)
+            {
+                _shownQuestId = quest.Id;
+                _objectiveScroll.scrollOffset = Vector2.zero;
+            }
 
             _badge.style.backgroundColor = rankColor;
             _badgeLabel.Text = RankFormatter.BadgeLabel(request.RecommendedRank);
@@ -115,6 +124,7 @@ namespace WanderersGuild
             IsBusy = false;
             Apply(0f);
             _layer.style.display = DisplayStyle.None;
+            _shownQuestId = -1;
         }
 
         public void Open(QuestPanelSettings settings, Action onOpened)

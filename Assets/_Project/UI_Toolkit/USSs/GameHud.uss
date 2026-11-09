@@ -209,3 +209,11 @@
 .game-hud--building .rep-root {
     display: none;
 }
+/* NOTE: 12×12 season icon left of the date, drawn at 1× (Point filtering on the sprite). */
+.hud-season-icon {
+    width: 12px;
+    height: 12px;
+    margin-right: 2px;
+    flex-shrink: 0;
+    -unity-background-scale-mode: scale-to-fit;
+}

@@ -39,11 +39,11 @@ namespace WanderersGuild
             return icon != null && bar != null && fill != null ? new ReputationMeterView(icon, bar, fill, linkTarget) : null;
         }
 
-        // Emoji for the level, tinted in the level's color (the bar fill uses the same color).
+        // The level's emoji (drawn in its own colors); the bar fill uses the level color.
         public void SetLevel(Background icon, Color color)
         {
             _icon.style.backgroundImage = new StyleBackground(icon);
-            _icon.style.unityBackgroundImageTintColor = color;
+            _icon.style.unityBackgroundImageTintColor = Color.white;
             _fill.style.backgroundColor = color;
         }
 

@@ -291,3 +291,13 @@
     justify-content: flex-end;
     flex-shrink: 0;
 }
+/* NOTE: The lifted note's description scrolls inside the note; capped so the terms, time and members always stay visible. */
+.note-objective-scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    max-height: 40px;
+}
+.note-objective-scroll .unity-scroll-view__content-container {
+    padding: 1px 2px;
+}

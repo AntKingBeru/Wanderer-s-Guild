@@ -16,6 +16,7 @@ namespace WanderersGuild
         private readonly OutlinedText _upgradeLabel;
         private readonly Button _demolish;
         private readonly OutlinedText _demolishLabel;
+        private readonly MarqueeLine[] _marquees;
 
         private RoomCardView(VisualElement root, OutlinedText title, OutlinedText state, OutlinedText effects, OutlinedText next,
                              OutlinedText reasons, Button upgrade, OutlinedText upgradeLabel, Button demolish,
@@ -39,6 +40,8 @@ namespace WanderersGuild
             upgrade.clicked += onUpgrade;
             demolish.clicked += onDemolish;
             close.clicked += onClose;
+            _marquees = new[] { new MarqueeLine(title), new MarqueeLine(state), new MarqueeLine(effects),
+                new MarqueeLine(next), new MarqueeLine(reasons) };
             Hide();
         }
 
@@ -86,9 +89,19 @@ namespace WanderersGuild
             _demolish.SetEnabled(demolish.Allowed);
 
             _root.style.display = DisplayStyle.Flex;
+            
+            foreach (var line in _marquees)
+                line.Refresh();
         }
 
-        public void Hide() => _root.style.display = DisplayStyle.None;
+        public void Hide()
+        {
+            _root.style.display = DisplayStyle.None;
+            if (_marquees == null)
+                return;
+            foreach (var line in _marquees)
+                line.Stop();
+        }
 
         private static void SetLine(OutlinedText line, string text)
         {

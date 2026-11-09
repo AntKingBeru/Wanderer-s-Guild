@@ -9,6 +9,7 @@
                 <!-- Left: time (TimeHudView / TimeHudPresenter) -->
                 <ui:VisualElement name="hud-root" class="hud-time-group" picking-mode="Ignore">
                     <ui:VisualElement class="hud-row" picking-mode="Ignore">
+                        <ui:VisualElement name="hud-season-icon" class="hud-season-icon" picking-mode="Ignore" />
                         <wg:OutlinedText name="hud-date" class="hud-date" text="Spring 1, Year 1" />
                         <wg:OutlinedText name="hud-time" class="hud-time" text="08:00" />
                         <wg:OutlinedText name="hud-phase" class="hud-phase" text="Day" />

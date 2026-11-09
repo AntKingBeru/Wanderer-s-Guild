@@ -166,12 +166,11 @@
     flex-shrink: 0;
     -unity-background-scale-mode: scale-to-fit;
 }
-/* NOTE: Lines are clipped at the card's edge; the 1px padding keeps glyph outlines inside the clip. */
+/* NOTE: The text column may be narrower than its lines, so long ones overflow and slide (MarqueeLine). */
 .build-card__text {
     flex-grow: 1;
+    flex-shrink: 1;
     min-width: 0;
-    overflow: hidden;
-    padding: 1px 2px;
 }
 .build-card__info .outlined-text__fill,
 .build-card__reason .outlined-text__fill {
@@ -179,4 +178,22 @@
 }
 .build-card--poor .build-card__info .outlined-text__fill {
     color: rgb(224, 112, 96);
+}
+/* ---------- Sliding lines (MarqueeLine) ---------- */
+/* NOTE: The line spans its column and clips; its text never wraps. 1px/2px padding keeps the outline inside the clip, and the
+   -1px vertical margin cancels that padding in the layout — each line takes exactly its text height (neighbours overlap by
+   the transparent pixel), so a locked catalog card's three lines still fit the card. */
+.marquee {
+    align-self: stretch;
+    align-items: flex-start;
+    overflow: hidden;
+    padding: 1px 2px;
+    margin: -1px 0;
+}
+.marquee .outlined-text__stack {
+    align-self: flex-start;
+    flex-shrink: 0;
+}
+.marquee .outlined-text__part {
+    white-space: nowrap;
 }

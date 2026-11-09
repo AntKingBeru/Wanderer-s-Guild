@@ -75,6 +75,11 @@ namespace WanderersGuild
         // Height the given text would take at this width, wrapped and styled exactly like this element's text.
         public float MeasureTextHeight(string text, float width) =>
             _fill.MeasureTextSize(text ?? string.Empty, width, MeasureMode.Exactly, 0f, MeasureMode.Undefined).y;
+        
+        // Width of this element's current text on one line per explicit line break (unwrapped), styled exactly like
+        // it — what a sliding (marquee) line needs to know, independent of how its container is laid out.
+        public float MeasureTextWidth() =>
+            _fill.MeasureTextSize(_text, 0f, MeasureMode.Undefined, 0f, MeasureMode.Undefined).x;
 
         private static Label CreatePart(string partClass)
         {

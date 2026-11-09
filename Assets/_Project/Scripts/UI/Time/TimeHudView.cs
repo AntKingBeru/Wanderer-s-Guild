@@ -8,10 +8,15 @@ namespace WanderersGuild
     [RequireComponent(typeof(UIDocument))]
     public class TimeHudView : MonoBehaviour
     {
+        [Tooltip("For the season icons; empty slots use placeholders.")]
+        [SerializeField] private GuildHudArt art;
+        
         private const string DateName = "hud-date";
         private const string TimeName = "hud-time";
         private const string PhaseName = "hud-phase";
         private const string SelectedClass = "hud-speed--selected";
+        private VisualElement _seasonIcon;
+        private int _shownMonth = -1;
 
         private static readonly (GameSpeed speed, string name)[] SpeedButtonNames =
         {
@@ -35,12 +40,13 @@ namespace WanderersGuild
             _date = root?.Q<OutlinedText>(DateName);
             _time = root?.Q<OutlinedText>(TimeName);
             _phase = root?.Q<OutlinedText>(PhaseName);
+            _seasonIcon = root?.Q<VisualElement>("hud-season-icon");
 
             _speedButtons.Clear();
             var allButtons = true;
-            foreach (var (speed, name) in SpeedButtonNames)
+            foreach (var (speed, buttonName) in SpeedButtonNames)
             {
-                var button = root?.Q<Button>(name);
+                var button = root?.Q<Button>(buttonName);
                 if (button == null)
                 {
                     allButtons = false;
@@ -53,7 +59,7 @@ namespace WanderersGuild
                 _speedButtons[speed] = button;
             }
 
-            IsBound = _date != null && _time != null && _phase != null && allButtons;
+            IsBound = _date != null && _time != null && _phase != null && _seasonIcon != null && allButtons;
             if (!IsBound)
                 Debug.LogError("[TimeHudView] Missing one of the HUD elements in the UXML.", this);
         }
@@ -64,6 +70,17 @@ namespace WanderersGuild
                 return;
 
             _date.Text = TimeFormatter.Date(time);
+            
+            // NOTE: Only re-set when the month changes (not every tick).
+            if (time.Month != _shownMonth)
+            {
+                _shownMonth = time.Month;
+                var sprite = art ? art.Season(time.Month) : null;
+                _seasonIcon.style.backgroundImage = new StyleBackground(sprite 
+                    ? Background.FromSprite(sprite)
+                    : Background.FromTexture2D(SeasonPlaceholderIcons.For(time.Month - 1)));
+            }
+            
             _time.Text = TimeFormatter.Clock(time);
         }
 

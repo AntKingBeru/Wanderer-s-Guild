@@ -22,3 +22,8 @@ MonoBehaviour:
   - {fileID: -336606616, guid: dbba96bde487054429dfecfa17b661cf, type: 3}
   - {fileID: -801891706, guid: dbba96bde487054429dfecfa17b661cf, type: 3}
   - {fileID: 28514455, guid: dbba96bde487054429dfecfa17b661cf, type: 3}
+  seasons:
+  - {fileID: 6035493226064762099, guid: 7246b7a8d73e5fe498fb7467dbacc829, type: 3}
+  - {fileID: -1118496483, guid: 7246b7a8d73e5fe498fb7467dbacc829, type: 3}
+  - {fileID: 1073211395, guid: 7246b7a8d73e5fe498fb7467dbacc829, type: 3}
+  - {fileID: -1968797258, guid: 7246b7a8d73e5fe498fb7467dbacc829, type: 3}

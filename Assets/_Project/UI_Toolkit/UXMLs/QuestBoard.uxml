@@ -22,7 +22,10 @@
 
                 <ui:VisualElement class="note-lifted__body" picking-mode="Ignore">
                     <wg:OutlinedText name="note-title" class="note-ink note-title" text="Title" />
-                    <wg:OutlinedText name="note-objective" class="note-ink note-wrap note-objective" text="Objective" />
+                    <ui:ScrollView name="note-objective-scroll" class="note-objective-scroll pixel-scroll" mode="Vertical"
+                                   horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto" focusable="false">
+                        <wg:OutlinedText name="note-objective" class="note-ink note-objective" text="Objective" />
+                    </ui:ScrollView>
                     <wg:OutlinedText name="note-meta" class="note-ink note-faint" text="Combat · Merchant · Rank F" />
                     <wg:OutlinedText name="note-terms" class="note-ink note-faint" text="Min. rank F · Party of 2" />
                     <wg:OutlinedText name="note-split" class="note-ink note-faint note-wrap" text="Party 0g (0g each) · Guild 0g" />

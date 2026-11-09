@@ -280,3 +280,17 @@
     color: var(--clip-stamp);
     font-size: var(--text-size-title);
 }
+/* NOTE: Only the description scrolls — it takes whatever height the lines above leave; its content's 1px/2px padding keeps
+   the outline inside the clip. */
+.detail-content {
+    flex-direction: column;
+}
+.detail-objective-scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-height: 0;
+    margin-top: 2px;
+}
+.detail-objective-scroll .unity-scroll-view__content-container {
+    padding: 1px 2px;
+}

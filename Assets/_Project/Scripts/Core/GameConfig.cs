@@ -63,6 +63,7 @@ namespace WanderersGuild
         [SerializeField] private LodgingSettings lodging = new();
         [SerializeField] private QuestRecallSettings questRecall = new();
         [SerializeField] private AdvancementSettings advancement = new();
+        [SerializeField] private MarqueeSettings marquee = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -115,6 +116,7 @@ namespace WanderersGuild
         public LodgingSettings Lodging => lodging;
         public QuestRecallSettings QuestRecall => questRecall;
         public AdvancementSettings Advancement => advancement;
+        public MarqueeSettings Marquee => marquee;
     }
     
     #region Scene Management
@@ -1898,6 +1900,21 @@ namespace WanderersGuild
         public float FeeMultiplier => feeMultiplier;
         public int TrialDays => trialDays;
         public int PassReputation => passReputation;
+    }
+    #endregion
+    
+    #region Marquee
+    [Serializable]
+    public class MarqueeSettings
+    {
+        [Tooltip("UI pixels per second a too-long line slides at.")]
+        [SerializeField, Min(1f)] private float speed = 20f;
+
+        [Tooltip("Seconds it rests at each end before sliding back.")]
+        [SerializeField, Min(0f)] private float pause = 1f;
+
+        public float Speed => speed;
+        public float Pause => pause;
     }
     #endregion
 }

@@ -22,6 +22,10 @@ namespace WanderersGuild
         [Tooltip("One emoji per level, worst → best (Despised, Distrusted, Neutral, Respected, Renowned). " +
                  "Author them white/greyscale — they're tinted in the level's colour.")]
         [SerializeField] private Sprite[] reputationIcons = new Sprite[Enum.GetValues(typeof(ReputationLevel)).Length];
+        
+        [Tooltip("One icon per season / month, in calendar order (Spring, Summer, Autumn, Winter). 12×12, Point filtering. " +
+                 "Empty = runtime placeholder.")]
+        [SerializeField] private Sprite[] seasons = new Sprite[4];
 
         public Sprite Coin => coin;
         public Sprite Adventurer => adventurer;
@@ -32,6 +36,15 @@ namespace WanderersGuild
         {
             var index = (int)level;
             return reputationIcons != null && index >= 0 && index < reputationIcons.Length ? reputationIcons[index] : null;
+        }
+        
+        // The icon for a 1-based month (wrapped onto the seasons), or null.
+        public Sprite Season(int month)
+        {
+            if (seasons == null || seasons.Length == 0)
+                return null;
+            var index = ((month - 1) % seasons.Length + seasons.Length) % seasons.Length;
+            return seasons[index];
         }
     }
 }

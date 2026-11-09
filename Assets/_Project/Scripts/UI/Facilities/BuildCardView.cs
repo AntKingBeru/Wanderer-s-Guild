@@ -1,4 +1,5 @@
-// One catalog card: icon, name, "cost · size · days", and the lock reason; disabled when locked, red cost when unaffordable.
+// One catalog card: icon, name, "cost · size · days", and the lock reason (each line slides if too long); disabled when
+// locked, red cost when unaffordable.
 using System;
 using UnityEngine.UIElements;
 
@@ -13,6 +14,7 @@ namespace WanderersGuild
         private readonly OutlinedText _name;
         private readonly OutlinedText _info;
         private readonly OutlinedText _reason;
+        private readonly MarqueeLine[] _marquees;
 
         public Button Button { get; }
         public FacilityData Data { get; private set; }
@@ -45,8 +47,11 @@ namespace WanderersGuild
 
             Button.Add(_icon);
             Button.Add(text);
+
+            _marquees = new[] { new MarqueeLine(_name), new MarqueeLine(_info), new MarqueeLine(_reason) };
         }
 
+        // NOTE: Called on every catalog refresh (gold, rank, rooms) — the lines only restart their slide when their text changed.
         public void Show(BuildCatalogEntry entry, bool isSelected)
         {
             var data = entry.Data;
@@ -65,18 +70,24 @@ namespace WanderersGuild
             Button.EnableInClassList(PoorClass, !entry.Affordable);
             Button.SetEnabled(!entry.IsLocked);
             Button.style.display = DisplayStyle.Flex;
+
+            foreach (var line in _marquees)
+                line.Refresh();
         }
 
         public void Hide()
         {
             Data = null;
             Button.style.display = DisplayStyle.None;
+            foreach (var line in _marquees)
+                line.Stop();
         }
 
         private static OutlinedText Part(string className)
         {
             OutlinedText text = new() { pickingMode = PickingMode.Ignore };
             text.AddToClassList(className);
+            text.AddToClassList("marquee");
             return text;
         }
     }

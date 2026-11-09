@@ -504,6 +504,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79f8a213ddc76de4690a47a2102aee43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.TimeHudView
+  art: {fileID: 11400000, guid: fdfb48ffb92d3854fb19a8f103a76552, type: 2}
 --- !u!114 &495723430
 MonoBehaviour:
   m_ObjectHideFlags: 0
