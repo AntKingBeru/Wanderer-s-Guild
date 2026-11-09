@@ -13,31 +13,10 @@ MonoBehaviour:
   m_Name: AvatarSheetCatalog
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AvatarSheetCatalog
   entries:
-  - species: {fileID: 11400000, guid: d1231bcb6e16bf840be0792efcffb2c3, type: 2}
-    classData: {fileID: 11400000, guid: 215f3f74669f23a4da6ca5854dcd0b60, type: 2}
-    sheet: {fileID: 11400000, guid: 0fedc8d0d02e0d240ade117bab3cf69e, type: 2}
-  - species: {fileID: 11400000, guid: d1231bcb6e16bf840be0792efcffb2c3, type: 2}
-    classData: {fileID: 11400000, guid: 7e16d1dcd825423409cbec5b211cfde9, type: 2}
-    sheet: {fileID: 11400000, guid: 38248be38227f2345bb25079876ff233, type: 2}
-  - species: {fileID: 11400000, guid: d1231bcb6e16bf840be0792efcffb2c3, type: 2}
-    classData: {fileID: 0}
-    sheet: {fileID: 11400000, guid: 7991af07f1479e8448ee922fccf5e050, type: 2}
-  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
-    classData: {fileID: 11400000, guid: 215f3f74669f23a4da6ca5854dcd0b60, type: 2}
-    sheet: {fileID: 11400000, guid: dddacb886c6c91a4b86e7ad5a20fa48e, type: 2}
-  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
-    classData: {fileID: 11400000, guid: 7e16d1dcd825423409cbec5b211cfde9, type: 2}
-    sheet: {fileID: 11400000, guid: 974809daa8ecaf74c8d66afe63a1753c, type: 2}
-  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
-    classData: {fileID: 0}
-    sheet: {fileID: 11400000, guid: aa09d90f5ae84f6408222ad2d6a13997, type: 2}
-  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
-    classData: {fileID: 11400000, guid: 215f3f74669f23a4da6ca5854dcd0b60, type: 2}
-    sheet: {fileID: 11400000, guid: 3a4c091fc4426e741a1a47c949f64354, type: 2}
   - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
     classData: {fileID: 11400000, guid: 7e16d1dcd825423409cbec5b211cfde9, type: 2}
     sheet: {fileID: 11400000, guid: 0065cb5cf37b3234bb119d4aaa50e312, type: 2}
   - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
-    classData: {fileID: 0}
-    sheet: {fileID: 11400000, guid: a2005167e1996744b9e14e52feed209d, type: 2}
-  defaultSheet: {fileID: 11400000, guid: a2005167e1996744b9e14e52feed209d, type: 2}
+    classData: {fileID: 11400000, guid: ab60d5dd8b08da44396ba187be81b557, type: 2}
+    sheet: {fileID: 11400000, guid: 4cdcc29a08e4e50408915d23df124fef, type: 2}
+  defaultSheet: {fileID: 11400000, guid: 0065cb5cf37b3234bb119d4aaa50e312, type: 2}

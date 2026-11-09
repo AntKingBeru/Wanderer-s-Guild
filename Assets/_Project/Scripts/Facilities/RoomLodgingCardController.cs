@@ -160,7 +160,7 @@ namespace WanderersGuild
             var size = view.RenderSize;
             var local = view.ViewToLocal(new Vector2(viewport.x * size.x, (1f - viewport.y) * size.y));
             Rect area = new(Vector2.zero, view.ViewToLocal(size));
-            var top = view.ViewToLocal(new Vector2(0f, GameConfig.Instance.Avatars.CardTopMargin)).y;
+            var top = view.ViewToLocal(new Vector2(0f, GameConfig.Instance.Avatars.CardTopMargin * view.PixelScale)).y;
 
             _card.Show();
             _card.Place(local, area, top);

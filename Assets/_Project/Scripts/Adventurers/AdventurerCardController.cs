@@ -130,13 +130,14 @@ namespace WanderersGuild
             }
 
             var settings = GameConfig.Instance.Avatars;
+            var scale = view.PixelScale;
             var size = view.RenderSize;
-            var pixel = new Vector2(viewport.x * size.x, (1f - viewport.y) * size.y) + settings.CardOffset;
+            var pixel = new Vector2(viewport.x * size.x, (1f - viewport.y) * size.y) + settings.CardOffset * scale;
             var local = view.ViewToLocal(pixel);
             Rect area = new(Vector2.zero, view.ViewToLocal(size));
 
             _card.Show();
-            _card.Place(local, area, view.ViewToLocal(new Vector2(0f, settings.CardTopMargin)).y);
+            _card.Place(local, area, view.ViewToLocal(new Vector2(0f, settings.CardTopMargin * scale)).y);
         }
 
         // ---------- Room outline ----------

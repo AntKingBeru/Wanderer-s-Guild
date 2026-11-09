@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 925f462107946e040bb7a8575a2420ab, type: 3}
-  m_Name: Sheet_DwarfGeneric
+  m_Name: Sheet_HumanKnight
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AdventurerSpriteSheet
-  texture: {fileID: 0}
+  texture: {fileID: 2800000, guid: 0885fa3b9cdffe1429d9ef5b0326a7e0, type: 3}
   walkFramesPerSecond: 6

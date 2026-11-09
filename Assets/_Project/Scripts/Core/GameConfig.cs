@@ -1473,13 +1473,21 @@ namespace WanderersGuild
     [Serializable]
     public class WorldViewSettings
     {
-        [Tooltip("REFERENCE size: the height sets the pixel density (the world texture is always as tall as the UI canvas, " +
-                 "with the camera's FOV scaled to match); 320×180 is the 16:9 case. The live texture follows the canvas, " +
-                 "so any aspect shows the same pixel size — wider screens just see more.")]
+        [Tooltip("REFERENCE size in UI pixels (320×180 at 16:9): the height sets the framing. The live texture follows the " +
+                 "canvas, so any aspect shows the same pixel size — wider screens just see more.")]
         [SerializeField] private Vector2Int renderSize = new(320, 180);
 
-        public Vector2Int RenderSize => new(Mathf.Max(16, renderSize.x), Mathf.Max(16, renderSize.y));
+        [Tooltip("World pixels per UI pixel. 1 = as chunky as the UI; 2 = half-size world pixels (finer adventurers and " +
+                 "edges). The framing (FOV) stays the same at any value.")]
+        [SerializeField, Range(1, 4)] private int renderScale = 2;
+
+        // The reference texture size (UI reference × Render Scale).
+        public Vector2Int RenderSize => new(Mathf.Max(16, renderSize.x) * RenderScale, Mathf.Max(16, renderSize.y) * RenderScale);
+
+        // Texture height that gives the reference framing and pixel size (scaled with the texture).
         public int ReferenceHeight => RenderSize.y;
+
+        public int RenderScale => Mathf.Clamp(renderScale, 1, 4);
     }
 
     [Serializable]

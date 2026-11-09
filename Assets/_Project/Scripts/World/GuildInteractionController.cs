@@ -122,7 +122,7 @@ namespace WanderersGuild
             }
 
             var size = view.RenderSize;
-            Vector2 pixel = new(viewport.x * size.x, (1f - viewport.y) * size.y - GameConfig.Instance.Interaction.LabelGap);
+            Vector2 pixel = new(viewport.x * size.x, (1f - viewport.y) * size.y - GameConfig.Instance.Interaction.LabelGap * view.PixelScale);
             _label.Show(_hovered.DisplayName, view.ViewToLocal(pixel));
         }
 

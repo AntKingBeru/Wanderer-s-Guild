@@ -761,7 +761,7 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: bb553b0d6d7a4e442b0a3612c88a681e, type: 2}
     catalog: {fileID: 11400000, guid: 7e0efa6f175e9e5418a176f211f79f4b, type: 2}
     frameSize: {x: 48, y: 52}
-    worldHeight: 2.5
+    worldHeight: 3.5
     walkSpeed: 3
     dwellMinutes: {x: 30, y: 120}
     seatChance: 0.5
@@ -829,3 +829,6 @@ MonoBehaviour:
   marquee:
     speed: 20
     pause: 1
+  doors:
+    openRadius: 1.6
+    swingSpeed: 300

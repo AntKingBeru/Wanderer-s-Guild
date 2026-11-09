@@ -19,6 +19,10 @@ namespace WanderersGuild
 
         // The live world-texture size in pixels — use this, not the config's reference size.
         public Vector2Int RenderSize => target ? target.Size : GameConfig.Instance.WorldView.RenderSize;
+        
+        // World-texture pixels per UI pixel (GameConfig › World View › Render Scale). Multiply offsets that are meant in
+        // UI pixels by this before adding them to view pixels.
+        public int PixelScale => GameConfig.Instance.WorldView.RenderScale;
 
         private void OnEnable()
         {
@@ -91,7 +95,7 @@ namespace WanderersGuild
 
         private void OnGeometryChanged(GeometryChangedEvent _) => MatchCanvas();
 
-        // NOTE: Runtime only (Edit mode shows the camera directly). One texture pixel per UI pixel; unchanged sizes are
+        // NOTE: Runtime only (Edit mode shows the camera directly). Render Scale texture pixels per UI pixel; unchanged sizes are
         // skipped by the target.
         private void MatchCanvas()
         {
@@ -102,7 +106,8 @@ namespace WanderersGuild
             if (float.IsNaN(rect.width) || rect.width <= 0f || rect.height <= 0f)
                 return;
 
-            target.Resize(new Vector2Int(Mathf.RoundToInt(rect.width), Mathf.RoundToInt(rect.height)));
+            var scale = PixelScale;
+            target.Resize(new Vector2Int(Mathf.RoundToInt(rect.width) * scale, Mathf.RoundToInt(rect.height) * scale));
         }
 
         private void OnResized(Vector2Int _) => ShowTexture();
