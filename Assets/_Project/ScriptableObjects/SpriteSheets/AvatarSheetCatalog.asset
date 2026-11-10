@@ -14,9 +14,129 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AvatarSheetCatalog
   entries:
   - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: 215f3f74669f23a4da6ca5854dcd0b60, type: 2}
+    sheet: {fileID: 11400000, guid: 69cdfe510bed323479e00b83c44b06dc, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: c114dfbdd9498594ca15eece5b978cb2, type: 2}
+    sheet: {fileID: 11400000, guid: 934c077af85f0614c87551b676a17d00, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: dbedce4500b1da04aa1f3b66fb41d28e, type: 2}
+    sheet: {fileID: 11400000, guid: 71a2f1c8ff004094a93d502e54ff0331, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: c1541d356ab61754f89758694ea34cbf, type: 2}
+    sheet: {fileID: 11400000, guid: d484bebab1a78294797844b13fe06436, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: 47cbf0640bd74b54d8288f459ba0804c, type: 2}
+    sheet: {fileID: 11400000, guid: 659ef834a09a93c48afec92e73118af1, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: b75a84831424e67449525c551c78cf8b, type: 2}
+    sheet: {fileID: 11400000, guid: 7699b0bcf36f5af45b9d43e89b100048, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: bf8386f29de451546babb615564400c3, type: 2}
+    sheet: {fileID: 11400000, guid: 3fe7522f714f04147b13e68b16677b3f, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
     classData: {fileID: 11400000, guid: 7e16d1dcd825423409cbec5b211cfde9, type: 2}
     sheet: {fileID: 11400000, guid: 0065cb5cf37b3234bb119d4aaa50e312, type: 2}
   - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: d39114cd3744e924198f0304b0d68570, type: 2}
+    sheet: {fileID: 11400000, guid: e8ed46bb4af177146988c5cde02f0293, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
     classData: {fileID: 11400000, guid: ab60d5dd8b08da44396ba187be81b557, type: 2}
     sheet: {fileID: 11400000, guid: 4cdcc29a08e4e50408915d23df124fef, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: 46922365fc153ba4090cf53ca9388fb4, type: 2}
+    sheet: {fileID: 11400000, guid: f5e6d7a41945fb14e90ddb056ef4c5ed, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: cb4437e3e97ce9948b0c589116184928, type: 2}
+    sheet: {fileID: 11400000, guid: 553e89252aab57b4bad8855ffd87bdb6, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: f2baf09d1b4a4934fbcf674f242a079c, type: 2}
+    sheet: {fileID: 11400000, guid: 964440a634b43b142907edd63093bb65, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: b904e442a1ec26c40bc6de781cdcde9a, type: 2}
+    sheet: {fileID: 11400000, guid: 9bd487d3414c8ea40902c78c92efc33b, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: fa330d242fe506445badd02be5b9386c, type: 2}
+    sheet: {fileID: 11400000, guid: 7c8cbcc7901f5054aa3874e44e96125e, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: c87ebb0cab9c27749915427d6cd49efc, type: 2}
+    sheet: {fileID: 11400000, guid: eda255479346292419aebd73e67a6762, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: 73efb9a06d8193545b24a72d737c1e94, type: 2}
+    sheet: {fileID: 11400000, guid: c430dda1c676cb2458d084e82403b645, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: 27b9efd00911d9646850610d726aa52a, type: 2}
+    sheet: {fileID: 11400000, guid: 4d62975eeb5fdb5478e25159b1f9fcba, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: e00be23d2a6312146857cffb25a9664a, type: 2}
+    sheet: {fileID: 11400000, guid: 5927bd8f767293c478209419ade5d3aa, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: d95542d92a7fc5248a2220301a63bcee, type: 2}
+    sheet: {fileID: 11400000, guid: 4486e36c3eb9cde488c3e21c67ae44fa, type: 2}
+  - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
+    classData: {fileID: 11400000, guid: abe5e8785bba83c41800ae92fbdbdf03, type: 2}
+    sheet: {fileID: 11400000, guid: 75387f50135b8bc4ba05786f16f40283, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: 215f3f74669f23a4da6ca5854dcd0b60, type: 2}
+    sheet: {fileID: 11400000, guid: 76e737e4fcba58b4ca3af4d1996fcaf0, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: c114dfbdd9498594ca15eece5b978cb2, type: 2}
+    sheet: {fileID: 11400000, guid: 033bc93faf044934d898f661709fdb10, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: dbedce4500b1da04aa1f3b66fb41d28e, type: 2}
+    sheet: {fileID: 11400000, guid: c239f55e2aaa7a841bcefc4bca8ce264, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: c1541d356ab61754f89758694ea34cbf, type: 2}
+    sheet: {fileID: 11400000, guid: 7e66256b9c599c0459e91e45abdae16b, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: 47cbf0640bd74b54d8288f459ba0804c, type: 2}
+    sheet: {fileID: 11400000, guid: 5d00ae509e69c4a469822d0bbc0fdb49, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: b75a84831424e67449525c551c78cf8b, type: 2}
+    sheet: {fileID: 11400000, guid: 554119d53bd0d3a49a53be38b2676bfa, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: bf8386f29de451546babb615564400c3, type: 2}
+    sheet: {fileID: 11400000, guid: 93f99f7baf28b1442b871fa4a63bbcc4, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: 7e16d1dcd825423409cbec5b211cfde9, type: 2}
+    sheet: {fileID: 11400000, guid: 007cca5df70bbac44b686806c7d90995, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: d39114cd3744e924198f0304b0d68570, type: 2}
+    sheet: {fileID: 11400000, guid: fc7df8d102da1174db550ae81502860c, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: ab60d5dd8b08da44396ba187be81b557, type: 2}
+    sheet: {fileID: 11400000, guid: b33506476691d6948b3fabed2425b2be, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: 46922365fc153ba4090cf53ca9388fb4, type: 2}
+    sheet: {fileID: 11400000, guid: 5cd38fb8d9e102844a6e6b8d4c650803, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: cb4437e3e97ce9948b0c589116184928, type: 2}
+    sheet: {fileID: 11400000, guid: c7f644a71d7eb4841a5faa3f73887cb3, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: f2baf09d1b4a4934fbcf674f242a079c, type: 2}
+    sheet: {fileID: 11400000, guid: f9bb88cac0826e44583f2fb034da4cdb, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: b904e442a1ec26c40bc6de781cdcde9a, type: 2}
+    sheet: {fileID: 11400000, guid: 7a08d3cf5b3a41549b5b925c748b1ad6, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: fa330d242fe506445badd02be5b9386c, type: 2}
+    sheet: {fileID: 11400000, guid: b5cc1c71d05d03042a125f208f470918, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: c87ebb0cab9c27749915427d6cd49efc, type: 2}
+    sheet: {fileID: 11400000, guid: 197cf003eaa56a64498c1b1df16aa252, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: 73efb9a06d8193545b24a72d737c1e94, type: 2}
+    sheet: {fileID: 11400000, guid: 14f0cd412460ca64cb06fa5f64cf3da1, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: 27b9efd00911d9646850610d726aa52a, type: 2}
+    sheet: {fileID: 11400000, guid: c4e1b34ec32244b43b381405722c7f9d, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: e00be23d2a6312146857cffb25a9664a, type: 2}
+    sheet: {fileID: 11400000, guid: cf89c4b422aa27141993ccc8a8b4207c, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: d95542d92a7fc5248a2220301a63bcee, type: 2}
+    sheet: {fileID: 11400000, guid: d11833fd0c3736543aea9c05721975ed, type: 2}
+  - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
+    classData: {fileID: 11400000, guid: abe5e8785bba83c41800ae92fbdbdf03, type: 2}
+    sheet: {fileID: 11400000, guid: 3e642248ea2874e4e8f2f195bae17f11, type: 2}
   defaultSheet: {fileID: 11400000, guid: 0065cb5cf37b3234bb119d4aaa50e312, type: 2}
