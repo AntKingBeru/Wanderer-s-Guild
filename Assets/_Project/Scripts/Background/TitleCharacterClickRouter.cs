@@ -31,11 +31,11 @@ namespace WanderersGuild
                 return false;
 
             var camera = _group.TargetCamera;
-            if (!camera || !PointerTracker.HasInstance)
+            if (camera is null || !PointerTracker.HasInstance)
                 return false;
 
             var target = FindTopTarget(CursorWorld(camera));
-            if (!target)
+            if (target is null)
                 return false;
 
             target.Click();
@@ -57,7 +57,7 @@ namespace WanderersGuild
                 if (!candidate.transform.IsChildOf(transform))
                     continue;
 
-                if (!top || candidate.IsAbove(top))
+                if (top is null || candidate.IsAbove(top))
                     top = candidate;
             }
             return top;

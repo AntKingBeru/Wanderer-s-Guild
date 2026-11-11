@@ -61,7 +61,7 @@ namespace WanderersGuild
 
         private void Start()
         {
-            _card = view ? AdventurerCardView.Bind(view.DocumentRoot, OpenDetails, Close) : null;
+            _card = view is not null ? AdventurerCardView.Bind(view.DocumentRoot, OpenDetails, Close) : null;
             if (_card == null)
                 Debug.LogError("[AdventurerCardController] Missing 'world-card' elements in WorldView.uxml.", this);
         }
@@ -167,13 +167,13 @@ namespace WanderersGuild
         // NOTE: Opens the roster with this adventurer selected (one-shot), then closes the card.
         private void OpenDetails()
         {
-            if (!IsOpen || !panels || panels.IsBusy || panels.HasOpenPanel)
+            if (!IsOpen || panels is not null || panels is { IsBusy: true } || panels is { HasOpenPanel: true })
                 return;
 
             var id = _adventurerId;
             Close();
             RosterPanel.SelectOnNextOpen(id);
-            panels.Open(MenuPanelId.Roster);
+            panels?.Open(MenuPanelId.Roster);
         }
 
         private void OnEscape()
@@ -243,7 +243,7 @@ namespace WanderersGuild
 
         private static InputAction Enable(InputActionReference reference)
         {
-            var action = reference ? reference.action : null;
+            var action = reference?.action;
             action?.Enable();
             return action;
         }

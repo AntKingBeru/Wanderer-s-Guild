@@ -143,7 +143,7 @@ namespace WanderersGuild
         // NOTE: A thumbnail failure doesn't fail the save — the slot just keeps its previous picture.
         private void TryWriteThumbnail(SaveSlotStore slots, int slot)
         {
-            if (!thumbnailCamera)
+            if (thumbnailCamera is null)
                 return;
 
             Texture2D thumbnail = null;
@@ -159,7 +159,7 @@ namespace WanderersGuild
             }
             finally
             {
-                if (thumbnail)
+                if (thumbnail is not null)
                     Destroy(thumbnail);
             }
         }

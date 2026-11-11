@@ -24,7 +24,7 @@ namespace WanderersGuild
             _restLocalPosition = transform.localPosition;
             _group = GetComponentInParent<ParallaxGroup>();
 
-            if (!_group)
+            if (_group is null)
                 Debug.LogWarning($"[ParallaxLayer] '{name}' has no ParallaxGroup above it; pan parallax disabled.", this);
         }
 
@@ -58,13 +58,13 @@ namespace WanderersGuild
         // NOTE: Deliberately unsmoothed — the camera tween is already smooth; smoothing here would drift after the pan ends.
         private Vector3 PanOffset(ParallaxSettings settings)
         {
-            if (!_group || !_group.TargetCamera)
+            if (_group?.TargetCamera is null)
                 return Vector3.zero;
 
             var factor = _panFactorOverride >= 0f ? _panFactorOverride : depth * settings.PanStrength;
             var worldOffset = CalculatePanOffset(_group.TargetCamera.transform.position, _group.PanOrigin, 1f, factor);
             var parent = transform.parent;
-            return parent != null ? parent.InverseTransformVector(worldOffset) : worldOffset;
+            return parent?.InverseTransformVector(worldOffset) ?? worldOffset;
         }
 
         // Pointer parallax math, shared by the runtime and the editor preview window.

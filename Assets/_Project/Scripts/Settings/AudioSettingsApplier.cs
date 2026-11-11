@@ -25,7 +25,7 @@ namespace WanderersGuild
         // NOTE: Must not run from Awake. AudioMixer.SetFloat is ignored there, so the first call comes from a boot step.
         public void Apply(AudioChannel channel, int percent)
         {
-            if (!_settings.Mixer)
+            if (_settings.Mixer is null)
             {
                 if (!_warnedMissingMixer)
                     Debug.LogWarning("[AudioSettingsApplier] No AudioMixer assigned in GameConfig › Audio Mixer.");

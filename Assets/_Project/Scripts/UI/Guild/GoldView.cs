@@ -8,7 +8,6 @@ namespace WanderersGuild
 {
     public sealed class GoldView
     {
-        private readonly VisualElement _root;
         private readonly VisualElement _icon;
         private readonly OutlinedText _amount;
         private readonly GameObject _linkTarget;
@@ -16,11 +15,11 @@ namespace WanderersGuild
         private Tween _flashReset;
 
         // >The gold window — floating numbers start beside it.
-        public VisualElement Anchor => _root;
+        public VisualElement Anchor { get; }
 
         private GoldView(VisualElement root, VisualElement icon, OutlinedText amount, GameObject linkTarget)
         {
-            _root = root;
+            Anchor = root;
             _icon = icon;
             _amount = amount;
             _linkTarget = linkTarget;

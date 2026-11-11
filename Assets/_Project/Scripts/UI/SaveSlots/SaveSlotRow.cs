@@ -63,7 +63,7 @@ namespace WanderersGuild
 
             _details.style.display = ready ? DisplayStyle.Flex : DisplayStyle.None;
             _status.style.display = ready ? DisplayStyle.None : DisplayStyle.Flex;
-            _thumbnail.style.backgroundImage = ready && thumbnail
+            _thumbnail.style.backgroundImage = ready && thumbnail is not null
                 ? new StyleBackground(thumbnail)
                 : new StyleBackground(StyleKeyword.None);
 

@@ -13,8 +13,8 @@ namespace WanderersGuild
             var any = false;
             foreach (var room in rooms)
             {
-                CapacityEffect effect = room.Data.Effect<CapacityEffect>();
-                if (!effect)
+                var effect = room.Data.Effect<CapacityEffect>();
+                if (effect is null)
                     continue;
 
                 any = true;

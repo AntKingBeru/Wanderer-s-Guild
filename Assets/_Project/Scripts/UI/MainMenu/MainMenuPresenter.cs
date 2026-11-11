@@ -22,7 +22,7 @@ namespace WanderersGuild
 
         private void Start()
         {
-            if (!view || !view.IsBound || !entranceAnimator)
+            if (view is null || !view.IsBound || entranceAnimator is null)
             {
                 Debug.LogError("[MainMenuPresenter] Missing or unbound view/animator.", this);
                 enabled = false;
@@ -71,7 +71,7 @@ namespace WanderersGuild
         private void RegisterCommands()
         {
             // NOTE: Converts Unity's "fake null" (unassigned field) into a real null before it reaches an interface.
-            IMenuPanelHost host = panelHost ? panelHost : null;
+            IMenuPanelHost host = panelHost;
 
             _commands[MenuAction.Continue] = new ContinueCommand();
             _commands[MenuAction.NewGame] = new NewGameCommand(host);

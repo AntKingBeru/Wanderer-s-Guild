@@ -24,7 +24,7 @@ namespace WanderersGuild
             var group = GetComponentInParent<ParallaxGroup>();
             _camera = group ? group.TargetCamera : Camera.main;
 
-            if (!transform.parent)
+            if (transform.parent is null)
                 Debug.LogWarning($"[PupilFollower] '{name}' should be a child of the eyes' parallax layer.", this);
         }
 
@@ -32,7 +32,7 @@ namespace WanderersGuild
         {
             var eye = transform.parent;
             var sprite = _renderer.sprite;
-            if (!eye || !sprite || !_camera || !PointerTracker.HasInstance)
+            if (eye is null || sprite is null || _camera is null|| !PointerTracker.HasInstance)
                 return;
 
             var settings = GameConfig.Instance.PupilFollow;

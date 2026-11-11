@@ -20,8 +20,8 @@ namespace WanderersGuild
         // NOTE: 0-based season (month − 1, wrapped). A diamond "leaf" with a dark outline, point-filtered.
         public static Texture2D For(int season)
         {
-            var index = ((season % 4) + 4) % 4;
-            if (Cache[index])
+            var index = (season % 4 + 4) % 4;
+            if (Cache[index] is not null)
                 return Cache[index];
 
             Texture2D texture = new(Size, Size, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };

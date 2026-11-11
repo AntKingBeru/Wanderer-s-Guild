@@ -11,7 +11,7 @@ namespace WanderersGuild
         
         public ScopedActionListener(InputActionReference reference, Action<InputAction.CallbackContext> callback)
         {
-            _action = reference ? reference.action : null;
+            _action = reference?.action;
             _callback = callback;
 
             if (_action == null)

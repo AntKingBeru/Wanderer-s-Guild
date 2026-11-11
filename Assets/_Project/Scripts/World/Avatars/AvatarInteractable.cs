@@ -23,7 +23,7 @@ namespace WanderersGuild
         {
             get
             {
-                if (!_renderer)
+                if (_renderer is null)
                     return transform.position;
                 var bounds = _renderer.bounds;
                 return new Vector3(bounds.center.x, bounds.max.y + LabelGap, bounds.center.z);
@@ -62,7 +62,7 @@ namespace WanderersGuild
                 return;
             _isOutlined = outlined;
 
-            if (_renderer)
+            if (_renderer is not null)
             {
                 var bit = GameConfig.Instance.Interaction.OutlineBit;
                 _renderer.renderingLayerMask = outlined ? _originalLayers | bit : _originalLayers;

@@ -30,7 +30,7 @@ namespace WanderersGuild
             _button.focusable = false;
             _button.RemoveFromClassList(Button.ussClassName);
 
-            Sprite sprite = art ? art.Build : null;
+            var sprite = art?.Build;
             icon.style.backgroundImage = new StyleBackground(
                 sprite ? Background.FromSprite(sprite) : Background.FromTexture2D(PlaceholderIcons.Hammer));
 

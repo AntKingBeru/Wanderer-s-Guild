@@ -25,13 +25,12 @@ namespace WanderersGuild
         // Exposure in EV stops: 0 = unchanged, +1 = twice as bright, −1 = half.
         public void SetExposure(float exposure)
         {
-            if (_colorAdjustments)
-                _colorAdjustments.postExposure.Override(exposure);
+            _colorAdjustments?.postExposure.Override(exposure);
         }
 
         protected override void OnDestroy()
         {
-            if (_profile)
+            if (_profile is not null)
                 Destroy(_profile);
 
             base.OnDestroy();

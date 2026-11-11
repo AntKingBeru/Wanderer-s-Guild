@@ -7,7 +7,8 @@ namespace WanderersGuild
         // NOTE: Current is set before Enter(), so a state may safely call ChangeState from inside its own Enter().
         public void ChangeState(IState next)
         {
-            if (next == null || next == Current) return;
+            if (next == null || next == Current)
+                return;
 
             Current?.Exit();
             Current = next;

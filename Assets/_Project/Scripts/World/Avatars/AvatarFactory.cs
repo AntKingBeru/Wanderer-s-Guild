@@ -24,7 +24,7 @@ namespace WanderersGuild
             quad.transform.SetParent(root.transform, false);
 
             var renderer = quad.GetComponent<MeshRenderer>();
-            if (settings.Material)
+            if (settings.Material is not null)
                 renderer.sharedMaterial = settings.Material;
             else
                 Debug.LogWarning("[AvatarFactory] GameConfig › Avatars › Material is empty — avatars use the default material.");
@@ -59,11 +59,11 @@ namespace WanderersGuild
         // once and replaced by the placeholder, so a bad import never shows sliced frames.
         private static AdventurerSpriteSheet SheetFor(Adventurer adventurer, AvatarSettings settings)
         {
-            var sheet = settings.Catalog ? settings.Catalog.Find(adventurer.Species, adventurer.Class) : null;
+            var sheet = settings.Catalog?.Find(adventurer.Species, adventurer.Class);
             var problem = string.Empty;
-            if (sheet && sheet.IsValid(settings.FrameSize, out problem)) return sheet;
+            if (sheet is not null && sheet.IsValid(settings.FrameSize, out problem)) return sheet;
 
-            if (sheet && Warned.Add(sheet))
+            if (sheet is not null && Warned.Add(sheet))
                 Debug.LogWarning($"[AvatarFactory] Sprite sheet '{sheet.name}' {problem}; using a placeholder.", sheet);
 
             return PlaceholderAvatarSheets.For(adventurer.Species, adventurer.Class, settings.FrameSize);

@@ -65,6 +65,7 @@ namespace WanderersGuild
         [SerializeField] private AdvancementSettings advancement = new();
         [SerializeField] private MarqueeSettings marquee = new();
         [SerializeField] private DoorSettings doors = new();
+        [SerializeField] private InteriorLightSettings interiorLightSettings = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -119,6 +120,7 @@ namespace WanderersGuild
         public AdvancementSettings Advancement => advancement;
         public MarqueeSettings Marquee => marquee;
         public DoorSettings Doors => doors;
+        public InteriorLightSettings InteriorLights => interiorLightSettings;
     }
     
     #region Scene Management
@@ -1768,6 +1770,16 @@ namespace WanderersGuild
         [SerializeField] private Vector2 cardOffset = new(8f, -10f);
         [Tooltip("Keep the card at least this far below the top of the view (clears the HUD bar).")]
         [SerializeField, Min(0f)] private float cardTopMargin = 26f;
+        
+        [Header("Poses (faked from the walk sheet)")]
+        [Tooltip("Share of the frame hidden from the bottom when sitting (the legs), rounded to whole sheet pixels.")]
+        [SerializeField, Range(0f, 0.6f)] private float sitCrop = 0.3f;
+        [Tooltip("World units the bottom of a sitting sprite sits at (seat height).")]
+        [SerializeField, Min(0f)] private float sitLift = 0.45f;
+        [Tooltip("World units a sleeping sprite lies above the floor (mattress height).")]
+        [SerializeField, Min(0f)] private float sleepLift = 0.5f;
+        [Tooltip("Size of a sleeping sprite relative to standing (fits it to a bed).")]
+        [SerializeField, Range(0.3f, 1.2f)] private float sleepScale = 0.8f;
 
         public Material Material => material;
         public AvatarSheetCatalog Catalog => catalog;
@@ -1786,6 +1798,10 @@ namespace WanderersGuild
         public int MaxPathNodes => maxPathNodes;
         public Vector2 CardOffset => cardOffset;
         public float CardTopMargin => cardTopMargin;
+        public float SitCrop => sitCrop;
+        public float SitLift => sitLift;
+        public float SleepLift => sleepLift;
+        public float SleepScale => sleepScale;
     }
     #endregion
     
@@ -1951,6 +1967,25 @@ namespace WanderersGuild
 
         public float OpenRadius => openRadius;
         public float SwingSpeed => swingSpeed;
+    }
+    #endregion
+    
+    #region Interior
+    [Serializable]
+    public class InteriorLightSettings
+    {
+        [Tooltip("Daylight (0 night … 1 noon) at which interior lights start fading in.")]
+        [SerializeField, Range(0f, 1f)] private float fadeStart = 0.5f;
+
+        [Tooltip("Daylight at (and below) which they're fully on.")]
+        [SerializeField, Range(0f, 1f)] private float fullOn = 0.2f;
+
+        // 0 = off … 1 = full, smooth-stepped between the two daylight values.
+        public float Strength(float daylight)
+        {
+            var high = Mathf.Max(fadeStart, fullOn + 0.001f);
+            return Mathf.SmoothStep(1f, 0f, Mathf.InverseLerp(fullOn, high, daylight));
+        }
     }
     #endregion
 }

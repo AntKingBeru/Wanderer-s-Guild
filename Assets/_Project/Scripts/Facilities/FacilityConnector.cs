@@ -38,9 +38,9 @@ namespace WanderersGuild
         // Linked → doorway on, wall off; not linked → wall on, doorway off. Set by ConnectorStateUpdater.
         public void SetLinked(bool linked)
         {
-            if (wall && wall.activeSelf == linked)
+            if (wall is not null && wall.activeSelf == linked)
                 wall.SetActive(!linked);
-            if (doorway && doorway.activeSelf != linked)
+            if (doorway is not null && doorway.activeSelf != linked)
                 doorway.SetActive(linked);
         }
 

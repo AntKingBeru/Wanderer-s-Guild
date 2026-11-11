@@ -14,7 +14,7 @@ namespace Editor
         private static void OpenRoster()
         {
             var host = Object.FindAnyObjectByType<GamePanelHost>();
-            if (!host || host.IsBusy || host.HasOpenPanel)
+            if (host is null || host.IsBusy || host.HasOpenPanel)
             {
                 Debug.LogWarning("[Adventurers] No idle GamePanelHost in the scene (close any open panel first).");
                 return;

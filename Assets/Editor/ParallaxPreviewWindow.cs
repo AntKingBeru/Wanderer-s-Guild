@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -25,8 +26,7 @@ namespace Editor
         
         private void OnEnable()
         {
-            if (!configPrefab)
-                configPrefab = FindConfigPrefab();
+            configPrefab ??= FindConfigPrefab();
 
             EditorApplication.update += OnEditorUpdate;
             EditorApplication.hierarchyChanged += MarkLayersDirty;
@@ -59,7 +59,7 @@ namespace Editor
                 return;
             }
 
-            if (!configPrefab)
+            if (configPrefab is null)
             {
                 EditorGUILayout.HelpBox("Assign the GameConfig prefab to read the parallax settings.", MessageType.Warning);
                 return;
@@ -111,7 +111,7 @@ namespace Editor
             if (!_previewing)
                 return;
 
-            if (EditorApplication.isPlayingOrWillChangePlaymode || !configPrefab)
+            if (EditorApplication.isPlayingOrWillChangePlaymode || configPrefab is null)
             {
                 StopPreview();
                 return;
@@ -127,9 +127,9 @@ namespace Editor
             if (_layersDirty) RefreshLayers();
 
             var settings = configPrefab.Parallax;
-            foreach (KeyValuePair<ParallaxLayer, PreviewRecord> pair in _records)
+            foreach (var pair in _records)
             {
-                if (!pair.Key)
+                if (pair.Key is null)
                     continue;
                 var offset = ParallaxLayer.CalculateOffset(_pointer, pair.Key.Depth, settings);
                 pair.Value.Apply(pair.Key.transform, offset);
@@ -147,12 +147,7 @@ namespace Editor
             }
 
             // Prune layers that were deleted or whose scene closed.
-            List<ParallaxLayer> destroyed = new();
-            foreach (var layer in _records.Keys)
-            {
-                if (!layer)
-                    destroyed.Add(layer);
-            }
+            var destroyed = _records.Keys.Where(layer => layer is null).ToList();
             foreach (var layer in destroyed) _records.Remove(layer);
 
             _layersDirty = false;
@@ -160,10 +155,9 @@ namespace Editor
 
         private void RestoreAll()
         {
-            foreach (KeyValuePair<ParallaxLayer, PreviewRecord> pair in _records)
+            foreach (var pair in _records.Where(pair => pair.Key is not null))
             {
-                if (pair.Key)
-                    pair.Value.Restore(pair.Key.transform);
+                pair.Value.Restore(pair.Key.transform);
             }
         }
         #endregion
@@ -198,7 +192,7 @@ namespace Editor
             foreach (var guid in AssetDatabase.FindAssets("GameConfig t:Prefab"))
             {
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid));
-                if (prefab && prefab.TryGetComponent(out GameConfig config))
+                if (prefab is not null && prefab.TryGetComponent(out GameConfig config))
                     return config;
             }
             return null;

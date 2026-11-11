@@ -9,7 +9,6 @@ namespace WanderersGuild
 {
     public sealed class RequestListView
     {
-        private readonly ScrollView _scroll;
         private readonly OutlinedText _empty;
         private readonly List<RequestRowView> _rows = new();
         private readonly List<Button> _buttons = new();
@@ -19,15 +18,15 @@ namespace WanderersGuild
 
         public RequestListView(ScrollView scroll, OutlinedText empty, int capacity, Action<ActiveRequest> onSelected)
         {
-            _scroll = scroll;
+            var scroll1 = scroll;
             _empty = empty;
 
             for (var i = 0; i < Mathf.Max(1, capacity); i++)
             {
                 RequestRowView row = new(clicked => { if (clicked.Request != null) onSelected(clicked.Request); });
-                row.Button.RegisterCallback<FocusEvent>(_ => _scroll.ScrollTo(row.Button));
+                row.Button.RegisterCallback<FocusEvent>(_ => scroll1.ScrollTo(row.Button));
 
-                _scroll.Add(row.Button);
+                scroll1.Add(row.Button);
                 _rows.Add(row);
                 _buttons.Add(row.Button);
             }

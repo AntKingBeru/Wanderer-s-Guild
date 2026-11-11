@@ -59,7 +59,7 @@ namespace WanderersGuild
             _logo.style.display = hasLogo ? DisplayStyle.Flex : DisplayStyle.None;
             _placeholder.style.display = hasLogo ? DisplayStyle.None : DisplayStyle.Flex;
 
-            if (hasLogo)
+            if (hasLogo is not null)
                 _logo.style.backgroundImage = new StyleBackground(slide.Logo);
             else
                 _placeholder.Text = slide.PlaceholderText;

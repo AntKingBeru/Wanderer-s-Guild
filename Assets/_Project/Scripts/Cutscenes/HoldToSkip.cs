@@ -31,7 +31,7 @@ namespace WanderersGuild
         public void Activate(Action onSkip)
         {
             var reference = GameConfig.Instance.InputBindings.Skip;
-            _action = reference ? reference.action : null;
+            _action = reference?.action;
 
             if (_action == null)
             {
@@ -48,8 +48,7 @@ namespace WanderersGuild
             _isActive = true;
 
             // NOTE: Shows the bound key's real name (e.g. "Esc"), so a rebind updates the hint.
-            if (view)
-                view.ShowSkipHint($"Hold {_action.GetBindingDisplayString()} to skip");
+            view?.ShowSkipHint($"Hold {_action.GetBindingDisplayString()} to skip");
         }
 
         public void Deactivate()
@@ -58,8 +57,7 @@ namespace WanderersGuild
             _onSkip = null;
             _progress = 0f;
 
-            if (view)
-                view.HideSkipHint();
+            view?.HideSkipHint();
         }
 
         // NOTE: Unscaled time keeps the hold length the same at any frame rate or timescale.
@@ -72,8 +70,7 @@ namespace WanderersGuild
             var step = Time.unscaledDeltaTime / settings.SkipHoldDuration;
             _progress = Mathf.Clamp01(_progress + (IsSkipKeyPressed ? step : -step * settings.SkipDrainMultiplier));
 
-            if (view)
-                view.SetSkipProgress(_progress);
+            view?.SetSkipProgress(_progress);
 
             if (_progress < 1f)
                 return;

@@ -58,7 +58,7 @@ namespace WanderersGuild
 
         public bool TryWriteThumbnail(int index, Texture2D thumbnail)
         {
-            if (!thumbnail)
+            if (thumbnail is null)
                 return false;
 
             var png = thumbnail.EncodeToPNG();

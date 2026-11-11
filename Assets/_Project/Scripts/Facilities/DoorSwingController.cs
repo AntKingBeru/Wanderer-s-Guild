@@ -41,7 +41,7 @@ namespace WanderersGuild
 
             foreach (var avatar in AvatarManager.Instance.Avatars.Values)
             {
-                if (!avatar)
+                if (avatar is null)
                     continue;
                 var p = avatar.transform.position;
                 _positions.Add(new Vector2(p.x, p.z));

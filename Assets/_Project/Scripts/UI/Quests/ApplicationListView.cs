@@ -9,7 +9,6 @@ namespace WanderersGuild
 {
     public sealed class ApplicationListView
     {
-        private readonly ScrollView _scroll;
         private readonly OutlinedText _empty;
         private readonly List<ApplicationRowView> _rows = new();
         private readonly List<Button> _buttons = new();
@@ -19,15 +18,15 @@ namespace WanderersGuild
         // NOTE: Every listed quest is on the quest board, so one row per board slot is always enough.
         public ApplicationListView(ScrollView scroll, OutlinedText empty, int rows, Action<Quest> onSelected)
         {
-            _scroll = scroll;
+            var scroll1 = scroll;
             _empty = empty;
 
             for (var i = 0; i < Mathf.Max(1, rows); i++)
             {
                 ApplicationRowView row = new(clicked => { if (clicked.Quest != null) onSelected(clicked.Quest); });
-                row.Button.RegisterCallback<FocusEvent>(_ => _scroll.ScrollTo(row.Button));
+                row.Button.RegisterCallback<FocusEvent>(_ => scroll1.ScrollTo(row.Button));
 
-                _scroll.Add(row.Button);
+                scroll1.Add(row.Button);
                 _rows.Add(row);
                 _buttons.Add(row.Button);
             }

@@ -29,7 +29,7 @@ namespace WanderersGuild
         // NOTE: Waits for a clear moment (no panel, host idle, no scene load); a prompt whose slots filled meanwhile is dropped.
         private void LateUpdate()
         {
-            if (!_pending || !host || host.IsBusy || host.HasOpenPanel)
+            if (!_pending || host is null || host.IsBusy || host.HasOpenPanel)
                 return;
             if (SceneLoader.HasInstance && SceneLoader.Instance.IsBusy)
                 return;

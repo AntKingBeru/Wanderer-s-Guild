@@ -40,8 +40,8 @@ namespace WanderersGuild
         // NOTE: A click on the character (face, eyes, eyebrows, moustache) pokes it instead of starting the game.
         private void OnAnyKey(InputAction.CallbackContext context)
         {
-            TitleCharacterClickRouter characterClicks = _director.CharacterClicks;
-            if (characterClicks && characterClicks.TryHandleClick(context))
+            var characterClicks = _director.CharacterClicks;
+            if (characterClicks is not null && characterClicks.TryHandleClick(context))
                 return;
 
             _director.EnterPanState();

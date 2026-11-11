@@ -11,7 +11,7 @@ namespace WanderersGuild
         // or even weights (¼ each) if it has none.
         public static float Value(EquipmentData item, ClassData classData, QuestSettings quests)
         {
-            if (!item)
+            if (item is null)
                 return 0f;
 
             var affinities = classData.CategoryAffinities;
@@ -28,7 +28,7 @@ namespace WanderersGuild
                                                 int budget, QuestSettings quests)
         {
             var gear = adventurer.Equipment;
-            if (slot == EquipmentSlot.Offhand && gear[EquipmentSlot.Weapon] && gear[EquipmentSlot.Weapon].TwoHanded)
+            if (slot == EquipmentSlot.Offhand && gear[EquipmentSlot.Weapon] is not null && gear[EquipmentSlot.Weapon].TwoHanded)
                 return null;
 
             EquipmentData best = null;
@@ -44,7 +44,7 @@ namespace WanderersGuild
                 var gain = Value(item, adventurer.Class, quests) - current;
                 if (gain <= 0.0001f)
                     continue;
-                if (best && (gain < bestGain || (Mathf.Approximately(gain, bestGain) && item.Price >= best.Price)))
+                if (best is not null && (gain < bestGain || (Mathf.Approximately(gain, bestGain) && item.Price >= best.Price)))
                     continue;
 
                 best = item;

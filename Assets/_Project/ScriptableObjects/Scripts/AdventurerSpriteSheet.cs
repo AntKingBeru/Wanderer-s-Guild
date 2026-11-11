@@ -25,7 +25,7 @@ namespace WanderersGuild
         public bool IsValid(Vector2Int frameSize, out string problem)
         {
             problem = null;
-            if (!texture)
+            if (texture is null)
                 problem = "has no texture";
             else if (texture.width % frameSize.x != 0 || texture.width < frameSize.x)
                 problem = $"is {texture.width}px wide — not a whole number of {frameSize.x}px frames";

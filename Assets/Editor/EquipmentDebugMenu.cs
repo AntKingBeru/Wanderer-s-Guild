@@ -14,7 +14,7 @@ namespace Editor
         private static void OpenArmory()
         {
             var host = Object.FindAnyObjectByType<GamePanelHost>();
-            if (!host || host.IsBusy || host.HasOpenPanel)
+            if (host is null || host.IsBusy || host.HasOpenPanel)
             {
                 Debug.LogWarning("[Equipment] No idle GamePanelHost in the scene (close any open panel first).");
                 return;

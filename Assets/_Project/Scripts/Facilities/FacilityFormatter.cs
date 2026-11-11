@@ -47,7 +47,7 @@ namespace WanderersGuild
             StringBuilder text = new();
             foreach (var effect in room.Data.Effects)
             {
-                if (!effect)
+                if (effect is null)
                     continue;
                 if (text.Length > 0)
                     text.Append('\n');

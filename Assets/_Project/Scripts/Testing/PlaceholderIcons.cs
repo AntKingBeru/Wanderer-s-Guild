@@ -52,8 +52,7 @@ namespace WanderersGuild
         public static Texture2D Face(ReputationLevel level)
         {
             var index = Mathf.Clamp((int)level, 0, Faces.Length - 1);
-            if (!Faces[index])
-                Faces[index] = BuildFace(Mouths[index]);
+            Faces[index] ??= BuildFace(Mouths[index]);
             return Faces[index];
         }
 

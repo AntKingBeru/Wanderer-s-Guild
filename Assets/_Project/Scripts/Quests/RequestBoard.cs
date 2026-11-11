@@ -22,7 +22,7 @@ namespace WanderersGuild
         // False when the board is full or this template is already posted.
         public bool TryAdd(ActiveRequest request)
         {
-            if (!request?.Data || FreeSlots == 0 || ContainsTemplate(request.Data.Id))
+            if (request.Data is null || FreeSlots == 0 || ContainsTemplate(request.Data.Id))
                 return false;
 
             _requests.Add(request);

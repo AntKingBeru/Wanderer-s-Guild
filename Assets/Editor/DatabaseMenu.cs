@@ -25,7 +25,7 @@ namespace Editor
                 var facilities = await new FacilitySheetImporter().ImportAsync();
                 var equipment = await new EquipmentSheetImporter().ImportAsync();
 
-                Debug.Log(species && classes && requests && facilities
+                Debug.Log(species && classes && requests && facilities && equipment
                     ? "[Database] Load finished."
                     : "[Database] Load finished with errors (see above).");
             }

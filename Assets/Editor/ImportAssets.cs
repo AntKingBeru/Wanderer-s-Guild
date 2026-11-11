@@ -28,7 +28,7 @@ namespace Editor
         public static T LoadOrCreate<T>(string assetPath) where T : ScriptableObject
         {
             var asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
-            if (asset)
+            if (asset is not null)
                 return asset;
 
             asset = ScriptableObject.CreateInstance<T>();

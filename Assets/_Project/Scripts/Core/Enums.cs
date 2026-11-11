@@ -349,6 +349,14 @@ namespace WanderersGuild
         Sleep = 4,
         Rest = 5
     }
+    
+    // How an avatar is posed (faked from their sheet: sit = cropped + lowered idle, sleep = laid flat.)
+    public enum AvatarPose
+    {
+        Stand = 0,
+        Sit = 1,
+        Sleep = 2
+    }
     #endregion
     
     #region Risks

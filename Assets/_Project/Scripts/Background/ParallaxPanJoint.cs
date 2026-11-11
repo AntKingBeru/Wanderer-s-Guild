@@ -33,10 +33,8 @@ namespace WanderersGuild
 
         private void OnDisable()
         {
-            if (upperLayer)
-                upperLayer.ClearPanFactorOverride();
-            if (lowerLayer)
-                lowerLayer.ClearPanFactorOverride();
+            upperLayer?.ClearPanFactorOverride();
+            lowerLayer?.ClearPanFactorOverride();
             _lastUpperScale = -1f;
             _lastLowerScale = -1f;
         }
@@ -92,15 +90,15 @@ namespace WanderersGuild
 
         private bool Validate()
         {
-            if (!upperLayer || !lowerLayer ||
-                !upperLayer.TryGetComponent(out _upperRenderer) || !_upperRenderer.sprite ||
-                !lowerLayer.TryGetComponent(out _lowerRenderer) || !_lowerRenderer.sprite)
+            if (upperLayer is null || lowerLayer is null ||
+                !upperLayer.TryGetComponent(out _upperRenderer) || _upperRenderer.sprite is null ||
+                !lowerLayer.TryGetComponent(out _lowerRenderer) || _lowerRenderer.sprite is null)
             {
                 Debug.LogError($"[ParallaxPanJoint] '{name}' needs two ParallaxLayers, each with a SpriteRenderer and sprite.", this);
                 return false;
             }
 
-            if (!upperLayer.Group || !lowerLayer.Group || upperLayer.Group == lowerLayer.Group)
+            if (upperLayer.Group is null || lowerLayer.Group is null || upperLayer.Group == lowerLayer.Group)
             {
                 Debug.LogError($"[ParallaxPanJoint] '{name}': the two layers must belong to two different ParallaxGroups.", this);
                 return false;

@@ -57,7 +57,7 @@ namespace WanderersGuild
             _view.Field.AddManipulator(_fieldGuard);
 
             _navigationHost = _view.PanelRoot;
-            _navigation = new MenuNavigation(_view.Focusables, () => CanAct && !_view.IsFieldFocused, null, NavigationAxis.Vertical);
+            _navigation = new MenuNavigation(_view.Focusables, () => CanAct && !_view.IsFieldFocused, null);
 
             // NOTE: Left/Right between No and Yes; Esc answers No.
             _confirmNavigation = new MenuNavigation(Confirmation.Buttons, () => CanAnswer, Confirmation.Cancel, NavigationAxis.Horizontal);
@@ -76,7 +76,7 @@ namespace WanderersGuild
             _filter = null;
 
             // NOTE: May run during scene unload, after the view is already destroyed.
-            if (_view && _view.IsBound)
+            if (_view is not null && _view.IsBound)
             {
                 Confirmation.HideImmediate();
                 _view.Confirm.clicked -= RequestConfirmation;
@@ -149,7 +149,7 @@ namespace WanderersGuild
                 _view.Confirm.Focus();
         }
 
-        // NOTE: No is pre-selected (like the Quit popup), so an accidental double Enter doesn't lock in the name.
+        // NOTE: "No" is pre-selected (like the Quit popup), so an accidental double Enter doesn't lock in the name.
         private void RequestConfirmation()
         {
             if (!CanAct)

@@ -22,8 +22,7 @@ namespace WanderersGuild
         {
             get
             {
-                if (!targetCamera)
-                    targetCamera = Camera.main;
+                targetCamera ??= Camera.main;
                 return targetCamera;
             }
         }

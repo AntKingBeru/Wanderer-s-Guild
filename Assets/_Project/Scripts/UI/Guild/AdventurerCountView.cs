@@ -6,17 +6,16 @@ namespace WanderersGuild
 {
     public sealed class AdventurerCountView
     {
-        private readonly VisualElement _root;
         private readonly VisualElement _icon;
         private readonly OutlinedText _count;
         private readonly PixelShake _shake;
 
         // The counter window — floating numbers start beside it.
-        public VisualElement Anchor => _root;
+        public VisualElement Anchor { get; }
 
         private AdventurerCountView(VisualElement root, VisualElement icon, OutlinedText count, GameObject linkTarget)
         {
-            _root = root;
+            Anchor = root;
             _icon = icon;
             _count = count;
             _shake = new PixelShake(count, linkTarget);

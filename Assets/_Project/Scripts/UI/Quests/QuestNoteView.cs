@@ -93,12 +93,12 @@ namespace WanderersGuild
         private void ShowCategory(QuestCategory category)
         {
             var icons = GameConfig.HasInstance ? GameConfig.Instance.QuestPanel.CategoryIcons : null;
-            var sprite = icons ? icons.IconFor(category) : null;
+            var sprite = icons?.IconFor(category);
 
             _icon.style.backgroundImage = sprite ? new StyleBackground(sprite) : new StyleBackground(StyleKeyword.None);
-            _icon.EnableInClassList(PlaceholderClass, !sprite);
+            _icon.EnableInClassList(PlaceholderClass, sprite is null);
             _iconFallback.Text = QuestFormatter.CategoryShort(category);
-            _iconFallback.style.display = !sprite ? DisplayStyle.Flex : DisplayStyle.None;
+            _iconFallback.style.display = sprite is null ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         // NOTE: Empty and locked slots are disabled, so keyboard navigation skips them and clicks do nothing.

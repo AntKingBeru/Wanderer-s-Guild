@@ -218,7 +218,7 @@ namespace WanderersGuild
 
         private void Enqueue(string message, bool isError)
         {
-            if (!view)
+            if (view is null)
                 return;
 
             _queue.Enqueue((message, isError));

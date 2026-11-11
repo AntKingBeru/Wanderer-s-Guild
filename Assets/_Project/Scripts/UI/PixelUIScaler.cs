@@ -23,7 +23,7 @@ namespace WanderersGuild
         {
             foreach (var panel in GameConfig.Instance.UIScale.PixelPanels)
             {
-                if (!panel || _originalScales.ContainsKey(panel))
+                if (panel is null || _originalScales.ContainsKey(panel))
                     continue;
 
                 if (panel.scaleMode != PanelScaleMode.ConstantPixelSize)

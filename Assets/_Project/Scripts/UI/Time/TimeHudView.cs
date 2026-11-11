@@ -75,7 +75,7 @@ namespace WanderersGuild
             if (time.Month != _shownMonth)
             {
                 _shownMonth = time.Month;
-                var sprite = art ? art.Season(time.Month) : null;
+                var sprite = art?.Season(time.Month);
                 _seasonIcon.style.backgroundImage = new StyleBackground(sprite 
                     ? Background.FromSprite(sprite)
                     : Background.FromTexture2D(SeasonPlaceholderIcons.For(time.Month - 1)));

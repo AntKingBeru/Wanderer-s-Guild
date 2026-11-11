@@ -47,7 +47,8 @@ namespace WanderersGuild
         {
             adventurer = null;
             FillEligible(guildRank);
-            if (_species.Count == 0 || _eligible.Count == 0) return false;
+            if (_species.Count == 0 || _eligible.Count == 0)
+                return false;
 
             var species = _species[Random.Range(0, _species.Count)];
             var chosen = _eligible[Random.Range(0, _eligible.Count)];
@@ -64,7 +65,8 @@ namespace WanderersGuild
                                       out Adventurer adventurer)
         {
             adventurer = null;
-            if (!spec.IsValid) return false;
+            if (!spec.IsValid)
+                return false;
 
             var name = !string.IsNullOrWhiteSpace(spec.Name) && !takenNames.Contains(spec.Name.Trim())
                 ? spec.Name.Trim()
@@ -86,7 +88,7 @@ namespace WanderersGuild
 
             foreach (var classData in _allClasses)
             {
-                if (!classData || !_predecessorOf.ContainsKey(classData.Id))
+                if (classData is null || !_predecessorOf.ContainsKey(classData.Id))
                     continue;
                 if (classData.RequiredGuildRank <= guildRank && _isUnlocked != null && _isUnlocked(classData.Id))
                     _eligible.Add(classData);

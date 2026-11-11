@@ -30,7 +30,7 @@ namespace WanderersGuild
                 return;
 
             var settings = GameConfig.Instance.Music;
-            if (!settings.TryGetTrack(track, out var entry) || !entry.Clip)
+            if (!settings.TryGetTrack(track, out var entry) || entry.Clip is null)
             {
                 Debug.LogWarning($"[MusicPlayer] No clip assigned for '{track}' in GameConfig › Music; staying silent.", this);
                 FadeOut();

@@ -96,7 +96,7 @@ namespace WanderersGuild
 
         // True if the next room of this facility would be a starter bedroom (exempt from its LIMIT).
         public bool StarterSlotOpen(FacilityData data) =>
-            data && data == _settings.StarterFacility && _starterRooms.Count < _settings.StarterCount;
+            data is not null && data == _settings.StarterFacility && _starterRooms.Count < _settings.StarterCount;
 
         // Finished starter bedrooms (the opening goal's progress).
         public int StarterBuilt
@@ -281,7 +281,7 @@ namespace WanderersGuild
                 }
             }
             
-            if (_migrateStarters && _settings.StarterFacility)
+            if (_migrateStarters && _settings.StarterFacility is not null)
             {
                 var bedrooms = Rooms.Where(room => room.Data == _settings.StarterFacility).ToList();
                 bedrooms.Sort((a, b) => a.Id.CompareTo(b.Id));

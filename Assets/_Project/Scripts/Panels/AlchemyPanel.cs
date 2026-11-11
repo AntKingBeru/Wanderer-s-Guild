@@ -192,7 +192,7 @@ namespace WanderersGuild
                 return;
             }
 
-            if (!alchemy)
+            if (alchemy is null)
                 return;
             foreach (var (key, value) in alchemy.Stock.Counts)
             {
@@ -207,7 +207,7 @@ namespace WanderersGuild
             var warn = false;
             string text;
 
-            if (_isBrewing && alchemy)
+            if (_isBrewing && alchemy is not null)
             {
                 var order = _order.ToList();
                 var cost = alchemy.CostOf(order);

@@ -22,7 +22,7 @@ namespace WanderersGuild
                 return string.Empty;
 
             StringBuilder builder = new(input.Length);
-            foreach (var c in input.TakeWhile(c => builder.Length < MaxLength).Where(IsAllowed).Where(c => c != ' ' || (builder.Length != 0 && builder[^1] != ' ')))
+            foreach (var c in input.TakeWhile(_ => builder.Length < MaxLength).Where(IsAllowed).Where(c => c != ' ' || (builder.Length != 0 && builder[^1] != ' ')))
             {
                 builder.Append(c);
             }

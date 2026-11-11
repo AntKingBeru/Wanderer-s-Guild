@@ -28,7 +28,7 @@ namespace WanderersGuild
 
         private void Start()
         {
-            if (!view || !view.IsBound)
+            if (view is null || !view.IsBound)
             {
                 Debug.LogError("[TimeHudPresenter] Missing or unbound TimeHudView.", this);
                 return;

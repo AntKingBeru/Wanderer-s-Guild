@@ -33,7 +33,7 @@ namespace WanderersGuild
 
         private void LateUpdate()
         {
-            if (!_dirty || !grid || !FacilityManager.HasInstance)
+            if (!_dirty || grid is null || !FacilityManager.HasInstance)
                 return;
             _dirty = false;
 
@@ -43,7 +43,7 @@ namespace WanderersGuild
             foreach (var room in rooms)
             {
                 var model = FacilityManager.Instance.ModelOf(room);
-                if (!model)
+                if (model is null)
                     continue;
 
                 model.GetComponentsInChildren(true, _connectors);

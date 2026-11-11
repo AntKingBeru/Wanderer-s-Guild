@@ -1761,6 +1761,7 @@ GameObject:
   - component: {fileID: 1269457476}
   - component: {fileID: 1269457475}
   - component: {fileID: 1269457478}
+  - component: {fileID: 1269457479}
   m_Layer: 0
   m_Name: Light
   m_TagString: Untagged
@@ -1889,6 +1890,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da0ed0edfffc2d4a93d53a2c48b5366, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.SunController
+--- !u!114 &1269457479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269457474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 563ad7abf4d42364586b97c377df4a43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.InteriorLightDirector
 --- !u!1 &1346576952
 GameObject:
   m_ObjectHideFlags: 0

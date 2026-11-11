@@ -48,7 +48,7 @@ namespace WanderersGuild
         // Game view shows the camera directly.
         private void Start()
         {
-            if (_view == null || !target || !target.Texture)
+            if (_view == null || target?.Texture is null)
             {
                 Debug.LogError("[WorldViewPresenter] No world render target to show.", this);
                 return;
@@ -99,7 +99,7 @@ namespace WanderersGuild
         // skipped by the target.
         private void MatchCanvas()
         {
-            if (!Application.isPlaying || !target || _view == null)
+            if (!Application.isPlaying || target is null || _view == null)
                 return;
 
             var rect = _view.contentRect;
@@ -114,7 +114,7 @@ namespace WanderersGuild
 
         private void ShowTexture()
         {
-            if (_view != null && target && target.Texture)
+            if (_view != null && target?.Texture is not null)
                 _view.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(target.Texture));
         }
 

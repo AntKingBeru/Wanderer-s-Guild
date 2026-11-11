@@ -63,7 +63,8 @@ namespace WanderersGuild
 
             _pointIndex = 0;
             _onArrived = onArrived;
-            if (_points.Count == 0) Arrive();
+            if (_points.Count == 0)
+                Arrive();
         }
 
         public void Stop()
@@ -75,6 +76,9 @@ namespace WanderersGuild
         }
 
         public void FaceTowards(Vector3 direction) => _view.FaceTowards(direction);
+        
+        // Stand / sit / sleep (arriving at a spot sets it; walking always stands).
+        public void SetPose(AvatarPose pose) => _view.SetPose(pose);
 
         // NOTE: Scaled deltaTime — pausing the game stops them; Fast / Very Fast speed them up.
         private void Update()

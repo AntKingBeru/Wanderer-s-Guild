@@ -119,7 +119,7 @@ namespace WanderersGuild
             _snapshot.AddRange(_avatars.Values);
             foreach (var avatar in _snapshot)
             {
-                if (!avatar || avatar.IsLeaving)
+                if (avatar is null || avatar.IsLeaving)
                     continue;
 
                 var adventurer = AdventurerManager.HasInstance ? AdventurerManager.Instance.Find(avatar.AdventurerId) : null;
@@ -135,7 +135,7 @@ namespace WanderersGuild
         private AvatarActivity DesiredNow(long now)
         {
             var minuteOfDay = (int)(now % GameCalendar.MinutesPerDay);
-            var hasTavern = TavernManager.HasInstance && TavernManager.Instance.Best.effect;
+            var hasTavern = TavernManager.HasInstance && TavernManager.Instance.Best.effect is not null;
             var hasArmory = ArmoryManager.HasInstance && ArmoryManager.Instance.StockTier > 0;
             return AvatarSchedule.Desired(minuteOfDay, _settings, hasTavern, hasArmory,
                                           GameConfig.Instance.Tavern.SupperHour, GameConfig.Instance.Equipment.ShoppingHour);
@@ -188,10 +188,11 @@ namespace WanderersGuild
             }
 
             var facing = target.Facing;
+            var pose = PoseFor(kind);
             avatar.Walk(_path, target.Position, () =>
             {
-                if (avatar)
-                    avatar.FaceTowards(facing);
+                avatar.FaceTowards(facing);
+                avatar.SetPose(pose);
             });
             return true;
         }
@@ -207,6 +208,14 @@ namespace WanderersGuild
             else
                 avatar.Stop();
         }
+        
+        // NOTE: Seats and tables seat them; beds lay them down; counters keep them standing.
+        private static AvatarPose PoseFor(SpotKind kind) => kind switch
+        {
+            SpotKind.Seat or SpotKind.Table => AvatarPose.Sit,
+            SpotKind.Bed => AvatarPose.Sleep,
+            _ => AvatarPose.Stand
+        };
 
         // ---------- Arrivals / departures ----------
 
@@ -269,7 +278,11 @@ namespace WanderersGuild
             var id = avatar.AdventurerId;
 
             if (_hasEntrance && _pathfinder.TryFind(_nav, avatar.Cell, _entrance, _settings.MaxPathNodes, _path))
-                avatar.Walk(_path, null, () => { if (avatar && avatar.IsLeaving) Despawn(id); });
+                avatar.Walk(_path, null, () =>
+                {
+                    if (avatar.IsLeaving)
+                        Despawn(id);
+                });
             else
                 Despawn(id);
         }
@@ -280,7 +293,7 @@ namespace WanderersGuild
             if (!_avatars.Remove(adventurerId, out var avatar))
                 return;
 
-            if (avatar)
+            if (avatar is not null)
                 Destroy(avatar.gameObject);
         }
 
@@ -346,7 +359,7 @@ namespace WanderersGuild
         private void ResolveEntrance()
         {
             _hasEntrance = false;
-            if (GuildEntrance.Current && grid)
+            if (GuildEntrance.Current is not null && grid is not null)
             {
                 _hasEntrance = _nav.TryNearest(CellOf(GuildEntrance.Current.transform.position), out _entrance);
                 return;

@@ -43,8 +43,8 @@ namespace WanderersGuild
                 return;
             }
 
-            _gold.SetIcon(Icon(art ? art.Coin : null, PlaceholderIcons.Coin));
-            _adventurers.SetIcon(Icon(art ? art.Adventurer : null, PlaceholderIcons.Person));
+            _gold.SetIcon(Icon(art?.Coin, PlaceholderIcons.Coin));
+            _adventurers.SetIcon(Icon(art?.Adventurer, PlaceholderIcons.Person));
 
             GameEventsRelay.OnGoldChanged.AddListener(OnGoldChanged);
             GameEventsRelay.OnAdventurerJoined.AddListener(OnAdventurerJoined);
@@ -140,7 +140,7 @@ namespace WanderersGuild
             if (_reputation == null)
                 return;
 
-            var sprite = art ? art.ReputationIcon(level) : null;
+            var sprite = art?.ReputationIcon(level);
             _reputation.SetLevel(Icon(sprite, PlaceholderIcons.Face(level)), Config.Reputation.ColorOf(level));
         }
 

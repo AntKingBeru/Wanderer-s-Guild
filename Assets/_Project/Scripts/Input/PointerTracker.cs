@@ -17,7 +17,7 @@ namespace WanderersGuild
         protected override void OnSingletonAwake()
         {
             var reference = GameConfig.Instance.InputBindings.Point;
-            _pointAction = reference ? reference.action : null;
+            _pointAction = reference?.action;
 
             if (_pointAction == null)
             {

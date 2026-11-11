@@ -12,7 +12,7 @@ namespace WanderersGuild
         {
             var config = GameConfig.Instance;
             var save = SaveGameService.HasInstance ? SaveGameService.Instance : null;
-            var loaded = save ? save.LoadedData : null;
+            var loaded = save?.LoadedData;
 
             // NOTE: v2+ saves carry the guild state; a new guild or a v1 save starts from the new-guild defaults,
             // keeping the rank from its header.

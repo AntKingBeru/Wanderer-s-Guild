@@ -80,7 +80,7 @@ namespace WanderersGuild
                 _focusOrder.Add(_delete);
             _focusOrder.Add(_back);
 
-            AddPanelManipulator(new MenuNavigation(_focusOrder, () => IsPanelActive, null, NavigationAxis.Vertical));
+            AddPanelManipulator(new MenuNavigation(_focusOrder, () => IsPanelActive, null));
             AddPanelManipulator(new MenuNavigation(_confirm.Buttons, () => IsConfirmActive, null, NavigationAxis.Horizontal));
 
             GameEventsRelay.OnSaveSlotsChanged.AddListener(RefreshRows);
@@ -100,7 +100,7 @@ namespace WanderersGuild
             _selected = -1;
             _list.scrollOffset = Vector2.zero;
 
-            if (Slots)
+            if (Slots is not null)
                 Slots.Refresh(); // Raises OnSaveSlotsChanged → RefreshRows.
             else
                 RefreshRows();
@@ -140,7 +140,7 @@ namespace WanderersGuild
             foreach (var row in _rows)
             {
                 var info = slots ? slots.GetSlot(row.Index) : new SaveSlotInfo(row.Index, SaveSlotState.Empty, null);
-                var thumbnail = slots ? slots.GetThumbnail(row.Index) : null;
+                var thumbnail = slots?.GetThumbnail(row.Index);
 
                 row.Bind(info, thumbnail, format);
                 row.Button.SetEnabled(IsSelectable(info)); // Disabled rows are greyed and skipped by navigation.
@@ -168,7 +168,7 @@ namespace WanderersGuild
         private bool TryGetSelected(out SaveSlotInfo info)
         {
             info = default;
-            if (!Slots || _selected < 0)
+            if (Slots is null || _selected < 0)
                 return false;
 
             info = Slots.GetSlot(_selected);
@@ -177,7 +177,7 @@ namespace WanderersGuild
 
         private void OnRowChosen(int index)
         {
-            if (!IsPanelActive || !Slots)
+            if (!IsPanelActive || Slots is null)
                 return;
 
             var info = Slots.GetSlot(index);
@@ -196,7 +196,7 @@ namespace WanderersGuild
                 AskOverwrite(info);
         }
 
-        // NOTE: No is pre-selected. The old save is only replaced when the new guild first saves.
+        // NOTE: "No" is pre-selected. The old save is only replaced when the new guild first saves.
         private void AskOverwrite(SaveSlotInfo info)
         {
             var index = info.Index;
@@ -229,7 +229,7 @@ namespace WanderersGuild
             var deleted = false;
 
             _confirm.Show(message,
-                          onConfirm: () => deleted = Slots && Slots.Delete(index),
+                          onConfirm: () => deleted = Slots is not null && Slots.Delete(index),
                           onClosed: () =>
                           {
                               if (!deleted)
@@ -263,7 +263,7 @@ namespace WanderersGuild
         // row; Back as a last resort.
         private Focusable PreferredFocus()
         {
-            if (IsLoadMode && Slots)
+            if (IsLoadMode && Slots is not null)
             {
                 if (Slots.TryGetMostRecent(out var recent) && recent < _rows.Count && _rows[recent].Button.enabledInHierarchy)
                     return _rows[recent].Button;

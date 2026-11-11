@@ -32,7 +32,7 @@ namespace WanderersGuild
             {
                 RenderTexture.active = previousActive;
                 RenderTexture.ReleaseTemporary(target);
-                if (full)
+                if (full is not null)
                     Object.Destroy(full);
             }
         }

@@ -12,7 +12,7 @@ namespace WanderersGuild
 
         private void OnDrawGizmos()
         {
-            if (!Application.isPlaying || !grid || !FacilityManager.HasInstance)
+            if (!Application.isPlaying || grid is null || !FacilityManager.HasInstance)
                 return;
 
             foreach (var room in FacilityManager.Instance.Rooms)

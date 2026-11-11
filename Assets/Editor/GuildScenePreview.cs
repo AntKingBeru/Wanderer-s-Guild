@@ -19,7 +19,7 @@ namespace Editor
         private static void FrameStartView()
         {
             var rig = Object.FindAnyObjectByType<GuildCameraRig>();
-            if (!rig)
+            if (rig is null)
             {
                 Debug.LogWarning("[Preview] No GuildCameraRig in the open scenes.");
                 return;
@@ -68,10 +68,8 @@ namespace Editor
             camera = null;
             renderHeight = 180;
 
-            var config = Object.FindAnyObjectByType<GameConfig>();
-            if (!config)
-                config = FindInPrefabs();
-            if (config)
+            var config = Object.FindAnyObjectByType<GameConfig>() ?? FindInPrefabs();
+            if (config is not null)
                 return Read(config, out camera, out renderHeight);
 
             if (EditorBuildSettings.scenes.Length == 0)
@@ -84,7 +82,7 @@ namespace Editor
                 foreach (var root in bootstrap.GetRootGameObjects())
                 {
                     config = root.GetComponentInChildren<GameConfig>(true);
-                    if (config)
+                    if (config is not null)
                         return Read(config, out camera, out renderHeight);
                 }
                 return false;
@@ -99,7 +97,7 @@ namespace Editor
         {
             return AssetDatabase.FindAssets("t:Prefab").Select(guid =>
                 AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid))).Select(prefab =>
-                prefab ? prefab.GetComponentInChildren<GameConfig>(true) : null).FirstOrDefault(config => config);
+                prefab?.GetComponentInChildren<GameConfig>(true)).FirstOrDefault(config => config);
         }
 
         // NOTE: A JSON copy, so the settings stay valid after the Bootstrap scene is closed again.

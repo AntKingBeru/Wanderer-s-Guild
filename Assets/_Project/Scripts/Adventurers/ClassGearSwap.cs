@@ -16,7 +16,7 @@ namespace WanderersGuild
             foreach (var slot in Slots)
             {
                 var item = adventurer.Equipment[slot];
-                if (!item || item.CanBeUsedBy(newClass))
+                if (item is null || item.CanBeUsedBy(newClass))
                     continue;
 
                 refund += (int)(item.Price * sellBackFraction);
@@ -27,7 +27,7 @@ namespace WanderersGuild
             {
                 if (!items.TryGetValue(id, out var item) || !item.CanBeUsedBy(newClass))
                     continue;
-                if (adventurer.Equipment[item.Slot])
+                if (adventurer.Equipment[item.Slot] is not null)
                     continue;
                 if (!Fits(adventurer, item))
                     continue;
@@ -43,11 +43,11 @@ namespace WanderersGuild
             switch (item.Slot)
             {
                 case EquipmentSlot.Weapon when item.TwoHanded:
-                    return !adventurer.Equipment[EquipmentSlot.Offhand];
+                    return adventurer.Equipment[EquipmentSlot.Offhand] is null;
                 case EquipmentSlot.Offhand:
                 {
                     var weapon = adventurer.Equipment[EquipmentSlot.Weapon];
-                    return !weapon || !weapon.TwoHanded;
+                    return weapon is null || !weapon.TwoHanded;
                 }
                 default:
                     return true;

@@ -21,14 +21,14 @@ namespace WanderersGuild
 
         private void OnSaveStarted(SaveReason reason)
         {
-            if (reason == SaveReason.Exit || !view)
+            if (reason == SaveReason.Exit || view is null)
                 return;
             view.Show("Saving...", false, -1f);
         }
 
         private void OnSaveCompleted(SaveReason reason, bool saved)
         {
-            if (reason == SaveReason.Exit || !view)
+            if (reason == SaveReason.Exit || view is null)
                 return;
 
             var settings = GameConfig.Instance.SaveGame;

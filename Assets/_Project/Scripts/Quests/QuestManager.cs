@@ -33,7 +33,7 @@ namespace WanderersGuild
             _settings = GameConfig.Instance.Quests;
 
             var database = GameConfig.Instance.Requests.Database;
-            if (database)
+            if (database is not null)
                 _requests = database.BuildLookup();
 
             var data = SaveGameService.HasInstance ? SaveGameService.Instance.LoadedData : null;

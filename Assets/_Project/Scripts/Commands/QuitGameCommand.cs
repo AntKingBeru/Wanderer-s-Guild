@@ -12,7 +12,8 @@ namespace WanderersGuild
 
         public void Execute()
         {
-            if (_isQuitting) return;
+            if (_isQuitting)
+                return;
 
             _isQuitting = true;
             FadeAndQuit();

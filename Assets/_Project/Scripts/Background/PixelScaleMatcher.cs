@@ -22,7 +22,7 @@ namespace WanderersGuild
         {
             _layers = GetComponentsInChildren<ParallaxLayer>(true);
 
-            if (!reference || !reference.sprite || !backgroundOrigin)
+            if (reference?.sprite is null || backgroundOrigin is null)
             {
                 Debug.LogError($"[PixelScaleMatcher] '{name}' needs a reference SpriteRenderer (with a sprite) and a background origin.", this);
                 enabled = false;

@@ -530,7 +530,7 @@ namespace WanderersGuild
         public ClassData Class => classData;
         public int Level => Mathf.Max(1, level);
         public string Name => name;
-        public bool IsValid => species && classData;
+        public bool IsValid => species is not null && classData is not null;
     }
     
     // The four adventurer stats. Sheet format "Str,Agi,Int,Vit" (whole numbers).
@@ -1078,11 +1078,11 @@ namespace WanderersGuild
         // −1 if it doesn't apply to this combination; otherwise 2 = exact, 1 = one side matched, 0 = matches anyone.
         public int Specificity(SpeciesData forSpecies, ClassData forClass)
         {
-            if (!sheet)
+            if (sheet is null)
                 return -1;
-            if (species && species != forSpecies)
+            if (species is not null && species != forSpecies)
                 return -1;
-            if (classData && classData != forClass)
+            if (classData is not null && classData != forClass)
                 return -1;
             return (species ? 1 : 0) + (classData ? 1 : 0);
         }

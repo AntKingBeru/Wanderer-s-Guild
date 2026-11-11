@@ -46,7 +46,7 @@ namespace WanderersGuild
 
             if (view.ModelLevel != room.Level)
             {
-                if (view.Model)
+                if (view.Model is not null)
                     Object.Destroy(view.Model);
                 view.Model = room.Level > 0 ? SpawnModel(room) : null;
                 view.ModelLevel = room.Level;
@@ -54,10 +54,10 @@ namespace WanderersGuild
 
             switch (needsScaffold)
             {
-                case true when !view.Scaffold:
+                case true when view.Scaffold is null:
                     view.Scaffold = SpawnScaffold(room);
                     break;
-                case false when view.Scaffold:
+                case false when view.Scaffold is not null:
                     Object.Destroy(view.Scaffold);
                     view.Scaffold = null;
                     break;
@@ -74,9 +74,9 @@ namespace WanderersGuild
 
             if (view.Highlighted)
                 PixelOutlineRequests.Remove();
-            if (view.Model)
+            if (view.Model is not null)
                 Object.Destroy(view.Model);
-            if (view.Scaffold)
+            if (view.Scaffold is not null)
                 Object.Destroy(view.Scaffold);
             _views.Remove(room.Id);
         }
@@ -121,7 +121,7 @@ namespace WanderersGuild
 
         private static void AddBit(View view, GameObject target, uint bit)
         {
-            if (!target)
+            if (target is null)
                 return;
 
             foreach (var renderer in target.GetComponentsInChildren<Renderer>(true))
@@ -135,7 +135,7 @@ namespace WanderersGuild
         private GameObject SpawnModel(PlacedFacility room)
         {
             var prefab = room.Data.PrefabFor(room.Level);
-            if (!prefab)
+            if (prefab is null)
             {
                 Debug.LogWarning($"[Facilities] '{room.Data.Id}' has no prefab for level {room.Level}; showing a box.");
                 return SpawnBox(room, 1f, $"{room.Data.DisplayName} (placeholder)");
@@ -151,7 +151,7 @@ namespace WanderersGuild
         // at the footprint's min corner and stretched over the rotated footprint, so it covers exactly the room's cells.
         private GameObject SpawnScaffold(PlacedFacility room)
         {
-            if (!_settings.ScaffoldPrefab)
+            if (_settings.ScaffoldPrefab is null)
                 return SpawnBox(room, 0.5f, $"Scaffold #{room.Id}");
 
             var size = FacilityFootprint.RotatedSize(room.Data.Size, room.Rotation);

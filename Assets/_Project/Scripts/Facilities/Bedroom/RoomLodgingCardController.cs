@@ -61,7 +61,7 @@ namespace WanderersGuild
 
         private void Start()
         {
-            _card = view ? RoomLodgingCardView.Bind(view.DocumentRoot, Close) : null;
+            _card = view is not null ? RoomLodgingCardView.Bind(view.DocumentRoot, Close) : null;
             if (_card == null)
                 Debug.LogError("[RoomLodgingCardController] Missing 'room-card' elements in WorldView.uxml.", this);
         }
@@ -215,7 +215,7 @@ namespace WanderersGuild
 
         private static InputAction Enable(InputActionReference reference)
         {
-            var action = reference ? reference.action : null;
+            var action = reference?.action;
             action?.Enable();
             return action;
         }

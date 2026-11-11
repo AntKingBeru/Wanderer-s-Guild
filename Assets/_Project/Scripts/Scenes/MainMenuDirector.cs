@@ -26,11 +26,11 @@ namespace WanderersGuild
         public CancellationToken LifetimeToken => destroyCancellationToken;
 
         // Null when no character is set up (converts Unity's "fake null" for an unassigned field).
-        public TitleCharacterClickRouter CharacterClicks => characterClicks ? characterClicks : null;
+        public TitleCharacterClickRouter CharacterClicks => characterClicks;
 
         private void Awake()
         {
-            if (!cameraPanner || !titleAnchor || !menuAnchor || !titleScreenView)
+            if (cameraPanner is null || titleAnchor is null || menuAnchor is null || titleScreenView is null)
             {
                 Debug.LogError("[MainMenuDirector] Missing scene references.", this);
                 enabled = false; // Prevents Start; OnDestroy still runs safely.

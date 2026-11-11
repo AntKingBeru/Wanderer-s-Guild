@@ -49,7 +49,7 @@ namespace WanderersGuild
 
         private void Play(UISoundClip sound)
         {
-            if (!sound.Clip || !_source)
+            if (sound.Clip is null || _source is null)
                 return;
             _source.PlayOneShot(sound.Clip, sound.Volume);
         }
