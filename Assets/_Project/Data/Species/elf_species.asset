@@ -16,6 +16,7 @@ MonoBehaviour:
   displayName: Elf
   description: Snotty bastards that live long and look down on others for no reason.
   icon: {fileID: 0}
+  nameList: {fileID: 11400000, guid: d8a783d96f2278849ab8afd8d4fb4726, type: 2}
   baseStatModifiers:
     strength: 1
     agility: 3

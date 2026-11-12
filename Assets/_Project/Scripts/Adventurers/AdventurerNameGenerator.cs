@@ -1,50 +1,90 @@
-// Picks a name for a new adventurer: a random first name, sometimes with an epithet; unique within the roster.
+// Names new adventurers from their species' list (or the common one): unique among adventurers and applicants, preferring
+// given names nobody has and that weren't handed out recently.
+using System;
 using System.Collections.Generic;
 
 namespace WanderersGuild
 {
     public sealed class AdventurerNameGenerator
     {
-        private const int MaxAttempts = 20;
+        private const int PreferredAttempts = 30; // NOTE: Stage 1 — unique full name, given name unused and not recent.
+        private const int UniqueAttempts = 30;    // NOTE: Stage 2 — just a unique full name.
         private const string FallbackName = "Adventurer";
 
-        private readonly AdventurerNameList _list;
-        private readonly float _epithetChance;
+        private readonly AdventurerNameList _common;
+        private readonly int _maxLength;
+        private readonly int _recentCount;
+        private readonly Queue<string> _recent = new();
+        private readonly HashSet<string> _avoid = new(StringComparer.OrdinalIgnoreCase);
 
-        public AdventurerNameGenerator(AdventurerNameList list, float epithetChance)
+        /// <param name="common">Fallback list for species without their own.</param>
+        /// <param name="maxLength">Longest full name (a family name or epithet past it is left off).</param>
+        /// <param name="recentCount">How many recently given names to avoid (0 = none).</param>
+        public AdventurerNameGenerator(AdventurerNameList common, int maxLength, int recentCount)
         {
-            _list = list;
-            _epithetChance = epithetChance;
+            _common = common;
+            _maxLength = Math.Max(1, maxLength);
+            _recentCount = Math.Max(0, recentCount);
         }
 
-        // NOTE: Random tries first; if every try collides, a number is appended to the last candidate ("Bran 2").
-        public string Next(ICollection<string> takenNames)
+        // NOTE: Stage 1, then stage 2, then the last candidate numbered ("Bran 2") — always terminates.
+        public string Next(SpeciesData species, ICollection<string> takenNames)
         {
-            var candidate = FallbackName;
-            for (var attempt = 0; attempt < MaxAttempts; attempt++)
+            var list = species != null && species.NameList != null ? species.NameList : _common;
+            FillAvoid(takenNames);
+
+            string lastGiven = null, lastFull = null;
+            for (var attempt = 0; attempt < PreferredAttempts + UniqueAttempts; attempt++)
             {
-                candidate = Random();
-                if (!takenNames.Contains(candidate))
-                    return candidate;
+                if (!NameComposer.TryCompose(list, _maxLength, out var given, out var full))
+                    break;
+
+                lastGiven = given;
+                lastFull = full;
+                if (takenNames.Contains(full))
+                    continue;
+                if (attempt < PreferredAttempts && _avoid.Contains(given))
+                    continue;
+                return Accept(given, full);
             }
 
+            var baseName = lastFull ?? FallbackName;
             for (var suffix = 2; ; suffix++)
             {
-                var numbered = $"{candidate} {suffix}";
+                var numbered = $"{baseName} {suffix}";
                 if (!takenNames.Contains(numbered))
-                    return numbered;
+                    return Accept(lastGiven ?? FallbackName, numbered);
             }
         }
 
-        private string Random()
+        // NOTE: Given names of everyone on the roster / waiting, plus the recent ones.
+        private void FillAvoid(ICollection<string> takenNames)
         {
-            if (_list == null || _list.FirstNames.Count == 0)
-                return FallbackName;
+            _avoid.Clear();
+            foreach (var name in takenNames)
+                _avoid.Add(GivenNameOf(name));
+            foreach (var given in _recent)
+                _avoid.Add(given);
+        }
 
-            var name = _list.FirstNames[UnityEngine.Random.Range(0, _list.FirstNames.Count)];
-            if (_list.Epithets.Count > 0 && UnityEngine.Random.value < _epithetChance)
-                name = $"{name} {_list.Epithets[UnityEngine.Random.Range(0, _list.Epithets.Count)]}";
-            return name;
+        // NOTE: Remembers the given name so the next arrivals (declined applicants included) don't repeat it soon.
+        private string Accept(string given, string full)
+        {
+            if (_recentCount > 0)
+            {
+                _recent.Enqueue(given);
+                while (_recent.Count > _recentCount)
+                    _recent.Dequeue();
+            }
+            return full;
+        }
+
+        private static string GivenNameOf(string fullName)
+        {
+            if (string.IsNullOrEmpty(fullName))
+                return string.Empty;
+            var space = fullName.IndexOf(' ');
+            return space < 0 ? fullName : fullName[..space];
         }
     }
 }

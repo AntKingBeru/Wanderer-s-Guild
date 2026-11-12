@@ -37,7 +37,7 @@ namespace WanderersGuild
             _predecessorOf = ClassLineage.PredecessorMap(allClasses);
             _isUnlocked = isUnlocked;
             _equipment = equipment;
-            _names = new AdventurerNameGenerator(settings.NameList, settings.EpithetChance);
+            _names = new AdventurerNameGenerator(settings.NameList, settings.MaxNameLength, settings.RecentNameMemory);
         }
 
         // A random arrival: random species, a random eligible class (base, or an unlocked advanced class — each gated
@@ -55,7 +55,7 @@ namespace WanderersGuild
             var level = Random.Range(1, _settings.MaxArrivalLevel(reputation) + 1);
 
             var (rank, retained) = ClassLineage.ArrivalProfile(chosen, species, _predecessorOf, _settings.Experience.MaxLevel);
-            adventurer = Build(id, _names.Next(takenNames), species, chosen, level, nowMinutes, rank, retained);
+            adventurer = Build(id, _names.Next(species, takenNames), species, chosen, level, nowMinutes, rank, retained);
             return true;
         }
 
@@ -70,7 +70,7 @@ namespace WanderersGuild
 
             var name = !string.IsNullOrWhiteSpace(spec.Name) && !takenNames.Contains(spec.Name.Trim())
                 ? spec.Name.Trim()
-                : _names.Next(takenNames);
+                : _names.Next(spec.Species, takenNames);
             var level = Mathf.Clamp(spec.Level, 1, _settings.Experience.MaxLevel);
 
             adventurer = Build(id, name, spec.Species, spec.Class, level, nowMinutes, GuildRank.F, default);

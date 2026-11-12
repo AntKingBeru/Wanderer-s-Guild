@@ -18,6 +18,7 @@ MonoBehaviour:
 
     Nothing remarkable about them.'
   icon: {fileID: 0}
+  nameList: {fileID: 11400000, guid: f6453ff0f4b926747a8512f357ea8f86, type: 2}
   baseStatModifiers:
     strength: 2
     agility: 2

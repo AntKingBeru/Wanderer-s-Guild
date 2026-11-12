@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86b1ea25505267f4fbd70cb1ad2f5d1b, type: 3}
+  m_Name: DwarfNames
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AdventurerNameList
+  givenNames:
+  - Barend
+  - Bruna
+  - Dagny
+  - Durgan
+  - Edda
+  - Gorrim
+  - Grenna
+  - Hakon
+  - Helga
+  - Ivra
+  - Jarl
+  - Kelda
+  - Korvak
+  - Lodrik
+  - Magda
+  - Morna
+  - Norvik
+  - Orrin
+  - Ragna
+  - Rulf
+  - Sabra
+  - Sten
+  - Thora
+  - Torvald
+  - Ulla
+  - Varn
+  - Vigdis
+  - Yorik
+  - Brannoc
+  - Dorna
+  - Hjalma
+  - Kragg
+  - Mardun
+  - Tova
+  - Ulrik
+  - Grimma
+  - Baldra
+  - Hrolf
+  - Odda
+  - Brokk
+  - Agna
+  - Feldra
+  familyNames:
+  - Ironfoot
+  - Stonebrow
+  - Copperkin
+  - Deepdelve
+  - Anvilborn
+  - Hammerson
+  - Flintbeard
+  - Goldvein
+  - Coalbrand
+  - Emberhelm
+  - Rockjaw
+  - Oreheart
+  - Gravelmane
+  - Steelgrip
+  - Bronzefist
+  - Ashforge
+  - Cragborn
+  - Tinbelly
+  - Runebeard
+  - Forgeson
+  - Slagborn
+  - Ironbrow
+  - Blackanvil
+  - Pebblefoot
+  - Deepmine
+  - Granitejaw
+  familyNameChance: 0.6
+  epithets:
+  - the Stout
+  - Beardless
+  - the Grim
+  - Alebelly
+  - Rockfist
+  - the Deep
+  - Oathkeeper
+  - the Loud
+  - Twice-Forged
+  - Stonehand
+  - the Gruff
+  - the Unbroken
+  epithetChance: 0.15

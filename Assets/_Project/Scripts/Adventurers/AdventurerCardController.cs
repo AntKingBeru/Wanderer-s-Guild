@@ -22,6 +22,9 @@ namespace WanderersGuild
         private int _escapeFrame = -1;
 
         public bool IsOpen => _adventurerId >= 0;
+        
+        // The adventurer whose card is open (−1 = none).
+        public int OpenAdventurerId => _adventurerId;
 
         // True while the card is open or Esc closed it this frame — the pause menu ignores that Esc.
         public bool BlocksEscape => IsOpen || _escapeFrame == Time.frameCount;

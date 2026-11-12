@@ -19,6 +19,9 @@ namespace WanderersGuild
         private string _name;
 
         public string DisplayName => _name;
+        
+        // True while the pointer is over it (the name label shows above the head — speech bubbles hide meanwhile).
+        public bool IsHovered => _isHovered;
 
         // NOTE: The figure's head, not the quad's top — short species (dwarves) have empty headroom in their frame.
         public Vector3 LabelAnchor => _view != null ? _view.HeadTop + Vector3.up * LabelGap : transform.position;

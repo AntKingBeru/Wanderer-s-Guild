@@ -66,6 +66,8 @@ namespace WanderersGuild
         [SerializeField] private MarqueeSettings marquee = new();
         [SerializeField] private DoorSettings doors = new();
         [SerializeField] private InteriorLightSettings interiorLightSettings = new();
+        [SerializeField] private SpeechSettings speech = new();
+        [SerializeField] private ProcessionSettings processions = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -121,6 +123,8 @@ namespace WanderersGuild
         public MarqueeSettings Marquee => marquee;
         public DoorSettings Doors => doors;
         public InteriorLightSettings InteriorLights => interiorLightSettings;
+        public SpeechSettings Speech => speech;
+        public ProcessionSettings Processions => processions;
     }
     
     #region Scene Management
@@ -1373,10 +1377,12 @@ namespace WanderersGuild
         [SerializeField] private ClassDatabase classDatabase;
         [SerializeField] private SpeciesDatabase speciesDatabase;
 
-        [Tooltip("First names and epithets for new adventurers.")]
+        [Tooltip("Fallback names for species without their own list (SpeciesData › Name List).")]
         [SerializeField] private AdventurerNameList nameList;
-        [Tooltip("Chance a new adventurer also gets an epithet (\"Bran the Bold\").")]
-        [SerializeField, Range(0f, 1f)] private float epithetChance = 0.25f;
+        [Tooltip("Longest full name: a family name or epithet that would pass it is left off (the roster and cards clip long names).")]
+        [SerializeField, Range(8, 32)] private int maxNameLength = 16;
+        [Tooltip("Given names handed out recently are avoided for this many new names (declined applicants included).")]
+        [SerializeField, Range(0, 60)] private int recentNameMemory = 20;
 
         [Tooltip("Fallback capacity, used only while no facility has a CapacityEffect (normally the Guild Hall and bedrooms set it).")]
         [SerializeField, Range(1, 50)] private int capacity = 6;
@@ -1399,7 +1405,8 @@ namespace WanderersGuild
         public ClassDatabase ClassDatabase => classDatabase;
         public SpeciesDatabase SpeciesDatabase => speciesDatabase;
         public AdventurerNameList NameList => nameList;
-        public float EpithetChance => epithetChance;
+        public int MaxNameLength => maxNameLength;
+        public int RecentNameMemory => recentNameMemory;
         public int Capacity => capacity;
         public IReadOnlyList<StartingAdventurerSpec> StartingParty => startingParty ?? Array.Empty<StartingAdventurerSpec>();
         public Vector2Int WealthPerLevel => new(Mathf.Max(0, wealthPerLevel.x), Mathf.Max(wealthPerLevel.x, wealthPerLevel.y));
@@ -1993,6 +2000,88 @@ namespace WanderersGuild
             var high = Mathf.Max(fadeStart, fullOn + 0.001f);
             return Mathf.SmoothStep(1f, 0f, Mathf.InverseLerp(fullOn, high, daylight));
         }
+    }
+    #endregion
+    
+    #region Speech
+    [Serializable]
+    public class SpeechSettings
+    {
+        [Tooltip("The lines adventurers say (Create › Wanderer's Guild › Speech Library — created filled with defaults). " +
+                 "Empty = no bubbles.")]
+        [SerializeField] private SpeechLibrary library;
+
+        [Header("When")]
+        [Tooltip("Chance per in-game hour that an adventurer at the guild says something idle (at a random minute of the hour).")]
+        [SerializeField, Range(0f, 1f)] private float chatterChance = 0.1f;
+        [Tooltip("Chance each adventurer who ate supper remarks on it.")]
+        [SerializeField, Range(0f, 1f)] private float wellFedChance = 0.35f;
+        [Tooltip("Supper remarks come within this many in-game minutes of serving.")]
+        [SerializeField, Min(0)] private int supperSpreadMinutes = 20;
+        [Tooltip("In-game minutes a line waits for its speaker to come home (quest results, level-ups, injuries).")]
+        [SerializeField, Min(1)] private int arrivalWaitMinutes = 120;
+        [Tooltip("In-game minutes any other line may wait to be shown (busy speaker, too many bubbles) before it's dropped.")]
+        [SerializeField, Min(1)] private int lineWaitMinutes = 30;
+
+        [Header("Limits")]
+        [Tooltip("Lines one adventurer may have waiting (the least important is dropped).")]
+        [SerializeField, Min(1)] private int maxQueued = 2;
+        [Tooltip("Most bubbles on screen at once (the pool size).")]
+        [SerializeField, Min(1)] private int maxVisible = 5;
+        [Tooltip("How many of those may be idle chatter.")]
+        [SerializeField, Min(0)] private int maxChatterVisible = 2;
+
+        [Header("Reading time (real seconds — frozen while paused, the same at every game speed)")]
+        [SerializeField, Min(0.1f)] private float baseSeconds = 1.5f;
+        [SerializeField, Min(0f)] private float secondsPerCharacter = 0.05f;
+        [SerializeField, Min(0.1f)] private float maxSeconds = 4f;
+        [Tooltip("Pause between two bubbles from the same adventurer.")]
+        [SerializeField, Min(0f)] private float gapSeconds = 0.4f;
+        [SerializeField, Min(0f)] private float fadeInSeconds = 0.08f;
+        [SerializeField, Min(0f)] private float fadeOutSeconds = 0.25f;
+
+        [Header("Placement")]
+        [Tooltip("UI pixels between the head and the tail's tip.")]
+        [SerializeField, Min(0f)] private float headGapPixels = 2f;
+
+        public SpeechLibrary Library => library;
+        public float ChatterChance => chatterChance;
+        public float WellFedChance => wellFedChance;
+        public int SupperSpreadMinutes => supperSpreadMinutes;
+        public int ArrivalWaitMinutes => arrivalWaitMinutes;
+        public int LineWaitMinutes => lineWaitMinutes;
+        public int MaxQueued => maxQueued;
+        public int MaxVisible => maxVisible;
+        public int MaxChatterVisible => Mathf.Min(maxChatterVisible, maxVisible);
+        public float GapSeconds => gapSeconds;
+        public float FadeInSeconds => fadeInSeconds;
+        public float FadeOutSeconds => fadeOutSeconds;
+        public float HeadGapPixels => headGapPixels;
+
+        // Seconds a line stays up: base + per character, capped.
+        public float ReadingSeconds(int characters) =>
+            Mathf.Clamp(baseSeconds + secondsPerCharacter * characters, baseSeconds, Mathf.Max(baseSeconds, maxSeconds));
+    }
+    #endregion
+    
+    #region Processions
+    [Serializable]
+    public class ProcessionSettings
+    {
+        [Tooltip("Longest a departing party waits for everyone to reach the entrance (seconds at Normal speed; game speed scales " +
+                 "every value here, like walking).")]
+        [SerializeField, Min(0f)] private float maxGatherSeconds = 15f;
+        [Tooltip("Seconds the gathered party stands together before heading out.")]
+        [SerializeField, Min(0f)] private float huddleSeconds = 0.8f;
+        [Tooltip("Seconds between party members walking out the door.")]
+        [SerializeField, Min(0f)] private float fileGapSeconds = 0.4f;
+        [Tooltip("Seconds between adventurers appearing at the entrance — a returning party comes in as a line.")]
+        [SerializeField, Min(0f)] private float arrivalGapSeconds = 0.4f;
+
+        public float MaxGatherSeconds => maxGatherSeconds;
+        public float HuddleSeconds => huddleSeconds;
+        public float FileGapSeconds => fileGapSeconds;
+        public float ArrivalGapSeconds => arrivalGapSeconds;
     }
     #endregion
 }

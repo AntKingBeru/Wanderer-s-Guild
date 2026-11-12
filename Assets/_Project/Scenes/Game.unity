@@ -1640,6 +1640,7 @@ GameObject:
   - component: {fileID: 1253490074}
   - component: {fileID: 1253490075}
   - component: {fileID: 1253490076}
+  - component: {fileID: 1253490077}
   m_Layer: 0
   m_Name: InteractionController
   m_TagString: Untagged
@@ -1694,6 +1695,21 @@ MonoBehaviour:
   worldCamera: {fileID: 1904311416}
   view: {fileID: 998846831}
   panels: {fileID: 1873610642}
+--- !u!114 &1253490077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253490073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f75a0c622bcbebb43a2bf0b309b68fe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.SpeechBubbleDirector
+  persistAcrossScenes: 0
+  worldCamera: {fileID: 1904311416}
+  view: {fileID: 998846831}
 --- !u!1 &1263578231
 GameObject:
   m_ObjectHideFlags: 0

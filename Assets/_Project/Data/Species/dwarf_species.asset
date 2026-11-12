@@ -16,6 +16,7 @@ MonoBehaviour:
   displayName: Dwarf
   description: Bearded folk, both man and woman, that like to drink and dig holes.
   icon: {fileID: 0}
+  nameList: {fileID: 11400000, guid: 5952db0a1d11b03448bb5247085e8d96, type: 2}
   baseStatModifiers:
     strength: 2
     agility: 1

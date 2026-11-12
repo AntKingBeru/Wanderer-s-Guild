@@ -2,6 +2,8 @@
     <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/WorldView.uss?fileID=7433441132597879392&amp;guid=98327eb0cf7704145994483b06881d8a&amp;type=3#WorldView"/>
     <!-- The world render texture, full canvas (same integer scale + letterbox as the UI). Never picks. -->
     <ui:VisualElement name="world-view" class="world-view" picking-mode="Ignore" />
+    <!-- Speech bubbles (created in code), under the label and cards. Never picks. -->
+    <ui:VisualElement name="world-bubbles" class="world-bubbles" picking-mode="Ignore" />
 
     <!-- Opening goal under the HUD bar (hidden once done). -->
     <wg:OutlinedText name="world-goal" class="world-goal" text="Build lodgings: 0/3" />

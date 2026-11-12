@@ -99,3 +99,53 @@
     flex-shrink: 1;
     min-width: 0;
 }
+/* ---------- Speech bubbles (created in code under world-bubbles) ---------- */
+/* NOTE: The layer covers the view; it never picks (set in UXML and code). */
+.world-bubbles {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+/* NOTE: left/top = the tail's tip (whole pixels, set in code); the translate puts the bubble centred above it. */
+.speech-bubble {
+    --bubble-bg: rgb(240, 230, 206);
+    --bubble-border: rgb(58, 44, 30);
+    position: absolute;
+    translate: -50% -100%;
+    align-items: center;
+}
+.speech-bubble__box {
+    max-width: 96px;
+    padding: 0 3px 1px 3px;
+    border-width: 1px;
+    border-color: var(--bubble-border);
+    background-color: var(--bubble-bg);
+}
+/* NOTE: Two classes — beats the theme's .unity-text-element / .unity-label colour and spacing. */
+.speech-bubble__box > .speech-bubble__text {
+    margin: 0;
+    padding: 0;
+    color: rgb(46, 34, 24);
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+/* NOTE: Pulled up 1px so the wide row replaces a 5px stretch of the box's bottom border: "#...#", then "#.#", then "#". */
+.speech-bubble__tail {
+    align-items: center;
+    margin-top: -1px;
+}
+.speech-bubble__tail-row {
+    height: 1px;
+    flex-shrink: 0;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-color: var(--bubble-border);
+    background-color: var(--bubble-bg);
+}
+.speech-bubble__tail-row--wide { width: 5px; }
+.speech-bubble__tail-row--narrow { width: 3px; }
+.speech-bubble__tail-row--tip {
+    width: 1px;
+    border-left-width: 0;
+    border-right-width: 0;
+    background-color: var(--bubble-border);
+}

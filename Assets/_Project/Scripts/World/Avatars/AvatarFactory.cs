@@ -59,7 +59,7 @@ namespace WanderersGuild
         // once and replaced by the placeholder, so a bad import never shows sliced frames.
         private static AdventurerSpriteSheet SheetFor(Adventurer adventurer, AvatarSettings settings)
         {
-            var sheet = settings.Catalog?.Find(adventurer.Species, adventurer.Class);
+            var sheet = settings.Catalog != null ? settings.Catalog.Find(adventurer.Species, adventurer.Class) : null;
             var problem = string.Empty;
             if (sheet != null && sheet.IsValid(settings.FrameSize, out problem)) return sheet;
 

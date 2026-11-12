@@ -1,5 +1,5 @@
-// Game-scene owner of avatars: one per adventurer at the guild; enter/leave through the entrance; daily schedule at activity
-// spots (sleep, supper, shopping, leisure); grid upkeep.
+// Game-scene owner of avatars: one per adventurer at the guild; arrivals one at a time and quest parties leaving together
+// through the entrance; daily schedule at activity spots (sleep, supper, shopping, leisure); grid upkeep.
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +7,8 @@ namespace WanderersGuild
 {
     // NOTE: Scene-scoped — untick "Persist Across Scenes". Builds the grid and syncs everyone in Start (after the managers
     // have loaded and the Guild Hall exists); join events before then are ignored — Start catches them.
-    public class AvatarManager : Singleton<AvatarManager>
+    // NOTE: No `using System;` — it would make Random ambiguous (System.Action is written out instead).
+    public class AvatarManager : Singleton<AvatarManager>, IProcessionHost
     {
         [SerializeField] private Grid grid;
         [SerializeField] private Camera worldCamera;
@@ -19,6 +20,8 @@ namespace WanderersGuild
         private readonly GuildNavGrid _nav = new();
         private readonly GridPathfinder _pathfinder = new();
         private readonly List<Vector2Int> _path = new();
+        private readonly ArrivalQueue _arrivals = new();
+        private PartyProcessions _processions;
         private AvatarSettings _settings;
         private Vector2Int _entrance;
         private bool _hasEntrance;
@@ -31,7 +34,7 @@ namespace WanderersGuild
         private static long Now => RequestManager.NowMinutes;
         private static bool IsAtGuild(Adventurer a) =>
             a.Status is AdventurerStatus.Idle or AdventurerStatus.SignedUp or AdventurerStatus.Injured;
-        
+
         // NOTE: At the guild and not lodging outside during sleep hours.
         private bool IsPresent(Adventurer a)
         {
@@ -44,7 +47,11 @@ namespace WanderersGuild
             return !AvatarSchedule.IsSleepTime(minuteOfDay, _settings);
         }
 
-        protected override void OnSingletonAwake() => _settings = GameConfig.Instance.Avatars;
+        protected override void OnSingletonAwake()
+        {
+            _settings = GameConfig.Instance.Avatars;
+            _processions = new PartyProcessions(this);
+        }
 
         private void OnEnable()
         {
@@ -98,18 +105,28 @@ namespace WanderersGuild
         // Debug and testing: removes every avatar and spawns everyone at the guild again.
         public void RespawnAll()
         {
+            _processions.Clear();
+            _arrivals.Clear();
             foreach (var avatar in new List<AdventurerAvatar>(_avatars.Values))
                 Despawn(avatar.AdventurerId);
             Start();
         }
 
-        // ---------- Frame: the schedule ----------
+        // ---------- Frame: processions, arrivals, the schedule ----------
 
-        // NOTE: One schedule read per frame. An avatar re-plans when the schedule's activity differs from what it planned for
-        // (even mid-walk — 18:30 sends a wanderer to supper), or when its leisure dwell runs out.
+        // NOTE: Processions and arrivals run on scaled time (pause freezes them, like walking). Then one schedule read per
+        // frame: an avatar re-plans when the schedule's activity differs from what it planned for (even mid-walk — 18:30
+        // sends a wanderer to supper), or when its leisure dwell runs out. Leavers (incl. gathering parties) are skipped.
         private void Update()
         {
-            if (!_isReady || _avatars.Count == 0)
+            if (!_isReady)
+                return;
+
+            var delta = Time.deltaTime;
+            _processions.Tick(delta);
+            TickArrivals(delta);
+
+            if (_avatars.Count == 0)
                 return;
 
             var now = Now;
@@ -129,6 +146,19 @@ namespace WanderersGuild
                 var dwellOver = !avatar.IsWalking && now >= avatar.NextDecisionAt;
                 if (scheduleChanged || dwellOver)
                     Plan(avatar, wanted, now);
+            }
+        }
+
+        // NOTE: Whoever's turn it is appears at the entrance — if still at the guild and not already shown.
+        private void TickArrivals(float deltaTime)
+        {
+            var gap = GameConfig.Instance.Processions.ArrivalGapSeconds;
+            while (_arrivals.TryNext(deltaTime, gap, out var id))
+            {
+                deltaTime = 0f;
+                var adventurer = AdventurerManager.HasInstance ? AdventurerManager.Instance.Find(id) : null;
+                if (adventurer != null && IsPresent(adventurer))
+                    Spawn(adventurer, atEntrance: true);
             }
         }
 
@@ -162,7 +192,7 @@ namespace WanderersGuild
             if (!atSpot)
                 WanderTo(avatar);
         }
-        
+
         // NOTE: −1 = any room (outside lodgers / unhoused never get someone else's bed: they get a seat).
         private static int OwnRoom(AdventurerAvatar avatar)
         {
@@ -209,7 +239,7 @@ namespace WanderersGuild
             else
                 avatar.Stop();
         }
-        
+
         // NOTE: Seats and tables seat them; beds lay them down; counters keep them standing.
         private static AvatarPose PoseFor(SpotKind kind) => kind switch
         {
@@ -223,12 +253,17 @@ namespace WanderersGuild
         private void OnAdventurerJoined(Adventurer adventurer)
         {
             if (_isReady && IsPresent(adventurer))
-                Spawn(adventurer, atEntrance: true);
+                _arrivals.Enqueue(adventurer.Id);
         }
 
-        private void OnAdventurerLeft(Adventurer adventurer) => Despawn(adventurer.Id);
+        private void OnAdventurerLeft(Adventurer adventurer)
+        {
+            _arrivals.Remove(adventurer.Id);
+            Despawn(adventurer.Id);
+        }
 
-        // NOTE: Only at-guild ↔ away transitions matter (Signed up ↔ Idle keeps them here).
+        // NOTE: Only at-guild ↔ away transitions matter (Signed up ↔ Idle keeps them here). Arrivals wait their turn at the
+        // entrance; a quest party's members join its procession, everyone else walks out alone.
         private void OnAdventurerChanged(Adventurer adventurer)
         {
             if (!_isReady)
@@ -240,14 +275,15 @@ namespace WanderersGuild
             switch (here)
             {
                 case true when !hasAvatar:
-                    Spawn(adventurer, atEntrance: true);
+                    _arrivals.Enqueue(adventurer.Id);
                     break;
                 case true when avatar.IsLeaving:
-                    avatar.IsLeaving = false; // Called back before reaching the door.
+                    avatar.IsLeaving = false; // Called back before reaching the door (a procession drops them next tick).
                     avatar.PlannedFor = AvatarActivity.None;
                     break;
                 case false when hasAvatar && !avatar.IsLeaving:
-                    Leave(avatar);
+                    if (!_processions.TryJoin(avatar, adventurer))
+                        Leave(avatar);
                     break;
             }
         }
@@ -298,15 +334,45 @@ namespace WanderersGuild
                 Destroy(avatar.gameObject);
         }
 
+        // ---------- IProcessionHost ----------
+
+        public bool TryGetEntrance(out Vector2Int cell)
+        {
+            cell = _entrance;
+            return _hasEntrance;
+        }
+
+        public bool TryWalkTo(AdventurerAvatar avatar, Vector2Int cell, System.Action onArrived)
+        {
+            if (avatar == null || !_pathfinder.TryFind(_nav, avatar.Cell, cell, _settings.MaxPathNodes, _path))
+                return false;
+
+            avatar.Walk(_path, null, onArrived);
+            return true;
+        }
+
+        public void WalkOut(AdventurerAvatar avatar)
+        {
+            if (avatar != null)
+                Leave(avatar);
+        }
+
+        public Vector3 CellCentre(Vector2Int cell)
+        {
+            var corner = grid.CellToWorld(new Vector3Int(cell.x, cell.y, 0));
+            return new Vector3(corner.x + 0.5f, _settings.FloorHeight, corner.z + 0.5f);
+        }
+
         // ---------- Grid upkeep ----------
 
-        // NOTE: Avatars on cells that are no longer walkable go to the entrance; everyone re-plans (spots may have vanished
-        // or appeared, and paths may cross a removed room). Leavers re-path to the door.
+        // NOTE: Processions are dropped first (their cells and paths may be gone); then avatars on cells that are no longer
+        // walkable go to the entrance; everyone re-plans, and leavers (incl. former procession members) re-path to the door.
         private void OnFacilitiesChanged(PlacedFacility _)
         {
             if (!_isReady)
                 return;
 
+            _processions.Clear();
             RebuildNav();
             foreach (var avatar in new List<AdventurerAvatar>(_avatars.Values))
             {
@@ -331,7 +397,7 @@ namespace WanderersGuild
                 }
             }
         }
-        
+
         // NOTE: Outside lodgers walk out at bedtime and come back at dawn (OnAdventurerChanged does the spawn/leave).
         private void OnHourStarted(GameDateTime _)
         {

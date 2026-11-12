@@ -1201,4 +1201,47 @@ namespace WanderersGuild
         public static AdvancementCheck Eligible(IReadOnlyList<ClassData> options, long fee) => new(true, true, options, fee, string.Empty);
     }
     #endregion
+    
+    #region Speech
+    // One topic's lines in the speech library.
+    [Serializable]
+    public struct SpeechLineSet
+    {
+        [SerializeField] private SpeechTopic topic;
+        [SerializeField] private string[] lines;
+
+        public SpeechLineSet(SpeechTopic topic, params string[] lines)
+        {
+            this.topic = topic;
+            this.lines = lines;
+        }
+
+        public SpeechTopic Topic => topic;
+        public IReadOnlyList<string> Lines => lines ?? Array.Empty<string>();
+    }
+
+    // A line an adventurer wants to say (times in in-game minutes).
+    // NOTE: WaitsForArrival = kept while the speaker is away (quest results, level-ups, injuries); otherwise the request is
+    // dropped as soon as their avatar is gone.
+    public readonly struct SpeechRequest
+    {
+        public int AdventurerId { get; }
+        public SpeechTopic Topic { get; }
+        public int Priority { get; }
+        public long ShowAtMinute { get; }
+        public long ExpiresAtMinute { get; }
+        public bool WaitsForArrival { get; }
+
+        public SpeechRequest(int adventurerId, SpeechTopic topic, int priority, long showAtMinute, long expiresAtMinute,
+            bool waitsForArrival)
+        {
+            AdventurerId = adventurerId;
+            Topic = topic;
+            Priority = priority;
+            ShowAtMinute = showAtMinute;
+            ExpiresAtMinute = expiresAtMinute;
+            WaitsForArrival = waitsForArrival;
+        }
+    }
+    #endregion
 }

@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2739766aa5fc19e409be931f2a78e302, type: 3}
+  m_Name: SpeechLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.SpeechLibrary
+  sets:
+  - topic: 0
+    lines:
+    - Off we go!
+    - Wish us luck!
+    - Adventure awaits!
+    - Swords ready!
+    - Back soon!
+  - topic: 1
+    lines:
+    - We did it!
+    - Easy coin!
+    - Another job done.
+    - Pay day!
+    - Not a scratch!
+  - topic: 2
+    lines:
+    - That went badly...
+    - Next time...
+    - We'll be back.
+    - Rough day.
+    - Don't ask.
+  - topic: 3
+    lines:
+    - Home at last.
+    - Good to be back.
+    - Missed this place.
+    - Finally, home.
+  - topic: 4
+    lines:
+    - I feel stronger!
+    - Level up!
+    - Getting better!
+    - Did you see that?
+  - topic: 5
+    lines:
+    - Ow... my ribs.
+    - Need a bed.
+    - Just a scratch...
+    - That one hurt.
+  - topic: 6
+    lines:
+    - Delicious!
+    - What a stew!
+    - So full...
+    - Best meal in town!
+    - More bread?
+  - topic: 7
+    lines:
+    - Nice day.
+    - Seen my boots?
+    - Hmm...
+    - Any good quests?
+    - I need a drink.
+    - This place is growing!
+  - topic: 8
+    lines:
+    - Pass the salt.
+    - Smells good!
+    - Is there more?
+    - Mmm...
+  - topic: 9
+    lines:
+    - Shiny...
+    - Too pricey.
+    - I'll take that one!
+    - Just looking.
+  - topic: 10
+    lines:
+    - Ugh...
+    - Need... rest.
+    - Everything hurts.
+    - Water, please.
+  - topic: 11
+    lines:
+    - Zzz...
+    - Zzz... zz...
+    - '*snore*'
+    - Mmh... treasure...

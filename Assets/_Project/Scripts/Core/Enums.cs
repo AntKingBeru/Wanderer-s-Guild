@@ -379,4 +379,34 @@ namespace WanderersGuild
         Player = 2
     }
     #endregion
+    
+    #region Speech
+    // What a speech bubble is about. Chatter is resolved when it shows to the activity's own kind (meal, shop, rest, sleep).
+    public enum SpeechTopic
+    {
+        Departing = 0,
+        QuestSucceeded = 1,
+        QuestFailed = 2,
+        CameBack = 3,
+        LeveledUp = 4,
+        Injured = 5,
+        WellFed = 6,
+        Chatter = 7,
+        MealChatter = 8,
+        ShopChatter = 9,
+        RestChatter = 10,
+        Sleeping = 11
+    }
+    #endregion
+    
+    #region Processions
+    // A departing quest party's walk-out: wait for everyone to join → walk to the gathering cells → stand together → file out.
+    public enum ProcessionPhase
+    {
+        Starting = 0,
+        Gathering = 1,
+        Huddling = 2,
+        Filing = 3
+    }
+    #endregion
 }

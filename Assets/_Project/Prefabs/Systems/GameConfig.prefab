@@ -671,6 +671,7 @@ MonoBehaviour:
     waitDays: 3
   worldView:
     renderSize: {x: 640, y: 360}
+    renderScale: 2
   guildCamera:
     fieldOfView: 30
     farDistance: 80
@@ -775,6 +776,11 @@ MonoBehaviour:
     maxPathNodes: 5000
     cardOffset: {x: 8, y: -10}
     cardTopMargin: 26
+    sitLegShare: 0.45
+    sitOffset: 0
+    sleepOffset: 0.02
+    sleepScale: 0.8
+    maxSleepLength: 1.8
   injuries:
     failureInjuryChance: 0.4
     failureInjuryPerOutmatch: 0.4
@@ -832,3 +838,23 @@ MonoBehaviour:
   doors:
     openRadius: 1.6
     swingSpeed: 300
+  interiorLightSettings:
+    fadeStart: 0.5
+    fullOn: 0.2
+  speech:
+    library: {fileID: 11400000, guid: 96ae9d2a97e631345a4ca926acf89fb6, type: 2}
+    chatterChance: 0.1
+    wellFedChance: 0.35
+    supperSpreadMinutes: 20
+    arrivalWaitMinutes: 120
+    lineWaitMinutes: 30
+    maxQueued: 2
+    maxVisible: 5
+    maxChatterVisible: 2
+    baseSeconds: 1.5
+    secondsPerCharacter: 0.05
+    maxSeconds: 4
+    gapSeconds: 0.4
+    fadeInSeconds: 0.08
+    fadeOutSeconds: 0.25
+    headGapPixels: 2
