@@ -1,5 +1,5 @@
-// One pooled roster row: rank badge, name (slides when selected and too long), class icon + class, level; hidden rows are
-// disabled so keyboard navigation skips them.
+// One pooled roster row: rank badge, given name (the full name is in the details), class icon + class, level; hidden rows
+// are disabled so keyboard navigation skips them.
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -13,7 +13,6 @@ namespace WanderersGuild
         private readonly VisualElement _badge;
         private readonly OutlinedText _badgeLabel;
         private readonly OutlinedText _name;
-        private readonly MarqueeLine _nameMarquee;
         private readonly IconSlot _classIcon;
         private readonly OutlinedText _class;
         private readonly OutlinedText _level;
@@ -33,7 +32,6 @@ namespace WanderersGuild
             _badge.Add(_badgeLabel);
 
             _name = Part("roster-row__name");
-            _nameMarquee = new MarqueeLine(_name);
             _classIcon = IconSlot.Create("roster-row__class-icon");
             _class = Part("roster-row__class");
             _level = Part("roster-row__level");
@@ -47,14 +45,14 @@ namespace WanderersGuild
             Hide();
         }
 
-        // NOTE: Only the selected row's name slides; any other row parks its name at the start (clipped).
+        // NOTE: Only the given name fits the row; the full name shows in the details pane.
         public void Show(Adventurer adventurer, Color rankColor, bool isSelected)
         {
             Adventurer = adventurer;
 
             _badge.style.backgroundColor = rankColor;
             _badgeLabel.Text = RankFormatter.BadgeLabel(adventurer.Rank);
-            _name.Text = adventurer.Name;
+            _name.Text = AdventurerFormatter.GivenName(adventurer.Name);
             _classIcon.Set(adventurer.Class.Icon, adventurer.Class.DisplayName);
             _class.Text = adventurer.Class.DisplayName;
             _level.Text = AdventurerFormatter.ShortLevel(adventurer);
@@ -62,18 +60,12 @@ namespace WanderersGuild
             Button.EnableInClassList(SelectedClass, isSelected);
             Button.style.display = DisplayStyle.Flex;
             Button.SetEnabled(true);
-
-            if (isSelected)
-                _nameMarquee.Refresh();
-            else
-                _nameMarquee.Stop();
         }
 
         // NOTE: display:none alone keeps the button enabled — keyboard navigation could land on it. Disabled rows are skipped.
         public void Hide()
         {
             Adventurer = null;
-            _nameMarquee.Stop();
             Button.style.display = DisplayStyle.None;
             Button.SetEnabled(false);
         }

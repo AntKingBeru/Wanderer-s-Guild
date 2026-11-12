@@ -19,6 +19,7 @@ namespace WanderersGuild
         private readonly List<AdventurerAvatar> _snapshot = new();
         private readonly List<Vector2Int> _path = new();
         private readonly ArrivalQueue _arrivals = new();
+        private readonly FurnitureExits _exits = new();
         private GuildNavigator _navigator;
         private PartyProcessions _processions;
         private AvatarSettings _settings;
@@ -206,8 +207,8 @@ namespace WanderersGuild
 
         // NOTE: Only spots whose cell is walkable (and, for a room id ≥ 0, inside that room — int.MinValue matches none) are
         // offered. Spots on furniture (chairs, beds) sit on blocked cells: the path ends at the nearest free cell beside the
-        // spot (on the avatar's side), then the final step goes onto the spot; on arrival they face the spot's arrow and sit /
-        // lie at its height (counters: standing).
+        // spot (on the avatar's side), which is remembered as where they'll get up later; then the final step goes onto the
+        // spot, they face its arrow and sit / lie at its height (counters: standing).
         private bool TryGoToSpot(AdventurerAvatar avatar, SpotKind kind, int roomId = -1)
         {
             if (!ActivitySpotRegistry.TryReserve(kind, avatar.AdventurerId, spot =>
@@ -217,14 +218,13 @@ namespace WanderersGuild
                 }, out var target))
                 return false;
 
-            var start = avatar.Cell;
-            if (!_navigator.TryNearestFree(CellOf(target.Position), start, out var approach) ||
-                !_navigator.TryFindPath(start, approach, _settings.MaxPathNodes, _path))
+            if (!_navigator.TryNearestFree(CellOf(target.Position), avatar.Cell, out var approach) || !TryRouteTo(avatar, approach))
             {
                 ActivitySpotRegistry.Release(avatar.AdventurerId);
                 return false;
             }
 
+            _exits.Remember(avatar.AdventurerId, approach);
             var facing = target.Facing;
             var surface = target.Position.y;
             var pose = PoseFor(kind);
@@ -235,14 +235,31 @@ namespace WanderersGuild
             });
             return true;
         }
+        
+        // NOTE: Fills _path from the avatar to goal. An avatar on furniture (sitting/lying on a blocked cell, whose neighbors
+        // may all be blocked too — a bed between beds) first gets up onto a free cell beside it, the side it came from; it's
+        // moved there only once the whole route exists, so a failed route leaves it where it is.
+        private bool TryRouteTo(AdventurerAvatar avatar, Vector2Int goal)
+        {
+            var start = avatar.Cell;
+            if (_navigator.IsFree(start) || !_navigator.IsWalkable(start))
+                return _navigator.TryFindPath(start, goal, _settings.MaxPathNodes, _path);
 
-        // NOTE: Free cells only. No path → just stand; the next dwell or schedule change tries again.
+            if (!_exits.TryResolve(_navigator, avatar.AdventurerId, start, out var exit) ||
+                !_navigator.TryFindPath(exit, goal, _settings.MaxPathNodes, _path))
+                return false;
+
+            avatar.PlaceAt(exit); // Stands up beside the furniture (PlaceAt stops and stands them).
+            return true;
+        }
+
+        // NOTE: Free cells only. No path → just stand (or stay seated); the next dwell or schedule change tries again.
         private void WanderTo(AdventurerAvatar avatar)
         {
             if (!_navigator.TryRandomFreeCell(out var target))
                 return;
 
-            if (_navigator.TryFindPath(avatar.Cell, target, _settings.MaxPathNodes, _path))
+            if (TryRouteTo(avatar, target))
                 avatar.Walk(_path, null, null);
             else
                 avatar.Stop();
@@ -316,14 +333,15 @@ namespace WanderersGuild
             _avatars[adventurer.Id] = avatar;
         }
 
-        // NOTE: Frees their spot, walks to the entrance, then disappears; with no path, disappears right away.
+        // NOTE: Frees their spot, walks to the entrance (getting up off furniture first), then disappears; with no path,
+        // disappears right away.
         private void Leave(AdventurerAvatar avatar)
         {
             ActivitySpotRegistry.Release(avatar.AdventurerId);
             avatar.IsLeaving = true;
             var id = avatar.AdventurerId;
 
-            if (_hasEntrance && _navigator.TryFindPath(avatar.Cell, _entrance, _settings.MaxPathNodes, _path))
+            if (_hasEntrance && TryRouteTo(avatar, _entrance))
                 avatar.Walk(_path, null, () =>
                 {
                     if (avatar.IsLeaving)
@@ -336,6 +354,7 @@ namespace WanderersGuild
         private void Despawn(int adventurerId)
         {
             ActivitySpotRegistry.Release(adventurerId);
+            _exits.Forget(adventurerId);
             if (!_avatars.Remove(adventurerId, out var avatar))
                 return;
 
@@ -353,7 +372,7 @@ namespace WanderersGuild
 
         public bool TryWalkTo(AdventurerAvatar avatar, Vector2Int cell, System.Action onArrived)
         {
-            if (avatar == null || !_navigator.TryFindPath(avatar.Cell, cell, _settings.MaxPathNodes, _path))
+            if (avatar == null || !TryRouteTo(avatar, cell))
                 return false;
 
             avatar.Walk(_path, null, onArrived);

@@ -1,4 +1,4 @@
-// Display strings for adventurers: species · class, rank · level, XP, rank progress, stats, wealth, affinities, gear, status, promotion hint.
+// Display strings for adventurers: given name, species · class, rank · level, XP, rank progress, stats, wealth, affinities, gear, status, promotion hint.
 using System.Text;
 using System.Globalization;
 
@@ -6,6 +6,17 @@ namespace WanderersGuild
 {
     public static class AdventurerFormatter
     {
+        // The given name — a full name's first word ("Dagny Ironfoot" → "Dagny"). NOTE: Names are generated as one-word given
+        // names plus an optional family name or epithet, so the first word is always the given name.
+        public static string GivenName(string fullName)
+        {
+            if (string.IsNullOrEmpty(fullName))
+                return string.Empty;
+
+            var space = fullName.IndexOf(' ');
+            return space < 0 ? fullName : fullName[..space];
+        }
+        
         public static string SpeciesAndClass(Adventurer adventurer) =>
             $"{adventurer.Species.DisplayName} · {adventurer.Class.DisplayName}";
 

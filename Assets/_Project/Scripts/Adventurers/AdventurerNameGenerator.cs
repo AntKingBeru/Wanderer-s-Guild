@@ -62,7 +62,7 @@ namespace WanderersGuild
         {
             _avoid.Clear();
             foreach (var name in takenNames)
-                _avoid.Add(GivenNameOf(name));
+                _avoid.Add(AdventurerFormatter.GivenName(name));
             foreach (var given in _recent)
                 _avoid.Add(given);
         }
@@ -77,14 +77,6 @@ namespace WanderersGuild
                     _recent.Dequeue();
             }
             return full;
-        }
-
-        private static string GivenNameOf(string fullName)
-        {
-            if (string.IsNullOrEmpty(fullName))
-                return string.Empty;
-            var space = fullName.IndexOf(' ');
-            return space < 0 ? fullName : fullName[..space];
         }
     }
 }

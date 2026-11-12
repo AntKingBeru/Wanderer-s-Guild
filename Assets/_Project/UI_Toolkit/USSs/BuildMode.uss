@@ -194,6 +194,10 @@
     align-self: flex-start;
     flex-shrink: 0;
 }
+/* NOTE: The parts inherit the button's centred text alignment; a part as wide as its line box would centre an overflowing
+   line (cut on both sides). Left-aligned, every line starts at the box's left edge and overflows to the right, where it
+   slides. */
 .marquee .outlined-text__part {
     white-space: nowrap;
+    -unity-text-align: middle-left;
 }

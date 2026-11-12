@@ -60,18 +60,13 @@
     flex-grow: 1;
     -unity-text-align: middle-center;
 }
-
-/* NOTE: The selected row's name slides when it's too long (MarqueeLine): one unwrapped line whose text block keeps its own
-   width — the same rules as BuildMode.uss's .marquee (that sheet isn't loaded by the Roster document). */
 .roster-row__name {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1px 2px;
     align-items: flex-start;
-}
-.roster-row__name .outlined-text__stack {
-    align-self: flex-start;
-    flex-shrink: 0;
-}
-.roster-row__name .outlined-text__part {
-    white-space: nowrap;
 }
 .roster-row__class {
     width: 44px;
