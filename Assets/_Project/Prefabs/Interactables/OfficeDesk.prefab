@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5783872985861715500}
   - component: {fileID: 1372335049329670139}
+  - component: {fileID: 3912926116179023445}
   m_Layer: 0
   m_Name: OfficeDesk
   m_TagString: Untagged
@@ -52,6 +53,20 @@ MonoBehaviour:
   displayName: Manager's Logbook
   opens: 11
   labelHeight: 0.1
+--- !u!114 &3912926116179023445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7997426664025665945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e641cc9943c1f469f8bd1be9ad9711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.NavObstacle
+  center: {x: 0, y: 0, z: -0.59959626}
+  size: {x: 2.8750002, y: 1.9491925}
 --- !u!1001 &3163319934488058477
 PrefabInstance:
   m_ObjectHideFlags: 0

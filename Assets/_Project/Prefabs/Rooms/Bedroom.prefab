@@ -475,8 +475,30 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1a9846d8bc1a52946932261bd1791d46, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5249965341793407876}
   m_SourcePrefab: {fileID: 100100000, guid: 1a9846d8bc1a52946932261bd1791d46, type: 3}
+--- !u!1 &175500075978665556 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1a9846d8bc1a52946932261bd1791d46, type: 3}
+  m_PrefabInstance: {fileID: 1058039914312897285}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5249965341793407876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 175500075978665556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e641cc9943c1f469f8bd1be9ad9711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.NavObstacle
+  center: {x: 0, y: 0, z: 0}
+  size: {x: 1.75, y: 1.75}
 --- !u!4 &658740296505586926 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1a9846d8bc1a52946932261bd1791d46, type: 3}
@@ -801,13 +823,35 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 69b5beed51fddec439134abb6fa2d656, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1426917594803090800}
   m_SourcePrefab: {fileID: 100100000, guid: 69b5beed51fddec439134abb6fa2d656, type: 3}
 --- !u!4 &2828531563058381257 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 69b5beed51fddec439134abb6fa2d656, type: 3}
   m_PrefabInstance: {fileID: 2362787837716080162}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3173673058525453171 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 69b5beed51fddec439134abb6fa2d656, type: 3}
+  m_PrefabInstance: {fileID: 2362787837716080162}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1426917594803090800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3173673058525453171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e641cc9943c1f469f8bd1be9ad9711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.NavObstacle
+  center: {x: 0.000000059604645, y: 0, z: 0}
+  size: {x: 0.7542335, y: 0.75000024}
 --- !u!1001 &2955801747623835465
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -937,8 +981,30 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 398c399e40eca96458a018bc90ebb0dd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3789718398782825309}
   m_SourcePrefab: {fileID: 100100000, guid: 398c399e40eca96458a018bc90ebb0dd, type: 3}
+--- !u!1 &3828093640696009856 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 398c399e40eca96458a018bc90ebb0dd, type: 3}
+  m_PrefabInstance: {fileID: 4170745793811261905}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3789718398782825309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3828093640696009856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e641cc9943c1f469f8bd1be9ad9711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.NavObstacle
+  center: {x: 0, y: 0, z: 0}
+  size: {x: 3, y: 4}
 --- !u!4 &4497915490721484346 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 398c399e40eca96458a018bc90ebb0dd, type: 3}
@@ -1321,8 +1387,30 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: db83c42f1e181e34d9ad695414ab972d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4772744299405857275}
   m_SourcePrefab: {fileID: 100100000, guid: db83c42f1e181e34d9ad695414ab972d, type: 3}
+--- !u!1 &6216227758084957472 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: db83c42f1e181e34d9ad695414ab972d, type: 3}
+  m_PrefabInstance: {fileID: 6522641522060335217}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4772744299405857275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6216227758084957472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e641cc9943c1f469f8bd1be9ad9711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.NavObstacle
+  center: {x: 0, y: -0.9375, z: 0.06338906}
+  size: {x: 1.6250002, y: 0.50177884}
 --- !u!4 &6705765951148916634 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: db83c42f1e181e34d9ad695414ab972d, type: 3}
@@ -1387,13 +1475,35 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: db83c42f1e181e34d9ad695414ab972d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4684141239357702470}
   m_SourcePrefab: {fileID: 100100000, guid: db83c42f1e181e34d9ad695414ab972d, type: 3}
 --- !u!4 &7474703248154009547 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: db83c42f1e181e34d9ad695414ab972d, type: 3}
   m_PrefabInstance: {fileID: 6931535144114255904}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7849962909908977009 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: db83c42f1e181e34d9ad695414ab972d, type: 3}
+  m_PrefabInstance: {fileID: 6931535144114255904}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4684141239357702470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7849962909908977009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e641cc9943c1f469f8bd1be9ad9711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.NavObstacle
+  center: {x: 0, y: -0.9375, z: 0.06338906}
+  size: {x: 1.6250002, y: 0.50177884}
 --- !u!1001 &7242654884064884106
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1775,13 +1885,35 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 69b5beed51fddec439134abb6fa2d656, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4210352059536350335}
   m_SourcePrefab: {fileID: 100100000, guid: 69b5beed51fddec439134abb6fa2d656, type: 3}
 --- !u!4 &8587825716482914575 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 69b5beed51fddec439134abb6fa2d656, type: 3}
   m_PrefabInstance: {fileID: 8116802095682739940}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8963787588210910133 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 69b5beed51fddec439134abb6fa2d656, type: 3}
+  m_PrefabInstance: {fileID: 8116802095682739940}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4210352059536350335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8963787588210910133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e641cc9943c1f469f8bd1be9ad9711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.NavObstacle
+  center: {x: 0, y: 0, z: 0}
+  size: {x: 0.7542329, y: 0.75}
 --- !u!1001 &8906414301297383746
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -52,6 +52,14 @@ namespace WanderersGuild
         }
 
         public bool IsWalkable(Vector2Int cell) => _roomOf.ContainsKey(cell);
+        
+        // Every walkable cell (rebuilt with the rooms).
+        public IReadOnlyList<Vector2Int> Cells => _cells;
+
+        // NOTE: For orthogonally adjacent cells: same room, or a linked door crossing (the same rule as Neighbors).
+        public bool CanStep(Vector2Int from, Vector2Int to) =>
+            _roomOf.TryGetValue(from, out var a) && _roomOf.TryGetValue(to, out var b) &&
+            (a == b || _doorLinks.Contains((from, to)));
 
         // The room a walkable cell belongs to (−1 if none).
         public int RoomOf(Vector2Int cell) => _roomOf.GetValueOrDefault(cell, -1);

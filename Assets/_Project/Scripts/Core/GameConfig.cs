@@ -68,6 +68,7 @@ namespace WanderersGuild
         [SerializeField] private InteriorLightSettings interiorLightSettings = new();
         [SerializeField] private SpeechSettings speech = new();
         [SerializeField] private ProcessionSettings processions = new();
+        [SerializeField] private NavigationSettings navigation = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -125,6 +126,7 @@ namespace WanderersGuild
         public InteriorLightSettings InteriorLights => interiorLightSettings;
         public SpeechSettings Speech => speech;
         public ProcessionSettings Processions => processions;
+        public NavigationSettings Navigation => navigation;
     }
     
     #region Scene Management
@@ -2082,6 +2084,27 @@ namespace WanderersGuild
         public float HuddleSeconds => huddleSeconds;
         public float FileGapSeconds => fileGapSeconds;
         public float ArrivalGapSeconds => arrivalGapSeconds;
+    }
+    #endregion
+    
+    #region Navigation
+    [Serializable]
+    public class NavigationSettings
+    {
+        [Tooltip("World units a NavObstacle's rectangle is grown by when deciding which cells it blocks (a cell is blocked when " +
+                 "its centre falls inside). 0 = only cells whose centre it covers; negative shrinks it.")]
+        [SerializeField, Range(-0.4f, 0.5f)] private float obstaclePadding = 0.1f;
+
+        [Tooltip("Extra path cost for stepping onto a cell near a wall, another room or furniture: element 0 = touching, element 1 " +
+                 "= one cell further, … Keeps avatars off the walls. Empty = no preference.")]
+        [SerializeField] private float[] clearanceCosts = { 0.8f, 0.3f };
+
+        [Tooltip("Straighten paths: skip waypoints while the straight line stays clear of walls and furniture.")]
+        [SerializeField] private bool smoothPaths = true;
+
+        public float ObstaclePadding => obstaclePadding;
+        public IReadOnlyList<float> ClearanceCosts => clearanceCosts ?? Array.Empty<float>();
+        public bool SmoothPaths => smoothPaths;
     }
     #endregion
 }

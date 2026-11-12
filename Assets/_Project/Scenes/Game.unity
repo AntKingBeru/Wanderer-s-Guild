@@ -1328,6 +1328,7 @@ GameObject:
   - component: {fileID: 1054836482}
   - component: {fileID: 1054836483}
   - component: {fileID: 1054836484}
+  - component: {fileID: 1054836485}
   m_Layer: 0
   m_Name: AdventuerManager
   m_TagString: Untagged
@@ -1428,6 +1429,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AdvancementManager
   persistAcrossScenes: 0
+--- !u!114 &1054836485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1054836477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70a00f772fa1551459483f6ccea65f29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.NavGridGizmos
+  grid: {fileID: 637456967}
+  showOpenCells: 1
+  openColor: {r: 0.3, g: 1, b: 0.4, a: 0.3}
+  nearColor: {r: 1, g: 0.8, b: 0.2, a: 0.5}
+  blockedColor: {r: 1, g: 0.25, b: 0.2, a: 0.7}
 --- !u!1 &1116493039
 GameObject:
   m_ObjectHideFlags: 0

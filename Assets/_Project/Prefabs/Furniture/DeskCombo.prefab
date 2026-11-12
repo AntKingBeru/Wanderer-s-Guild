@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5171184359357477261}
+  - component: {fileID: 4773230556264911926}
   m_Layer: 0
   m_Name: DeskCombo
   m_TagString: Untagged
@@ -35,6 +36,20 @@ Transform:
   - {fileID: 2111196783370356509}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4773230556264911926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9571335793950301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e641cc9943c1f469f8bd1be9ad9711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.NavObstacle
+  center: {x: 0, y: 0, z: 0.28125}
+  size: {x: 2.8750002, y: 1.6875}
 --- !u!1001 &2430420358724881588
 PrefabInstance:
   m_ObjectHideFlags: 0

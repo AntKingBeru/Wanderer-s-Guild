@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8528525781887287013}
+  - component: {fileID: 3015983643186251969}
   m_Layer: 0
   m_Name: Bookshelf
   m_TagString: Untagged
@@ -44,6 +45,20 @@ Transform:
   - {fileID: 4165403798257388405}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3015983643186251969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8844561648007575438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e641cc9943c1f469f8bd1be9ad9711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.NavObstacle
+  center: {x: 0, y: 0, z: -0.0625}
+  size: {x: 2, y: 0.625}
 --- !u!1001 &704882526480353715
 PrefabInstance:
   m_ObjectHideFlags: 0

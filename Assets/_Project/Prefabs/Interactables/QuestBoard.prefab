@@ -190,6 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 396859761862395520}
   - component: {fileID: 1486569278744406548}
+  - component: {fileID: 8950638142664553298}
   m_Layer: 0
   m_Name: QuestBoard
   m_TagString: Untagged
@@ -229,6 +230,20 @@ MonoBehaviour:
   displayName: Quest Board
   opens: 8
   labelHeight: 0.1
+--- !u!114 &8950638142664553298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213234087394675623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e641cc9943c1f469f8bd1be9ad9711, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.NavObstacle
+  center: {x: 0, y: -2, z: -0.031249993}
+  size: {x: 2.625, y: 0.18749999}
 --- !u!1 &1884649910696829135
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,7 +6,8 @@ namespace WanderersGuild
 {
     public interface IProcessionHost
     {
-        GuildNavGrid Nav { get; }
+        // The avatars' navigation (free cells, the room grid).
+        GuildNavigator Navigator { get; }
 
         // The entrance cell (false if the guild has none).
         bool TryGetEntrance(out Vector2Int cell);

@@ -1,5 +1,6 @@
 // Quest parties leaving together: members gather beside the entrance, stand together a moment, then walk out one after
 // another a short gap apart. Solo departures (and layouts with no entrance) use the normal walk-out.
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -141,14 +142,15 @@ namespace WanderersGuild
         }
 
         // NOTE: Breadth-first from the entrance through real steps (Neighbors respects walls and doors), inside the
-        // entrance's room only, skipping the entrance cell itself — nearest first.
+        // entrance's room only, skipping the entrance cell and furniture — nearest first.
         private void FindGatherCells(Vector2Int entrance, int count)
         {
             _cells.Clear();
             _visited.Clear();
             _frontier.Clear();
 
-            var nav = _host.Nav;
+            var navigator = _host.Navigator;
+            var nav = navigator.Grid;
             var room = nav.RoomOf(entrance);
             _frontier.Enqueue(entrance);
             _visited.Add(entrance);
@@ -156,14 +158,13 @@ namespace WanderersGuild
             while (_frontier.Count > 0 && _cells.Count < count)
             {
                 var cell = _frontier.Dequeue();
-                if (cell != entrance)
+                if (cell != entrance && navigator.IsFree(cell))
                     _cells.Add(cell);
 
                 nav.Neighbours(cell, _neighbours);
-                foreach (var next in _neighbours)
+                foreach (var next in _neighbours.Where(next => nav.RoomOf(next) == room && _visited.Add(next)))
                 {
-                    if (nav.RoomOf(next) == room && _visited.Add(next))
-                        _frontier.Enqueue(next);
+                    _frontier.Enqueue(next);
                 }
             }
         }

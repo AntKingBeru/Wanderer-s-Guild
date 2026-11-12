@@ -17,7 +17,9 @@ namespace Editor
                 var state = avatar.IsLeaving ? "leaving" : avatar.IsWalking ? "walking" : "standing";
                 Debug.Log($"#{avatar.AdventurerId} at {avatar.Cell} — {avatar.PlannedFor}, {state}");
             }
-            Debug.Log($"[Avatars] {AvatarManager.Instance.Avatars.Count} shown; nav grid {AvatarManager.Instance.Nav.CellCount} cells.");
+            var navigator = AvatarManager.Instance.Navigator;
+            Debug.Log($"[Avatars] {AvatarManager.Instance.Avatars.Count} shown; nav grid {navigator.CellCount} cells, " +
+                      $"{navigator.Clearance.BlockedCount} blocked by furniture.");
         }
 
         [MenuItem(MenuRoot + "Log Activity Spots")]

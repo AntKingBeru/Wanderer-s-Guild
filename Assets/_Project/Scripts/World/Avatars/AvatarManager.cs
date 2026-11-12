@@ -17,10 +17,9 @@ namespace WanderersGuild
 
         private readonly Dictionary<int, AdventurerAvatar> _avatars = new();
         private readonly List<AdventurerAvatar> _snapshot = new();
-        private readonly GuildNavGrid _nav = new();
-        private readonly GridPathfinder _pathfinder = new();
         private readonly List<Vector2Int> _path = new();
         private readonly ArrivalQueue _arrivals = new();
+        private GuildNavigator _navigator;
         private PartyProcessions _processions;
         private AvatarSettings _settings;
         private Vector2Int _entrance;
@@ -29,7 +28,7 @@ namespace WanderersGuild
         private bool _warnedEntrance;
 
         public IReadOnlyDictionary<int, AdventurerAvatar> Avatars => _avatars;
-        public GuildNavGrid Nav => _nav;
+        public GuildNavigator Navigator => _navigator;
 
         private static long Now => RequestManager.NowMinutes;
         private static bool IsAtGuild(Adventurer a) =>
@@ -50,6 +49,7 @@ namespace WanderersGuild
         protected override void OnSingletonAwake()
         {
             _settings = GameConfig.Instance.Avatars;
+            _navigator = new GuildNavigator(grid);
             _processions = new PartyProcessions(this);
         }
 
@@ -77,7 +77,7 @@ namespace WanderersGuild
             GameEventsRelay.OnLodgingChanged.RemoveListener(OnLodgingChanged);
         }
 
-        // NOTE: On load everyone at the guild appears at a random cell, then plans their first activity next frame.
+        // NOTE: On load everyone at the guild appears at a random free cell, then plans their first activity next frame.
         private void Start()
         {
             RebuildNav();
@@ -112,15 +112,19 @@ namespace WanderersGuild
             Start();
         }
 
-        // ---------- Frame: processions, arrivals, the schedule ----------
+        // ---------- Frame: furniture, processions, arrivals, the schedule ----------
 
-        // NOTE: Processions and arrivals run on scaled time (pause freezes them, like walking). Then one schedule read per
-        // frame: an avatar re-plans when the schedule's activity differs from what it planned for (even mid-walk — 18:30
-        // sends a wanderer to supper), or when its leisure dwell runs out. Leavers (incl. gathering parties) are skipped.
+        // NOTE: Furniture blocks follow the obstacle registry (the entrance is re-snapped if they changed). Processions and
+        // arrivals run on scaled time (pause freezes them, like walking). Then one schedule read per frame: an avatar
+        // re-plans when the schedule's activity differs from what it planned for, or when its leisure dwell runs out.
+        // Leavers (incl. gathering parties) are skipped.
         private void Update()
         {
             if (!_isReady)
                 return;
+
+            if (_navigator.RefreshObstacles())
+                ResolveEntrance();
 
             var delta = Time.deltaTime;
             _processions.Tick(delta);
@@ -200,18 +204,22 @@ namespace WanderersGuild
             return room > 0 ? room : int.MinValue;
         }
 
-        // NOTE: Only spots whose cell is walkable (and, for a room id ≥ 0, inside that room — int.MinValue matches none)
-        // are offered; on arrival the avatar faces the spot's arrow and sits / lies at the spot's height (counters: standing).
+        // NOTE: Only spots whose cell is walkable (and, for a room id ≥ 0, inside that room — int.MinValue matches none) are
+        // offered. Spots on furniture (chairs, beds) sit on blocked cells: the path ends at the nearest free cell beside the
+        // spot (on the avatar's side), then the final step goes onto the spot; on arrival they face the spot's arrow and sit /
+        // lie at its height (counters: standing).
         private bool TryGoToSpot(AdventurerAvatar avatar, SpotKind kind, int roomId = -1)
         {
             if (!ActivitySpotRegistry.TryReserve(kind, avatar.AdventurerId, spot =>
                 {
                     var cell = CellOf(spot.Position);
-                    return _nav.IsWalkable(cell) && (roomId == -1 || _nav.RoomOf(cell) == roomId);
+                    return _navigator.IsWalkable(cell) && (roomId == -1 || _navigator.RoomOf(cell) == roomId);
                 }, out var target))
                 return false;
 
-            if (!_pathfinder.TryFind(_nav, avatar.Cell, CellOf(target.Position), _settings.MaxPathNodes, _path))
+            var start = avatar.Cell;
+            if (!_navigator.TryNearestFree(CellOf(target.Position), start, out var approach) ||
+                !_navigator.TryFindPath(start, approach, _settings.MaxPathNodes, _path))
             {
                 ActivitySpotRegistry.Release(avatar.AdventurerId);
                 return false;
@@ -228,13 +236,13 @@ namespace WanderersGuild
             return true;
         }
 
-        // NOTE: No path → just stand; the next dwell or schedule change tries again.
+        // NOTE: Free cells only. No path → just stand; the next dwell or schedule change tries again.
         private void WanderTo(AdventurerAvatar avatar)
         {
-            if (!_nav.TryRandomCell(out var target))
+            if (!_navigator.TryRandomFreeCell(out var target))
                 return;
 
-            if (_pathfinder.TryFind(_nav, avatar.Cell, target, _settings.MaxPathNodes, _path))
+            if (_navigator.TryFindPath(avatar.Cell, target, _settings.MaxPathNodes, _path))
                 avatar.Walk(_path, null, null);
             else
                 avatar.Stop();
@@ -288,6 +296,7 @@ namespace WanderersGuild
             }
         }
 
+        // NOTE: At the entrance, or a random FREE cell (never on furniture).
         private void Spawn(Adventurer adventurer, bool atEntrance)
         {
             if (_avatars.ContainsKey(adventurer.Id))
@@ -296,7 +305,7 @@ namespace WanderersGuild
             Vector2Int cell;
             if (atEntrance && _hasEntrance)
                 cell = _entrance;
-            else if (!_nav.TryRandomCell(out cell))
+            else if (!_navigator.TryRandomFreeCell(out cell))
                 return;
 
             var avatar = AvatarFactory.Create(adventurer, avatarsParent ? avatarsParent : transform,
@@ -314,7 +323,7 @@ namespace WanderersGuild
             avatar.IsLeaving = true;
             var id = avatar.AdventurerId;
 
-            if (_hasEntrance && _pathfinder.TryFind(_nav, avatar.Cell, _entrance, _settings.MaxPathNodes, _path))
+            if (_hasEntrance && _navigator.TryFindPath(avatar.Cell, _entrance, _settings.MaxPathNodes, _path))
                 avatar.Walk(_path, null, () =>
                 {
                     if (avatar.IsLeaving)
@@ -344,7 +353,7 @@ namespace WanderersGuild
 
         public bool TryWalkTo(AdventurerAvatar avatar, Vector2Int cell, System.Action onArrived)
         {
-            if (avatar == null || !_pathfinder.TryFind(_nav, avatar.Cell, cell, _settings.MaxPathNodes, _path))
+            if (avatar == null || !_navigator.TryFindPath(avatar.Cell, cell, _settings.MaxPathNodes, _path))
                 return false;
 
             avatar.Walk(_path, null, onArrived);
@@ -376,7 +385,7 @@ namespace WanderersGuild
             RebuildNav();
             foreach (var avatar in new List<AdventurerAvatar>(_avatars.Values))
             {
-                if (!_nav.IsWalkable(avatar.Cell))
+                if (!_navigator.IsWalkable(avatar.Cell))
                 {
                     if (_hasEntrance)
                         avatar.PlaceAt(_entrance);
@@ -418,17 +427,19 @@ namespace WanderersGuild
         private void RebuildNav()
         {
             if (FacilityManager.HasInstance)
-                _nav.Rebuild(FacilityManager.Instance.Rooms);
+                _navigator.Rebuild(FacilityManager.Instance.Rooms);
             ResolveEntrance();
         }
 
-        // NOTE: The entrance marker's cell (snapped to the nearest walkable one); without a marker, any walkable cell (warned once).
+        // NOTE: The entrance marker's cell, snapped to the nearest FREE cell in its room; without a marker, any free cell
+        // (warned once).
         private void ResolveEntrance()
         {
             _hasEntrance = false;
             if (GuildEntrance.Current != null && grid != null)
             {
-                _hasEntrance = _nav.TryNearest(CellOf(GuildEntrance.Current.transform.position), out _entrance);
+                var marker = CellOf(GuildEntrance.Current.transform.position);
+                _hasEntrance = _navigator.TryNearestFree(marker, marker, out _entrance);
                 return;
             }
 
@@ -437,7 +448,7 @@ namespace WanderersGuild
                 _warnedEntrance = true;
                 Debug.LogWarning("[AvatarManager] No GuildEntrance in the Guild Hall prefab — adventurers enter at a random cell.", this);
             }
-            _hasEntrance = _nav.TryRandomCell(out _entrance);
+            _hasEntrance = _navigator.TryRandomFreeCell(out _entrance);
         }
 
         private Vector2Int CellOf(Vector3 position)
