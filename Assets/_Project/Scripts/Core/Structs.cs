@@ -255,7 +255,7 @@ namespace WanderersGuild
     #endregion
     
     #region Save Slots
-    // One slot as read from disk. Header is null unless State is Ready.
+    // One slot as read from disk. Header == null unless State is Ready.
     public readonly struct SaveSlotInfo
     {
         public SaveSlotInfo(int index, SaveSlotState state, SaveSlotHeader header)
@@ -530,7 +530,7 @@ namespace WanderersGuild
         public ClassData Class => classData;
         public int Level => Mathf.Max(1, level);
         public string Name => name;
-        public bool IsValid => species is not null && classData is not null;
+        public bool IsValid => species != null && classData != null;
     }
     
     // The four adventurer stats. Sheet format "Str,Agi,Int,Vit" (whole numbers).
@@ -1078,11 +1078,11 @@ namespace WanderersGuild
         // −1 if it doesn't apply to this combination; otherwise 2 = exact, 1 = one side matched, 0 = matches anyone.
         public int Specificity(SpeciesData forSpecies, ClassData forClass)
         {
-            if (sheet is null)
+            if (sheet == null)
                 return -1;
-            if (species is not null && species != forSpecies)
+            if (species != null && species != forSpecies)
                 return -1;
-            if (classData is not null && classData != forClass)
+            if (classData != null && classData != forClass)
                 return -1;
             return (species ? 1 : 0) + (classData ? 1 : 0);
         }

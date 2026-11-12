@@ -1,5 +1,5 @@
-// Makes an avatar hoverable and clickable: name label, silhouette outline (hover or selected by a card), and a click asks
-// for its floating card.
+// Makes an avatar hoverable and clickable: name label (above the figure's head), silhouette outline (hover or selected by a
+// card), and a click asks for its floating card.
 using UnityEngine;
 
 namespace WanderersGuild
@@ -10,6 +10,7 @@ namespace WanderersGuild
         private const float LabelGap = 0.1f;
 
         private Renderer _renderer;
+        private AvatarSpriteView _view;
         private uint _originalLayers;
         private bool _isHovered;
         private bool _isSelected;
@@ -19,22 +20,15 @@ namespace WanderersGuild
 
         public string DisplayName => _name;
 
-        public Vector3 LabelAnchor
-        {
-            get
-            {
-                if (_renderer is null)
-                    return transform.position;
-                var bounds = _renderer.bounds;
-                return new Vector3(bounds.center.x, bounds.max.y + LabelGap, bounds.center.z);
-            }
-        }
+        // NOTE: The figure's head, not the quad's top — short species (dwarves) have empty headroom in their frame.
+        public Vector3 LabelAnchor => _view != null ? _view.HeadTop + Vector3.up * LabelGap : transform.position;
 
-        public void Initialize(int adventurerId, string displayName, Renderer spriteRenderer)
+        public void Initialize(int adventurerId, string displayName, Renderer spriteRenderer, AvatarSpriteView view)
         {
             _adventurerId = adventurerId;
             _name = displayName;
             _renderer = spriteRenderer;
+            _view = view;
             _originalLayers = spriteRenderer.renderingLayerMask;
         }
 
@@ -62,7 +56,7 @@ namespace WanderersGuild
                 return;
             _isOutlined = outlined;
 
-            if (_renderer is not null)
+            if (_renderer != null)
             {
                 var bit = GameConfig.Instance.Interaction.OutlineBit;
                 _renderer.renderingLayerMask = outlined ? _originalLayers | bit : _originalLayers;

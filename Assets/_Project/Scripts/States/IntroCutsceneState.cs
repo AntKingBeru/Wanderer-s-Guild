@@ -47,7 +47,8 @@ namespace WanderersGuild
             _advanceListener = null;
 
             // NOTE: May run during scene unload, after the component is already destroyed.
-            _holdToSkip?.Deactivate();
+            if (_holdToSkip != null)
+                _holdToSkip.Deactivate();
         }
 
         // NOTE: The any-key action also fires for the skip key; those presses belong to hold-to-skip, not to advancing.

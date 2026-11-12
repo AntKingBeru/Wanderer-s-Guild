@@ -23,7 +23,7 @@ namespace WanderersGuild
 
         // NOTE: Also off in build mode — clicks there place rooms, not open screens.
         private bool IsBlocked =>
-            (panels is not null && (panels.HasOpenPanel || panels.IsBusy)) ||
+            (panels != null && (panels.HasOpenPanel || panels.IsBusy)) ||
             (SceneLoader.HasInstance && SceneLoader.Instance.IsBusy) ||
             (BuildModeController.HasInstance && BuildModeController.Instance.IsActive);
 
@@ -38,7 +38,7 @@ namespace WanderersGuild
         private void Start()
         {
             _bedrooms = new BedroomPicker(grid);
-            _label = view is not null ? WorldHoverLabel.Bind(view.DocumentRoot) : null;
+            _label = view != null ? WorldHoverLabel.Bind(view.DocumentRoot) : null;
             if (_label == null)
                 Debug.LogError("[GuildInteractionController] Missing the world label in WorldView.uxml.", this);
         }
@@ -73,7 +73,7 @@ namespace WanderersGuild
         // (furniture, adventurers) win; only when the ray hits none is the bedroom under the pointer's floor cell used.
         private IWorldInteractable FindUnderPointer()
         {
-            if (_point == null || view is null || worldCamera is null)
+            if (_point == null || view == null || worldCamera == null)
                 return null;
 
             var screen = _point.ReadValue<Vector2>();
@@ -150,7 +150,7 @@ namespace WanderersGuild
 
         private static InputAction Enable(InputActionReference reference)
         {
-            var action = reference?.action;
+            var action = reference != null ? reference.action : null;
             action?.Enable();
             return action;
         }

@@ -119,7 +119,7 @@ namespace WanderersGuild
             _snapshot.AddRange(_avatars.Values);
             foreach (var avatar in _snapshot)
             {
-                if (avatar is null || avatar.IsLeaving)
+                if (avatar == null || avatar.IsLeaving)
                     continue;
 
                 var adventurer = AdventurerManager.HasInstance ? AdventurerManager.Instance.Find(avatar.AdventurerId) : null;
@@ -135,7 +135,7 @@ namespace WanderersGuild
         private AvatarActivity DesiredNow(long now)
         {
             var minuteOfDay = (int)(now % GameCalendar.MinutesPerDay);
-            var hasTavern = TavernManager.HasInstance && TavernManager.Instance.Best.effect is not null;
+            var hasTavern = TavernManager.HasInstance && TavernManager.Instance.Best.effect != null;
             var hasArmory = ArmoryManager.HasInstance && ArmoryManager.Instance.StockTier > 0;
             return AvatarSchedule.Desired(minuteOfDay, _settings, hasTavern, hasArmory,
                                           GameConfig.Instance.Tavern.SupperHour, GameConfig.Instance.Equipment.ShoppingHour);
@@ -171,7 +171,7 @@ namespace WanderersGuild
         }
 
         // NOTE: Only spots whose cell is walkable (and, for a room id ≥ 0, inside that room — int.MinValue matches none)
-        // are offered; on arrival the avatar stands on the marker, facing its arrow.
+        // are offered; on arrival the avatar faces the spot's arrow and sits / lies at the spot's height (counters: standing).
         private bool TryGoToSpot(AdventurerAvatar avatar, SpotKind kind, int roomId = -1)
         {
             if (!ActivitySpotRegistry.TryReserve(kind, avatar.AdventurerId, spot =>
@@ -188,11 +188,12 @@ namespace WanderersGuild
             }
 
             var facing = target.Facing;
+            var surface = target.Position.y;
             var pose = PoseFor(kind);
             avatar.Walk(_path, target.Position, () =>
             {
                 avatar.FaceTowards(facing);
-                avatar.SetPose(pose);
+                avatar.SetPose(pose, surface);
             });
             return true;
         }
@@ -293,7 +294,7 @@ namespace WanderersGuild
             if (!_avatars.Remove(adventurerId, out var avatar))
                 return;
 
-            if (avatar is not null)
+            if (avatar != null)
                 Destroy(avatar.gameObject);
         }
 
@@ -359,7 +360,7 @@ namespace WanderersGuild
         private void ResolveEntrance()
         {
             _hasEntrance = false;
-            if (GuildEntrance.Current is not null && grid is not null)
+            if (GuildEntrance.Current != null && grid != null)
             {
                 _hasEntrance = _nav.TryNearest(CellOf(GuildEntrance.Current.transform.position), out _entrance);
                 return;

@@ -39,7 +39,7 @@ namespace WanderersGuild
         public void Resize(Vector2Int size)
         {
             size = new Vector2Int(Mathf.Max(MinSize, size.x), Mathf.Max(MinSize, size.y));
-            if (Texture is not null && Texture.width == size.x && Texture.height == size.y)
+            if (Texture != null && Texture.width == size.x && Texture.height == size.y)
                 return;
 
             var old = Texture;
@@ -54,7 +54,7 @@ namespace WanderersGuild
         // NOTE: Detach first, so the camera never renders into a released texture.
         private void OnDestroy()
         {
-            if (_camera is not null && _camera.targetTexture == Texture)
+            if (_camera != null && _camera.targetTexture == Texture)
                 _camera.targetTexture = null;
 
             Release(Texture);
@@ -76,7 +76,7 @@ namespace WanderersGuild
 
         private static void Release(RenderTexture texture)
         {
-            if (texture is null)
+            if (texture == null)
                 return;
             texture.Release();
             Destroy(texture);

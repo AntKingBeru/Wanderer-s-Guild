@@ -15,7 +15,7 @@ namespace WanderersGuild
 
         public override async Awaitable ExecuteAsync(CancellationToken token)
         {
-            if (view is null || !view.IsBound)
+            if (view == null || !view.IsBound)
             {
                 Debug.LogWarning("[SplashSequenceStep] No bound SplashView; skipping splash.", this);
                 return;

@@ -26,7 +26,8 @@ namespace Editor
         
         private void OnEnable()
         {
-            configPrefab ??= FindConfigPrefab();
+            if (configPrefab == null)
+                configPrefab = FindConfigPrefab();
 
             EditorApplication.update += OnEditorUpdate;
             EditorApplication.hierarchyChanged += MarkLayersDirty;
@@ -59,7 +60,7 @@ namespace Editor
                 return;
             }
 
-            if (configPrefab is null)
+            if (configPrefab == null)
             {
                 EditorGUILayout.HelpBox("Assign the GameConfig prefab to read the parallax settings.", MessageType.Warning);
                 return;
@@ -111,7 +112,7 @@ namespace Editor
             if (!_previewing)
                 return;
 
-            if (EditorApplication.isPlayingOrWillChangePlaymode || configPrefab is null)
+            if (EditorApplication.isPlayingOrWillChangePlaymode || configPrefab == null)
             {
                 StopPreview();
                 return;
@@ -129,7 +130,7 @@ namespace Editor
             var settings = configPrefab.Parallax;
             foreach (var pair in _records)
             {
-                if (pair.Key is null)
+                if (pair.Key == null)
                     continue;
                 var offset = ParallaxLayer.CalculateOffset(_pointer, pair.Key.Depth, settings);
                 pair.Value.Apply(pair.Key.transform, offset);
@@ -147,7 +148,7 @@ namespace Editor
             }
 
             // Prune layers that were deleted or whose scene closed.
-            var destroyed = _records.Keys.Where(layer => layer is null).ToList();
+            var destroyed = _records.Keys.Where(layer => layer == null).ToList();
             foreach (var layer in destroyed) _records.Remove(layer);
 
             _layersDirty = false;
@@ -155,7 +156,7 @@ namespace Editor
 
         private void RestoreAll()
         {
-            foreach (var pair in _records.Where(pair => pair.Key is not null))
+            foreach (var pair in _records.Where(pair => pair.Key != null))
             {
                 pair.Value.Restore(pair.Key.transform);
             }
@@ -192,7 +193,7 @@ namespace Editor
             foreach (var guid in AssetDatabase.FindAssets("GameConfig t:Prefab"))
             {
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid));
-                if (prefab is not null && prefab.TryGetComponent(out GameConfig config))
+                if (prefab != null && prefab.TryGetComponent(out GameConfig config))
                     return config;
             }
             return null;

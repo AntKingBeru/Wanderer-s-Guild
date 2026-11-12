@@ -20,7 +20,7 @@ namespace WanderersGuild
         // NOTE: Start runs after every panel's OnEnable has bound its UXML.
         private void Start()
         {
-            if (presenter is null || menuAnimator is null)
+            if (presenter == null || menuAnimator == null)
                 Debug.LogError("[MenuPanelHost] Missing presenter or menu animator.", this);
 
             foreach (var panel in panels.Where(panel => panel))
@@ -37,7 +37,7 @@ namespace WanderersGuild
                 return;
 
             var panel = Find(id);
-            if (panel is null)
+            if (panel == null)
             {
                 Debug.LogWarning($"[MenuPanelHost] No bound panel registered for {id}.", this);
                 return;
@@ -48,7 +48,7 @@ namespace WanderersGuild
 
         public void Close(MenuPanelId id)
         {
-            if (_isBusy || _active is null || _active.Id != id)
+            if (_isBusy || _active == null || _active.Id != id)
                 return;
             RunClose(_active);
         }
@@ -107,7 +107,7 @@ namespace WanderersGuild
 
         private MenuPanel Find(MenuPanelId id)
         {
-            return panels.FirstOrDefault(panel => panel is not null && panel.IsBound && panel.Id == id);
+            return panels.FirstOrDefault(panel => panel != null && panel.IsBound && panel.Id == id);
         }
     }
 }

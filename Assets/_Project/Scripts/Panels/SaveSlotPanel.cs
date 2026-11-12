@@ -100,7 +100,7 @@ namespace WanderersGuild
             _selected = -1;
             _list.scrollOffset = Vector2.zero;
 
-            if (Slots is not null)
+            if (Slots != null)
                 Slots.Refresh(); // Raises OnSaveSlotsChanged → RefreshRows.
             else
                 RefreshRows();
@@ -168,7 +168,7 @@ namespace WanderersGuild
         private bool TryGetSelected(out SaveSlotInfo info)
         {
             info = default;
-            if (Slots is null || _selected < 0)
+            if (Slots == null || _selected < 0)
                 return false;
 
             info = Slots.GetSlot(_selected);
@@ -177,7 +177,7 @@ namespace WanderersGuild
 
         private void OnRowChosen(int index)
         {
-            if (!IsPanelActive || Slots is null)
+            if (!IsPanelActive || Slots == null)
                 return;
 
             var info = Slots.GetSlot(index);
@@ -229,7 +229,7 @@ namespace WanderersGuild
             var deleted = false;
 
             _confirm.Show(message,
-                          onConfirm: () => deleted = Slots is not null && Slots.Delete(index),
+                          onConfirm: () => deleted = Slots != null && Slots.Delete(index),
                           onClosed: () =>
                           {
                               if (!deleted)
@@ -263,7 +263,7 @@ namespace WanderersGuild
         // row; Back as a last resort.
         private Focusable PreferredFocus()
         {
-            if (IsLoadMode && Slots is not null)
+            if (IsLoadMode && Slots != null)
             {
                 if (Slots.TryGetMostRecent(out var recent) && recent < _rows.Count && _rows[recent].Button.enabledInHierarchy)
                     return _rows[recent].Button;

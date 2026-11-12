@@ -1,4 +1,5 @@
-// One adventurer in the world: walks a cell path (optionally ending on an exact point), faces a way, knows its plan.
+// One adventurer in the world: walks a cell path at floor level (optionally ending on an exact point), faces a way, and sits or
+// lies at a spot's height.
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,7 +35,7 @@ namespace WanderersGuild
             _floorHeight = floorHeight;
         }
 
-        // The grid cell under the avatar.
+        // The grid cell under the avatar (X/Z only — sitting or lying higher up doesn't change it).
         public Vector2Int Cell
         {
             get
@@ -50,9 +51,12 @@ namespace WanderersGuild
             transform.position = CellCentre(cell);
         }
 
-        // Walks the cells' centres in order, then (if given) the exact final point.
+        // Walks the cells' centres in order, then (if given) the exact final point — always at floor level.
+        // NOTE: Gets up first (back to the floor, standing); the arrival callback may sit or lay them down again.
         public void Walk(IReadOnlyList<Vector2Int> cells, Vector3? finalPoint, Action onArrived)
         {
+            StandUp();
+
             _points.Clear();
             foreach (var cell in cells) _points.Add(CellCentre(cell));
             if (finalPoint.HasValue)
@@ -67,18 +71,26 @@ namespace WanderersGuild
                 Arrive();
         }
 
+        // NOTE: Stops and stands on the floor (teleports via PlaceAt, canceled plans).
         public void Stop()
         {
             _points.Clear();
             _pointIndex = 0;
             _onArrived = null;
             _view.SetMotion(Vector3.zero);
+            StandUp();
         }
 
         public void FaceTowards(Vector3 direction) => _view.FaceTowards(direction);
-        
-        // Stand / sit / sleep (arriving at a spot sets it; walking always stands).
-        public void SetPose(AvatarPose pose) => _view.SetPose(pose);
+
+        // Stand / sit / sleep. Sitting and sleeping move the avatar to the surface height (the spot's Y: seat or mattress);
+        // standing puts it back on the floor.
+        public void SetPose(AvatarPose pose, float surfaceHeight)
+        {
+            var p = transform.position;
+            transform.position = new Vector3(p.x, pose == AvatarPose.Stand ? _floorHeight : surfaceHeight, p.z);
+            _view.SetPose(pose);
+        }
 
         // NOTE: Scaled deltaTime — pausing the game stops them; Fast / Very Fast speed them up.
         private void Update()
@@ -109,6 +121,8 @@ namespace WanderersGuild
             if (!IsWalking)
                 Arrive();
         }
+
+        private void StandUp() => SetPose(AvatarPose.Stand, _floorHeight);
 
         private void Arrive()
         {

@@ -16,7 +16,7 @@ namespace WanderersGuild
             Dictionary<string, ClassData> map = new();
             foreach (var classData in classes)
             {
-                if (classData is null)
+                if (classData == null)
                     continue;
                 foreach (var upgrade in classData.AdvancesToIds)
                 {

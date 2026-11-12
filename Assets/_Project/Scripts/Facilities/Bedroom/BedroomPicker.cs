@@ -14,7 +14,7 @@ namespace WanderersGuild
         // NOTE: Cached per room id, so the same room is the same target every frame (no hover flicker).
         public BedroomTarget Find(Camera camera, WorldViewPresenter view, Vector2 screen)
         {
-            if (_grid is null || !FacilityManager.HasInstance)
+            if (_grid == null || !FacilityManager.HasInstance)
                 return null;
 
             var floor = GameConfig.Instance.BuildMode.FloorHeight;

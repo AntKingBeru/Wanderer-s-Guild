@@ -41,7 +41,7 @@ namespace WanderersGuild
         private void OnAnyKey(InputAction.CallbackContext context)
         {
             var characterClicks = _director.CharacterClicks;
-            if (characterClicks is not null && characterClicks.TryHandleClick(context))
+            if (characterClicks != null && characterClicks.TryHandleClick(context))
                 return;
 
             _director.EnterPanState();

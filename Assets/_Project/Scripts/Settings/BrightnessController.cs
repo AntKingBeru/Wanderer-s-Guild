@@ -30,7 +30,7 @@ namespace WanderersGuild
 
         protected override void OnDestroy()
         {
-            if (_profile is not null)
+            if (_profile != null)
                 Destroy(_profile);
 
             base.OnDestroy();

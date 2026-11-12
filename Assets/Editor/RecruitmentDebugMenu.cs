@@ -14,7 +14,7 @@ namespace Editor
         private static void OpenRecruits()
         {
             var host = Object.FindAnyObjectByType<GamePanelHost>();
-            if (host is null || host.IsBusy || host.HasOpenPanel)
+            if (host == null || host.IsBusy || host.HasOpenPanel)
             {
                 Debug.LogWarning("[Recruitment] No idle GamePanelHost in the scene (close any open panel first).");
                 return;

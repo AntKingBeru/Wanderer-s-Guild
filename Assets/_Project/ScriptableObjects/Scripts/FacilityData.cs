@@ -69,7 +69,7 @@ namespace WanderersGuild
         {
             for (var i = Mathf.Clamp(level, 1, MaxLevel) - 1; i >= 0; i--)
             {
-                if (levelPrefabs != null && i < levelPrefabs.Length && levelPrefabs[i] is not null)
+                if (levelPrefabs != null && i < levelPrefabs.Length && levelPrefabs[i] != null)
                     return levelPrefabs[i];
             }
             return null;
@@ -89,7 +89,7 @@ namespace WanderersGuild
                 _connectors = new ConnectorSpec[markers.Length];
                 for (var i = 0; i < markers.Length; i++)
                 {
-                    if (prefab is null)
+                    if (prefab == null)
                         continue;
                     var local = prefab.transform.InverseTransformPoint(markers[i].transform.position);
                     _connectors[i] = new ConnectorSpec(FacilityConnector.StartCell(local, markers[i].Facing, Size), markers[i].Facing);

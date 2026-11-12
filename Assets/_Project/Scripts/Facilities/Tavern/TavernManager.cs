@@ -25,7 +25,7 @@ namespace WanderersGuild
                 foreach (var room in FacilityManager.Instance.Rooms)
                 {
                     var effect = room.Data.Effect<TavernEffect>();
-                    if (effect is null || room.Level <= bestLevel)
+                    if (effect == null || room.Level <= bestLevel)
                         continue;
 
                     best = effect;
@@ -66,7 +66,7 @@ namespace WanderersGuild
                 var before = adventurer.WellFedBonus;
                 adventurer.SetWellFed(0f);
 
-                if (tavern is not null)
+                if (tavern != null)
                 {
                     if (adventurer.TrySpendWealth(price))
                     {
@@ -84,7 +84,7 @@ namespace WanderersGuild
                     GameEventsRelay.OnAdventurerChanged.Invoke(adventurer);
             }
 
-            if (tavern is null)
+            if (tavern == null)
                 return;
 
             if (gold > 0 && GuildManager.HasInstance)

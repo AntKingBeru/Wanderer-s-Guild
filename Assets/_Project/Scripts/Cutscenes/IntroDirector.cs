@@ -17,13 +17,13 @@ namespace WanderersGuild
 
         private void Start()
         {
-            if (cutsceneView is null || !cutsceneView.IsBound || holdToSkip is null || namingView is null || !namingView.IsBound)
+            if (cutsceneView == null || !cutsceneView.IsBound || holdToSkip == null || namingView == null || !namingView.IsBound)
             {
                 Debug.LogError("[IntroDirector] Missing or unbound cutscene view, hold-to-skip or naming view.", this);
                 return;
             }
 
-            if (cutscene is null)
+            if (cutscene == null)
                 Debug.LogWarning("[IntroDirector] No CutsceneData assigned; the cutscene will end at once.", this);
 
             if (!GameSession.HasActiveSlot)

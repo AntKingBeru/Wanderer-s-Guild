@@ -1,10 +1,11 @@
-// An avatar's look: an upright billboard (yaw only) showing the walk row for its facing; sitting = the idle frame with the legs
-// cropped, lowered onto the seat; sleeping = the idle frame laid flat on the bed (head toward the spot's arrow).
+// An avatar's look: an upright billboard (yaw only) showing the walk row for its facing; sitting = the idle frame with the
+// figure's legs cropped, resting on the seat; sleeping = the idle frame laid flat, the figure centred on the bed.
 using UnityEngine;
 
 namespace WanderersGuild
 {
-    // NOTE: After the camera rig (order 120), so the billboard uses this frame's final camera yaw.
+    // NOTE: After the camera rig (order 120), so the billboard uses this frame's final camera yaw. The avatar root is already at
+    // the spot's height while sitting / sleeping (AdventurerAvatar.SetPose) — this view only adds the small pose offsets.
     [DefaultExecutionOrder(120)]
     [RequireComponent(typeof(MeshRenderer))]
     public class AvatarSpriteView : MonoBehaviour
@@ -24,10 +25,36 @@ namespace WanderersGuild
         private float _walkTime;
         private float _width;
         private float _height;
-        private float _crop;
         private int _columns;
 
-        // Sets the sheet and camera; sizes the quad to the frame aspect (bottom-centred on the root).
+        // NOTE: Everything below is in sheet pixels, measured per sheet — this is what makes short and tall species fit.
+        private int _frameHeight;
+        private float _pixel;        // world units per sheet pixel (standing)
+        private int _figureTop;      // empty pixels above the head
+        private int _figureBottom;   // empty pixels under the feet
+        private int _figureHeight;   // the figure itself
+        private float _sitCrop;      // share of the frame hidden when sitting (feet gap + legs)
+        private float _sleepScale;   // this sheet's lying scale (bed-length clamp applied)
+
+        // World point at the top of the figure's head — the label / card anchor (short species have empty headroom).
+        public Vector3 HeadTop
+        {
+            get
+            {
+                if (_settings == null || _root == null)
+                    return transform.position;
+
+                var root = _root.position;
+                return _pose switch
+                {
+                    AvatarPose.Sleep => root + Vector3.up * _settings.SleepOffset,
+                    AvatarPose.Sit => root + Vector3.up * (_settings.SitOffset + (_frameHeight * (1f - _sitCrop) - _figureTop) * _pixel),
+                    _ => root + Vector3.up * ((_frameHeight - _figureTop) * _pixel)
+                };
+            }
+        }
+
+        // Sets the sheet and camera; sizes the quad to the frame aspect (bottom-centred on the root); works out the pose sizes.
         public void Initialize(AdventurerSpriteSheet sheet, Camera worldCamera, Transform root, AvatarSettings settings)
         {
             _renderer = GetComponent<MeshRenderer>();
@@ -39,27 +66,45 @@ namespace WanderersGuild
 
             var frame = settings.FrameSize;
             _columns = sheet.ColumnsFor(frame);
-
+            _frameHeight = frame.y;
             _height = settings.WorldHeight;
             _width = _height * frame.x / frame.y;
+            _pixel = _height / frame.y;
 
-            // NOTE: Whole sheet pixels only — a fractional crop would leave a flickering sliver of legs.
-            _crop = Mathf.Round(settings.SitCrop * frame.y) / frame.y;
+            // NOTE: Clamped so a bad measurement can never leave less than a 1-pixel figure.
+            _figureTop = Mathf.Clamp(sheet.FigureTop, 0, frame.y - 1);
+            _figureBottom = Mathf.Clamp(sheet.FigureBottom, 0, frame.y - 1 - _figureTop);
+            _figureHeight = frame.y - _figureTop - _figureBottom;
 
-            _block.SetTexture(BaseMapId, sheet.Texture ?? Texture2D.whiteTexture);
+            // NOTE: Legs = a share of the FIGURE, in whole sheet pixels (no flickering sliver at the crop line).
+            var cropPixels = _figureBottom + Mathf.RoundToInt(settings.SitLegShare * _figureHeight);
+            _sitCrop = Mathf.Clamp(cropPixels, 0, frame.y - 1) / (float)frame.y;
+
+            // NOTE: Tall species shrink to fit the bed; shorter ones keep the base scale.
+            _sleepScale = settings.SleepScale;
+            var lyingLength = _figureHeight * _pixel * _sleepScale;
+            if (settings.MaxSleepLength > 0f && lyingLength > settings.MaxSleepLength)
+                _sleepScale *= settings.MaxSleepLength / lyingLength;
+
+            _block.SetTexture(BaseMapId, sheet.Texture != null ? sheet.Texture : Texture2D.whiteTexture);
             _pose = AvatarPose.Stand;
             ApplyPoseTransform();
             ApplyFrame(AvatarFacing.Down, 0, 0f);
         }
 
-        // World-space walking direction (zero = standing, keeping the last look direction).
+        // World-space walking direction (zero = standing still, keeping the last look direction).
+        // NOTE: Moving always means standing — whoever started the walk, a sprite never slides along seated or lying.
         public void SetMotion(Vector3 direction)
         {
             _isMoving = direction.sqrMagnitude > 0.0001f;
-            if (_isMoving)
-                _lookDirection = direction;
-            else
+            if (!_isMoving)
+            {
                 _walkTime = 0f;
+                return;
+            }
+
+            _lookDirection = direction;
+            SetPose(AvatarPose.Stand);
         }
 
         // Stands still looking this way (world space) — e.g. a spot's arrow (for a bed: toward the pillow).
@@ -81,11 +126,11 @@ namespace WanderersGuild
             ApplyPoseTransform();
         }
 
-        // NOTE: Yaw first (the root), then the pose: a sleeper's world rotation is re-set after the root turns, so it stays
+        // NOTE: Yaw first (the root), then the pose: a sleeper's world placement is re-set after the root turns, so it stays
         // still on the bed while the camera orbits.
         private void LateUpdate()
         {
-            if (_camera is null || _sheet is null)
+            if (_camera == null || _sheet == null)
                 return;
 
             var yaw = _camera.transform.eulerAngles.y;
@@ -94,11 +139,11 @@ namespace WanderersGuild
             switch (_pose)
             {
                 case AvatarPose.Sleep:
-                    transform.rotation = LyingRotation();
+                    PlaceLying();
                     ApplyFrame(AvatarFacing.Down, 0, 0f);
                     return;
                 case AvatarPose.Sit:
-                    ApplyFrame(FacingFor(_lookDirection, yaw), 0, _crop);
+                    ApplyFrame(FacingFor(_lookDirection, yaw), 0, _sitCrop);
                     return;
             }
 
@@ -107,42 +152,45 @@ namespace WanderersGuild
             ApplyFrame(FacingFor(_lookDirection, yaw), CurrentFrame(), 0f);
         }
 
-        // NOTE: Face up (normal along world Y — both faces render), sprite "up" (the head) along the bed's arrow.
-        private Quaternion LyingRotation()
-        {
-            Vector3 head = new(_lookDirection.x, 0f, _lookDirection.z);
-            if (head.sqrMagnitude < 0.0001f)
-                head = _root.forward;
-            return Quaternion.LookRotation(Vector3.down, head.normalized);
-        }
-
-        // NOTE: Stand: full quad, bottom on the floor. Sit: shorter by the crop, bottom at the seat. Sleep: scaled, centred on the
-        // bed at mattress height (rotation set each frame in LateUpdate).
+        // NOTE: Stand: full quad, feet on the root (floor). Sit: shorter by the crop, bottom at the root (the seat) + offset.
+        // Sleep: scaled, placed by PlaceLying (now, then every frame).
         private void ApplyPoseTransform()
         {
             switch (_pose)
             {
                 case AvatarPose.Sit:
                 {
-                    float visible = _height * (1f - _crop);
+                    var visible = _height * (1f - _sitCrop);
                     transform.localRotation = Quaternion.identity;
                     transform.localScale = new Vector3(_width, visible, 1f);
-                    transform.localPosition = new Vector3(0f, _settings.SitLift + visible * 0.5f, 0f);
+                    transform.localPosition = new Vector3(0f, _settings.SitOffset + visible * 0.5f, 0f);
                     break;
                 }
                 case AvatarPose.Sleep:
-                {
-                    var scale = _settings.SleepScale;
-                    transform.localScale = new Vector3(_width * scale, _height * scale, 1f);
-                    transform.localPosition = new Vector3(0f, _settings.SleepLift, 0f);
+                    transform.localScale = new Vector3(_width * _sleepScale, _height * _sleepScale, 1f);
+                    PlaceLying();
                     break;
-                }
                 default:
                     transform.localRotation = Quaternion.identity;
                     transform.localScale = new Vector3(_width, _height, 1f);
                     transform.localPosition = new Vector3(0f, _height * 0.5f, 0f);
                     break;
             }
+        }
+
+        // NOTE: Face up, the head along the bed's arrow, just above the root (the mattress). The quad is slid along that axis so
+        // the FIGURE's center (not the frame's, which includes the headroom) sits on the spot.
+        private void PlaceLying()
+        {
+            Vector3 head = new(_lookDirection.x, 0f, _lookDirection.z);
+            if (head.sqrMagnitude < 0.0001f)
+                head = _root.forward;
+            head.Normalize();
+
+            var figureCentre = _figureBottom + _figureHeight * 0.5f; // sheet px above the frame's bottom
+            var shift = (_frameHeight * 0.5f - figureCentre) * _pixel * _sleepScale;
+            transform.SetPositionAndRotation(_root.position + Vector3.up * _settings.SleepOffset + head * shift,
+                                             Quaternion.LookRotation(Vector3.down, head));
         }
 
         // NOTE: The direction is turned into camera space: toward the camera = Down, away = Up.
@@ -167,7 +215,7 @@ namespace WanderersGuild
         }
 
         // NOTE: UV scale/offset for one frame (texture rows bottom-up, sheet rows top-down); cropBottom hides that share of the
-        // frame from its bottom (the legs) — the quad is shortened by the same share, so pixels keep their size.
+        // frame from its bottom — the quad is shortened by the same share, so pixels keep their size.
         private void ApplyFrame(AvatarFacing facing, int column, float cropBottom)
         {
             float cols = _columns;

@@ -139,7 +139,7 @@ namespace Editor
         private static bool TryGetStore(out SaveSlotStore store, out SaveSlotSettings settings)
         {
             var config = GameConfig.HasInstance ? GameConfig.Instance : FindConfigPrefab();
-            if (config is null)
+            if (config == null)
             {
                 Debug.LogError("[SaveSlotDebugMenu] No GameConfig prefab found.");
                 store = null;
@@ -163,7 +163,7 @@ namespace Editor
             foreach (var guid in AssetDatabase.FindAssets("GameConfig t:Prefab"))
             {
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid));
-                if (prefab is not null && prefab.TryGetComponent(out GameConfig config))
+                if (prefab != null && prefab.TryGetComponent(out GameConfig config))
                     return config;
             }
             return null;

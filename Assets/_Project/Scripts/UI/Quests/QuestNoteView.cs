@@ -96,9 +96,9 @@ namespace WanderersGuild
             var sprite = icons?.IconFor(category);
 
             _icon.style.backgroundImage = sprite ? new StyleBackground(sprite) : new StyleBackground(StyleKeyword.None);
-            _icon.EnableInClassList(PlaceholderClass, sprite is null);
+            _icon.EnableInClassList(PlaceholderClass, sprite == null);
             _iconFallback.Text = QuestFormatter.CategoryShort(category);
-            _iconFallback.style.display = sprite is null ? DisplayStyle.Flex : DisplayStyle.None;
+            _iconFallback.style.display = sprite == null ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
         // NOTE: Empty and locked slots are disabled, so keyboard navigation skips them and clicks do nothing.

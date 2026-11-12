@@ -19,7 +19,7 @@ namespace Editor
         private static void FrameStartView()
         {
             var rig = Object.FindAnyObjectByType<GuildCameraRig>();
-            if (rig is null)
+            if (rig == null)
             {
                 Debug.LogWarning("[Preview] No GuildCameraRig in the open scenes.");
                 return;
@@ -69,7 +69,7 @@ namespace Editor
             renderHeight = 180;
 
             var config = Object.FindAnyObjectByType<GameConfig>() ?? FindInPrefabs();
-            if (config is not null)
+            if (config != null)
                 return Read(config, out camera, out renderHeight);
 
             if (EditorBuildSettings.scenes.Length == 0)
@@ -82,7 +82,7 @@ namespace Editor
                 foreach (var root in bootstrap.GetRootGameObjects())
                 {
                     config = root.GetComponentInChildren<GameConfig>(true);
-                    if (config is not null)
+                    if (config != null)
                         return Read(config, out camera, out renderHeight);
                 }
                 return false;

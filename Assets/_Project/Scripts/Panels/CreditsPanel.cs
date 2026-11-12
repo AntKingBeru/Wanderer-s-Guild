@@ -55,7 +55,7 @@ namespace WanderersGuild
         {
             _scroll.Clear();
 
-            if (data is null || data.Sections.Count == 0)
+            if (data == null || data.Sections.Count == 0)
             {
                 AddLine("Credits coming soon.", NameClass);
                 return;

@@ -30,7 +30,7 @@ namespace WanderersGuild
             _button.focusable = false;
             _button.RemoveFromClassList(Button.ussClassName);
 
-            var sprite = art?.Pause;
+            var sprite = art != null ? art.Pause : null;
             icon.style.backgroundImage = new StyleBackground(
                 sprite ? Background.FromSprite(sprite) : Background.FromTexture2D(PlaceholderIcons.Pause));
 
@@ -45,7 +45,8 @@ namespace WanderersGuild
 
         private void OnClicked()
         {
-            pauseMenu?.TryOpen();
+            if (pauseMenu != null)
+                pauseMenu.TryOpen();
         }
     }
 }

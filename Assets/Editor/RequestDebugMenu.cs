@@ -14,7 +14,7 @@ namespace Editor
         private static void OpenBoard()
         {
             var host = Object.FindAnyObjectByType<GamePanelHost>();
-            if (host is null || host.IsBusy || host.HasOpenPanel)
+            if (host == null || host.IsBusy || host.HasOpenPanel)
             {
                 Debug.LogWarning("[Requests] No idle GamePanelHost in the scene (close any open panel first).");
                 return;

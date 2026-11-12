@@ -28,7 +28,7 @@ namespace WanderersGuild
         // loading). True if it opened. (Build mode closes itself when the menu opens.)
         public bool TryOpen()
         {
-            if (host is null || host.IsBusy || host.HasOpenPanel)
+            if (host == null || host.IsBusy || host.HasOpenPanel)
                 return false;
             if (!TimeManager.HasInstance || !TimeManager.Instance.IsRunning)
                 return false;

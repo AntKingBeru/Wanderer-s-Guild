@@ -60,7 +60,7 @@ namespace WanderersGuild
             var bit = GameConfig.Instance.Interaction.OutlineBit;
             for (var i = 0; i < _renderers.Length; i++)
             {
-                if (_renderers[i] is not null)
+                if (_renderers[i] != null)
                     _renderers[i].renderingLayerMask = highlighted ? _originalLayers[i] | bit : _originalLayers[i];
             }
 
@@ -72,7 +72,8 @@ namespace WanderersGuild
 
         public void Interact(GamePanelHost panels)
         {
-            panels?.Open(opens);
+            if (panels != null)
+                panels.Open(opens);
         }
 
         // NOTE: Never leave a model outlined, or the outline passes running, after it's disabled or destroyed.
@@ -84,7 +85,7 @@ namespace WanderersGuild
             var first = true;
             foreach (var target in _renderers)
             {
-                if (target is null)
+                if (target == null)
                     continue;
                 if (first)
                 {

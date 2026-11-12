@@ -9,7 +9,7 @@ namespace WanderersGuild
     {
         private readonly Dictionary<EquipmentData, int> _units = new();
 
-        public int Units(EquipmentData item) => item is not null && _units.TryGetValue(item, out var units) ? units : 0;
+        public int Units(EquipmentData item) => item != null && _units.TryGetValue(item, out var units) ? units : 0;
 
         // Units needed to reach the item's STOCK (0 if full).
         public int Missing(EquipmentData item) => Mathf.Max(0, item.MaxStock - Units(item));
@@ -28,7 +28,7 @@ namespace WanderersGuild
         // Adds units, never past the item's STOCK.
         public void Add(EquipmentData item, int units)
         {
-            if (item is null || units <= 0)
+            if (item == null || units <= 0)
                 return;
             _units[item] = Mathf.Min(item.MaxStock, Units(item) + units);
         }

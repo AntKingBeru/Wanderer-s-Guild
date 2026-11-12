@@ -27,7 +27,7 @@ namespace WanderersGuild
                 foreach (var room in FacilityManager.Instance.Rooms)
                 {
                     var effect = room.Data.Effect<ApplicantsEffect>();
-                    if (effect is not null)
+                    if (effect != null)
                         max = Mathf.Max(max, effect.MaxWaitingAt(room.Level));
                 }
                 return max;

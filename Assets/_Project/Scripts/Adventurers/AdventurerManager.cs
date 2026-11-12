@@ -38,12 +38,12 @@ namespace WanderersGuild
         {
             _settings = GameConfig.Instance.Adventurers;
 
-            if (_settings.ClassDatabase is not null)
+            if (_settings.ClassDatabase != null)
                 _classes = _settings.ClassDatabase.BuildLookup();
-            if (_settings.SpeciesDatabase is not null)
+            if (_settings.SpeciesDatabase != null)
                 _species = _settings.SpeciesDatabase.BuildLookup();
             var equipment = GameConfig.Instance.Equipment.Database;
-            if (equipment is not null)
+            if (equipment != null)
                 _equipment = equipment.BuildLookup();
             if (_classes.Count == 0 || _species.Count == 0)
                 Debug.LogWarning("[AdventurerManager] Class or species database is empty or unassigned (run Database › Load) — nobody can arrive.", this);

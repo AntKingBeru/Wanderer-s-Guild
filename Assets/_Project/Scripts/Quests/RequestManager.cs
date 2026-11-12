@@ -26,7 +26,7 @@ namespace WanderersGuild
         {
             _settings = GameConfig.Instance.Requests;
 
-            if (_settings.Database is not null)
+            if (_settings.Database != null)
                 _templates = _settings.Database.BuildLookup();
             if (_templates.Count == 0)
                 Debug.LogWarning("[RequestManager] The request database is empty or unassigned (run Database › Load) — no requests will appear.", this);

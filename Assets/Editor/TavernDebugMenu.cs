@@ -12,7 +12,7 @@ namespace Editor
         [MenuItem(MenuRoot + "Serve Supper Now")]
         private static void ServeSupper()
         {
-            if (TavernManager.Instance.Best.effect is null)
+            if (TavernManager.Instance.Best.effect == null)
                 Debug.Log("[Tavern] No finished tavern — supper just clears everyone's buff.");
             TavernManager.Instance.ServeSupperNow();
         }

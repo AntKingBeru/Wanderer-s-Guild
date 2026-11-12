@@ -22,7 +22,7 @@ namespace WanderersGuild
 
         private void Start()
         {
-            if (view is null || !view.IsBound || entranceAnimator is null)
+            if (view == null || !view.IsBound || entranceAnimator == null)
             {
                 Debug.LogError("[MainMenuPresenter] Missing or unbound view/animator.", this);
                 enabled = false;

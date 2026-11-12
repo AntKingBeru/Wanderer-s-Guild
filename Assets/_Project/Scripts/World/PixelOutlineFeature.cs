@@ -42,7 +42,7 @@ namespace WanderersGuild
         {
             if (renderingData.cameraData.cameraType != CameraType.Game)
                 return;
-            if (PixelOutlineRequests.Count == 0 || settings.maskMaterial is null || settings.outlineMaterial is null)
+            if (PixelOutlineRequests.Count == 0 || settings.maskMaterial == null || settings.outlineMaterial == null)
                 return;
 
             settings.outlineMaterial.SetColor(OutlineColorId, settings.color);

@@ -35,7 +35,7 @@ namespace WanderersGuild
                 return;
 
             var panel = Find(id);
-            if (panel is null)
+            if (panel == null)
             {
                 Debug.LogWarning($"[GamePanelHost] No bound panel registered for {id}.", this);
                 return;
@@ -47,7 +47,7 @@ namespace WanderersGuild
 
         public void Close(MenuPanelId id)
         {
-            if (_isBusy || _active is null || _active.Id != id)
+            if (_isBusy || _active == null || _active.Id != id)
                 return;
             RunClose();
         }
@@ -61,7 +61,7 @@ namespace WanderersGuild
 
             try
             {
-                if (_active is not null)
+                if (_active != null)
                 {
                     await _active.CloseAsync(token);
                     _returnTo.Push(_active);
@@ -94,7 +94,7 @@ namespace WanderersGuild
                 _active = _returnTo.Count > 0 ? _returnTo.Pop() : null;
                 GameEventsRelay.OnMenuPanelClosed.Invoke(closing.Id);
 
-                if (_active is not null)
+                if (_active != null)
                 {
                     await _active.OpenAsync(token);
                     GameEventsRelay.OnMenuPanelOpened.Invoke(_active.Id);
@@ -112,7 +112,7 @@ namespace WanderersGuild
 
         private MenuPanel Find(MenuPanelId id)
         {
-            return panels.FirstOrDefault(panel => panel is not null && panel.IsBound && panel.Id == id);
+            return panels.FirstOrDefault(panel => panel != null && panel.IsBound && panel.Id == id);
         }
     }
 }

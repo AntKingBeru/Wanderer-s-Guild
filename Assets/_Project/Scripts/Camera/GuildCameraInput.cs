@@ -19,7 +19,7 @@ namespace WanderersGuild
         private bool _isDragging;
 
         private bool IsBlocked =>
-            (panels is null && panels is { HasOpenPanel: true } or { IsBusy: true }) ||
+            (panels != null && (panels.HasOpenPanel || panels.IsBusy)) ||
             (SceneLoader.HasInstance && SceneLoader.Instance.IsBusy);
 
         private void OnEnable()
@@ -35,7 +35,7 @@ namespace WanderersGuild
 
         private void Update()
         {
-            if (rig is null)
+            if (rig == null)
                 return;
             if (IsBlocked)
             {
@@ -84,7 +84,7 @@ namespace WanderersGuild
             var value = _zoom.ReadValue<float>();
             if (Mathf.Abs(value) <= 0.01f)
                 return;
-            if (view is not null && _point != null && view.IsPointerOverUI(_point.ReadValue<Vector2>()))
+            if (view != null && _point != null && view.IsPointerOverUI(_point.ReadValue<Vector2>()))
                 return;
 
             rig.ZoomBy(value > 0f ? 1 : -1);
@@ -93,7 +93,7 @@ namespace WanderersGuild
         // NOTE: The first held frame only records the position (no jump); outside the view (letterbox) the drag stops.
         private void ReadDrag()
         {
-            if (_drag == null || _point == null || view is null || !_drag.IsPressed() || !view.TryScreenToView(_point.ReadValue<Vector2>(), out var pixel))
+            if (_drag == null || _point == null || view == null || !_drag.IsPressed() || !view.TryScreenToView(_point.ReadValue<Vector2>(), out var pixel))
             {
                 _isDragging = false;
                 return;
@@ -108,7 +108,7 @@ namespace WanderersGuild
 
         private static InputAction Enable(InputActionReference reference)
         {
-            var action = reference?.action;
+            var action = reference != null ? reference.action : null;
             action?.Enable();
             return action;
         }

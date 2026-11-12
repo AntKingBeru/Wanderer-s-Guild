@@ -41,7 +41,7 @@ namespace Editor
         private static void Open()
         {
             var host = Object.FindAnyObjectByType<GamePanelHost>();
-            if (host is null || host.IsBusy || host.HasOpenPanel)
+            if (host == null || host.IsBusy || host.HasOpenPanel)
             {
                 Debug.LogWarning("[Alchemy] No idle GamePanelHost in the scene (close any open panel first).");
                 return;

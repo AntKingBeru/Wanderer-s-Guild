@@ -47,7 +47,7 @@ namespace WanderersGuild
         private static long Now => RequestManager.NowMinutes;
 
         private bool CanEnter =>
-            FacilityManager.HasInstance && panels is not null && !panels.HasOpenPanel && !panels.IsBusy &&
+            FacilityManager.HasInstance && panels != null && !panels.HasOpenPanel && !panels.IsBusy &&
             !(SceneLoader.HasInstance && SceneLoader.Instance.IsBusy);
 
         private void OnEnable()
@@ -90,7 +90,7 @@ namespace WanderersGuild
 
         private void Start()
         {
-            var root = document?.rootVisualElement;
+            var root = document != null ? document.rootVisualElement : null;
             _view = BuildModeView.Bind(root, Pick);
             _card = RoomCardView.Bind(root, AskToUpgrade, AskToDemolish, () => SelectRoom(null));
             if (_view == null || _card == null)
@@ -169,7 +169,7 @@ namespace WanderersGuild
             var cell = BuildPointer.CellAt(grid, floor);
             _gridOverlay.Show(cell, Settings.FloorHeight);
 
-            if (_selected is not null)
+            if (_selected != null)
                 UpdateGhost(cell, pixel);
             else
                 UpdateRoomPicking(cell);
@@ -248,7 +248,7 @@ namespace WanderersGuild
 
         private void DeselectFacility()
         {
-            if (_selected is null)
+            if (_selected == null)
                 return;
 
             _selected = null;
@@ -260,7 +260,7 @@ namespace WanderersGuild
 
         private void Rotate()
         {
-            if (IsActive && _selected is not null && !_view.IsConfirming)
+            if (IsActive && _selected != null && !_view.IsConfirming)
                 _rotation = (_rotation + 1) & 3;
         }
 
@@ -369,7 +369,7 @@ namespace WanderersGuild
 
             if (_view.IsConfirming)
                 _view.CancelConfirm();
-            else if (_selected is not null)
+            else if (_selected != null)
                 DeselectFacility();
             else if (_selectedRoom != null)
                 SelectRoom(null);
@@ -437,7 +437,7 @@ namespace WanderersGuild
 
         private static InputAction Enable(InputActionReference reference)
         {
-            var action = reference?.action;
+            var action = reference != null ? reference.action : null;
             action?.Enable();
             return action;
         }

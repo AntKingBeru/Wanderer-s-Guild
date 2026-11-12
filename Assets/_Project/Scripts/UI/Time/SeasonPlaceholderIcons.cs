@@ -21,7 +21,7 @@ namespace WanderersGuild
         public static Texture2D For(int season)
         {
             var index = (season % 4 + 4) % 4;
-            if (Cache[index] is not null)
+            if (Cache[index] != null)
                 return Cache[index];
 
             Texture2D texture = new(Size, Size, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };

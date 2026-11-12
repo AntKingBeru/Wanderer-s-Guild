@@ -17,7 +17,7 @@ namespace WanderersGuild
         private void Awake()
         {
             _group = GetComponent<ParallaxGroup>();
-            if (_group is null)
+            if (_group == null)
             {
                 Debug.LogError($"[ParallaxBackgroundFitter] '{name}' needs a ParallaxGroup on the same object.", this);
                 enabled = false;
@@ -34,7 +34,7 @@ namespace WanderersGuild
         private void Update()
         {
             var camera = _group.TargetCamera;
-            if (camera is null)
+            if (camera == null)
                 return;
 
             if (Mathf.Approximately(camera.aspect, _lastAspect) && Mathf.Approximately(camera.orthographicSize, _lastOrthographicSize))
@@ -48,7 +48,7 @@ namespace WanderersGuild
         [ContextMenu("Refit Now (Play Mode)")]
         private void RefitNow()
         {
-            if (Application.isPlaying && _group?.TargetCamera is not null)
+            if (Application.isPlaying && _group != null && _group.TargetCamera != null)
                 Fit(_group.TargetCamera);
         }
 
@@ -56,7 +56,7 @@ namespace WanderersGuild
         {
             foreach (var layer in GetComponentsInChildren<ParallaxLayer>(true))
             {
-                if (!layer.TryGetComponent(out SpriteRenderer spriteRenderer) || spriteRenderer.sprite is null)
+                if (!layer.TryGetComponent(out SpriteRenderer spriteRenderer) || spriteRenderer.sprite == null)
                 {
                     Debug.LogWarning($"[ParallaxBackgroundFitter] '{layer.name}' needs a SpriteRenderer with a sprite on the same object.", layer);
                     continue;

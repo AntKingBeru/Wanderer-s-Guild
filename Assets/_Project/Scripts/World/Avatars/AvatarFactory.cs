@@ -24,7 +24,7 @@ namespace WanderersGuild
             quad.transform.SetParent(root.transform, false);
 
             var renderer = quad.GetComponent<MeshRenderer>();
-            if (settings.Material is not null)
+            if (settings.Material != null)
                 renderer.sharedMaterial = settings.Material;
             else
                 Debug.LogWarning("[AvatarFactory] GameConfig › Avatars › Material is empty — avatars use the default material.");
@@ -40,7 +40,7 @@ namespace WanderersGuild
             avatar.Initialize(adventurer.Id, view, grid, settings.FloorHeight);
 
             var interactable = root.AddComponent<AvatarInteractable>();
-            interactable.Initialize(adventurer.Id, adventurer.Name, renderer);
+            interactable.Initialize(adventurer.Id, adventurer.Name, renderer, view);
             return avatar;
         }
 
@@ -61,9 +61,9 @@ namespace WanderersGuild
         {
             var sheet = settings.Catalog?.Find(adventurer.Species, adventurer.Class);
             var problem = string.Empty;
-            if (sheet is not null && sheet.IsValid(settings.FrameSize, out problem)) return sheet;
+            if (sheet != null && sheet.IsValid(settings.FrameSize, out problem)) return sheet;
 
-            if (sheet is not null && Warned.Add(sheet))
+            if (sheet != null && Warned.Add(sheet))
                 Debug.LogWarning($"[AvatarFactory] Sprite sheet '{sheet.name}' {problem}; using a placeholder.", sheet);
 
             return PlaceholderAvatarSheets.For(adventurer.Species, adventurer.Class, settings.FrameSize);

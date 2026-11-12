@@ -67,7 +67,7 @@ namespace WanderersGuild
             AddPanelManipulator(new MenuNavigation(_navigationOrder, () => IsInteractable, null));
 
             var classes = GameConfig.Instance.Adventurers.ClassDatabase;
-            if (classes is not null)
+            if (classes != null)
                 _classes = classes.BuildLookup();
 
             GameEventsRelay.OnArmoryStockChanged.AddListener(RefreshIfOpen);
@@ -95,7 +95,7 @@ namespace WanderersGuild
 
         private void Select(EquipmentData item)
         {
-            if (!IsInteractable || item is null)
+            if (!IsInteractable || item == null)
                 return;
 
             _selectedId = item.Id;
@@ -140,7 +140,7 @@ namespace WanderersGuild
             }
             _listEmpty.style.display = _sorted.Count == 0 ? DisplayStyle.Flex : DisplayStyle.None;
 
-            if (selected is not null)
+            if (selected != null)
             {
                 if (stock != null)
                     _details.Show(selected, stock.Units(selected), _classes);
@@ -196,7 +196,7 @@ namespace WanderersGuild
         {
             return string.IsNullOrEmpty(itemId)
                 ? null
-                : (from row in _rows where row.Item is not null && row.Item.Id == itemId select row.Button).FirstOrDefault();
+                : (from row in _rows where row.Item != null && row.Item.Id == itemId select row.Button).FirstOrDefault();
         }
 
         private void OnHourStarted(GameDateTime _) => RefreshIfOpen();

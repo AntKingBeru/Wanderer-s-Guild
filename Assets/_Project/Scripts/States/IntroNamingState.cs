@@ -76,7 +76,7 @@ namespace WanderersGuild
             _filter = null;
 
             // NOTE: May run during scene unload, after the view is already destroyed.
-            if (_view is not null && _view.IsBound)
+            if (_view != null && _view.IsBound)
             {
                 Confirmation.HideImmediate();
                 _view.Confirm.clicked -= RequestConfirmation;

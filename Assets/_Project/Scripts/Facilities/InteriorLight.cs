@@ -40,7 +40,7 @@ namespace WanderersGuild
         private void OnDisable()
         {
             Active.Remove(this);
-            if (_light is not null)
+            if (_light != null)
             {
                 _light.intensity = _fullIntensity;
                 _light.enabled = true;

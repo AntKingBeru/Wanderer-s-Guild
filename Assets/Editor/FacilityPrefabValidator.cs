@@ -17,13 +17,13 @@ namespace Editor
             foreach (var guid in AssetDatabase.FindAssets("t:FacilityData"))
             {
                 var data = AssetDatabase.LoadAssetAtPath<FacilityData>(AssetDatabase.GUIDToAssetPath(guid));
-                if (data is null)
+                if (data == null)
                     continue;
 
                 for (var level = 1; level <= data.MaxLevel; level++)
                 {
                     var prefab = data.PrefabFor(level);
-                    if (prefab is null)
+                    if (prefab == null)
                     {
                         Debug.LogWarning($"[Validate] {data.Id}: no prefab for level {level}.", data);
                         problems++;
@@ -71,7 +71,7 @@ namespace Editor
 
         private static bool Encapsulate(Mesh mesh, Matrix4x4 matrix, ref Vector2 min, ref Vector2 max)
         {
-            if (mesh is null)
+            if (mesh == null)
                 return false;
 
             var b = mesh.bounds;

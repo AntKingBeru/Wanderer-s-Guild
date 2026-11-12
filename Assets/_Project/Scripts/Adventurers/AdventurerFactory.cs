@@ -88,7 +88,7 @@ namespace WanderersGuild
 
             foreach (var classData in _allClasses)
             {
-                if (classData is null || !_predecessorOf.ContainsKey(classData.Id))
+                if (classData == null || !_predecessorOf.ContainsKey(classData.Id))
                     continue;
                 if (classData.RequiredGuildRank <= guildRank && _isUnlocked != null && _isUnlocked(classData.Id))
                     _eligible.Add(classData);

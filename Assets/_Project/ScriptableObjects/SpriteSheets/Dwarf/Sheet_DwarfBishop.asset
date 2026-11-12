@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.AdventurerSpriteSheet
   texture: {fileID: 2800000, guid: 8fb73cc92dd7e624e905f87f0bd1db4e, type: 3}
   walkFramesPerSecond: 6
+  figureTop: 27
+  figureBottom: 0

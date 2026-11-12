@@ -1772,14 +1772,20 @@ namespace WanderersGuild
         [SerializeField, Min(0f)] private float cardTopMargin = 26f;
         
         [Header("Poses (faked from the walk sheet)")]
-        [Tooltip("Share of the frame hidden from the bottom when sitting (the legs), rounded to whole sheet pixels.")]
-        [SerializeField, Range(0f, 0.6f)] private float sitCrop = 0.3f;
-        [Tooltip("World units the bottom of a sitting sprite sits at (seat height).")]
-        [SerializeField, Min(0f)] private float sitLift = 0.45f;
-        [Tooltip("World units a sleeping sprite lies above the floor (mattress height).")]
-        [SerializeField, Min(0f)] private float sleepLift = 0.5f;
-        [Tooltip("Size of a sleeping sprite relative to standing (fits it to a bed).")]
+        [Tooltip("Share of the FIGURE (measured per sheet, not the frame) hidden from the bottom when sitting — the legs — so " +
+                 "short and tall species lose the same proportion. Rounded to whole sheet pixels.")]
+        [SerializeField, Range(0f, 0.7f)] private float sitLegShare = 0.45f;
+        [Tooltip("World units above the Seat / Table spot the bottom of a sitting sprite sits (0 = on the spot — put the spot on " +
+                 "the seat surface).")]
+        [SerializeField] private float sitOffset;
+        [Tooltip("World units above the Bed spot a sleeping sprite lies (put the spot on the mattress top; a hair above it so " +
+                 "the sprite never sinks in).")]
+        [SerializeField] private float sleepOffset = 0.02f;
+        [Tooltip("Size of a sleeping sprite relative to standing.")]
         [SerializeField, Range(0.3f, 1.2f)] private float sleepScale = 0.8f;
+        [Tooltip("Longest a sleeping figure may be, in world units (the bed's length); taller species are scaled down to fit. " +
+                 "0 = no limit.")]
+        [SerializeField, Min(0f)] private float maxSleepLength = 1.8f;
 
         public Material Material => material;
         public AvatarSheetCatalog Catalog => catalog;
@@ -1798,10 +1804,11 @@ namespace WanderersGuild
         public int MaxPathNodes => maxPathNodes;
         public Vector2 CardOffset => cardOffset;
         public float CardTopMargin => cardTopMargin;
-        public float SitCrop => sitCrop;
-        public float SitLift => sitLift;
-        public float SleepLift => sleepLift;
+        public float SitLegShare => sitLegShare;
+        public float SitOffset => sitOffset;
+        public float SleepOffset => sleepOffset;
         public float SleepScale => sleepScale;
+        public float MaxSleepLength => maxSleepLength;
     }
     #endregion
     

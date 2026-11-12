@@ -63,7 +63,7 @@ namespace WanderersGuild
             foreach (var room in FacilityManager.Instance.Rooms)
             {
                 var effect = room.Data.Effect<AlchemistEffect>();
-                if (effect is not null)
+                if (effect != null)
                     best = Mathf.Max(best, value(effect, room.Level));
             }
             return best;

@@ -75,7 +75,7 @@ namespace Editor
             foreach (var guid in UnityEditor.AssetDatabase.FindAssets("t:ClassData"))
             {
                 var data = UnityEditor.AssetDatabase.LoadAssetAtPath<ClassData>(UnityEditor.AssetDatabase.GUIDToAssetPath(guid));
-                if (data is not null && !string.IsNullOrEmpty(data.Id))
+                if (data != null && !string.IsNullOrEmpty(data.Id))
                     ids.Add(data.Id);
             }
             return ids;

@@ -38,7 +38,7 @@ namespace WanderersGuild
 
         private string Random()
         {
-            if (_list is null || _list.FirstNames.Count == 0)
+            if (_list == null || _list.FirstNames.Count == 0)
                 return FallbackName;
 
             var name = _list.FirstNames[UnityEngine.Random.Range(0, _list.FirstNames.Count)];

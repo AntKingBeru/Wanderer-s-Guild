@@ -31,7 +31,7 @@ namespace WanderersGuild
                 foreach (var room in FacilityManager.Instance.Rooms)
                 {
                     var effect = room.Data.Effect<ArmoryEffect>();
-                    if (effect is not null)
+                    if (effect != null)
                         tier = Mathf.Max(tier, effect.TierAt(room.Level));
                 }
                 return tier;
@@ -51,11 +51,11 @@ namespace WanderersGuild
         protected override void OnSingletonAwake()
         {
             _settings = GameConfig.Instance.Equipment;
-            if (_settings.Database is not null)
+            if (_settings.Database != null)
                 _items = _settings.Database.Items;
 
             var data = SaveGameService.HasInstance ? SaveGameService.Instance.LoadedData : null;
-            if (data != null && _settings.Database is not null)
+            if (data != null && _settings.Database != null)
                 _stock.Restore(data.ArmoryStock, _settings.Database.BuildLookup());
         }
 
@@ -163,7 +163,7 @@ namespace WanderersGuild
                 {
                     var budget = (int)(adventurer.Wealth * _settings.SpendFraction);
                     var item = EquipmentRules.BestUpgrade(adventurer, slot, _available, budget, quests);
-                    if (item is null || !adventurer.TrySpendWealth(item.Price))
+                    if (item == null || !adventurer.TrySpendWealth(item.Price))
                         continue;
                     if (!_stock.TryTake(item))
                     {
@@ -204,7 +204,7 @@ namespace WanderersGuild
             var rank = GuildManager.HasInstance ? GuildManager.Instance.Rank.Rank : GuildRank.F;
             foreach (var item in _items)
             {
-                if (item is not null && item.IsSoldInArmory && item.ArmoryLevel <= tier && item.UnlockRank <= rank)
+                if (item != null && item.IsSoldInArmory && item.ArmoryLevel <= tier && item.UnlockRank <= rank)
                     _onSale.Add(item);
             }
         }
@@ -223,7 +223,7 @@ namespace WanderersGuild
         private long SellBack(Adventurer adventurer, EquipmentSlot slot)
         {
             var old = adventurer.Equipment[slot];
-            if (old is null)
+            if (old == null)
                 return 0;
 
             var refund = (int)(old.Price * _settings.SellBackFraction);

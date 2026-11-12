@@ -19,7 +19,7 @@ namespace WanderersGuild
 
             foreach (var request in Requests)
             {
-                if (request is null)
+                if (request == null)
                     continue;
 
                 if (string.IsNullOrWhiteSpace(request.Id))

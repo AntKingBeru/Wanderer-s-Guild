@@ -31,7 +31,7 @@ namespace WanderersGuild
         public void Activate(Action onSkip)
         {
             var reference = GameConfig.Instance.InputBindings.Skip;
-            _action = reference?.action;
+            _action = reference != null ? reference.action : null;
 
             if (_action == null)
             {
@@ -70,7 +70,8 @@ namespace WanderersGuild
             var step = Time.unscaledDeltaTime / settings.SkipHoldDuration;
             _progress = Mathf.Clamp01(_progress + (IsSkipKeyPressed ? step : -step * settings.SkipDrainMultiplier));
 
-            view?.SetSkipProgress(_progress);
+            if (view != null)
+                view.SetSkipProgress(_progress);
 
             if (_progress < 1f)
                 return;

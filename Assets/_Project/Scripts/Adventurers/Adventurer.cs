@@ -37,7 +37,7 @@ namespace WanderersGuild
                 return;
             foreach (var item in equipment)
             {
-                if (item is not null)
+                if (item != null)
                     Equipment.Set(item.Slot, item);
             }
         }
@@ -191,7 +191,7 @@ namespace WanderersGuild
         // Becomes the new class at level 1 (XP 0) with the given retained growth; rank kept, rank progress reset.
         public void AdvanceTo(ClassData newClass, StatBlock retainedGrowth)
         {
-            if (newClass is null)
+            if (newClass == null)
                 return;
 
             Class = newClass;

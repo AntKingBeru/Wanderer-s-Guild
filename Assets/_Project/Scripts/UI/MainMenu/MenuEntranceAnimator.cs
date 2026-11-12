@@ -11,7 +11,7 @@ namespace WanderersGuild
 
         private Sequence _sequence;
 
-        private bool IsReady => view is not null && view.IsBound;
+        private bool IsReady => view != null && view.IsBound;
 
         // Puts the logo and column items in their hidden state: invisible and offset.
         public void PrepareHidden()

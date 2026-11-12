@@ -46,7 +46,7 @@ namespace WanderersGuild
         public void Set(Sprite sprite, string nameForPlaceholder)
         {
             Root.style.backgroundImage = sprite ? new StyleBackground(sprite) : new StyleBackground(StyleKeyword.None);
-            Root.EnableInClassList(PlaceholderClass, sprite is null);
+            Root.EnableInClassList(PlaceholderClass, sprite == null);
             _letter.Text = sprite ? string.Empty : Initial(nameForPlaceholder);
             Root.style.display = DisplayStyle.Flex;
             Root.style.visibility = Visibility.Visible;

@@ -21,7 +21,7 @@ namespace WanderersGuild
         public static AdventurerSpriteSheet For(SpeciesData species, ClassData classData, Vector2Int frameSize)
         {
             var key = $"{(species ? species.Id : "")}|{(classData ? classData.Id : "")}|{frameSize.x}x{frameSize.y}";
-            if (Cache.TryGetValue(key, out var cached) && cached is not null)
+            if (Cache.TryGetValue(key, out var cached) && cached != null)
                 return cached;
 
             var texture = Build(Hue(classData ? classData.Id : "", 0.55f, 0.85f),
@@ -36,7 +36,7 @@ namespace WanderersGuild
         {
             foreach (var sheet in Cache.Values.Where(sheet => sheet))
             {
-                if (sheet.Texture is not null)
+                if (sheet.Texture != null)
                     Object.Destroy(sheet.Texture);
                 Object.Destroy(sheet);
             }

@@ -44,7 +44,7 @@ namespace WanderersGuild
             _renderers = _root.GetComponentsInChildren<Renderer>(true);
             foreach (var target in _renderers)
             {
-                if (material is null)
+                if (material == null)
                     continue;
                 var materials = new Material[target.sharedMaterials.Length];
                 for (var i = 0; i < materials.Length; i++) materials[i] = material;
@@ -55,7 +55,7 @@ namespace WanderersGuild
         // Places the ghost on the grid and tints it (valid green / invalid red).
         public void Show(FacilityData data, Vector2Int origin, int rotation, bool valid)
         {
-            if (_root is null)
+            if (_root == null)
                 return;
 
             var pivot = CellToWorld(FacilityFootprint.PivotCell(origin, data.Size, rotation));
@@ -74,12 +74,13 @@ namespace WanderersGuild
 
         public void Hide()
         {
-            _root?.SetActive(false);
+            if (_root != null)
+                _root.SetActive(false);
         }
 
         public void Clear()
         {
-            if (_root is not null)
+            if (_root != null)
                 Object.Destroy(_root);
             _root = null;
             _model = null;

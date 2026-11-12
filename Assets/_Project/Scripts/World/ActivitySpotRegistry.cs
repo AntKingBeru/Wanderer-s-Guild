@@ -16,7 +16,7 @@ namespace WanderersGuild
 
         public static void Register(ActivitySpot spot)
         {
-            if (spot is not null && !Spots.Contains(spot))
+            if (spot != null && !Spots.Contains(spot))
                 Spots.Add(spot);
         }
 
@@ -32,7 +32,7 @@ namespace WanderersGuild
         {
             spot = null;
             Candidates.Clear();
-            foreach (var candidate in Spots.Where(candidate => candidate is not null && candidate.Kind == kind && !HeldBy.ContainsKey(candidate))
+            foreach (var candidate in Spots.Where(candidate => candidate != null && candidate.Kind == kind && !HeldBy.ContainsKey(candidate))
                          .Where(candidate => usable == null || usable(candidate)))
             {
                 Candidates.Add(candidate);
@@ -49,13 +49,13 @@ namespace WanderersGuild
         public static void Release(int adventurerId)
         {
             var held = (from pair in HeldBy where pair.Value == adventurerId select pair.Key).FirstOrDefault();
-            if (held is not null)
+            if (held != null)
                 HeldBy.Remove(held);
         }
 
         public static int CountOf(SpotKind kind)
         {
-            return Spots.Count(spot => spot is not null && spot.Kind == kind);
+            return Spots.Count(spot => spot != null && spot.Kind == kind);
         }
 
         // Scene teardown: clears reservations (spots unregister themselves as they're destroyed).

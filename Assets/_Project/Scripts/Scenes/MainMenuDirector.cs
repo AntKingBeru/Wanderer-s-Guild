@@ -30,7 +30,7 @@ namespace WanderersGuild
 
         private void Awake()
         {
-            if (cameraPanner is null || titleAnchor is null || menuAnchor is null || titleScreenView is null)
+            if (cameraPanner == null || titleAnchor == null || menuAnchor == null || titleScreenView == null)
             {
                 Debug.LogError("[MainMenuDirector] Missing scene references.", this);
                 enabled = false; // Prevents Start; OnDestroy still runs safely.

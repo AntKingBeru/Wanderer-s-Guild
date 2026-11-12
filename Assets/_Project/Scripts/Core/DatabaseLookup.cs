@@ -12,7 +12,7 @@ namespace WanderersGuild
 
             foreach (var item in items)
             {
-                if (item is null)
+                if (item == null)
                     continue;
 
                 if (string.IsNullOrWhiteSpace(item.Id))

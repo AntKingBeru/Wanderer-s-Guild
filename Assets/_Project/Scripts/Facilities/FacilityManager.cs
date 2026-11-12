@@ -37,7 +37,7 @@ namespace WanderersGuild
         protected override void OnSingletonAwake()
         {
             _settings = GameConfig.Instance.Facilities;
-            if (_settings.Database is not null)
+            if (_settings.Database != null)
                 _facilities = _settings.Database.BuildLookup();
             if (_facilities.Count == 0)
                 Debug.LogWarning("[FacilityManager] Facility database is empty or unassigned (run Database › Load).", this);
@@ -198,7 +198,7 @@ namespace WanderersGuild
         private void PlaceGuildHall()
         {
             var hall = Find(_settings.GuildHallId);
-            if (hall is null)
+            if (hall == null)
             {
                 Debug.LogError($"[FacilityManager] Guild Hall '{_settings.GuildHallId}' isn't in the facility database " +
                                "(run Database › Load and assign GameConfig › Facilities › Database).", this);
@@ -229,7 +229,7 @@ namespace WanderersGuild
         // NOTE: The camera may roam over the union of all rooms' footprints (plus padding).
         private void UpdateCameraBounds()
         {
-            if (cameraBounds is null || _rooms.Count == 0)
+            if (cameraBounds == null || _rooms.Count == 0)
                 return;
 
             Vector2Int min = new(int.MaxValue, int.MaxValue), max = new(int.MinValue, int.MinValue);
@@ -257,7 +257,7 @@ namespace WanderersGuild
             foreach (var saved in data.Facilities)
             {
                 var facility = Find(saved.FacilityId);
-                if (facility is null)
+                if (facility == null)
                 {
                     Debug.LogWarning($"[FacilityManager] Saved room #{saved.Id} uses facility '{saved.FacilityId}', which isn't in the database any more; dropped.", this);
                     continue;
