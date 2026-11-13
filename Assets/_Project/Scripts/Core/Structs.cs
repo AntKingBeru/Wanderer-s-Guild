@@ -1087,6 +1087,22 @@ namespace WanderersGuild
             return (species ? 1 : 0) + (classData ? 1 : 0);
         }
     }
+    
+    // One frame of the walk bob: lift up and sway sideways (sheet pixels), lean (degrees, + = toward the sway side).
+    // NOTE: default = standing still.
+    public readonly struct AvatarBobPose
+    {
+        public int LiftPixels { get; }
+        public int SwayPixels { get; }
+        public float LeanDegrees { get; }
+
+        public AvatarBobPose(int liftPixels, int swayPixels, float leanDegrees)
+        {
+            LiftPixels = liftPixels;
+            SwayPixels = swayPixels;
+            LeanDegrees = leanDegrees;
+        }
+    }
     #endregion
     
     #region Risks

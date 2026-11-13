@@ -1,5 +1,5 @@
-// An avatar's look: an upright billboard (yaw only) showing the walk row for its facing; sitting = the idle frame with the
-// figure's legs cropped, resting on the seat; sleeping = the idle frame laid flat, the figure centred on the bed.
+// An avatar's look: an upright billboard (yaw only) showing the walk row for its facing (a hop-and-waddle while walking if the
+// sheet has no walk frames); sitting = the idle frame, legs cropped, on the seat; sleeping = laid flat, centred on the bed.
 using UnityEngine;
 
 namespace WanderersGuild
@@ -17,12 +17,14 @@ namespace WanderersGuild
         private MaterialPropertyBlock _block;
         private AdventurerSpriteSheet _sheet;
         private AvatarSettings _settings;
+        private AvatarBobSettings _bob;
         private Camera _camera;
         private Transform _root;
         private Vector3 _lookDirection;
         private AvatarPose _pose;
         private bool _isMoving;
         private float _walkTime;
+        private float _cadence;      // NOTE: This avatar's hop-rate multiplier (1 ± variation) — groups don't bob in lockstep.
         private float _width;
         private float _height;
         private int _columns;
@@ -37,6 +39,7 @@ namespace WanderersGuild
         private float _sleepScale;   // this sheet's lying scale (bed-length clamp applied)
 
         // World point at the top of the figure's head — the label / card anchor (short species have empty headroom).
+        // NOTE: From the root, not this quad — labels, bubbles and cards don't follow the walk bob.
         public Vector3 HeadTop
         {
             get
@@ -63,6 +66,9 @@ namespace WanderersGuild
             _settings = settings;
             _camera = worldCamera;
             _root = root;
+
+            _bob = GameConfig.Instance.AvatarBob;
+            _cadence = 1f + Random.Range(-_bob.CadenceVariation, _bob.CadenceVariation);
 
             var frame = settings.FrameSize;
             _columns = sheet.ColumnsFor(frame);
@@ -149,7 +155,24 @@ namespace WanderersGuild
 
             if (_isMoving)
                 _walkTime += Time.deltaTime;
+            PlaceStanding();
             ApplyFrame(FacingFor(_lookDirection, yaw), CurrentFrame(), 0f);
+        }
+
+        // NOTE: Feet on the root; while walking a sheet that needs it, the walk bob lifts, sways and leans the quad. The lean
+        // pivots at the feet: the feet-to-center offset is rotated, so the bottom edge stays at the (swayed) feet. A + Z roll
+        // tips the top toward camera-left, so the lean is negated to lean toward the sway. Rebuilt every frame (never
+        // accumulated) — a stop is upright and grounded at once.
+        private void PlaceStanding()
+        {
+            var bob = _isMoving && _bob.AppliesTo(_columns > 1)
+                ? AvatarWalkBob.Sample(_walkTime, _bob.StepsPerSecond * _cadence, _bob)
+                : default;
+
+            var lean = Quaternion.Euler(0f, 0f, -bob.LeanDegrees);
+            transform.localRotation = lean;
+            transform.localPosition = lean * new Vector3(0f, _height * 0.5f + bob.LiftPixels * _pixel, 0f) +
+                                      new Vector3(bob.SwayPixels * _pixel, 0f, 0f);
         }
 
         // NOTE: Stand: full quad, feet on the root (floor). Sit: shorter by the crop, bottom at the root (the seat) + offset.

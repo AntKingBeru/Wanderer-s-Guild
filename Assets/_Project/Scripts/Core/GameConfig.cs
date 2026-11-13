@@ -69,6 +69,7 @@ namespace WanderersGuild
         [SerializeField] private SpeechSettings speech = new();
         [SerializeField] private ProcessionSettings processions = new();
         [SerializeField] private NavigationSettings navigation = new();
+        [SerializeField] private AvatarBobSettings avatarBob = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -127,6 +128,7 @@ namespace WanderersGuild
         public SpeechSettings Speech => speech;
         public ProcessionSettings Processions => processions;
         public NavigationSettings Navigation => navigation;
+        public AvatarBobSettings AvatarBob => avatarBob;
     }
     
     #region Scene Management
@@ -2105,6 +2107,45 @@ namespace WanderersGuild
         public float ObstaclePadding => obstaclePadding;
         public IReadOnlyList<float> ClearanceCosts => clearanceCosts ?? Array.Empty<float>();
         public bool SmoothPaths => smoothPaths;
+    }
+    #endregion
+    
+    #region Avatar Bob
+    [Serializable]
+    public class AvatarBobSettings
+    {
+        [Tooltip("When avatars bob while walking: only for sheets without walk frames (the stand-in until walk animations " +
+                 "exist), always, or never.")]
+        [SerializeField] private AvatarBobMode mode = AvatarBobMode.WithoutWalkFrames;
+
+        [Tooltip("Hop height in sheet pixels (whole pixels keep the art crisp). 0 = no hop.")]
+        [SerializeField, Range(0, 4)] private int heightPixels = 2;
+
+        [Tooltip("Side-to-side sway in sheet pixels, alternating each step. 0 = no sway.")]
+        [SerializeField, Range(0, 4)] private int swayPixels = 1;
+
+        [Tooltip("Lean toward the sway side, in degrees, around the feet. 0 = none (keeps the sprite pixel-perfect).")]
+        [SerializeField, Range(0f, 12f)] private float leanDegrees = 4f;
+
+        [Tooltip("Steps per second at Normal speed (game speed scales it, like the walking).")]
+        [SerializeField, Min(0f)] private float stepsPerSecond = 4f;
+
+        [Tooltip("Each avatar's cadence differs by up to this share, so groups don't bob in lockstep.")]
+        [SerializeField, Range(0f, 0.3f)] private float cadenceVariation = 0.1f;
+
+        public int HeightPixels => heightPixels;
+        public int SwayPixels => swayPixels;
+        public float LeanDegrees => leanDegrees;
+        public float StepsPerSecond => stepsPerSecond;
+        public float CadenceVariation => cadenceVariation;
+
+        // NOTE: hasWalkFrames = the sheet has more than the idle column.
+        public bool AppliesTo(bool hasWalkFrames) => mode switch
+        {
+            AvatarBobMode.Always => true,
+            AvatarBobMode.Never => false,
+            _ => !hasWalkFrames
+        };
     }
     #endregion
 }

@@ -357,6 +357,14 @@ namespace WanderersGuild
         Sit = 1,
         Sleep = 2
     }
+    
+    // When avatars bob while walking (the stand-in until walk animations exist).
+    public enum AvatarBobMode
+    {
+        WithoutWalkFrames = 0, // Only sheets that have just the idle column.
+        Always = 1,
+        Never = 2
+    }
     #endregion
     
     #region Risks

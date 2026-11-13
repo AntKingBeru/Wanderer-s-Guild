@@ -637,7 +637,8 @@ MonoBehaviour:
     classDatabase: {fileID: 11400000, guid: bb15dd73d6cdda74fb45a283cf62eee7, type: 2}
     speciesDatabase: {fileID: 11400000, guid: c36934fcfba45734bb0b1050837def0e, type: 2}
     nameList: {fileID: 11400000, guid: fd0d5328347d2b94ea57680df4417c3d, type: 2}
-    epithetChance: 0.25
+    maxNameLength: 16
+    recentNameMemory: 20
     capacity: 6
     startingParty:
     - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
@@ -858,3 +859,21 @@ MonoBehaviour:
     fadeInSeconds: 0.08
     fadeOutSeconds: 0.25
     headGapPixels: 2
+  processions:
+    maxGatherSeconds: 15
+    huddleSeconds: 0.8
+    fileGapSeconds: 0.4
+    arrivalGapSeconds: 0.4
+  navigation:
+    obstaclePadding: 0.1
+    clearanceCosts:
+    - 0.8
+    - 0.3
+    smoothPaths: 1
+  avatarBob:
+    mode: 0
+    heightPixels: 2
+    swayPixels: 1
+    leanDegrees: 4
+    stepsPerSecond: 4
+    cadenceVariation: 0.1
