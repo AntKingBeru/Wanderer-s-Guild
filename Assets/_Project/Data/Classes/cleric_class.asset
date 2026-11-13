@@ -17,7 +17,11 @@ MonoBehaviour:
   description: 'A divine disciple of a god.
 
     Don''t know which one.'
-  icon: {fileID: 0}
+  icon: {fileID: -454581595, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  rankIcons:
+  - {fileID: -454581595, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: -1795905951, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: 425057407, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
   baseStats:
     strength: 0
     agility: 0

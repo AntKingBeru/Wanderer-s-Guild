@@ -1,4 +1,4 @@
-// One adventurer class (imported from the Classes sheet): base stats, growth bonus, unlock + max rank, upgrades, affinities, starting gear.
+// One adventurer class (imported from the Classes sheet): base stats, growth bonus, unlock + max rank, upgrades, affinities, starting gear, rank icons.
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,8 +13,11 @@ namespace WanderersGuild
         [SerializeField] private string id;
         [SerializeField] private string displayName;
         [SerializeField, TextArea] private string description;
-        [Tooltip("Not set by the importer (yet) — assign by hand; reloads keep it.")]
+        [Tooltip("Fallback icon — shown when Rank Icons is empty or a slot is blank. Not set by the importer; reloads keep it.")]
         [SerializeField] private Sprite icon;
+        [Tooltip("One icon per rank this class spans, lowest rank first. Anchored at MAX_RANK: the LAST icon is MAX_RANK, the one " +
+                 "before it MAX_RANK − 1, … (base F–D: F, E, D; a B–A class: B, A). Not set by the importer; reloads keep it.")]
+        [SerializeField] private Sprite[] rankIcons = Array.Empty<Sprite>();
 
         [Header("Stats")]
         [SerializeField] private StatBlock baseStats;
@@ -54,9 +57,22 @@ namespace WanderersGuild
         public AdventurerSpriteSheet AvatarSheet => avatarSheet;
 
         public bool HasAffinity(QuestCategory category) => Array.IndexOf(categoryAffinities ?? Array.Empty<QuestCategory>(), category) >= 0;
+        
+        // The icon for an adventurer of this class at this rank.
+        // NOTE: Counted down from MAX_RANK (classes don't store their lowest rank); ranks below the first icon use the first.
+        // Blank slots and an empty list fall back to the single Icon.
+        public Sprite IconFor(GuildRank rank)
+        {
+            if (rankIcons == null || rankIcons.Length == 0)
+                return icon;
+
+            var index = rankIcons.Length - 1 - ((int)maxRank - (int)rank);
+            var sprite = rankIcons[Mathf.Clamp(index, 0, rankIcons.Length - 1)];
+            return sprite != null ? sprite : icon;
+        }
 
 #if UNITY_EDITOR
-        // Editor-only: the sheet importer fills or updates this asset in place. NOTE: The icon is left untouched.
+        // Editor-only: the sheet importer fills or updates this asset in place. NOTE: Icon and Rank Icons are left untouched.
         public void ApplyImport(in ClassImportRow row)
         {
             id = row.Id;

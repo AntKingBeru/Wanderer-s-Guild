@@ -15,7 +15,11 @@ MonoBehaviour:
   id: soldier_class
   displayName: Soldier
   description: Likes to attack.. with STYLE.
-  icon: {fileID: 1129040932, guid: 447a2b2701cb8db4b9704ac8244ee22f, type: 3}
+  icon: {fileID: -336327962, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  rankIcons:
+  - {fileID: -336327962, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: -1835879501, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: 1374896829, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
   baseStats:
     strength: 3
     agility: 1

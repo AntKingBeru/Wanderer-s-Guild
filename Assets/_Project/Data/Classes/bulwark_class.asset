@@ -15,7 +15,11 @@ MonoBehaviour:
   id: bulwark_class
   displayName: Bulwark
   description: More of a shield than a person.
-  icon: {fileID: 1129040932, guid: 447a2b2701cb8db4b9704ac8244ee22f, type: 3}
+  icon: {fileID: -1424359373, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  rankIcons:
+  - {fileID: -1424359373, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: 1680656368, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: 797773410, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
   baseStats:
     strength: 2
     agility: 0

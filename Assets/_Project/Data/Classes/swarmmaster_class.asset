@@ -17,7 +17,11 @@ MonoBehaviour:
   description: 'Now a friend of insects.
 
     They found another option.'
-  icon: {fileID: -593710947, guid: 447a2b2701cb8db4b9704ac8244ee22f, type: 3}
+  icon: {fileID: 386435578, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  rankIcons:
+  - {fileID: 386435578, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: 48720754, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: -171025926, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
   baseStats:
     strength: 0
     agility: 2

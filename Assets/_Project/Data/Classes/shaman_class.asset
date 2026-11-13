@@ -17,7 +17,11 @@ MonoBehaviour:
   description: 'Uses the spirits of the world to do daily tasks.
 
     What a lazy bastard.'
-  icon: {fileID: 0}
+  icon: {fileID: 1800978204, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  rankIcons:
+  - {fileID: 1800978204, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: -593491809, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: -1074250452, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
   baseStats:
     strength: 0
     agility: 0

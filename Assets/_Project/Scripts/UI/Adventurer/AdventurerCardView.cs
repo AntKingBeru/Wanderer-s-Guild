@@ -60,7 +60,7 @@ namespace WanderersGuild
         {
             _name.Text = adventurer.Name;
             _info.Text = $"{AdventurerFormatter.SpeciesAndClass(adventurer)} · {AdventurerFormatter.ShortLevel(adventurer)} · Rank {adventurer.Rank}";
-            _classIcon.Set(adventurer.Class.Icon, adventurer.Class.DisplayName);
+            _classIcon.Set(adventurer.Class.IconFor(adventurer.Rank), adventurer.Class.DisplayName);
             _status.Text = AdventurerFormatter.Status(adventurer, nowMinutes).Replace("Status: ", string.Empty);
             _room.Text = roomLabel;
             _room.style.display = string.IsNullOrEmpty(roomLabel) ? DisplayStyle.None : DisplayStyle.Flex;

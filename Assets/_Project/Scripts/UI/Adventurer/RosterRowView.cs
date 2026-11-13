@@ -53,7 +53,7 @@ namespace WanderersGuild
             _badge.style.backgroundColor = rankColor;
             _badgeLabel.Text = RankFormatter.BadgeLabel(adventurer.Rank);
             _name.Text = AdventurerFormatter.GivenName(adventurer.Name);
-            _classIcon.Set(adventurer.Class.Icon, adventurer.Class.DisplayName);
+            _classIcon.Set(adventurer.Class.IconFor(adventurer.Rank), adventurer.Class.DisplayName);
             _class.Text = adventurer.Class.DisplayName;
             _level.Text = AdventurerFormatter.ShortLevel(adventurer);
 

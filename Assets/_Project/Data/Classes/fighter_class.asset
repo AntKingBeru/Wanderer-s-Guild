@@ -17,7 +17,11 @@ MonoBehaviour:
   description: 'A basic fighter.
 
     Uses martial weapons, maybe a shield.'
-  icon: {fileID: -2064028281, guid: 447a2b2701cb8db4b9704ac8244ee22f, type: 3}
+  icon: {fileID: -1630333637, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  rankIcons:
+  - {fileID: -1630333637, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: 1840217160, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
+  - {fileID: -27018405, guid: 7083ea55d9b6a014bb62acb952c16d5f, type: 3}
   baseStats:
     strength: 1
     agility: 0

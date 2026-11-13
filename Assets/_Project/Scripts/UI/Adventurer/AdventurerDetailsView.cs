@@ -100,7 +100,7 @@ namespace WanderersGuild
 
             _name.Text = adventurer.Name;
             _speciesClass.Text = AdventurerFormatter.SpeciesAndClass(adventurer);
-            _classIcon.Set(adventurer.Class.Icon, adventurer.Class.DisplayName);
+            _classIcon.Set(adventurer.Class.IconFor(adventurer.Rank), adventurer.Class.DisplayName);
             _rankLevel.Text = AdventurerFormatter.RankAndLevel(adventurer);
             _experience.Text = AdventurerFormatter.Experience(adventurer, table);
             _experienceBar.SetProgress(adventurer.LevelProgress);
