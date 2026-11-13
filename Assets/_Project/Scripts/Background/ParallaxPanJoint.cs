@@ -1,4 +1,5 @@
-// Keeps two parallax layers from vertically stacked groups joined during the camera pan (e.g. a title roof on a menu building).
+// Keeps two parallax layers from vertically stacked groups joined during the camera pan and pointer movement (a title roof
+// on a menu building, clouds hanging from a title layer).
 using UnityEngine;
 
 namespace WanderersGuild
@@ -21,6 +22,10 @@ namespace WanderersGuild
                  "counted from the sprite's bottom (0).")]
         [SerializeField] private float lowerJoinPixelY;
 
+        [Tooltip("On: the lower layer moves vertically with the pointer like the upper one (its horizontal movement keeps its own " +
+                 "depth), so the joined edge never separates and the two layers may have different depths.")]
+        [SerializeField] private bool matchVerticalPointer = true;
+
         private SpriteRenderer _upperRenderer;
         private SpriteRenderer _lowerRenderer;
         private float _lastUpperScale = -1f;
@@ -29,14 +34,24 @@ namespace WanderersGuild
         private bool _warnedRange;
 
         // NOTE: Start, not Awake — every layer has captured its rest position and group by then.
-        private void Start() => _isValid = Validate();
+        private void Start()
+        {
+            _isValid = Validate();
+            ApplyPointerMatch();
+        }
+
+        // NOTE: After the first Start (OnEnable runs before it once, while _isValid is still false).
+        private void OnEnable() => ApplyPointerMatch();
 
         private void OnDisable()
         {
             if (upperLayer != null)
                 upperLayer.ClearPanFactorOverride();
             if (lowerLayer != null)
+            {
                 lowerLayer.ClearPanFactorOverride();
+                lowerLayer.ClearPointerDepthYOverride();
+            }
             _lastUpperScale = -1f;
             _lastLowerScale = -1f;
         }
@@ -55,6 +70,18 @@ namespace WanderersGuild
             _lastUpperScale = upperScale;
             _lastLowerScale = lowerScale;
             Recalculate();
+        }
+
+        // NOTE: Only the vertical pointer offset can open the joined edge — horizontal shifts slide along it.
+        private void ApplyPointerMatch()
+        {
+            if (!_isValid)
+                return;
+
+            if (matchVerticalPointer)
+                lowerLayer.SetPointerDepthYOverride(upperLayer.Depth);
+            else
+                lowerLayer.ClearPointerDepthYOverride();
         }
 
         // NOTE: Both layers get the same factor = (rest gap between the join rows + overlap) ÷ distance between the groups,
@@ -113,10 +140,20 @@ namespace WanderersGuild
                 return false;
             }
 
-            // NOTE: Pointer parallax moves layers by depth — different depths would still pull the joined pair apart.
-            if (!Mathf.Approximately(upperLayer.Depth, lowerLayer.Depth))
+            if (matchVerticalPointer)
+            {
+                // NOTE: The vertical match is exact only when both groups smooth the pointer the same way.
+                if (upperLayer.Group.Motion != lowerLayer.Group.Motion)
+                    Debug.LogWarning($"[ParallaxPanJoint] '{name}': the two groups use different motions " +
+                                     $"({upperLayer.Group.Motion} vs {lowerLayer.Group.Motion}) — the joined edge may wobble " +
+                                     "while the pointer moves.", this);
+            }
+            else if (!Mathf.Approximately(upperLayer.Depth, lowerLayer.Depth))
+            {
+                // NOTE: Without the vertical match, different depths pull the joined pair apart under the pointer.
                 Debug.LogWarning($"[ParallaxPanJoint] '{name}': give both layers the same depth " +
-                                 $"({upperLayer.Depth:0.##} vs {lowerLayer.Depth:0.##}) so the pointer moves them together.", this);
+                                 $"({upperLayer.Depth:0.##} vs {lowerLayer.Depth:0.##}) or turn on Match Vertical Pointer.", this);
+            }
 
             return true;
         }

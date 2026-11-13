@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'A simple cotton gown worn by holy people.
 
     Very itchy.'
-  icon: {fileID: 0}
+  icon: {fileID: 1623579680, guid: 04b85aef8eed30d4a963bd033f215d67, type: 3}
   slot: 2
   classIds:
   - cleric_class

@@ -15,7 +15,7 @@ MonoBehaviour:
   id: equipment_cheap_leather
   displayName: Pig-Leather Armor
   description: A low quality armor made from a pig's cured leather.
-  icon: {fileID: 1070375913, guid: 04b85aef8eed30d4a963bd033f215d67, type: 3}
+  icon: {fileID: -1450843990, guid: 04b85aef8eed30d4a963bd033f215d67, type: 3}
   slot: 2
   classIds:
   - archer_class

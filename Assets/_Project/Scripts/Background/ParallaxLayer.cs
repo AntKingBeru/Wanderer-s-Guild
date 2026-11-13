@@ -8,12 +8,18 @@ namespace WanderersGuild
         [Tooltip("0 = front-most (shifts least), 1 = back-most (shifts the most).")]
         [SerializeField, Range(0f, 1f)] private float depth = 0.5f;
 
+        [Tooltip("On: the layer covers the whole view (its height decides the group's scale). Off: a strip (e.g. clouds) — the " +
+                 "fitter ignores its height and gives it the group's scale.")]
+        [SerializeField] private bool fillsView = true;
+
         private ParallaxGroup _group;
         private Vector3 _restLocalPosition;
         private Vector3 _pointerOffset;
-        private float _panFactorOverride = -1f; // NOTE: < 0 = use depth × Pan Strength.
+        private float _panFactorOverride = -1f;      // NOTE: < 0 = use depth × Pan Strength.
+        private float _pointerDepthYOverride = -1f;  // NOTE: < 0 = use depth for vertical pointer movement too.
 
         public float Depth => depth;
+        public bool FillsView => fillsView;
         public ParallaxGroup Group => _group;
 
         // Local position with no parallax applied (captured in Awake).
@@ -33,6 +39,11 @@ namespace WanderersGuild
 
         public void ClearPanFactorOverride() => _panFactorOverride = -1f;
 
+        // Replaces depth for VERTICAL pointer movement only (ParallaxPanJoint › Match Vertical Pointer) — horizontal keeps depth.
+        public void SetPointerDepthYOverride(float depthY) => _pointerDepthYOverride = Mathf.Clamp01(depthY);
+
+        public void ClearPointerDepthYOverride() => _pointerDepthYOverride = -1f;
+
         // NOTE: LateUpdate so the camera has already moved this frame (DOTween updates in Update); avoids pan jitter.
         private void LateUpdate()
         {
@@ -47,7 +58,9 @@ namespace WanderersGuild
                 return _pointerOffset;
 
             var motion = _group ? _group.Motion : ParallaxMotion.Background;
-            var target = CalculateOffset(PointerTracker.Instance.NormalizedPosition, depth, settings) * settings.PointerStrength(motion);
+            var depthY = _pointerDepthYOverride >= 0f ? _pointerDepthYOverride : depth;
+            var target = CalculateOffset(PointerTracker.Instance.NormalizedPosition, depth, depthY, settings) *
+                         settings.PointerStrength(motion);
 
             // NOTE: Exponential damping — frame-rate independent, unscaled (works while paused).
             var blend = 1f - Mathf.Exp(-settings.SmoothingFor(motion) * Time.unscaledDeltaTime);
@@ -67,13 +80,17 @@ namespace WanderersGuild
             return parent != null ? parent.InverseTransformVector(worldOffset) : worldOffset;
         }
 
-        // Pointer parallax math, shared by the runtime and the editor preview window.
-        public static Vector3 CalculateOffset(Vector2 normalizedPointer, float depth, ParallaxSettings settings)
+        // Pointer parallax math (one depth for both axes) — kept for the editor preview window.
+        public static Vector3 CalculateOffset(Vector2 normalizedPointer, float depth, ParallaxSettings settings) =>
+            CalculateOffset(normalizedPointer, depth, depth, settings);
+
+        // Pointer parallax math with separate horizontal / vertical depths.
+        public static Vector3 CalculateOffset(Vector2 normalizedPointer, float depthX, float depthY, ParallaxSettings settings)
         {
-            var scale = depth * (settings.MoveAgainstPointer ? -1f : 1f);
+            var sign = settings.MoveAgainstPointer ? -1f : 1f;
             return new Vector3(
-                normalizedPointer.x * settings.MaxShift.x * scale,
-                normalizedPointer.y * settings.MaxShift.y * scale,
+                normalizedPointer.x * settings.MaxShift.x * depthX * sign,
+                normalizedPointer.y * settings.MaxShift.y * depthY * sign,
                 0f);
         }
 

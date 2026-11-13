@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'A shield left behind from a battle. It''s owner did not make it.
 
     Very cheap though!'
-  icon: {fileID: 0}
+  icon: {fileID: 71426543, guid: 04b85aef8eed30d4a963bd033f215d67, type: 3}
   slot: 1
   classIds:
   - fighter_class

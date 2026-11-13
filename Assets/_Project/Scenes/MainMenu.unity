@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 0.45
+  fillsView: 1
 --- !u!1 &177388246
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,6 +334,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 0.1
+  fillsView: 1
 --- !u!212 &364720615
 SpriteRenderer:
   serializedVersion: 3
@@ -380,7 +382,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 4
+  m_SortingOrder: 40
   m_MaskInteraction: 0
   m_Sprite: {fileID: -767320093, guid: e0e744ba851c9664c898127fd4d70e12, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -425,6 +427,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 934575888}
+  - {fileID: 1163963846}
   - {fileID: 1770626892}
   - {fileID: 2088648281}
   - {fileID: 890304940}
@@ -551,6 +554,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 0.5
+  fillsView: 1
 --- !u!212 &451206256
 SpriteRenderer:
   serializedVersion: 3
@@ -598,7 +602,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 3
+  m_SortingOrder: 30
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2135051087, guid: e0e744ba851c9664c898127fd4d70e12, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -693,7 +697,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 6
+  m_SortingOrder: 60
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1452059042, guid: f2c234a6dd7524643a72a823ee1f66f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -866,7 +870,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 3
+  m_SortingOrder: 30
   m_MaskInteraction: 0
   m_Sprite: {fileID: 884834787, guid: f2c234a6dd7524643a72a823ee1f66f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1034,7 +1038,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 4
+  m_SortingOrder: 40
   m_MaskInteraction: 0
   m_Sprite: {fileID: 101254592, guid: f2c234a6dd7524643a72a823ee1f66f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1142,7 +1146,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 6
+  m_SortingOrder: 60
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1754717789, guid: f2c234a6dd7524643a72a823ee1f66f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1350,6 +1354,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 0.3
+  fillsView: 1
 --- !u!212 &890304942
 SpriteRenderer:
   serializedVersion: 3
@@ -1397,7 +1402,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 3
+  m_SortingOrder: 38
   m_MaskInteraction: 0
   m_Sprite: {fileID: -1016982567, guid: a2f30e3399ac0b74990bb777c60b4626, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1505,6 +1510,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 1
+  fillsView: 1
 --- !u!212 &934575890
 SpriteRenderer:
   serializedVersion: 3
@@ -1611,6 +1617,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 0.6
+  fillsView: 1
 --- !u!212 &996228914
 SpriteRenderer:
   serializedVersion: 3
@@ -1658,7 +1665,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 2
+  m_SortingOrder: 30
   m_MaskInteraction: 0
   m_Sprite: {fileID: 82416573, guid: f2c234a6dd7524643a72a823ee1f66f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1717,6 +1724,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 0.75
+  fillsView: 1
 --- !u!212 &998983271
 SpriteRenderer:
   serializedVersion: 3
@@ -1764,7 +1772,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 1
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1760051686, guid: e0e744ba851c9664c898127fd4d70e12, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1923,7 +1931,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 5
+  m_SortingOrder: 50
   m_MaskInteraction: 0
   m_Sprite: {fileID: 535604155, guid: f2c234a6dd7524643a72a823ee1f66f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2018,6 +2026,162 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dfa39d4db2f5334fbff1c545c85398a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.CharacterClickTarget
+--- !u!1 &1093905533
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1093905535}
+  - component: {fileID: 1093905534}
+  m_Layer: 0
+  m_Name: CloudsJoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!114 &1093905534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093905533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4917c6c7a0b769b4684563980898bace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxPanJoint
+  upperLayer: {fileID: 451206255}
+  upperJoinPixelY: 0
+  lowerLayer: {fileID: 1163963847}
+  lowerJoinPixelY: 170
+  matchVerticalPointer: 1
+--- !u!4 &1093905535
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093905533}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1163963845
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1163963846}
+  - component: {fileID: 1163963848}
+  - component: {fileID: 1163963847}
+  m_Layer: 0
+  m_Name: CloudsLayer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1163963846
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163963845}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 9.375, z: 0}
+  m_LocalScale: {x: 1.35, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 439469393}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1163963847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163963845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffc8905c6fd556f44bd48e470daa3603, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
+  depth: 0.9
+  fillsView: 0
+--- !u!212 &1163963848
+SpriteRenderer:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163963845}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 74f267a93c0b879469735c7defdb1869, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 6149165
+  m_SortingLayer: 1
+  m_SortingOrder: 35
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: d23b78d00e21916408635a12ce0b8684, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 2
+  m_Size: {x: 3.2, y: 1.8}
+  m_AdaptiveModeThreshold: 0
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+  m_BlendShapeWeights: []
 --- !u!1 &1382090569
 GameObject:
   m_ObjectHideFlags: 0
@@ -2098,7 +2262,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 2
+  m_SortingOrder: 20
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1093213674, guid: f2c234a6dd7524643a72a823ee1f66f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2124,6 +2288,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 0.55
+  fillsView: 1
 --- !u!1 &1436234207
 GameObject:
   m_ObjectHideFlags: 0
@@ -2339,6 +2504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 0.1
+  fillsView: 1
 --- !u!212 &1557153390
 SpriteRenderer:
   serializedVersion: 3
@@ -2386,7 +2552,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 4
+  m_SortingOrder: 40
   m_MaskInteraction: 0
   m_Sprite: {fileID: -1370150288747598966, guid: d2a951af9c31b8b41914d0ca12142865, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2479,7 +2645,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 4
+  m_SortingOrder: 40
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1960799697, guid: f2c234a6dd7524643a72a823ee1f66f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2553,6 +2719,7 @@ MonoBehaviour:
   upperJoinPixelY: 0
   lowerLayer: {fileID: 1557153389}
   lowerJoinPixelY: 180
+  matchVerticalPointer: 1
 --- !u!1 &1770626891
 GameObject:
   m_ObjectHideFlags: 0
@@ -2599,6 +2766,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 0.75
+  fillsView: 1
 --- !u!212 &1770626894
 SpriteRenderer:
   serializedVersion: 3
@@ -2646,7 +2814,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 1
+  m_SortingOrder: 36
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1300593392, guid: a2f30e3399ac0b74990bb777c60b4626, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2741,7 +2909,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 6
+  m_SortingOrder: 60
   m_MaskInteraction: 0
   m_Sprite: {fileID: 1207367967, guid: f2c234a6dd7524643a72a823ee1f66f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3174,6 +3342,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 0.45
+  fillsView: 1
 --- !u!1 &2051495793
 GameObject:
   m_ObjectHideFlags: 0
@@ -3301,6 +3470,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 1
+  fillsView: 1
 --- !u!212 &2073612591
 SpriteRenderer:
   serializedVersion: 3
@@ -3407,6 +3577,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.ParallaxLayer
   depth: 0.5
+  fillsView: 1
 --- !u!212 &2088648283
 SpriteRenderer:
   serializedVersion: 3
@@ -3454,7 +3625,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 6149165
   m_SortingLayer: 1
-  m_SortingOrder: 2
+  m_SortingOrder: 37
   m_MaskInteraction: 0
   m_Sprite: {fileID: 475664852, guid: a2f30e3399ac0b74990bb777c60b4626, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3545,6 +3716,7 @@ SceneRoots:
   - {fileID: 450926135}
   - {fileID: 923540600}
   - {fileID: 1710672528}
+  - {fileID: 1093905535}
   - {fileID: 1073236818}
   - {fileID: 2051495796}
   - {fileID: 177388247}

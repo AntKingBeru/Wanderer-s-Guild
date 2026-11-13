@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'A bow made in bulk from rotwood.
 
     Mold included!'
-  icon: {fileID: 2132736499, guid: 04b85aef8eed30d4a963bd033f215d67, type: 3}
+  icon: {fileID: 1304860094, guid: 04b85aef8eed30d4a963bd033f215d67, type: 3}
   slot: 0
   classIds:
   - archer_class

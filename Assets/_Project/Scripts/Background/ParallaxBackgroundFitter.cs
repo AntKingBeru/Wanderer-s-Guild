@@ -88,7 +88,8 @@ namespace WanderersGuild
 
             foreach (var entry in _entries)
             {
-                var scale = settings.UniformLayerScale
+                // NOTE: Strips (Fills View off) have no height requirement of their own — they always take the shared scale.
+                var scale = settings.UniformLayerScale || !entry.FillsView
                     ? sharedScale
                     : entry.RequiredScale(viewWidth, viewHeight, settings.MaxShift);
 
@@ -127,10 +128,15 @@ namespace WanderersGuild
             }
 
             private bool IsTiled => _renderer.drawMode == SpriteDrawMode.Tiled;
+            public bool FillsView => _layer.FillsView;
 
-            // NOTE: Height always decides the scale; width is solved by widening (tiled) or a bigger scale (simple).
+            // NOTE: Height always decides the scale; width is solved by widening (tiled) or a bigger scale (simple). A strip
+            // (Fills View off) never sets the height — a short cloud strip would otherwise scale the whole group up.
             public float RequiredScale(float viewWidth, float viewHeight, Vector2 maxShift)
             {
+                if (!_layer.FillsView)
+                    return IsTiled ? 0f : CoverWidth(viewWidth, maxShift) / _tileSize.x;
+
                 var heightScale = (viewHeight + 2f * maxShift.y * _layer.Depth) / _tileSize.y;
                 if (IsTiled)
                     return heightScale;

@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 'A sword that was never sharpened, and is sold in bulk.
 
     Better then a stick with metal!'
-  icon: {fileID: -602256766, guid: 04b85aef8eed30d4a963bd033f215d67, type: 3}
+  icon: {fileID: 739197777, guid: 04b85aef8eed30d4a963bd033f215d67, type: 3}
   slot: 0
   classIds:
   - fighter_class
