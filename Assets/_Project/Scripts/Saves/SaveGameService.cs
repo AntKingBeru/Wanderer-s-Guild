@@ -31,8 +31,9 @@ namespace WanderersGuild
 
         public bool IsSaving { get; private set; }
 
-        // False without an active slot (e.g. Play started in the Game scene) or while a save runs.
-        public bool CanSave => GameSession.HasActiveSlot && SaveSlotManager.HasInstance && !IsSaving;
+        // False without an active slot (e.g. Play started in the Game scene), while a save runs, or while saving is held back
+        // (the start tutorial).
+        public bool CanSave => GameSession.HasActiveSlot && SaveSlotManager.HasInstance && !IsSaving && !SaveBlockers.IsBlocked;
 
         protected override void OnSingletonAwake()
         {

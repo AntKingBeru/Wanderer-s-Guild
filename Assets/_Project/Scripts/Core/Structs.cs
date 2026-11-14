@@ -1260,4 +1260,19 @@ namespace WanderersGuild
         }
     }
     #endregion
+    
+    #region Tutorial
+    // One room the start tutorial builds: which facility, where (grid origin) and how it's turned (0–3 = 0°–270°).
+    [Serializable]
+    public struct TutorialPlacement
+    {
+        [SerializeField] private FacilityData facility;
+        [SerializeField] private Vector2Int origin;
+        [SerializeField, Range(0, 3)] private int rotation;
+
+        public FacilityData Facility => facility;
+        public Vector2Int Origin => origin;
+        public int Rotation => rotation & 3;
+    }
+    #endregion
 }

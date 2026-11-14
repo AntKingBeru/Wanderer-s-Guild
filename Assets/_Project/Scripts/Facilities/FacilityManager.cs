@@ -96,18 +96,19 @@ namespace WanderersGuild
             FacilityRules.CanDemolish(room, _grid, _hallId, _settings, FacilityEffects.Capacity(_rooms).total, RosterCount);
 
         // Pays and starts construction if still allowed (re-checked here). Null = nothing changed.
-        public PlacedFacility TryPlace(FacilityData data, Vector2Int origin, int rotation)
+        // NOTE: buildTimeScale shortens the build (the tutorial: 0.25 for its bedrooms, 0 = finished at once — Skip).
+        public PlacedFacility TryPlace(FacilityData data, Vector2Int origin, int rotation, float buildTimeScale = 1f)
         {
             var check = CanPlace(data, origin, rotation);
             if (!check.Allowed || !Spend(check.Gold))
                 return null;
 
-            PlacedFacility room = new(_nextId++, data, origin, rotation, 0, 1, FacilityState.Building,
-                                      Now + (long)data.BuildDaysFor(1) * GameCalendar.MinutesPerDay, check.Gold);
+            var minutes = (long)Mathf.Round(data.BuildDaysFor(1) * GameCalendar.MinutesPerDay * Mathf.Max(0f, buildTimeScale));
+            PlacedFacility room = new(_nextId++, data, origin, rotation, 0, 1, FacilityState.Building, Now + minutes, check.Gold);
             Add(room);
             GameEventsRelay.OnFacilityPlaced.Invoke(room);
 
-            if (data.BuildDaysFor(1) == 0)
+            if (minutes <= 0)
                 Finish(room, isNewRoom: true);
             return room;
         }

@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Tutorial.uss?fileID=7433441132597879392&amp;guid=c90f51a02ba507a46ba4bc6ee037e969&amp;type=3#Tutorial"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="pixel-window tutorial-prompt">
+            <wg:OutlinedText text="Welcome, Guild Master!" class="tutorial-prompt__title"/>
+            <wg:OutlinedText text="Would you like a short tutorial&#10;on running your guild?&#10;&#10;Skipping sets the guild up as&#10;it would be after the tutorial." class="tutorial-prompt__body"/>
+            <ui:VisualElement picking-mode="Ignore" class="tutorial-prompt__buttons">
+                <ui:Button name="tutorial-skip" class="pixel-button panel-button">
+                    <wg:OutlinedText text="Skip"/>
+                </ui:Button>
+                <ui:Button name="tutorial-play" class="pixel-button panel-button">
+                    <wg:OutlinedText text="Play Tutorial"/>
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

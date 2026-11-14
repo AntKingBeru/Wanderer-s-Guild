@@ -1,0 +1,16 @@
+/* Start-tutorial prompt (28a). The instruction box and highlights join this sheet in 28b. */
+.tutorial-prompt {
+    width: 240px;
+}
+.tutorial-prompt__title {
+    margin: 2px 0 4px 0;
+    align-self: center;
+}
+.tutorial-prompt__body {
+    margin: 0 0 6px 0;
+    align-self: center;
+}
+.tutorial-prompt__buttons {
+    flex-direction: row;
+    justify-content: center;
+}

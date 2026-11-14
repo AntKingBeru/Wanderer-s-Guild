@@ -35,7 +35,7 @@ namespace WanderersGuild
             if (SceneLoader.HasInstance && SceneLoader.Instance.IsBusy)
                 return false;
 
-            TimeManager.Instance.EnterMenuPause();
+            TimeManager.Instance.EnterMenuPause(this);
             _isMenuOpen = true;
             host.Open(MenuPanelId.Pause);
             return true;
@@ -62,7 +62,7 @@ namespace WanderersGuild
 
             _isMenuOpen = false;
             if (TimeManager.HasInstance)
-                TimeManager.Instance.ExitMenuPause();
+                TimeManager.Instance.ExitMenuPause(this);
         }
     }
 }

@@ -235,7 +235,7 @@ MonoBehaviour:
       year: 1
       month: 1
       day: 1
-    startingGold: 500
+    startingGold: 1100
   time:
     months:
     - name: Spring
@@ -539,7 +539,7 @@ MonoBehaviour:
     database: {fileID: 11400000, guid: af14e793d4e6f3e4eb3dab858be6cbf6, type: 2}
     boardCapacity: 10
     dawnBatchByReputation: 0100000002000000020000000300000003000000i
-    rankAllowance: 1
+    rankAllowance: 0
     gatedSources: 0000000001000000i
     gatedSourceMinimumLevel: 3
     expiryReputation: -2
@@ -644,11 +644,11 @@ MonoBehaviour:
     - species: {fileID: 11400000, guid: 9111531ff2254e3469e880feeec8a135, type: 2}
       classData: {fileID: 11400000, guid: 7e16d1dcd825423409cbec5b211cfde9, type: 2}
       level: 1
-      name: 
+      name: Bran Ashford
     - species: {fileID: 11400000, guid: bd2724ecdc4496c419cd6d8128673a36, type: 2}
       classData: {fileID: 11400000, guid: 215f3f74669f23a4da6ca5854dcd0b60, type: 2}
       level: 1
-      name: 
+      name: Aelith Moonsong
     arrivalChanceByReputation:
     - 0.15
     - 0.3
@@ -877,3 +877,26 @@ MonoBehaviour:
     leanDegrees: 4
     stepsPerSecond: 4
     cadenceVariation: 0.1
+  tutorial:
+    startingRequest: {fileID: 11400000, guid: 0a408452edd6e6b42b7661983ecc9d48, type: 2}
+    placements:
+    - facility: {fileID: 11400000, guid: d06f9d30654abfc498108851a706fd21, type: 2}
+      origin: {x: -22, y: -6}
+      rotation: 0
+    - facility: {fileID: 11400000, guid: d06f9d30654abfc498108851a706fd21, type: 2}
+      origin: {x: -22, y: 6}
+      rotation: 0
+    - facility: {fileID: 11400000, guid: d06f9d30654abfc498108851a706fd21, type: 2}
+      origin: {x: -22, y: -18}
+      rotation: 0
+    - facility: {fileID: 11400000, guid: fedfa58c7197c8844bbfd5cf38369e62, type: 2}
+      origin: {x: -34, y: -18}
+      rotation: 3
+    - facility: {fileID: 11400000, guid: fedfa58c7197c8844bbfd5cf38369e62, type: 2}
+      origin: {x: -34, y: -6}
+      rotation: 3
+    - facility: {fileID: 11400000, guid: fedfa58c7197c8844bbfd5cf38369e62, type: 2}
+      origin: {x: -34, y: 6}
+      rotation: 3
+    guidedBuildTimeScale: 0.25
+    tutorialWithoutSlot: 0

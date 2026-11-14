@@ -70,6 +70,7 @@ namespace WanderersGuild
         [SerializeField] private ProcessionSettings processions = new();
         [SerializeField] private NavigationSettings navigation = new();
         [SerializeField] private AvatarBobSettings avatarBob = new();
+        [SerializeField] private TutorialSettings tutorial = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -129,6 +130,7 @@ namespace WanderersGuild
         public ProcessionSettings Processions => processions;
         public NavigationSettings Navigation => navigation;
         public AvatarBobSettings AvatarBob => avatarBob;
+        public TutorialSettings Tutorial => tutorial;
     }
     
     #region Scene Management
@@ -757,7 +759,7 @@ namespace WanderersGuild
         [Tooltip("Rank, in-game date and gold a new guild starts with.")]
         [SerializeField] private GuildRank startingRank = GuildRank.F;
         [SerializeField] private GameDateStamp startingDate = new(1, 1, 1);
-        [SerializeField, Min(0)] private long startingGold = 500;
+        [SerializeField, Min(0)] private long startingGold = 1100;
 
         public int NameMinLength => Mathf.Clamp(nameMinLength, 1, NameMaxLength);
         public int NameMaxLength => Mathf.Max(1, nameMaxLength);
@@ -1093,7 +1095,7 @@ namespace WanderersGuild
         [SerializeField] private int[] dawnBatchByReputation = { 1, 2, 2, 3, 3 };
 
         [Tooltip("Requests up to this many ranks above the guild's rank can appear.")]
-        [SerializeField, Range(0, 3)] private int rankAllowance = 1;
+        [SerializeField, Range(0, 3)] private int rankAllowance;
 
         [Tooltip("Sources that only offer requests at or above the minimum reputation level below.")]
         [SerializeField] private RequestSource[] gatedSources = { RequestSource.Kingdom, RequestSource.Nobility };
@@ -2146,6 +2148,32 @@ namespace WanderersGuild
             AvatarBobMode.Never => false,
             _ => !hasWalkFrames
         };
+    }
+    #endregion
+    
+    #region Tutorial
+    [Serializable]
+    public class TutorialSettings
+    {
+        [Tooltip("The start tutorial's own request (not from the sheet). Keep the asset OUTSIDE Data/Requests — Database › Load " +
+                 "deletes request assets that aren't in the sheet. Recommended Party Size must match the starting party (2).")]
+        [SerializeField] private RequestData startingRequest;
+
+        [Tooltip("The start tutorial's rooms in build order: the hall west of the Guild Hall, the halls north and south of it, then " +
+                 "a bedroom west of each hall. Debug › Tutorial › Log Placed Rooms prints these from a guild built by hand.")]
+        [SerializeField] private TutorialPlacement[] placements = Array.Empty<TutorialPlacement>();
+
+        [Tooltip("The guided tutorial's rooms take this share of their usual build time (0.25 = a quarter).")]
+        [SerializeField, Range(0f, 1f)] private float guidedBuildTimeScale = 0.25f;
+
+        [Tooltip("On: pressing Play in the Game scene without a save slot also starts with the tutorial prompt (testing). " +
+                 "Off: no slot = tutorial done.")]
+        [SerializeField] private bool tutorialWithoutSlot;
+
+        public RequestData StartingRequest => startingRequest;
+        public IReadOnlyList<TutorialPlacement> Placements => placements ?? Array.Empty<TutorialPlacement>();
+        public float GuidedBuildTimeScale => guidedBuildTimeScale;
+        public bool TutorialWithoutSlot => tutorialWithoutSlot;
     }
     #endregion
 }

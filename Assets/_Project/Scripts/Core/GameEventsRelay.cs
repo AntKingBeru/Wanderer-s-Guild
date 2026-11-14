@@ -293,5 +293,13 @@ namespace WanderersGuild
         // An adventurer failed a class trial. Args: adventurer, the class they tried for.
         public static readonly UnityEvent<Adventurer, ClassData> OnClassTrialFailed = new();
         #endregion
+        
+        #region Tutorial
+        // The player chose to play the guided start tutorial.
+        public static readonly UnityEvent OnTutorialStarted = new();
+
+        // The start tutorial is over. Arg: true if it was skipped (the start state was built instead).
+        public static readonly UnityEvent<bool> OnTutorialCompleted = new();
+        #endregion
     }
 }

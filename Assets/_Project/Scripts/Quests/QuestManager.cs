@@ -130,6 +130,48 @@ namespace WanderersGuild
 
         // Approve without a potion.
         public bool Approve(int questId) => Approve(questId, PotionKey.None);
+        
+                // Signs these adventurers up at once (scripted — the tutorial's starting party), skipping appeal and cooldowns; a full
+        // quest becomes Ready. Anyone not idle, or already in, is skipped. Returns how many joined.
+        public int ForceSignUp(int questId, IEnumerable<Adventurer> adventurers)
+        {
+            var quest = Find(questId);
+            if (quest is not { State: QuestState.Waiting } || adventurers == null)
+                return 0;
+
+            var added = 0;
+            foreach (var adventurer in new List<Adventurer>(adventurers)) // NOTE: Copied — status changes raise events.
+            {
+                if (adventurer is not { Status: AdventurerStatus.Idle } || !quest.TryAddMember(adventurer.Id))
+                    continue;
+
+                SetStatus(adventurer, AdventurerStatus.SignedUp);
+                added++;
+            }
+
+            if (added > 0)
+                GameEventsRelay.OnQuestUpdated.Invoke(quest);
+            if (quest.MarkReadyIfFull())
+            {
+                GameEventsRelay.OnQuestUpdated.Invoke(quest);
+                GameEventsRelay.OnQuestPartyReady.Invoke(quest);
+            }
+            return added;
+        }
+
+        // Resolves an in-progress quest now with a set outcome (scripted — the tutorial). It's marked safe first, so no
+        // injuries or deaths are rolled. False unless the quest is in progress.
+        public bool ResolveScripted(int questId, bool success)
+        {
+            var quest = Find(questId);
+            if (quest is not { State: QuestState.InProgress })
+                return false;
+
+            ScriptedQuests.MarkSafe(quest.Id);
+            ScriptedQuests.Release(quest.Id);
+            Resolve(quest, success);
+            return true;
+        }
 
         // Declines one applicant: they go idle and can't re-apply to this quest for the cooldown; a ready quest
         // reopens. False after departure or if they aren't an applicant.
@@ -248,13 +290,14 @@ namespace WanderersGuild
         private void OnHourStarted(GameDateTime now) => RunSignUps(now.TotalMinutes);
 
         // NOTE: Due quests are collected first, then handled — never modifies the list while iterating it.
-        // Anything not yet departed (waiting or ready) expires at the request's expiry.
+        // Anything not yet departed (waiting or ready) expires at the request's expiry. Held quests (scripted) are skipped.
         private void OnTimeTick(GameDateTime now)
         {
             ReturningAdventurers.ReleaseDue(now.TotalMinutes);
-            
+
             List<Quest> due = null;
             foreach (var quest in from quest in _quests
+                     where !ScriptedQuests.IsHeld(quest.Id)
                      let expired = quest.IsBeforeDeparture && now.TotalMinutes >= quest.ExpiresAtMinutes
                      let returned = quest.State == QuestState.InProgress && now.TotalMinutes >= quest.ReturnsAtMinutes
                      where expired || returned select quest)
@@ -314,9 +357,9 @@ namespace WanderersGuild
         }
 
         // NOTE: A quest whose members are all gone (dropped on load) fails without the reputation penalty. Potions taken
-        // at departure add their bonus to the roll. OnQuestOutcome fires after the payout and before the members are
-        // released, so injuries/deaths (InjuryManager) apply to the members and stick.
-        private void Resolve(Quest quest)
+        // at departure add their bonus to the roll; a scripted outcome replaces the roll. OnQuestOutcome fires after the payout
+        // and before the members are released, so injuries/deaths (InjuryManager) apply to the members and stick.
+        private void Resolve(Quest quest, bool? forcedSuccess = null)
         {
             var members = MembersOf(quest);
             if (members.Count == 0)
@@ -328,7 +371,7 @@ namespace WanderersGuild
             var power = QuestCalculator.PartyPower(members, quest.Request.Category, _settings);
             var difficulty = QuestCalculator.Difficulty(quest.Request, _settings);
             var chance = QuestCalculator.SuccessChance(power, difficulty, _settings, quest.PotionChanceBonus);
-            var success = Random.value < chance;
+            var success = forcedSuccess ?? Random.value < chance;
 
             if (success)
                 PaySuccess(quest, members);
@@ -367,7 +410,7 @@ namespace WanderersGuild
         }
 
         // NOTE: Every way out of the list goes through here. Only quest-owned statuses (Signed up / On quest) are released
-        // back to idle — an injury applied during the outcome stays.
+        // back to idle — an injury applied during the outcome stays. A scripted quest is forgotten after its listeners ran.
         private void End(Quest quest, QuestEndReason reason)
         {
             foreach (var member in MembersOf(quest).Where(member => member.Status is AdventurerStatus.SignedUp or AdventurerStatus.OnQuest))
@@ -377,6 +420,7 @@ namespace WanderersGuild
 
             _quests.Remove(quest);
             GameEventsRelay.OnQuestEnded.Invoke(quest, reason);
+            ScriptedQuests.Forget(quest.Id);
         }
 
         private static void SetStatus(Adventurer adventurer, AdventurerStatus status)

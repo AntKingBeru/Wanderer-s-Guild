@@ -234,10 +234,12 @@ namespace WanderersGuild
         }
 
         // NOTE: One roll per day at dawn. With an office, the waiting list's room matters (a full guild still gets
-        // applicants); without one, a full guild means nobody arrives.
+        // applicants); without one, a full guild means nobody arrives. Nobody arrives while the start tutorial holds them back.
         private void OnHourStarted(GameDateTime now)
         {
             if (now.Minute != 0 || now.Hour != GameConfig.Instance.Time.DawnHour || !HasRoomForArrival)
+                return;
+            if (TutorialManager.HasInstance && TutorialManager.Instance.BlocksArrivals)
                 return;
 
             if (Random.value < _settings.ArrivalChance(CurrentReputation))

@@ -3,10 +3,11 @@ namespace WanderersGuild
 {
     public sealed class GameExitFlow
     {
-        // True when saved — or when there's nothing to save into (no active slot).
+        // True when saved — or when there's nothing to save (no active slot, or saving held back by the start tutorial: the
+        // slot keeps the new guild's first save, so quitting mid-tutorial just leaves).
         public async UnityEngine.Awaitable<bool> TrySaveAsync()
         {
-            if (!SaveGameService.HasInstance || !GameSession.HasActiveSlot)
+            if (!SaveGameService.HasInstance || !GameSession.HasActiveSlot || SaveBlockers.IsBlocked)
                 return true;
             return await SaveGameService.Instance.SaveAsync(SaveReason.Exit);
         }

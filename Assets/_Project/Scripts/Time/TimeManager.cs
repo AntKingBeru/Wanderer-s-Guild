@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace WanderersGuild
 {
@@ -12,6 +13,7 @@ namespace WanderersGuild
         private GameSpeed _speed = GameSpeed.Paused;
         private GameSpeed _lastRunningSpeed = GameSpeed.Normal;
         private GameSpeed _speedBeforeMenu;
+        private readonly HashSet<object> _pauseOwners = new(); // NOTE: Everyone holding time paused (menus, the tutorial).
 
         public GameCalendar Calendar => _calendar;
         public GameDateTime Now => _clock.Now;
@@ -21,8 +23,8 @@ namespace WanderersGuild
         // False until the scene has faded in; speed changes are ignored before that.
         public bool IsRunning { get; private set; }
 
-        // True while a menu holds time paused; speed changes (hotkeys, HUD) are ignored meanwhile.
-        public bool IsMenuPaused { get; private set; }
+        // True while anyone holds time paused (a menu, a prompt, the tutorial); speed changes are ignored meanwhile.
+        public bool IsMenuPaused => _pauseOwners.Count > 0;
 
         // Progress toward the next tick (0–1), for smooth visuals between ticks.
         public float TickFraction => _ticks.Fraction;
@@ -82,24 +84,26 @@ namespace WanderersGuild
         // Pauses, or resumes at the speed it was paused from.
         public void TogglePause() => SetSpeed(IsPaused ? _lastRunningSpeed : GameSpeed.Paused);
 
-        // Pauses for a menu and remembers the current speed (Paused included).
-        public void EnterMenuPause()
+        // Holds time paused for this owner. The first owner remembers the current speed (Paused included).
+        // NOTE: Owners are counted — the pause menu opening over the tutorial can't release the tutorial's pause.
+        public void EnterMenuPause(object owner)
         {
-            if (!IsRunning || IsMenuPaused)
+            if (owner == null || !IsRunning || !_pauseOwners.Add(owner))
                 return;
 
-            _speedBeforeMenu = _speed;
-            ApplySpeed(GameSpeed.Paused);
-            IsMenuPaused = true;
+            if (_pauseOwners.Count == 1)
+            {
+                _speedBeforeMenu = _speed;
+                ApplySpeed(GameSpeed.Paused);
+            }
         }
 
-        // Restores exactly the speed from before the menu opened.
-        public void ExitMenuPause()
+        // Lets go of this owner's pause; when the last one leaves, the speed from before the first is restored.
+        public void ExitMenuPause(object owner)
         {
-            if (!IsMenuPaused)
+            if (owner == null || !_pauseOwners.Remove(owner) || _pauseOwners.Count > 0)
                 return;
 
-            IsMenuPaused = false;
             ApplySpeed(_speedBeforeMenu);
         }
 

@@ -16,6 +16,16 @@ namespace WanderersGuild
         private bool _startingBatchDone;
 
         public IReadOnlyList<ActiveRequest> Requests => _board.Requests;
+        
+        // The start tutorial's request while it's on the board (null otherwise).
+        public ActiveRequest TutorialRequest
+        {
+            get
+            {
+                var template = GameConfig.Instance.Tutorial.StartingRequest;
+                return template == null ? null : _board.Requests.FirstOrDefault(request => request.Data == template);
+            }
+        }
 
         // Current in-game time (minutes); the save's start time if no TimeManager exists.
         public static long NowMinutes =>
@@ -48,7 +58,8 @@ namespace WanderersGuild
             GameEventsRelay.OnTimeTick.RemoveListener(OnTimeTick);
         }
 
-        // NOTE: A new guild (or an older save without request state) gets one starting batch, once.
+        // NOTE: A new guild (or an older save without request state) gets one starting batch, once — or, while the start
+        // tutorial isn't done, the tutorial's own request instead (the real batch comes when the tutorial ends).
         private void Start()
         {
             if (SaveGameService.HasInstance)
@@ -58,7 +69,10 @@ namespace WanderersGuild
                 return;
 
             _startingBatchDone = true;
-            GenerateBatch(NowMinutes);
+            if (TutorialManager.HasInstance && !TutorialManager.Instance.IsDone)
+                PostTutorialRequest();
+            else
+                GenerateBatch(NowMinutes);
         }
 
         protected override void OnDestroy()
@@ -115,12 +129,14 @@ namespace WanderersGuild
             data.RequestsInitialized = _startingBatchDone;
         }
 
-        // NOTE: Expire first, then generate — a request ending at 05:00 frees its slot (and its template) for that dawn.
+        // NOTE: Expire first, then generate — a request ending at 05:00 frees its slot (and its template) for that dawn. No new
+        // requests while the start tutorial holds them back.
         private void OnHourStarted(GameDateTime now)
         {
             ExpireDue(now.TotalMinutes);
 
-            if (now.Minute == 0 && now.Hour == GameConfig.Instance.Time.DawnHour)
+            var blocked = TutorialManager.HasInstance && TutorialManager.Instance.BlocksNewRequests;
+            if (!blocked && now.Minute == 0 && now.Hour == GameConfig.Instance.Time.DawnHour)
                 GenerateBatch(now.TotalMinutes);
         }
 
@@ -141,6 +157,25 @@ namespace WanderersGuild
             {
                 GameEventsRelay.OnRequestAdded.Invoke(request);
             }
+        }
+        
+        // NOTE: The hand-made tutorial request (GameConfig › Tutorial › Starting Request). It never joins the generator's
+        // templates, so it can't come back at random. Missing → the normal batch, with a warning.
+        private void PostTutorialRequest()
+        {
+            var template = GameConfig.Instance.Tutorial.StartingRequest;
+            if (template == null)
+            {
+                Debug.LogWarning("[RequestManager] GameConfig › Tutorial › Starting Request is empty — posting the normal batch.", this);
+                GenerateBatch(NowMinutes);
+                return;
+            }
+
+            var now = NowMinutes;
+            var request = new ActiveRequest(_nextInstanceId++, template, now,
+                now + (long)template.ExpirationDays * GameCalendar.MinutesPerDay);
+            if (_board.TryAdd(request))
+                GameEventsRelay.OnRequestAdded.Invoke(request);
         }
 
         private void ExpireDue(long nowMinutes)

@@ -64,6 +64,9 @@ namespace WanderersGuild
 
         private void OnQuestOutcome(Quest quest, List<Adventurer> members, bool success, float powerRatio)
         {
+            if (ScriptedQuests.IsSafe(quest.Id))
+                return; // NOTE: A scripted quest (the tutorial's) never injures or kills.
+            
             foreach (var result in QuestRisks.Roll(members, success, powerRatio, _settings))
             {
                 if (result.Died)

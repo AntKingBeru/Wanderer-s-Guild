@@ -40,7 +40,7 @@ namespace WanderersGuild
 
             if (TimeManager.HasInstance && TimeManager.Instance.IsRunning)
             {
-                TimeManager.Instance.EnterMenuPause();
+                TimeManager.Instance.EnterMenuPause(this);
                 _ownsPause = true;
             }
 
@@ -61,7 +61,7 @@ namespace WanderersGuild
 
             _ownsPause = false;
             if (TimeManager.HasInstance)
-                TimeManager.Instance.ExitMenuPause();
+                TimeManager.Instance.ExitMenuPause(this);
         }
     }
 }

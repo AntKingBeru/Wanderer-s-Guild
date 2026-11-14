@@ -67,7 +67,8 @@ namespace WanderersGuild
         Applications = 10,
         Recruits = 11,
         Armory = 12,
-        Alchemy = 13
+        Alchemy = 13,
+        TutorialPrompt = 14
     }
     
     // How a ParallaxGroup reacts to the pointer (strength + follow speed set in GameConfig › Parallax).
@@ -415,6 +416,16 @@ namespace WanderersGuild
         Gathering = 1,
         Huddling = 2,
         Filing = 3
+    }
+    #endregion
+    
+    #region Tutorial
+    // Where the guild is with the start tutorial (saved as done / not done).
+    public enum TutorialStage
+    {
+        Pending = 0, // Not chosen yet — the play / skip prompt is (about to be) up.
+        Running = 1, // The guided tutorial is under way.
+        Done = 2 // Finished or skipped (and every save from before the tutorial existed).
     }
     #endregion
 }

@@ -45,9 +45,12 @@ namespace WanderersGuild
                 RunOpen(panel);
         }
 
+        // NOTE: The tutorial may lock a panel open until its explanation is done — every close goes through here.
         public void Close(MenuPanelId id)
         {
             if (_isBusy || _active == null || _active.Id != id)
+                return;
+            if (TutorialManager.HasInstance && !TutorialManager.Instance.CanClose(id))
                 return;
             RunClose();
         }
