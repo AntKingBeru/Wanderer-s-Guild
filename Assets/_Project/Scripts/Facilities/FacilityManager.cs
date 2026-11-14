@@ -155,6 +155,17 @@ namespace WanderersGuild
                 Finish(room, isNewRoom: room.Level == 0);
             }
         }
+        
+        // Finishes one room's construction now, through the normal completion (events, reputation) — the tutorial skips its
+        // bedrooms' wait. False if it isn't this manager's room or isn't being built.
+        public bool FinishNow(PlacedFacility room)
+        {
+            if (room is not { IsUnderConstruction: true } || !_rooms.Contains(room))
+                return false;
+
+            Finish(room, isNewRoom: room.Level == 0);
+            return true;
+        }
 
         public void WriteTo(GameSaveData data)
         {

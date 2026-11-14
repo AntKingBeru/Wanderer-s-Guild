@@ -76,5 +76,19 @@ namespace WanderersGuild
         public static string DemolishLabel(FacilityCheck check) => check.Allowed ? $"Demolish (+{check.Gold:N0}g)" : "Demolish";
 
         public static string Days(int days) => days == 1 ? "1 day" : $"{days} days";
+        
+        // Build time at a timescale (the tutorial's quicker rooms): days at full speed, else hours ("6 hours"); none = "Instant".
+        public static string BuildTime(int days, float scale)
+        {
+            if (scale >= 1f)
+                return Days(days);
+
+            var hours = (int)System.Math.Round(days * 24.0 * System.Math.Max(0f, scale));
+            if (hours <= 0)
+                return "Instant";
+            if (hours % 24 == 0)
+                return Days(hours / 24);
+            return hours == 1 ? "1 hour" : $"{hours} hours";
+        }
     }
 }

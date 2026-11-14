@@ -1274,5 +1274,26 @@ namespace WanderersGuild
         public Vector2Int Origin => origin;
         public int Rotation => rotation & 3;
     }
+    
+    // What the tutorial overlay shows this frame: the instruction (null = no box), the Next label (null = no button) and the
+    // spotlight (panel space).
+    public readonly struct TutorialFrame
+    {
+        public string Text { get; }
+        public string NextLabel { get; }
+        public bool HasHighlight { get; }
+        public Rect Highlight { get; }
+
+        public TutorialFrame(string text, string nextLabel, bool hasHighlight, Rect highlight)
+        {
+            Text = text;
+            NextLabel = nextLabel;
+            HasHighlight = hasHighlight;
+            Highlight = highlight;
+        }
+
+        // Blocks the UI and shows nothing (between steps).
+        public static TutorialFrame BlockOnly => new(null, null, false, default);
+    }
     #endregion
 }

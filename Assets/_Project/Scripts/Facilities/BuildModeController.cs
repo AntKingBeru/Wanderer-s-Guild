@@ -8,7 +8,8 @@ using UnityEngine.UIElements;
 namespace WanderersGuild
 {
     // NOTE: Scene-scoped — untick "Persist Across Scenes". LateUpdate runs after the camera rig (order 110), so the ghost
-    // and room picking use this frame's final camera pose.
+    // and room picking use this frame's final camera pose. The guided tutorial (TutorialGate) can keep it open, limit the
+    // catalog to one room, pin the ghost to a spot and shorten the build.
     [DefaultExecutionOrder(110)]
     public class BuildModeController : Singleton<BuildModeController>
     {
@@ -41,6 +42,10 @@ namespace WanderersGuild
 
         // True while build mode is open or used Esc this frame — the pause menu ignores that Esc.
         public bool BlocksEscape => IsActive || _escapeFrame == Time.frameCount;
+
+        // The facility being placed (null = none) and whether a confirm is open — the tutorial follows both.
+        public FacilityData Selected => _selected;
+        public bool IsConfirming => _view is { IsConfirming: true };
 
         private static FacilityManager Facilities => FacilityManager.Instance;
         private static BuildModeSettings Settings => GameConfig.Instance.BuildMode;
@@ -107,17 +112,18 @@ namespace WanderersGuild
             base.OnDestroy();
         }
 
+        // NOTE: The tutorial may keep build mode open (its building steps).
         public void Toggle()
         {
-            if (IsActive)
-                Exit();
-            else
+            if (!IsActive)
                 Enter();
+            else if (!TutorialGate.KeepsBuildMode)
+                Exit();
         }
 
         public void Enter()
         {
-            if (IsActive || !CanEnter || _view == null || _card == null)
+            if (IsActive || !CanEnter || !TutorialGate.AllowsBuildModeEnter || _view == null || _card == null)
                 return;
 
             IsActive = true;
@@ -128,7 +134,8 @@ namespace WanderersGuild
             GameEventsRelay.OnBuildModeChanged.Invoke(true);
         }
 
-        // NOTE: Clears both outlines (hover + selection) — no room stays outlined during normal play.
+        // NOTE: Clears both outlines (hover + selection) — no room stays outlined during normal play. Unconditional (a panel
+        // opening closes build mode even under the tutorial).
         public void Exit()
         {
             if (!IsActive)
@@ -146,9 +153,16 @@ namespace WanderersGuild
             GameEventsRelay.OnBuildModeChanged.Invoke(false);
         }
 
+        // The catalog card showing this facility (null if none) — the tutorial spotlights it.
+        public VisualElement CatalogCard(FacilityData data) => _view?.CardFor(data);
+
+        // Scrolls the catalog so this facility's card is fully in view.
+        public void RevealCard(FacilityData data) => _view?.RevealCard(data);
+
         // ---------- Frame ----------
 
-        // NOTE: Frozen while a confirm is open, so the dialog always matches what's on screen.
+        // NOTE: Frozen while a confirm is open, so the dialog always matches what's on screen. A tutorial-pinned room is
+        // handled before the over-UI check, so its ghost stays put whatever the pointer is over.
         private void LateUpdate()
         {
             if (!IsActive || _view == null)
@@ -158,6 +172,12 @@ namespace WanderersGuild
             ScrollCatalog(screen);
             if (_view.IsConfirming)
                 return;
+
+            if (_selected != null && TutorialGate.TryGetPlacement(_selected, out var pinned))
+            {
+                UpdatePinnedGhost(pinned, screen);
+                return;
+            }
 
             if (view.IsPointerOverUI(screen) ||
                 !BuildPointer.TryFloorPoint(worldCamera, view, screen, Settings.FloorHeight, out var floor, out var pixel))
@@ -197,19 +217,52 @@ namespace WanderersGuild
 
             var check = Facilities.CanPlace(_selected, _origin, _ghostRotation);
             _ghost.Show(_selected, _origin, _ghostRotation, check.Allowed);
-
-            var label = check.Allowed ? $"{check.Gold:N0}g · {FacilityFormatter.Days(_selected.BuildDaysFor(1))}" : check.Reason;
-            _view.ShowCursor(label, check.Allowed, view.ViewToLocal(pixel + Settings.CursorLabelOffset));
+            _view.ShowCursor(PlacementLabel(check), check.Allowed, view.ViewToLocal(pixel + Settings.CursorLabelOffset));
 
             if (check.Allowed && _click != null && _click.WasPressedThisFrame())
                 AskToBuild(check.Gold);
         }
 
+        // NOTE: The tutorial pins the ghost to its spot; only a click on one of the spot's own cells (not on UI) asks to build.
+        private void UpdatePinnedGhost(TutorialPlacement pinned, Vector2 screen)
+        {
+            _origin = pinned.Origin;
+            _ghostRotation = pinned.Rotation;
+            _gridOverlay.Hide();
+            SetHoverRoom(null);
+
+            var check = Facilities.CanPlace(_selected, _origin, _ghostRotation);
+            _ghost.Show(_selected, _origin, _ghostRotation, check.Allowed);
+
+            if (view.IsPointerOverUI(screen) ||
+                !BuildPointer.TryFloorPoint(worldCamera, view, screen, Settings.FloorHeight, out var floor, out var pixel) ||
+                !FacilityFootprint.Cells(_origin, _selected.Size, _ghostRotation).Contains(BuildPointer.CellAt(grid, floor)))
+            {
+                _view.HideCursor();
+                return;
+            }
+
+            _view.ShowCursor(PlacementLabel(check), check.Allowed, view.ViewToLocal(pixel + Settings.CursorLabelOffset));
+            if (check.Allowed && _click != null && _click.WasPressedThisFrame())
+                AskToBuild(check.Gold);
+        }
+
+        // "150g · 6 hours" (the tutorial's shortened time), or why it can't go there.
+        private string PlacementLabel(FacilityCheck check) =>
+            check.Allowed ? $"{check.Gold:N0}g · {FacilityFormatter.BuildTime(_selected.BuildDaysFor(1), TutorialGate.BuildTimeScale)}"
+                          : check.Reason;
+
         // NOTE: The floor cell under the pointer tells which room owns it (no colliders needed). Clicking empty floor
-        // deselects the room.
+        // deselects the room. Off while the tutorial runs.
         private void UpdateRoomPicking(Vector2Int cell)
         {
             _view.HideCursor();
+            if (!TutorialGate.AllowsRoomPicking)
+            {
+                SetHoverRoom(null);
+                return;
+            }
+
             var room = Facilities.RoomAt(cell);
             SetHoverRoom(room);
 
@@ -227,9 +280,10 @@ namespace WanderersGuild
 
         // ---------- Placing ----------
 
+        // NOTE: While the tutorial runs, only its pinned room can be picked.
         private void Pick(FacilityData data)
         {
-            if (!IsActive || _view.IsConfirming)
+            if (!IsActive || _view.IsConfirming || !TutorialGate.AllowsFacility(data))
                 return;
 
             if (data == _selected)
@@ -264,15 +318,17 @@ namespace WanderersGuild
                 _rotation = (_rotation + 1) & 3;
         }
 
-        // NOTE: TryPlace re-checks on Yes — anything that changed meanwhile simply refuses. The facility stays selected.
+        // NOTE: TryPlace re-checks on Yes — anything that changed meanwhile simply refuses. The facility stays selected. The
+        // build-time scale (the tutorial's) is taken now, so the dialog and the build agree.
         private void AskToBuild(long cost)
         {
             var data = _selected;
             var origin = _origin;
             var rotation = _ghostRotation;
+            var scale = TutorialGate.BuildTimeScale;
 
-            _view.Confirm($"Build {data.DisplayName}?\n{cost:N0}g · {FacilityFormatter.Days(data.BuildDaysFor(1))}",
-                          onYes: () => Facilities.TryPlace(data, origin, rotation),
+            _view.Confirm($"Build {data.DisplayName}?\n{cost:N0}g · {FacilityFormatter.BuildTime(data.BuildDaysFor(1), scale)}",
+                          onYes: () => Facilities.TryPlace(data, origin, rotation, scale),
                           onClosed: null);
         }
 
@@ -363,6 +419,7 @@ namespace WanderersGuild
             StepBack(allowExit: true);
         }
 
+        // NOTE: The last step (leaving build mode) is skipped while the tutorial keeps it opened.
         private void StepBack(bool allowExit)
         {
             if (!IsActive) return;
@@ -373,7 +430,7 @@ namespace WanderersGuild
                 DeselectFacility();
             else if (_selectedRoom != null)
                 SelectRoom(null);
-            else if (allowExit)
+            else if (allowExit && !TutorialGate.KeepsBuildMode)
                 Exit();
         }
 

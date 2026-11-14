@@ -140,6 +140,36 @@ namespace WanderersGuild
             if (_confirm.IsOpen)
                 _confirm.Cancel();
         }
+        
+        // The catalog card showing this facility (null if none) — the tutorial spotlights it.
+        public VisualElement CardFor(FacilityData data)
+        {
+            if (data == null)
+                return null;
+
+            foreach (var card in _cards)
+            {
+                if (card.Data == data)
+                    return card.Button;
+            }
+            return null;
+        }
+
+        // Scrolls the catalog so this facility's card is fully in view.
+        public void RevealCard(FacilityData data)
+        {
+            if (data == null)
+                return;
+
+            for (var i = 0; i < _cards.Count && i < _visibleCards; i++)
+            {
+                if (_cards[i].Data != data)
+                    continue;
+
+                BringIntoView(i);
+                return;
+            }
+        }
 
         // ---------- Scrolling ----------
 

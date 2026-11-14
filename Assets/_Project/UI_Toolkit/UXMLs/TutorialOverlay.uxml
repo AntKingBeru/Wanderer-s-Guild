@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild" editor-extension-mode="False">
+
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Tutorial.uss?fileID=7433441132597879392&amp;guid=c90f51a02ba507a46ba4bc6ee037e969&amp;type=3#Tutorial"/>
+    <ui:VisualElement name="tutorial-root" class="tutorial-root" picking-mode="Ignore">
+        <!-- Blocks the UI except the step's holes; the world under it stays clickable. -->
+        <wg:TutorialBlocker name="tutorial-blocker" class="tutorial-blocker"/>
+        <!-- Spotlight: four dims around the target + a blinking frame (positioned in code). -->
+        <ui:VisualElement name="tutorial-dim-top" class="tutorial-dim" picking-mode="Ignore"/>
+        <ui:VisualElement name="tutorial-dim-bottom" class="tutorial-dim" picking-mode="Ignore"/>
+        <ui:VisualElement name="tutorial-dim-left" class="tutorial-dim" picking-mode="Ignore"/>
+        <ui:VisualElement name="tutorial-dim-right" class="tutorial-dim" picking-mode="Ignore"/>
+        <ui:VisualElement name="tutorial-frame" class="tutorial-frame" picking-mode="Ignore"/>
+        <!-- Instruction box (positioned in code beside the target). -->
+        <ui:VisualElement name="tutorial-box" class="pixel-window tutorial-box">
+            <wg:OutlinedText name="tutorial-text" class="tutorial-text" text="Click the Reception Desk."/>
+            <ui:Button name="tutorial-next" class="pixel-button panel-button tutorial-next">
+                <wg:OutlinedText name="tutorial-next-label" text="Next"/>
+            </ui:Button>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

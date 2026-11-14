@@ -1,4 +1,5 @@
-// A clickable guild object (desk, quest board, lounge…): its name, the screen it opens, its colliders, and its hover outline.
+// A clickable guild object (desk, quest board, lounge…): its name, the screen it opens, its colliders, and its outline (hover
+// or the tutorial's pin). Registered in GuildInteractables while enabled.
 using UnityEngine;
 
 namespace WanderersGuild
@@ -9,7 +10,7 @@ namespace WanderersGuild
         [Tooltip("Shown in the label above the object while hovered.")]
         [SerializeField] private string displayName = "Reception Desk";
 
-        [Tooltip("The screen a click opens.")]
+        [Tooltip("The screen a click opens (also how the tutorial finds this object).")]
         [SerializeField] private MenuPanelId opens = MenuPanelId.ReceptionDesk;
 
         [Tooltip("Extra height above the object's top for the label anchor (units).")]
@@ -17,10 +18,16 @@ namespace WanderersGuild
 
         private Renderer[] _renderers;
         private uint[] _originalLayers;
-        private bool _isHighlighted;
+        private Collider[] _colliders;
+        private bool _isHovered;
+        private bool _isPinned;
+        private bool _isOutlined;
 
         public string DisplayName => displayName;
         public MenuPanelId Opens => opens;
+
+        // Every renderer's bounds together (the tutorial frames this on screen).
+        public Bounds WorldBounds => CombinedBounds();
 
         // World point the name label sits above: the top-center of the combined renderer bounds.
         public Vector3 LabelAnchor
@@ -41,33 +48,52 @@ namespace WanderersGuild
             for (var i = 0; i < _renderers.Length; i++)
                 _originalLayers[i] = _renderers[i].renderingLayerMask;
 
-            var colliders = GetComponentsInChildren<Collider>(true);
-            if (colliders.Length == 0)
-                colliders = new[] { AddFittedBox() };
+            _colliders = GetComponentsInChildren<Collider>(true);
+            if (_colliders.Length == 0)
+                _colliders = new[] { AddFittedBox() };
 
             var layer = GameConfig.Instance.Interaction.InteractableLayer;
-            foreach (var collider in colliders)
-                collider.gameObject.layer = layer;
+            foreach (var target in _colliders)
+                target.gameObject.layer = layer;
         }
 
-        // Turns the outline bit on or off on every renderer (originals restored exactly).
+        private void OnEnable() => GuildInteractables.Register(this);
+
+        // NOTE: Never leave a model outlined, or the outline passes running, after it's disabled or destroyed.
+        private void OnDisable()
+        {
+            GuildInteractables.Unregister(this);
+            _isHovered = false;
+            _isPinned = false;
+            RefreshOutline();
+        }
+
+        // Hover outline (GuildInteractionController).
         public void SetHighlighted(bool highlighted)
         {
-            if (_isHighlighted == highlighted)
-                return;
-            _isHighlighted = highlighted;
+            _isHovered = highlighted;
+            RefreshOutline();
+        }
 
-            var bit = GameConfig.Instance.Interaction.OutlineBit;
-            for (var i = 0; i < _renderers.Length; i++)
+        // NOTE: The tutorial's outline — it stays while hover comes and goes.
+        public void SetPinned(bool pinned)
+        {
+            _isPinned = pinned;
+            RefreshOutline();
+        }
+
+        // True if the ray hits one of this object's own colliders (the tutorial's world gate — nothing in front can take it).
+        public bool IsHitBy(Ray ray, float maxDistance)
+        {
+            if (_colliders == null)
+                return false;
+
+            foreach (var target in _colliders)
             {
-                if (_renderers[i] != null)
-                    _renderers[i].renderingLayerMask = highlighted ? _originalLayers[i] | bit : _originalLayers[i];
+                if (target != null && target.enabled && target.gameObject.activeInHierarchy && target.Raycast(ray, out _, maxDistance))
+                    return true;
             }
-
-            if (highlighted)
-                PixelOutlineRequests.Add();
-            else
-                PixelOutlineRequests.Remove();
+            return false;
         }
 
         public void Interact(GamePanelHost panels)
@@ -76,12 +102,33 @@ namespace WanderersGuild
                 panels.Open(opens);
         }
 
-        // NOTE: Never leave a model outlined, or the outline passes running, after it's disabled or destroyed.
-        private void OnDisable() => SetHighlighted(false);
+        // NOTE: Outlined while hovered OR pinned; the outline bit and the outline-pass count change only when that flips.
+        private void RefreshOutline()
+        {
+            var outlined = _isHovered || _isPinned;
+            if (outlined == _isOutlined || _renderers == null)
+                return;
+            _isOutlined = outlined;
+
+            var bit = GameConfig.Instance.Interaction.OutlineBit;
+            for (var i = 0; i < _renderers.Length; i++)
+            {
+                if (_renderers[i] != null)
+                    _renderers[i].renderingLayerMask = outlined ? _originalLayers[i] | bit : _originalLayers[i];
+            }
+
+            if (outlined)
+                PixelOutlineRequests.Add();
+            else
+                PixelOutlineRequests.Remove();
+        }
 
         private Bounds CombinedBounds()
         {
             Bounds bounds = new(transform.position, Vector3.zero);
+            if (_renderers == null)
+                return bounds;
+
             var first = true;
             foreach (var target in _renderers)
             {

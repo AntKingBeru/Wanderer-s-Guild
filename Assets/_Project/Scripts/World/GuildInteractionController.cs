@@ -70,7 +70,9 @@ namespace WanderersGuild
         }
 
         // NOTE: Nothing under UI (any pickable element — the HUD bar, the cards) or outside the view (letterbox). Colliders
-        // (furniture, adventurers) win; only when the ray hits none is the bedroom under the pointer's floor cell used.
+        // (furniture, adventurers) win; only when the ray hits none is the bedroom under the pointer's floor cell used. While
+        // the tutorial gates the world, only its target answers — tested on its own colliders, so an adventurer standing in
+        // front can't take the click (and no bedroom is picked).
         private IWorldInteractable FindUnderPointer()
         {
             if (_point == null || view == null || worldCamera == null)
@@ -82,8 +84,14 @@ namespace WanderersGuild
 
             var size = view.RenderSize;
             var ray = worldCamera.ViewportPointToRay(new Vector3(pixel.x / size.x, 1f - pixel.y / size.y, 0f));
-
             var settings = GameConfig.Instance.Interaction;
+
+            if (TutorialGate.IsActive)
+            {
+                var allowed = TutorialGate.WorldTarget;
+                return allowed != null && allowed.IsHitBy(ray, settings.MaxRayDistance) ? allowed : null;
+            }
+
             if (Physics.Raycast(ray, out var hit, settings.MaxRayDistance, settings.InteractableMask, QueryTriggerInteraction.Collide))
             {
                 var hitTarget = hit.collider.GetComponentInParent<IWorldInteractable>();

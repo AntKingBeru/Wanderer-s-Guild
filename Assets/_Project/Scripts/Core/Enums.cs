@@ -427,5 +427,13 @@ namespace WanderersGuild
         Running = 1, // The guided tutorial is under way.
         Done = 2 // Finished or skipped (and every save from before the tutorial existed).
     }
+    
+    // What a tutorial step lets build mode do.
+    public enum TutorialBuildAccess
+    {
+        Closed = 0, // Build mode can't be entered.
+        Open = 1, // It can be entered and left.
+        Kept = 2  // It can't be left (the building steps — 28b-2).
+    }
     #endregion
 }

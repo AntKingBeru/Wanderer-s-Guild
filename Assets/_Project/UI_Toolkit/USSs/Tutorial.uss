@@ -14,3 +14,48 @@
     flex-direction: row;
     justify-content: center;
 }
+/* ---------- Guided tutorial overlay ---------- */
+.tutorial-root {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+.tutorial-blocker {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+.tutorial-dim {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.35);
+    display: none;
+}
+.tutorial-frame {
+    position: absolute;
+    border-width: 1px;
+    border-color: var(--color-accent);
+    display: none;
+}
+.tutorial-frame.tutorial-frame--off {
+    border-color: rgba(0, 0, 0, 0);
+}
+/* NOTE: Two classes, so these beat the theme's .pixel-window / .panel-button. */
+.pixel-window.tutorial-box {
+    position: absolute;
+    width: 160px;
+    padding: 4px 5px;
+    align-items: stretch;
+    display: none;
+}
+.tutorial-text {
+    align-self: stretch;
+}
+.tutorial-text .outlined-text__stack {
+    align-self: stretch;
+}
+.tutorial-text .outlined-text__part {
+    white-space: normal;
+    -unity-text-align: upper-left;
+}
+.panel-button.tutorial-next {
+    align-self: flex-end;
+    margin: 3px 0 0 0;
+}

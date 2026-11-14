@@ -27,6 +27,9 @@ namespace WanderersGuild
         public bool HidesMenu => hidesMenu;
         public bool IsBound { get; private set; }
         public bool IsOpen { get; private set; }
+        
+        // The panel-root element — this screen's elements live under it (the tutorial finds its highlights here).
+        public VisualElement ScreenRoot => Root;
 
         protected IMenuPanelHost Host { get; private set; }
         protected VisualElement Root { get; private set; }
@@ -185,9 +188,11 @@ namespace WanderersGuild
                 focused.Blur();
         }
 
+        // NOTE: The guided tutorial keeps Esc from closing or stepping back in its screens (TutorialGate) — checked here, since
+        // every panel's cancel handler shares the panel root with any other handler, in no guaranteed order.
         private void OnCancelEvent(NavigationCancelEvent evt)
         {
-            if (!IsInteractable)
+            if (!IsInteractable || TutorialGate.BlocksCancel(id))
                 return;
 
             evt.StopPropagation();

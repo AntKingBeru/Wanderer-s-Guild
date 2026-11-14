@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace WanderersGuild
 {
@@ -27,6 +28,16 @@ namespace WanderersGuild
         }
 
         public bool HasPanel(MenuPanelId id) => Find(id);
+        
+        // True while this panel is the open one (its opening and closing included — check IsBusy for "settled").
+        public bool IsActive(MenuPanelId id) => _active != null && _active.Id == id;
+        
+        // A registered panel's panel-root (to find its elements — the tutorial's highlights). Null if none is registered.
+        public VisualElement RootOf(MenuPanelId id)
+        {
+            var panel = Find(id);
+            return panel != null ? panel.ScreenRoot : null;
+        }
 
         // Opens a panel; if one is open it closes first and is reopened when the new one closes.
         public void Open(MenuPanelId id)

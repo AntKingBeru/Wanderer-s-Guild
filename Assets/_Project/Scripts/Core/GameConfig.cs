@@ -2169,11 +2169,36 @@ namespace WanderersGuild
         [Tooltip("On: pressing Play in the Game scene without a save slot also starts with the tutorial prompt (testing). " +
                  "Off: no slot = tutorial done.")]
         [SerializeField] private bool tutorialWithoutSlot;
+        
+        [Header("Overlay (guided tutorial)")]
+        [Tooltip("Gap between the instruction box and what it points at (UI pixels).")]
+        [SerializeField, Min(0)] private int boxGap = 4;
+
+        [Tooltip("Nearest the instruction box comes to the screen edges (UI pixels).")]
+        [SerializeField, Min(0)] private int screenMargin = 4;
+
+        [Tooltip("Top of the instruction box when it points at nothing (UI pixels — just under the HUD bar).")]
+        [SerializeField, Min(0)] private int freeBoxTop = 36;
+
+        [Tooltip("The highlight frame sits this far outside what it highlights (UI pixels).")]
+        [SerializeField, Min(0)] private int highlightPadding = 2;
+
+        [Tooltip("One blink of the highlight frame, on + off (seconds, real time).")]
+        [SerializeField, Min(0.1f)] private float blinkSeconds = 0.8f;
+        
+        [Tooltip("Build spots are framed from the floor up to this height (units) — about a room's wall height.")]
+        [SerializeField, Min(0.1f)] private float footprintHeight = 2.5f;
 
         public RequestData StartingRequest => startingRequest;
         public IReadOnlyList<TutorialPlacement> Placements => placements ?? Array.Empty<TutorialPlacement>();
         public float GuidedBuildTimeScale => guidedBuildTimeScale;
         public bool TutorialWithoutSlot => tutorialWithoutSlot;
+        public int BoxGap => boxGap;
+        public int ScreenMargin => screenMargin;
+        public int FreeBoxTop => freeBoxTop;
+        public int HighlightPadding => highlightPadding;
+        public float BlinkSeconds => blinkSeconds;
+        public float FootprintHeight => footprintHeight;
     }
     #endregion
 }

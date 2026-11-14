@@ -128,5 +128,8 @@ namespace WanderersGuild
             panelPoint = RuntimePanelUtils.ScreenToPanel(_view.panel, new Vector2(screenPosition.x, Screen.height - screenPosition.y));
             return true;
         }
+        
+        // World-view pixel → panel space (to frame world objects from another document on the shared panel — the tutorial).
+        public Vector2 ViewToPanel(Vector2 viewPixel) => _view?.LocalToWorld(ViewToLocal(viewPixel)) ?? viewPixel;
     }
 }
