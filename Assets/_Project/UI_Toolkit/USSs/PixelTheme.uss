@@ -7,7 +7,7 @@
     --color-text: rgb(240, 232, 214);
     --color-text-disabled: rgb(128, 122, 110);
     --color-outline: rgb(0, 0, 0);
-    --color-accent: rgb(232, 200, 120);
+    --color-accent: rgb(20 200 120);
     --color-dim: rgba(0, 0, 0, 0.6);
 
     /* NOTE: Calibrated: a glyph's vertical stroke is exactly as thick as the 1px menu divider. */

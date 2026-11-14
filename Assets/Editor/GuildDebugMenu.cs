@@ -8,6 +8,7 @@ namespace Editor
     {
         private const string MenuRoot = "Tools/Wanderer's Guild/Debug/";
 
+        [MenuItem(MenuRoot + "Gold +1000")] private static void AddManyGold() => Guild.Wallet.Add(1000, GoldReason.Debug);
         [MenuItem(MenuRoot + "Gold +100")] private static void AddGold() => Guild.Wallet.Add(100, GoldReason.Debug);
         [MenuItem(MenuRoot + "Gold -100")] private static void SpendGold() => Guild.Wallet.TrySpend(100, GoldReason.Debug);
         [MenuItem(MenuRoot + "Reputation +10")] private static void AddReputation() => Guild.Reputation.Change(10, ReputationSource.Debug);
@@ -16,6 +17,7 @@ namespace Editor
         [MenuItem(MenuRoot + "Rank Points +1000")] private static void AddManyRankPoints() => Guild.Rank.AddPoints(1000);
 
         // NOTE: Every item above is only enabled in Play Mode with a GuildManager in the scene.
+        [MenuItem(MenuRoot + "Gold +1000", true)]
         [MenuItem(MenuRoot + "Gold +100", true)]
         [MenuItem(MenuRoot + "Gold -100", true)]
         [MenuItem(MenuRoot + "Reputation +10", true)]
