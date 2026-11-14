@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild" editor-extension-mode="False">
+
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Tutorial.uss?fileID=7433441132597879392&amp;guid=c90f51a02ba507a46ba4bc6ee037e969&amp;type=3#Tutorial"/>
+    <!-- Never picks: only the card takes clicks, so play goes on around it. -->
+    <ui:VisualElement name="guide-root" class="guide-root" picking-mode="Ignore">
+        <ui:VisualElement name="guide-card" class="pixel-window guide-card">
+            <wg:OutlinedText name="guide-title" class="guide-title" text="New room: Tavern" />
+            <wg:OutlinedText name="guide-body" class="guide-body" text="You can afford a Tavern!" />
+            <ui:Button name="guide-ok" class="pixel-button panel-button guide-ok">
+                <wg:OutlinedText text="OK" />
+            </ui:Button>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

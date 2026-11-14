@@ -900,3 +900,34 @@ MonoBehaviour:
       rotation: 3
     guidedBuildTimeScale: 0.25
     tutorialWithoutSlot: 0
+    boxGap: 4
+    screenMargin: 4
+    freeBoxTop: 36
+    highlightPadding: 2
+    blinkSeconds: 0.8
+    footprintHeight: 2.5
+    roomGuides:
+    - facility: {fileID: 11400000, guid: 9b4fa6026f6c18244867e6a102a29f91, type: 2}
+      minRank: 0
+      needsGold: 1
+      goal: Build a Tavern
+      intro: You can afford a Tavern! Adventurers eat supper there each evening and set out Well fed, doing better on quests.
+      built: The Tavern is open! Each evening at 7, everyone at the guild pays for supper and stays Well fed until the next one.
+    - facility: {fileID: 11400000, guid: 1916a87a08b450b48abd5b0abe7833de, type: 2}
+      minRank: 1
+      needsGold: 0
+      goal: Build an Office
+      intro: Your guild reached rank E! With an office, newcomers wait as applicants and you choose who joins.
+      built: Your office is ready. Click it to review applicants, then accept or decline them.
+    - facility: {fileID: 11400000, guid: 441770f4078b37b408c4d88c015bbd4c, type: 2}
+      minRank: 1
+      needsGold: 1
+      goal: Build a Potion Shop
+      intro: "You can afford a Potion Shop! It brews potions that raise a party\u2019s chance of success on quests of their type."
+      built: The Potion Shop is open! Brew potions at dawn, then give one to a party when you approve its quest.
+    - facility: {fileID: 11400000, guid: 7b819866e183c3a428100aaea3ede49f, type: 2}
+      minRank: 2
+      needsGold: 1
+      goal: Build an Armory
+      intro: You can afford an Armory! It sells gear, and adventurers spend their own gold on upgrades.
+      built: The Armory is open! It restocks every morning, and idle adventurers shop for better gear at 9.

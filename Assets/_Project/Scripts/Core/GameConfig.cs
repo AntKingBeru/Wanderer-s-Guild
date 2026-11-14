@@ -2188,6 +2188,10 @@ namespace WanderersGuild
         
         [Tooltip("Build spots are framed from the floor up to this height (units) — about a room's wall height.")]
         [SerializeField, Min(0.1f)] private float footprintHeight = 2.5f;
+        
+        [Header("Room guides (after the start tutorial)")]
+        [Tooltip("In priority order — the first active one gets the goal line under the HUD bar.")]
+        [SerializeField] private RoomGuide[] roomGuides = Array.Empty<RoomGuide>();
 
         public RequestData StartingRequest => startingRequest;
         public IReadOnlyList<TutorialPlacement> Placements => placements ?? Array.Empty<TutorialPlacement>();
@@ -2199,6 +2203,7 @@ namespace WanderersGuild
         public int HighlightPadding => highlightPadding;
         public float BlinkSeconds => blinkSeconds;
         public float FootprintHeight => footprintHeight;
+        public IReadOnlyList<RoomGuide> RoomGuides => roomGuides ?? Array.Empty<RoomGuide>();
     }
     #endregion
 }

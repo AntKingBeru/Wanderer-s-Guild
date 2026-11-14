@@ -5,8 +5,11 @@
     <!-- Speech bubbles (created in code), under the label and cards. Never picks. -->
     <ui:VisualElement name="world-bubbles" class="world-bubbles" picking-mode="Ignore" />
 
-    <!-- Opening goal under the HUD bar (hidden once done). -->
-    <wg:OutlinedText name="world-goal" class="world-goal" text="Build lodgings: 0/3" />
+    <!-- Goals under the HUD bar: the opening lodging goal, then the room guide's goal (each hidden when not needed). -->
+    <ui:VisualElement name="world-goals" class="world-goals" picking-mode="Ignore">
+        <wg:OutlinedText name="world-goal" class="world-goal" text="Build lodgings: 0/3" />
+        <wg:OutlinedText name="world-guide" class="world-goal" text="Build a Tavern" />
+    </ui:VisualElement>
 
     <!-- Name of the hovered guild object, adventurer or bedroom, centred above it (positioned in code). -->
     <ui:VisualElement name="world-label" class="pixel-window world-label" picking-mode="Ignore">

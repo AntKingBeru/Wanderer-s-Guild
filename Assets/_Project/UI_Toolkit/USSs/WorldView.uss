@@ -72,10 +72,14 @@
 }
 /* ---------- Opening goal (under the HUD bar, top-left) ---------- */
 /* NOTE: Below the HUD top bar with a small gap (the bar covers the first ~30 UI pixels). */
-.world-goal {
+.world-goals {
     position: absolute;
     left: 4px;
     top: 34px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.world-goal {
     padding: 1px 2px;
     display: none;
 }

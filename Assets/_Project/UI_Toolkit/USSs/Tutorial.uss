@@ -59,3 +59,36 @@
     align-self: flex-end;
     margin: 3px 0 0 0;
 }
+/* ---------- Room guide popup ---------- */
+.guide-root {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    align-items: center;
+}
+.pixel-window.guide-card {
+    margin-top: 36px;
+    width: 170px;
+    padding: 4px 5px;
+    align-items: stretch;
+    display: none;
+}
+.guide-title {
+    margin-bottom: 2px;
+}
+.guide-title .outlined-text__fill {
+    color: var(--color-accent);
+}
+.guide-body {
+    align-self: stretch;
+}
+.guide-body .outlined-text__stack {
+    align-self: stretch;
+}
+.guide-body .outlined-text__part {
+    white-space: normal;
+    -unity-text-align: upper-left;
+}
+.panel-button.guide-ok {
+    align-self: flex-end;
+    margin: 3px 0 0 0;
+}

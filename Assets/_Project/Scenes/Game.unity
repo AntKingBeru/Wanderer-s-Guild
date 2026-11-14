@@ -577,6 +577,7 @@ GameObject:
   - component: {fileID: 495723431}
   - component: {fileID: 495723433}
   - component: {fileID: 495723434}
+  - component: {fileID: 495723435}
   m_Layer: 0
   m_Name: HudUI
   m_TagString: Untagged
@@ -700,6 +701,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5598faa4b78a3db49b4a63c34ef298e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.HudBuildModeStyler
+--- !u!114 &495723435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 495723426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5011082a8ff723a4fbbe7d5b5f9faeae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.RoomGuideHighlighter
 --- !u!1 &592386956
 GameObject:
   m_ObjectHideFlags: 0
@@ -1338,6 +1351,7 @@ Transform:
   m_Children:
   - {fileID: 636296195}
   - {fileID: 193466241}
+  - {fileID: 1600368756}
   - {fileID: 998846825}
   - {fileID: 495723427}
   - {fileID: 1263578232}
@@ -1367,6 +1381,7 @@ GameObject:
   - component: {fileID: 998846830}
   - component: {fileID: 998846831}
   - component: {fileID: 998846832}
+  - component: {fileID: 998846833}
   m_Layer: 0
   m_Name: WorldViewUI
   m_TagString: Untagged
@@ -1437,6 +1452,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 376f52f1d7af4384eaca00b6891e07ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.LodgingGoalPresenter
+--- !u!114 &998846833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 998846824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a94fb9d19a4f6ac42b03735b72afc65b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.RoomGuideGoalPresenter
 --- !u!1 &1021737198
 GameObject:
   m_ObjectHideFlags: 0
@@ -2475,6 +2502,75 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1600368755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1600368756}
+  - component: {fileID: 1600368758}
+  - component: {fileID: 1600368757}
+  m_Layer: 0
+  m_Name: RoomGuidePopupUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &1600368756
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600368755}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 993639236}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1600368757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600368755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d833bc5653f6ff547863878b353e1a6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.RoomGuidePopupPresenter
+  host: {fileID: 1873610642}
+--- !u!114 &1600368758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600368755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 6a12b064e5aaf24479f9d0c41e745f9e, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 31e55350ddacf9f47af0bb051198fe7f, type: 3}
+  m_SortingOrder: 4
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
 --- !u!1 &1608831305
 GameObject:
   m_ObjectHideFlags: 0
@@ -2485,6 +2581,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1608831306}
   - component: {fileID: 1608831307}
+  - component: {fileID: 1608831308}
   m_Layer: 0
   m_Name: TutorialManager
   m_TagString: Untagged
@@ -2519,6 +2616,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 508e6ae32508fbe4da8b5ba5c2eacca7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.TutorialManager
+  persistAcrossScenes: 0
+--- !u!114 &1608831308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1608831305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5338fd60e5f8694c9b83b562daca326, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.RoomGuideDirector
   persistAcrossScenes: 0
 --- !u!1 &1669214135
 GameObject:

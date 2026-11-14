@@ -9,6 +9,7 @@ namespace Editor
     {
         private const string Root = "Tools/Wanderer's Guild/Debug/Tutorial/";
         private const string Guided = Root + "Guided/";
+        private const string Guides = Root + "Room Guides/";
 
         [MenuItem(Root + "Skip Now (Build Start State)")]
         private static void SkipNow() => TutorialManager.Instance.Skip();
@@ -50,5 +51,21 @@ namespace Editor
         [MenuItem(Guided + "Log Step", true)]
         [MenuItem(Guided + "Skip Step", true)]
         private static bool IsGuided() => EditorApplication.isPlaying && TutorialDirector.HasInstance && TutorialDirector.Instance.IsRunning;
+        
+        [MenuItem(Guides + "Log")]
+        private static void LogGuides()
+        {
+            foreach (var guide in GameConfig.Instance.Tutorial.RoomGuides)
+            {
+                var placed = RoomGuideRules.FirstPlaced(guide.Facility);
+                Debug.Log($"[Tutorial] Guide '{guide.Id}': done {TutorialManager.Instance.IsGuideCompleted(guide.Id)}, " +
+                          $"can build now {RoomGuideRules.CanBuildNow(guide)}, placed {(placed == null ? "no" : placed.IsUnderConstruction ? "building" : "finished")}");
+            }
+
+            Debug.Log($"[Tutorial] Goal line: {(RoomGuideDirector.HasInstance ? RoomGuideDirector.Instance.GoalLine ?? "(none)" : "(no director)")}");
+        }
+
+        [MenuItem(Guides + "Log", true)]
+        private static bool HasGuides() => EditorApplication.isPlaying && TutorialManager.HasInstance;
     }
 }

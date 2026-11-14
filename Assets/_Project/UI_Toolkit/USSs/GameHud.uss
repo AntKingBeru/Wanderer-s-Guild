@@ -68,6 +68,9 @@
     border-color: var(--color-accent);
     background-color: var(--frame-highlight-bg);
 }
+.pixel-button.hud-build--guided {
+    border-color: var(--color-accent);
+}
 
 /* ---------- Guild (right of the bar) ---------- */
 /* NOTE: A row: the counters column, then the pause button at its top right. */

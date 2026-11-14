@@ -300,6 +300,12 @@ namespace WanderersGuild
 
         // The start tutorial is over. Arg: true if it was skipped (the start state was built instead).
         public static readonly UnityEvent<bool> OnTutorialCompleted = new();
+        
+        // The room guides' goal line changed. Arg: the line, or null when no guide is active.
+        public static readonly UnityEvent<string> OnRoomGuideGoalChanged = new();
+
+        // A room guide has something to say (its room can be built, or was built). Args: title, message.
+        public static readonly UnityEvent<string, string> OnRoomGuideMessage = new();
         #endregion
     }
 }

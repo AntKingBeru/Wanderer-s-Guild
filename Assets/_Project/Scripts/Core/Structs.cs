@@ -1088,7 +1088,7 @@ namespace WanderersGuild
         }
     }
     
-    // One frame of the walk bob: lift up and sway sideways (sheet pixels), lean (degrees, + = toward the sway side).
+    // One frame of the walk bob: lift and sway sideways (sheet pixels), lean (degrees, + = toward the sway side).
     // NOTE: default = standing still.
     public readonly struct AvatarBobPose
     {
@@ -1294,6 +1294,53 @@ namespace WanderersGuild
 
         // Blocks the UI and shows nothing (between steps).
         public static TutorialFrame BlockOnly => new(null, null, false, default);
+    }
+    
+    // A room guide (after the start tutorial): which room, when it's announced (guild rank, and whether it waits until the
+    // guild can afford it), the goal line, and its two messages.
+    [Serializable]
+    public struct RoomGuide
+    {
+        [SerializeField] private FacilityData facility;
+
+        [Tooltip("Announced from this guild rank (the room must also be unlocked and under its limit).")]
+        [SerializeField] private GuildRank minRank;
+
+        [Tooltip("Also wait until the guild can afford the room.")]
+        [SerializeField] private bool needsGold;
+
+        [Tooltip("The goal line under the HUD bar. Empty = \"Build a <room>\".")]
+        [SerializeField] private string goal;
+
+        [Tooltip("Shown once, when the room can be built.")]
+        [SerializeField, TextArea(2, 4)] private string intro;
+
+        [Tooltip("Shown once, when the first one is finished.")]
+        [SerializeField, TextArea(2, 4)] private string built;
+
+        public FacilityData Facility => facility;
+        public GuildRank MinRank => minRank;
+        public bool NeedsGold => needsGold;
+        public string Intro => intro;
+        public string Built => built;
+
+        public string Goal => string.IsNullOrWhiteSpace(goal) && facility != null ? $"Build a {facility.DisplayName}" : goal;
+
+        // Saved in the slot's completed guides once done.
+        public string Id => facility != null ? facility.Id : string.Empty;
+    }
+
+    // One room-guide popup: a title and its message.
+    public readonly struct RoomGuideMessage
+    {
+        public string Title { get; }
+        public string Body { get; }
+
+        public RoomGuideMessage(string title, string body)
+        {
+            Title = title;
+            Body = body;
+        }
     }
     #endregion
 }
