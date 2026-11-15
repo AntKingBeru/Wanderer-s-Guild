@@ -124,13 +124,26 @@ MonoBehaviour:
     outputGroup: {fileID: -7145607219341094057, guid: aef01b88448b3f84a8e7adf534e57f55, type: 2}
     defaultFadeIn: 1.5
     defaultFadeOut: 1
+    splashFadeIn: 0.2
+    nightMusicFrom: 3
+    dayNightCrossfade: 4
     tracks:
+    - id: 3
+      clip: {fileID: 8300000, guid: 7cc8e58eacb7a314498520c0eb3497ca, type: 3}
+      volume: 1
+      playOnce: 1
     - id: 1
-      clip: {fileID: 0}
+      clip: {fileID: 8300000, guid: 1cc3a0f9ddf89fa4982286896c259710, type: 3}
       volume: 1
-    - id: 2
-      clip: {fileID: 0}
+      playOnce: 0
+    - id: 4
+      clip: {fileID: 8300000, guid: 25fccf7149ef00f4aa34038edb5da4a3, type: 3}
       volume: 1
+      playOnce: 0
+    - id: 5
+      clip: {fileID: 8300000, guid: 96a88194bdefcdc4e8ce1b3eaf407a98, type: 3}
+      volume: 1
+      playOnce: 0
   uiSounds:
     outputGroup: {fileID: 4019844444243420605, guid: aef01b88448b3f84a8e7adf534e57f55, type: 2}
     hover:

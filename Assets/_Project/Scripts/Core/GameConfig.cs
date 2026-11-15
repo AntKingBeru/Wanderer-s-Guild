@@ -440,7 +440,7 @@ namespace WanderersGuild
         };
     }
     
-    // NOTE: Named MusicSettings to avoid clashing with UnityEngine.AudioSettings.
+        // NOTE: Named MusicSettings to avoid clashing with UnityEngine.AudioSettings.
     [Serializable]
     public class MusicSettings
     {
@@ -449,15 +449,36 @@ namespace WanderersGuild
 
         [SerializeField, Min(0f)] private float defaultFadeIn = 1.5f;
         [SerializeField, Min(0f)] private float defaultFadeOut = 1f;
+        [Tooltip("Fade-in for the splash track — short, so its first note isn't lost.")]
+        [SerializeField, Min(0f)] private float splashFadeIn = 0.2f;
+
+        [Header("Game scene")]
+        [Tooltip("The phase the night track starts at; it plays until Dawn. Dusk = from dusk, Night = from night only " +
+                 "(Dawn / Day count as Dusk).")]
+        [SerializeField] private DayPhase nightMusicFrom = DayPhase.Night;
+        [Tooltip("Seconds the day and night tracks crossfade when the phase turns (real time, not game speed).")]
+        [SerializeField, Min(0f)] private float dayNightCrossfade = 4f;
 
         [SerializeField] private MusicTrackEntry[] tracks =
         {
-            new(MusicTrackId.MainMenu, 1f)
+            new(MusicTrackId.Splash, 1f, playOnce: true),
+            new(MusicTrackId.MainMenu, 1f),
+            new(MusicTrackId.Day, 1f),
+            new(MusicTrackId.Night, 1f)
         };
 
         public AudioMixerGroup OutputGroup => outputGroup;
         public float DefaultFadeIn => defaultFadeIn;
         public float DefaultFadeOut => defaultFadeOut;
+        public float SplashFadeIn => splashFadeIn;
+        public float DayNightCrossfade => dayNightCrossfade;
+
+        // The game scene's track for this phase. NOTE: Night wraps past midnight, so "from Dusk" = Dusk + Night.
+        public MusicTrackId GameTrackFor(DayPhase phase)
+        {
+            var from = nightMusicFrom < DayPhase.Dusk ? DayPhase.Dusk : nightMusicFrom;
+            return phase >= from ? MusicTrackId.Night : MusicTrackId.Day;
+        }
 
         //Finds the entry for a track id. False when the id isn't listed.
         public bool TryGetTrack(MusicTrackId id, out MusicTrackEntry entry)

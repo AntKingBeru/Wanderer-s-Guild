@@ -1,4 +1,4 @@
-// Boot step: plays the studio splash slides (fade in, hold, fade out); pressing Skip skips the rest of the splash.
+// Boot step: plays the studio splash slides (fade in, hold, fade out) over the splash music; Skip skips the rest.
 using System.Threading;
 using DG.Tweening;
 using UnityEngine;
@@ -22,6 +22,7 @@ namespace WanderersGuild
             }
 
             _skipRequested = false;
+            PlaySplashMusic();
 
             // NOTE: The using scope guarantees the skip listener is removed even if the step is canceled.
             using (new ScopedActionListener(GameConfig.Instance.InputBindings.Skip, OnSkipPerformed))
@@ -37,6 +38,17 @@ namespace WanderersGuild
                     await _activeSequence.AwaitCompletionAsync(token);
                 }
             }
+        }
+
+        // NOTE: Not stopped here — it carries through the fade to black and the menu's cue crossfades it out (a skip
+        // doesn't cut it either). The settings step runs earlier, so the saved mixer volumes already apply.
+        private static void PlaySplashMusic()
+        {
+            if (!MusicPlayer.HasInstance)
+                return;
+
+            var music = GameConfig.Instance.Music;
+            MusicPlayer.Instance.Play(MusicTrackId.Splash, music.SplashFadeIn, music.DefaultFadeOut);
         }
 
         // NOTE: Killing the sequence makes AwaitCompletionAsync return; the scene fader then covers the cut.

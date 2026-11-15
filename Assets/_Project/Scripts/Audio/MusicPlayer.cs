@@ -1,9 +1,12 @@
+// Persistent music player: crossfades between two channels when the track changes, with default or custom fade times.
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace WanderersGuild
 {
     public class MusicPlayer : Singleton<MusicPlayer>
     {
+        private readonly HashSet<MusicTrackId> _warnedMissing = new();
         private MusicChannel _active;
         private MusicChannel _idle;
 
@@ -17,37 +20,47 @@ namespace WanderersGuild
             _idle = new MusicChannel(CreateSource(settings), gameObject);
         }
 
-        //Crossfades to the track. Requesting the track that's already playing does nothing.
+        // Crossfades to the track with the default fades. Requesting the track that's already playing does nothing.
         public void Play(MusicTrackId track)
+        {
+            var settings = GameConfig.Instance.Music;
+            Play(track, settings.DefaultFadeIn, settings.DefaultFadeOut);
+        }
+
+        // Crossfades to the track: the new one fades in over fadeIn while the old one fades out over fadeOut.
+        public void Play(MusicTrackId track, float fadeIn, float fadeOut)
         {
             if (track == MusicTrackId.None)
             {
-                FadeOut();
+                FadeOut(fadeOut);
                 return;
             }
 
             if (track == CurrentTrack && _active.IsPlaying)
                 return;
 
-            var settings = GameConfig.Instance.Music;
-            if (!settings.TryGetTrack(track, out var entry) || entry.Clip == null)
+            if (!GameConfig.Instance.Music.TryGetTrack(track, out var entry) || entry.Clip == null)
             {
-                Debug.LogWarning($"[MusicPlayer] No clip assigned for '{track}' in GameConfig › Music; staying silent.", this);
-                FadeOut();
+                // NOTE: Once per track — the game scene asks again at every phase change.
+                if (_warnedMissing.Add(track))
+                    Debug.LogWarning($"[MusicPlayer] No clip assigned for '{track}' in GameConfig › Music; staying silent.", this);
+                FadeOut(fadeOut);
                 return;
             }
 
             // NOTE: Swap roles. The old active channel fades out while the other one fades the new track in.
             (_active, _idle) = (_idle, _active);
-            _idle.FadeOutAndStop(settings.DefaultFadeOut);
-            _active.Play(entry.Clip, entry.Volume, settings.DefaultFadeIn);
+            _idle.FadeOutAndStop(fadeOut);
+            _active.Play(entry.Clip, entry.Volume, fadeIn, !entry.PlayOnce);
             CurrentTrack = track;
         }
 
         //Fades the current track out. The fade survives scene changes because this object persists.
-        public void FadeOut()
+        public void FadeOut() => FadeOut(GameConfig.Instance.Music.DefaultFadeOut);
+
+        public void FadeOut(float duration)
         {
-            _active.FadeOutAndStop(GameConfig.Instance.Music.DefaultFadeOut);
+            _active.FadeOutAndStop(duration);
             CurrentTrack = MusicTrackId.None;
         }
 

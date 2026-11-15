@@ -56,7 +56,7 @@ namespace WanderersGuild
     #endregion
     
     #region Audio
-    // Maps a MusicTrackId to its clip and a per-track loudness balance.
+    // Maps a MusicTrackId to its clip, a per-track loudness balance, and whether it loops.
     [Serializable]
     public struct MusicTrackEntry
     {
@@ -65,17 +65,21 @@ namespace WanderersGuild
         [SerializeField] private AudioClip clip;
         [Tooltip("Per-track loudness balance (0–1), applied before the mixer.")]
         [SerializeField, Range(0f, 1f)] private float volume;
-        
-        public MusicTrackEntry(MusicTrackId id, float volume)
+        [Tooltip("Play the clip once instead of looping (e.g. the splash).")]
+        [SerializeField] private bool playOnce; // NOTE: false = loop, so entries saved before this field existed keep looping.
+
+        public MusicTrackEntry(MusicTrackId id, float volume, bool playOnce = false)
         {
             this.id = id;
             clip = null;
             this.volume = volume;
+            this.playOnce = playOnce;
         }
 
         public MusicTrackId Id => id;
         public AudioClip Clip => clip;
         public float Volume => volume;
+        public bool PlayOnce => playOnce;
     }
     
     // A UI sound: an optional clip plus its playback volume. A missing clip simply plays nothing.

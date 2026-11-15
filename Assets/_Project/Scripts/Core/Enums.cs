@@ -12,12 +12,15 @@ namespace WanderersGuild
     #endregion
     
     #region Audio
-    // Logical music tracks. Mapped to clips in GameConfig.Music.
+    // Music tracks the MusicPlayer can play (GameConfig › Music › Tracks maps each to a clip).
     public enum MusicTrackId
     {
         None = 0,
         MainMenu = 1,
-        Intro = 2
+        Intro = 2,
+        Splash = 3, // The studio splash (usually Play Once).
+        Day = 4, // The game scene from dawn to dusk.
+        Night = 5 // The game scene at night.
     }
     
     // Mixer channels the player controls in Options. Each maps to one exposed mixer parameter.

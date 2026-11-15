@@ -1,3 +1,4 @@
+// One music AudioSource with DOTween volume fades: start a clip from silence and fade it up, or fade it out and stop.
 using DG.Tweening;
 using UnityEngine;
 
@@ -17,11 +18,12 @@ namespace WanderersGuild
 
         public bool IsPlaying => _source.isPlaying;
 
-        //Starts the clip from silence and fades up to the target volume.
-        public void Play(AudioClip clip, float targetVolume, float fadeDuration)
+        // Starts the clip from silence and fades up to the target volume. NOTE: loop = false plays it once (the splash).
+        public void Play(AudioClip clip, float targetVolume, float fadeDuration, bool loop)
         {
             KillFade();
             _source.clip = clip;
+            _source.loop = loop;
             _source.volume = 0f;
             _source.Play();
             _fadeTween = FadeTo(targetVolume, fadeDuration);
@@ -30,7 +32,8 @@ namespace WanderersGuild
         //Fades to silence, then stops. Does nothing when already stopped.
         public void FadeOutAndStop(float fadeDuration)
         {
-            if (!_source.isPlaying) return;
+            if (!_source.isPlaying)
+                return;
 
             KillFade();
             _fadeTween = FadeTo(0f, fadeDuration).OnComplete(_source.Stop);

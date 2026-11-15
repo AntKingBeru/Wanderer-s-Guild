@@ -1,4 +1,4 @@
-// One pooled row of the Recruits list: name, "Class Lv N", time left (red on the last day); hidden rows are disabled.
+// One pooled row of the Recruits list: given name, "Class Lv N", time left (red on the last day); hidden rows are disabled.
 using System;
 using UnityEngine.UIElements;
 
@@ -38,7 +38,7 @@ namespace WanderersGuild
         public void Show(Applicant applicant, long nowMinutes, bool isSelected)
         {
             Applicant = applicant;
-            _name.Text = applicant.Adventurer.Name;
+            _name.Text = AdventurerFormatter.GivenName(applicant.Adventurer.Name); // NOTE: Full name stays in the details pane.
             _info.Text = RecruitFormatter.RowInfo(applicant.Adventurer);
             _time.Text = RecruitFormatter.TimeLeft(applicant, nowMinutes);
 
