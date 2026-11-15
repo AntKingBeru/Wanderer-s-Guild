@@ -45,6 +45,7 @@ namespace WanderersGuild
             GameEventsRelay.OnLodgingChanged.AddListener(OnLodgingChanged);
             GameEventsRelay.OnRoomCardRequested.AddListener(OnRoomCardRequested);
             GameEventsRelay.OnFacilityRemoved.AddListener(OnFacilityRemoved);
+            GameEventsRelay.OnMoodChanged.AddListener(OnMoodChanged);
         }
 
         private void OnDisable()
@@ -59,6 +60,7 @@ namespace WanderersGuild
             GameEventsRelay.OnLodgingChanged.RemoveListener(OnLodgingChanged);
             GameEventsRelay.OnRoomCardRequested.RemoveListener(OnRoomCardRequested);
             GameEventsRelay.OnFacilityRemoved.RemoveListener(OnFacilityRemoved);
+            GameEventsRelay.OnMoodChanged.RemoveListener(OnMoodChanged);
             Close();
         }
 
@@ -117,7 +119,12 @@ namespace WanderersGuild
         }
 
         private void RefreshContent(Adventurer adventurer) =>
-            _card.SetContent(adventurer, RequestManager.NowMinutes, PartyName(adventurer), RoomLabel(adventurer));
+            _card.SetContent(adventurer, RequestManager.NowMinutes, PartyName(adventurer), RoomLabel(adventurer), MoodOf(adventurer));
+
+        private static MoodSnapshot? MoodOf(Adventurer adventurer) =>
+            SatisfactionManager.HasInstance ? SatisfactionManager.Instance.Snapshot(adventurer) : null;
+
+        private void OnMoodChanged(Adventurer adventurer, SatisfactionLevel _) => OnAdventurerEvent(adventurer);
 
         private void Follow()
         {

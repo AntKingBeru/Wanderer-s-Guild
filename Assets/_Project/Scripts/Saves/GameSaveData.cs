@@ -10,8 +10,8 @@ namespace WanderersGuild
     {
         // NOTE: v2 guild state; v3 request board; v4 roster; v5 posted quests; v6 facilities; v7 applicants; v8 armory stock;
         // v9 parties + lineup progress; v10 lodging + starter bedrooms; v11 potion stock; v12 unlocked advanced classes;
-        // v13 start tutorial done + completed room guides.
-        public const int CurrentVersion = 13;
+        // v13 start tutorial done + completed room guides; v14 adventurer moods (satisfaction).
+        public const int CurrentVersion = 14;
 
         // NOTE: Generous upper bound (~114 years) — anything above means a corrupted file.
         private const double MaxPlayTimeSeconds = 3.6e9;
@@ -56,6 +56,8 @@ namespace WanderersGuild
         
         [SerializeField] private bool startTutorialDone;
         [SerializeField] private string[] completedGuides = Array.Empty<string>();
+        
+        [SerializeField] private List<SavedMood> moods = new();
 
         public int Version => version;
 
@@ -239,6 +241,13 @@ namespace WanderersGuild
 
         public void SetCompletedGuides(IEnumerable<string> ids) =>
             completedGuides = ids != null ? new List<string>(ids).ToArray() : Array.Empty<string>();
+        
+        // Each member's satisfaction memories and dawn counters. Written by SatisfactionManager (empty before v14 — everyone
+        // starts fresh on load).
+        public IReadOnlyList<SavedMood> Moods => moods ?? (IReadOnlyList<SavedMood>)Array.Empty<SavedMood>();
+
+        public void SetMoods(IEnumerable<SavedMood> items) =>
+            moods = items != null ? new List<SavedMood>(items) : new List<SavedMood>();
 
         public bool IsValid =>
             version is >= 1 and <= CurrentVersion &&

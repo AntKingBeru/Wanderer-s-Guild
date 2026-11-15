@@ -1,6 +1,6 @@
 /* Alchemy screen in 320×180 UI pixels: a scrolling list of potions (brewing: − count +), cost/free line, Brew / Skip. */
 .alc-window {
-    width: 220px;
+    width: 236px;
     height: 160px;
 }
 /* NOTE: The theme's pixel-window centres its children — the list and footer stretch to the window's width. */

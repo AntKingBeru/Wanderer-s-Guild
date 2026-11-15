@@ -1,5 +1,7 @@
 // The roster's details pane: name, species · class, rank · level, XP and rank-progress bars, stats (with gear), wealth,
-// affinities, gear, status, party, room, promotion / advancement hint; Promote (or Advance), Disband, Dismiss and Move buttons.
+// affinities, gear, status, mood + reasons, party, room, promotion / advancement hint; Promote (or Advance), Disband,
+// Dismiss and Move buttons.
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -7,6 +9,8 @@ namespace WanderersGuild
 {
     public sealed class AdventurerDetailsView
     {
+        private const int MaxMoodReasons = 6;
+        
         private readonly ScrollView _content;
         private readonly OutlinedText _empty;
         private readonly OutlinedText _name;
@@ -21,6 +25,8 @@ namespace WanderersGuild
         private readonly OutlinedText _affinities;
         private readonly OutlinedText _gear;
         private readonly OutlinedText _status;
+        private readonly OutlinedText _mood; // NOTE: Optional — an older UXML without the mood lines still works.
+        private readonly OutlinedText _moodReasons;
         private readonly OutlinedText _party;
         private readonly OutlinedText _room;
         private readonly OutlinedText _hint;
@@ -53,6 +59,8 @@ namespace WanderersGuild
             _affinities = root.Q<OutlinedText>("adv-affinities");
             _gear = root.Q<OutlinedText>("adv-gear");
             _status = root.Q<OutlinedText>("adv-status");
+            _mood = root.Q<OutlinedText>("adv-mood");
+            _moodReasons = root.Q<OutlinedText>("adv-mood-reasons");
             _party = root.Q<OutlinedText>("adv-party");
             _room = root.Q<OutlinedText>("adv-room");
             _hint = root.Q<OutlinedText>("adv-promote-hint");
@@ -134,6 +142,24 @@ namespace WanderersGuild
             Promote.SetEnabled(IsAdvanceMode ? advancement.CanAdvance : check.CanPromote);
             Disband.SetEnabled(!string.IsNullOrEmpty(partyLine));
             Move.SetEnabled(canMove);
+        }
+        
+        // Mood line ("Mood: Unhappy (34) · wants +20% pay", colored by level) and its reasons; null = hidden (no system).
+        public void SetMood(MoodSnapshot? mood, List<MoodEntry> reasons)
+        {
+            if (_mood == null || _moodReasons == null)
+                return;
+
+            var visible = mood != null;
+            _mood.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            _moodReasons.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            if (!visible)
+                return;
+
+            var settings = GameConfig.Instance.Satisfaction;
+            _mood.Text = MoodFormatter.Line(mood.Value, settings);
+            _mood.SetFillColor(settings.ColorOf(mood.Value.Level));
+            _moodReasons.Text = MoodFormatter.Reasons(reasons, MaxMoodReasons);
         }
 
         public void ShowEmpty(string message)

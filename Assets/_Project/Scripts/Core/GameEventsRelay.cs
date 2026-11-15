@@ -249,6 +249,9 @@ namespace WanderersGuild
 
         // The potion stock changed (brewed, used, cleared).
         public static readonly UnityEvent OnPotionStockChanged = new();
+        
+        // Supper for one adventurer at the guild (only with a tavern). Args: them, whether they ate (false = couldn't pay).
+        public static readonly UnityEvent<Adventurer, bool> OnSupperOutcome = new();
         #endregion
         
         #region Avatars
@@ -315,6 +318,17 @@ namespace WanderersGuild
 
         // A room guide has something to say (its room can be built, or was built). Args: title, message.
         public static readonly UnityEvent<string, string> OnRoomGuideMessage = new();
+        #endregion
+        
+        #region Satisfaction
+        // An adventurer's satisfaction level changed. Args: them, the new level.
+        public static readonly UnityEvent<Adventurer, SatisfactionLevel> OnMoodChanged = new();
+
+        // A Miserable adventurer will leave at the next dawn unless their mood lifts. Arg: them.
+        public static readonly UnityEvent<Adventurer> OnAdventurerLeavingSoon = new();
+
+        // An adventurer quit over their mood (raised just before they leave the roster). Args: them, the reputation it cost.
+        public static readonly UnityEvent<Adventurer, int> OnAdventurerQuit = new();
         #endregion
     }
 }

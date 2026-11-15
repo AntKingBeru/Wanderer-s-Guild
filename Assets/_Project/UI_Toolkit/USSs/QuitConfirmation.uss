@@ -1,5 +1,5 @@
 .quit-window {
-    width: 120px;
+    width: 136px;
 }
 .quit-message {
     margin: 2px 0 6px 0;

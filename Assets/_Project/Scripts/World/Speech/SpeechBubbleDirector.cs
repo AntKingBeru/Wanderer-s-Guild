@@ -185,7 +185,7 @@ namespace WanderersGuild
                 return;
             if (!avatar.TryGetComponent(out AvatarInteractable speaker))
                 return;
-            if (!TryPickLine(request.Topic, avatar.PlannedFor, out var line))
+            if (!TryPickLine(request.Topic, avatar, out var line))
                 return;
             if (!_pool.TryRent(out var bubbleView))
                 return;
@@ -202,16 +202,35 @@ namespace WanderersGuild
                 _chatterShown++;
         }
 
-        // NOTE: Chatter becomes the current activity's kind (meal, shop, rest, sleep); a kind with no lines falls back to
-        // plain chatter.
-        private bool TryPickLine(SpeechTopic topic, AvatarActivity activity, out string line)
+        // NOTE: Chatter becomes a mood line now and then (Happy / Unhappy or worse — never while asleep), else the current
+        // activity's kind (meal, shop, rest, sleep); a kind with no lines falls back to plain chatter. Content adventurers
+        // skip the mood roll entirely, so their activity lines aren't thinned out.
+        private bool TryPickLine(SpeechTopic topic, AdventurerAvatar avatar, out string line)
         {
             var library = _settings.Library;
             if (topic != SpeechTopic.Chatter)
                 return _picker.TryPick(library, topic, out line);
 
+            var activity = avatar.PlannedFor;
+            var mood = activity == AvatarActivity.Sleep ? SpeechTopic.Chatter : MoodChatterOf(avatar.AdventurerId);
+            if (mood != SpeechTopic.Chatter && UnityEngine.Random.value < _settings.MoodChatterChance &&
+                _picker.TryPick(library, mood, out line))
+                return true;
+
             return _picker.TryPick(library, SpeechRules.ChatterFor(activity), out line) ||
                    _picker.TryPick(library, SpeechTopic.Chatter, out line);
+        }
+
+        // NOTE: No satisfaction system or a Content mood → plain Chatter (= no mood line).
+        private static SpeechTopic MoodChatterOf(int adventurerId)
+        {
+            if (!SatisfactionManager.HasInstance || !AdventurerManager.HasInstance)
+                return SpeechTopic.Chatter;
+
+            var adventurer = AdventurerManager.Instance.Find(adventurerId);
+            return adventurer != null
+                ? SpeechRules.MoodChatterFor(SatisfactionManager.Instance.LevelOf(adventurer))
+                : SpeechTopic.Chatter;
         }
 
         private void End(int adventurerId)

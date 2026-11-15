@@ -70,7 +70,9 @@ namespace WanderersGuild
         [SerializeField] private ProcessionSettings processions = new();
         [SerializeField] private NavigationSettings navigation = new();
         [SerializeField] private AvatarBobSettings avatarBob = new();
+        [SerializeField] private AvatarSidestepSettings avatarSidestep = new();
         [SerializeField] private TutorialSettings tutorial = new();
+        [SerializeField] private SatisfactionSettings satisfaction = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -130,7 +132,9 @@ namespace WanderersGuild
         public ProcessionSettings Processions => processions;
         public NavigationSettings Navigation => navigation;
         public AvatarBobSettings AvatarBob => avatarBob;
+        public AvatarSidestepSettings AvatarSidestep => avatarSidestep;
         public TutorialSettings Tutorial => tutorial;
+        public SatisfactionSettings Satisfaction => satisfaction;
     }
     
     #region Scene Management
@@ -1613,6 +1617,9 @@ namespace WanderersGuild
         [Tooltip("Rendering-layer bit switched on while hovered. MUST match the PixelOutline renderer feature's bit.")]
         [SerializeField, Range(0, 31)] private int outlineRenderingLayer = 7;
 
+        [Tooltip("Hover outline thickness in UI pixels (× World View › Render Scale texels), so it matches the UI at any scale.")]
+        [SerializeField, Range(1, 3)] private int outlineWidth = 1;
+
         [Tooltip("Longest hover ray (units).")]
         [SerializeField, Min(1f)] private float maxRayDistance = 200f;
 
@@ -1622,6 +1629,7 @@ namespace WanderersGuild
         public int InteractableLayer => interactableLayer;
         public int InteractableMask => 1 << interactableLayer;
         public uint OutlineBit => 1u << outlineRenderingLayer;
+        public int OutlineWidth => Mathf.Clamp(outlineWidth, 1, 3);
         public float MaxRayDistance => maxRayDistance;
         public float LabelGap => labelGap;
     }
@@ -2077,6 +2085,8 @@ namespace WanderersGuild
         [Header("When")]
         [Tooltip("Chance per in-game hour that an adventurer at the guild says something idle (at a random minute of the hour).")]
         [SerializeField, Range(0f, 1f)] private float chatterChance = 0.1f;
+        [Tooltip("Chance a Happy / Unhappy adventurer's chatter is about their mood (never while asleep).")]
+        [SerializeField, Range(0f, 1f)] private float moodChatterChance = 0.5f;
         [Tooltip("Chance each adventurer who ate supper remarks on it.")]
         [SerializeField, Range(0f, 1f)] private float wellFedChance = 0.35f;
         [Tooltip("Supper remarks come within this many in-game minutes of serving.")]
@@ -2109,6 +2119,7 @@ namespace WanderersGuild
 
         public SpeechLibrary Library => library;
         public float ChatterChance => chatterChance;
+        public float MoodChatterChance => moodChatterChance;
         public float WellFedChance => wellFedChance;
         public int SupperSpreadMinutes => supperSpreadMinutes;
         public int ArrivalWaitMinutes => arrivalWaitMinutes;
@@ -2208,6 +2219,45 @@ namespace WanderersGuild
     }
     #endregion
     
+    #region Avatar Sidestep
+    [Serializable]
+    public class AvatarSidestepSettings
+    {
+        [Tooltip("Walkers ease aside to pass each other and anyone standing in the way (off = they walk through, as before).")]
+        [SerializeField] private bool enabled = true;
+
+        [Tooltip("How far a walker eases aside (units; a cell is 1).")]
+        [SerializeField, Range(0.1f, 0.8f)] private float sideDistance = 0.5f;
+
+        [Tooltip("Extra room checked beyond the offset — about half a figure's width — so nobody leans into furniture or walls.")]
+        [SerializeField, Range(0f, 0.5f)] private float clearance = 0.25f;
+
+        [Tooltip("How far ahead (units) someone counts as in the way.")]
+        [SerializeField, Min(0.5f)] private float lookAhead = 2.5f;
+
+        [Tooltip("Someone closer than this to the walker's line (units) is in the way.")]
+        [SerializeField, Min(0.1f)] private float passWidth = 1f;
+
+        [Tooltip("Stay aside until the other is this far behind (units).")]
+        [SerializeField, Min(0f)] private float keepBehind = 0.6f;
+
+        [Tooltip("Within this distance of the route's end (units), ease back onto the line — the step onto a spot stays exact.")]
+        [SerializeField, Min(0f)] private float settleDistance = 1f;
+
+        [Tooltip("How fast the offset eases, in units per second at Normal speed (game speed scales it, like walking).")]
+        [SerializeField, Min(0.1f)] private float easeSpeed = 2.5f;
+
+        public bool Enabled => enabled;
+        public float SideDistance => sideDistance;
+        public float Clearance => clearance;
+        public float LookAhead => lookAhead;
+        public float PassWidth => passWidth;
+        public float KeepBehind => keepBehind;
+        public float SettleDistance => settleDistance;
+        public float EaseSpeed => easeSpeed;
+    }
+    #endregion
+    
     #region Tutorial
     [Serializable]
     public class TutorialSettings
@@ -2261,6 +2311,115 @@ namespace WanderersGuild
         public float BlinkSeconds => blinkSeconds;
         public float FootprintHeight => footprintHeight;
         public IReadOnlyList<RoomGuide> RoomGuides => roomGuides ?? Array.Empty<RoomGuide>();
+    }
+    #endregion
+    
+    #region Satisfaction
+    [Serializable]
+    public class SatisfactionSettings
+    {
+        [Header("Score (0–100)")]
+        [Tooltip("Where a mood rests with nothing going on.")]
+        [SerializeField, Range(0f, 100f)] private float baseline = 50f;
+        [Tooltip("Level thresholds (ascending): below Miserable → Miserable, below Unhappy → Unhappy, from Happy → Happy.")]
+        [SerializeField, Range(0f, 100f)] private float miserableBelow = 20f;
+        [SerializeField, Range(0f, 100f)] private float unhappyBelow = 40f;
+        [SerializeField, Range(0f, 100f)] private float happyFrom = 75f;
+
+        [Header("Memories (fade to nothing over their days; one per reason)")]
+        [SerializeField] private MoodEventValue[] memories =
+        {
+            new(MoodReason.NewArrival, 10f, 5f),
+            new(MoodReason.AteSupper, 5f, 2f),
+            new(MoodReason.WentHungry, -4f, 2f),
+            new(MoodReason.QuestSucceeded, 6f, 4f),
+            new(MoodReason.QuestFailed, -6f, 4f),
+            new(MoodReason.GoodPay, 2f, 4f),
+            new(MoodReason.PoorPay, -2f, 4f),
+            new(MoodReason.Injured, -8f, 5f),
+            new(MoodReason.InfirmaryCare, 5f, 4f),
+            new(MoodReason.PromotionPassed, 10f, 6f),
+            new(MoodReason.ExamFailed, -5f, 3f),
+            new(MoodReason.ClassAdvanced, 10f, 6f),
+            new(MoodReason.TrialFailed, -5f, 3f),
+            new(MoodReason.PartyFormed, 5f, 4f),
+            new(MoodReason.PartyBrokeUp, -6f, 4f),
+            new(MoodReason.Recalled, -4f, 3f)
+        };
+        [Tooltip("The party share (%) that feels fair: Good Pay / Poor Pay are per 10% above / below it.")]
+        [SerializeField, Range(0, 100)] private int fairSharePercent = 60;
+
+        [Header("Situations (while they last)")]
+        [SerializeField] private float lodgingOutside = -8f;
+        [SerializeField] private float ownBed = 4f;
+        [Tooltip("Idle dawns in a row before idling starts to hurt, then points per further idle dawn, down to the max penalty.")]
+        [SerializeField, Min(0)] private int idleGraceDays = 2;
+        [SerializeField] private float idlePerDay = -3f;
+        [SerializeField, Min(0f)] private float idleMaxPenalty = 12f;
+
+        [Header("Effects")]
+        [Tooltip("Appeal an Unhappy / Miserable adventurer needs to sign up (1 = their normal expectation).")]
+        [SerializeField, Min(1f)] private float unhappyAppeal = 1.2f;
+        [SerializeField, Min(1f)] private float miserableAppeal = 1.4f;
+        [Tooltip("Quest power bonus while Happy (0.03 = +3%).")]
+        [SerializeField, Range(0f, 0.2f)] private float happyPowerBonus = 0.03f;
+        [Tooltip("Miserable dawns in a row before a free adventurer quits (warned the day before). 0 = never.")]
+        [SerializeField, Min(0)] private int leaveAfterDays = 3;
+        [Tooltip("Reputation the guild loses when someone quits.")]
+        [SerializeField, Min(0)] private int leaveReputation = 1;
+        
+        [Header("Look")]
+        [Tooltip("Mood faces by level: Miserable, Unhappy, Content, Happy (12×12, Point filter). Empty = a framed coloured letter.")]
+        [SerializeField] private Sprite[] moodIcons = new Sprite[4];
+        [Tooltip("Mood text colours by level: Miserable, Unhappy, Content, Happy.")]
+        [SerializeField] private Color[] levelColors =
+        {
+            new(0.86f, 0.33f, 0.31f),
+            new(0.93f, 0.63f, 0.30f),
+            new(0.86f, 0.84f, 0.78f),
+            new(0.52f, 0.85f, 0.45f)
+        };
+
+        public float Baseline => baseline;
+        public float MiserableBelow => miserableBelow;
+        public float UnhappyBelow => unhappyBelow;
+        public float HappyFrom => happyFrom;
+        public int FairSharePercent => fairSharePercent;
+        public float LodgingOutside => lodgingOutside;
+        public float OwnBed => ownBed;
+        public int IdleGraceDays => idleGraceDays;
+        public float IdlePerDay => idlePerDay;
+        public float IdleMaxPenalty => idleMaxPenalty;
+        public float UnhappyAppeal => unhappyAppeal;
+        public float MiserableAppeal => miserableAppeal;
+        public float HappyPowerBonus => happyPowerBonus;
+        public int LeaveAfterDays => leaveAfterDays;
+        public int LeaveReputation => leaveReputation;
+
+        // The tuning for a memory reason. False = not listed (that memory is never made).
+        public bool TryGetMemory(MoodReason reason, out MoodEventValue value)
+        {
+            if (memories != null)
+            {
+                foreach (var candidate in memories)
+                {
+                    if (candidate.Reason != reason)
+                        continue;
+                    value = candidate;
+                    return true;
+                }
+            }
+
+            value = default;
+            return false;
+        }
+        
+        // NOTE: Short or empty lists → no sprite (the letter) / white.
+        public Sprite IconFor(SatisfactionLevel level) =>
+            moodIcons != null && (int)level < moodIcons.Length ? moodIcons[(int)level] : null;
+
+        public Color ColorOf(SatisfactionLevel level) =>
+            levelColors != null && (int)level < levelColors.Length ? levelColors[(int)level] : Color.white;
     }
     #endregion
 }

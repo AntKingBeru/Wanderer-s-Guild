@@ -68,7 +68,8 @@ namespace WanderersGuild
 
                 if (tavern != null)
                 {
-                    if (adventurer.TrySpendWealth(price))
+                    var ate = adventurer.TrySpendWealth(price);
+                    if (ate)
                     {
                         adventurer.SetWellFed(bonus);
                         served++;
@@ -78,6 +79,9 @@ namespace WanderersGuild
                     {
                         skipped++;
                     }
+
+                    // NOTE: Per adventurer, for their mood (eating or going hungry).
+                    GameEventsRelay.OnSupperOutcome.Invoke(adventurer, ate);
                 }
 
                 if (!Mathf.Approximately(before, adventurer.WellFedBonus))

@@ -1,6 +1,6 @@
 /* Save-slot panel (Load Game / New Game slot picker) in 320×180 UI pixels. */
 .slots-window {
-    width: 252px;
+    width: 268px;
     height: 164px;
 }
 

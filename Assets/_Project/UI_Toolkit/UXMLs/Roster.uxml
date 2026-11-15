@@ -40,6 +40,8 @@
                         <wg:OutlinedText name="adv-affinities" class="adv-line adv-wrap" text="Good at: —" />
                         <wg:OutlinedText name="adv-gear" class="adv-line adv-wrap" text="Gear: —" />
                         <wg:OutlinedText name="adv-status" class="adv-line" text="Status: Idle" />
+                        <wg:OutlinedText name="adv-mood" class="adv-line adv-wrap" text="Mood: Content (62)" />
+                        <wg:OutlinedText name="adv-mood-reasons" class="adv-line adv-wrap adv-mood-reasons" text="+6 Quest success" />
                         <wg:OutlinedText name="adv-party" class="adv-line adv-wrap" text="Party: The Iron Wolves (3) · Teamwork +4%" />
                         <wg:OutlinedText name="adv-room" class="adv-line" text="Room: Bedroom 2" />
                         <wg:OutlinedText name="adv-promote-hint" class="adv-hint adv-wrap" text="Needs more rank progress" />

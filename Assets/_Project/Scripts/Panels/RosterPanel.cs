@@ -19,6 +19,7 @@ namespace WanderersGuild
         private readonly List<Button> _buttons = new();
         private readonly List<VisualElement> _navigationOrder = new();
         private readonly List<Adventurer> _sorted = new();
+        private readonly List<MoodEntry> _moodReasons = new(); // NOTE: Scratch for the details pane's reasons.
         private OutlinedText _title;
         private RosterListView _list;
         private AdventurerDetailsView _details;
@@ -105,6 +106,7 @@ namespace WanderersGuild
             GameEventsRelay.OnLodgingChanged.AddListener(OnLodgingChanged);
             GameEventsRelay.OnFacilityCompleted.AddListener(OnFacilityEvent);
             GameEventsRelay.OnFacilityRemoved.AddListener(OnFacilityEvent);
+            GameEventsRelay.OnMoodChanged.AddListener(OnMoodChanged);
         }
 
         protected override void OnDestroy()
@@ -123,6 +125,7 @@ namespace WanderersGuild
             GameEventsRelay.OnLodgingChanged.RemoveListener(OnLodgingChanged);
             GameEventsRelay.OnFacilityCompleted.RemoveListener(OnFacilityEvent);
             GameEventsRelay.OnFacilityRemoved.RemoveListener(OnFacilityEvent);
+            GameEventsRelay.OnMoodChanged.RemoveListener(OnMoodChanged);
             base.OnDestroy();
         }
         
@@ -289,6 +292,12 @@ namespace WanderersGuild
             _details.Show(selected, Settings.Experience, check, GameConfig.Instance.Promotion, RequestManager.NowMinutes,
                 partyLine, roomLine, canMove, advancement);
             
+            // NOTE: The live score and its reasons (the row's face uses the same live level).
+            if (SatisfactionManager.HasInstance)
+                _details.SetMood(SatisfactionManager.Instance.Snapshot(selected, _moodReasons), _moodReasons);
+            else
+                _details.SetMood(null, null);
+            
             // NOTE: The chooser belongs to one adventurer — if they're no longer selected or can't advance, it closes.
             if (_chooser.IsOpen && (_chooser.AdventurerId != selected.Id || !advancement.CanAdvance))
                 _chooser.HideImmediate();
@@ -386,6 +395,8 @@ namespace WanderersGuild
 
         // NOTE: The office being finished or demolished shows or hides Dismiss.
         private void OnFacilityEvent(PlacedFacility _) => RefreshIfOpen();
+        
+        private void OnMoodChanged(Adventurer _, SatisfactionLevel __) => RefreshIfOpen();
         
         private void OnPartyEvent(GuildParty _) => RefreshIfOpen();
         private void OnPartyDisbanded(GuildParty _, PartyEndReason __) => RefreshIfOpen();

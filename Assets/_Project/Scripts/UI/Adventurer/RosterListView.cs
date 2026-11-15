@@ -31,7 +31,7 @@ namespace WanderersGuild
                 RosterRowView row = new(clicked => { if (clicked.Adventurer != null) onSelected(clicked.Adventurer); });
                 row.Button.RegisterCallback<FocusEvent>(_ => scroll1.ScrollTo(row.Button));
 
-                scroll1.Add(row.Button);
+                scroll1.Add(row.Root); // NOTE: The line (mood face + row); navigation still uses the row's button.
                 _rows.Add(row);
                 _buttons.Add(row.Button);
             }
@@ -40,15 +40,18 @@ namespace WanderersGuild
         /// <param name="adventurers">Already sorted. Anything beyond the pooled rows isn't listed (the panel warns).</param>
         /// <param name="selectedId"></param>
         /// <param name="ranks"></param>
+        // NOTE: The mood face uses the LIVE level (the same the details pane shows); none without the satisfaction system.
         public void Show(IReadOnlyList<Adventurer> adventurers, int selectedId, GuildRankSettings ranks)
         {
+            var satisfaction = SatisfactionManager.HasInstance ? SatisfactionManager.Instance : null;
             for (var i = 0; i < _rows.Count; i++)
             {
                 if (i < adventurers.Count)
                 {
                     var adventurer = adventurers[i];
+                    var mood = satisfaction != null ? satisfaction.LevelOf(adventurer) : (SatisfactionLevel?)null;
                     _rows[i].Show(adventurer, ranks.ColorOf(adventurer.Rank), adventurer.Id == selectedId,
-                        RosterReadinessRules.Of(adventurer));
+                        RosterReadinessRules.Of(adventurer), mood);
                 }
                 else
                 {

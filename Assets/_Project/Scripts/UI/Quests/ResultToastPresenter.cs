@@ -42,6 +42,8 @@ namespace WanderersGuild
             GameEventsRelay.OnClassTrialFailed.AddListener(OnClassTrialFailed);
             GameEventsRelay.OnClassUnlocked.AddListener(OnClassUnlocked);
             GameEventsRelay.OnAdventurerDismissed.AddListener(OnAdventurerDismissed);
+            GameEventsRelay.OnAdventurerLeavingSoon.AddListener(OnAdventurerLeavingSoon);
+            GameEventsRelay.OnAdventurerQuit.AddListener(OnAdventurerQuit);
         }
 
         private void OnDisable()
@@ -69,6 +71,8 @@ namespace WanderersGuild
             GameEventsRelay.OnClassTrialFailed.RemoveListener(OnClassTrialFailed);
             GameEventsRelay.OnClassUnlocked.RemoveListener(OnClassUnlocked);
             GameEventsRelay.OnAdventurerDismissed.RemoveListener(OnAdventurerDismissed);
+            GameEventsRelay.OnAdventurerLeavingSoon.RemoveListener(OnAdventurerLeavingSoon);
+            GameEventsRelay.OnAdventurerQuit.RemoveListener(OnAdventurerQuit);
             if (_wait.IsActive())
                 _wait.Kill();
             _queue.Clear();
@@ -194,6 +198,9 @@ namespace WanderersGuild
                 case PartyEndReason.Dismissed:
                     Enqueue($"{party.Name} broke up (a member was dismissed)", true);
                     break;
+                case PartyEndReason.Left:
+                    Enqueue($"{party.Name} broke up (a member left)", true);
+                    break;
             }
         }
         
@@ -230,6 +237,13 @@ namespace WanderersGuild
         private void OnAdventurerDismissed(Adventurer adventurer, int reputationLoss) =>
             Enqueue(reputationLoss > 0 ? $"{adventurer.Name} was dismissed (-{reputationLoss} reputation)"
                 : $"{adventurer.Name} was dismissed", true);
+        
+        private void OnAdventurerLeavingSoon(Adventurer adventurer) =>
+            Enqueue($"{AdventurerFormatter.GivenName(adventurer.Name)} is miserable and may leave tomorrow", true);
+
+        private void OnAdventurerQuit(Adventurer adventurer, int reputationLoss) =>
+            Enqueue(reputationLoss > 0 ? $"{adventurer.Name} quit the guild, unhappy (-{reputationLoss} reputation)"
+                : $"{adventurer.Name} quit the guild, unhappy", true);
 
         private static string Signed(long value) => value >= 0 ? $"+{value:N0}" : $"-{-value:N0}";
 

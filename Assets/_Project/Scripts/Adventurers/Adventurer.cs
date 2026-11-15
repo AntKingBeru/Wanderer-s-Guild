@@ -95,6 +95,11 @@ namespace WanderersGuild
         public int PartyId { get; private set; }
         public float TeamworkBonus { get; private set; }
         public bool IsInParty => PartyId != 0;
+        
+        // Quest power bonus from satisfaction (Happy). Set only by SatisfactionManager (not saved — recomputed on load).
+        public float MoraleBonus { get; private set; }
+
+        public void SetMorale(float bonus) => MoraleBonus = System.Math.Max(0f, bonus);
 
         public int Level => _levels.LevelFor(Experience);
         public bool IsMaxLevel => Level >= _levels.MaxLevel;

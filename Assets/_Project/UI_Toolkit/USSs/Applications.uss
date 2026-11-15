@@ -1,6 +1,6 @@
 /* Applications screen in 320×180 UI pixels: quests with applicants (left) + one scrolling details pane (right). */
 .app-window {
-    width: 300px;
+    width: 316px;
     height: 164px;
 }
 .app-body {

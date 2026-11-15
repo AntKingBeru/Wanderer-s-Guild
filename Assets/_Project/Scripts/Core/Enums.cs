@@ -397,7 +397,8 @@ namespace WanderersGuild
         Death = 0,
         Failures = 1,
         Player = 2,
-        Dismissed = 3 // A member was dismissed from the guild.
+        Dismissed = 3, // A member was dismissed from the guild.
+        Left = 4 // A member quit the guild (too unhappy).
     }
     #endregion
     
@@ -416,7 +417,10 @@ namespace WanderersGuild
         MealChatter = 8,
         ShopChatter = 9,
         RestChatter = 10,
-        Sleeping = 11
+        Sleeping = 11,
+        HappyChatter = 12, // Chatter from a Happy adventurer (now and then).
+        UnhappyChatter = 13, // Chatter from an Unhappy or Miserable adventurer (now and then).
+        FedUp = 14 // Said when they're warned they may leave tomorrow.
     }
     #endregion
     
@@ -446,6 +450,42 @@ namespace WanderersGuild
         Closed = 0, // Build mode can't be entered.
         Open = 1, // It can be entered and left.
         Kept = 2  // It can't be left (the building steps — 28b-2).
+    }
+    #endregion
+    
+    #region Satisfaction
+    // How an adventurer feels, from their satisfaction score (thresholds in GameConfig › Satisfaction).
+    public enum SatisfactionLevel
+    {
+        Miserable = 0,
+        Unhappy = 1,
+        Content = 2,
+        Happy = 3
+    }
+
+    // Why an adventurer's mood moved: memories (fading) and situations (while they last).
+    public enum MoodReason
+    {
+        NewArrival = 0,
+        AteSupper = 1,
+        WentHungry = 2,
+        QuestSucceeded = 3,
+        QuestFailed = 4,
+        GoodPay = 5,
+        PoorPay = 6,
+        Injured = 7,
+        InfirmaryCare = 8,
+        PromotionPassed = 9,
+        ExamFailed = 10,
+        ClassAdvanced = 11,
+        TrialFailed = 12,
+        PartyFormed = 13,
+        PartyBrokeUp = 14,
+        Recalled = 15,
+        LodgingOutside = 50, // Situation.
+        OwnBed = 51, // Situation.
+        IdleTooLong = 52, // Situation.
+        Debug = 99
     }
     #endregion
 }

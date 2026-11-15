@@ -1,6 +1,6 @@
 /* Adventurer roster in 320×180 UI pixels: list (left) + scrolling details (right), Promote pinned under the details. */
 .roster-window {
-    width: 300px;
+    width: 316px;
     height: 164px;
 }
 .roster-body {
@@ -11,8 +11,9 @@
 }
 
 /* ---------- List ---------- */
+/* NOTE: 14px wider than the row box: the mood face sits outside it, on the left. */
 .roster-list-frame {
-    width: 150px;
+    width: 164px;
     margin-right: 4px;
 }
 .roster-list {
@@ -26,10 +27,26 @@
     align-items: center;
     display: none;
 }
-.roster-row {
+
+/* One list line: the mood face outside the row's box, then the row. NOTE: The LINE stretches across the list (the row used
+   to do this itself when it was the list's direct child); the row then takes everything after the face. */
+.roster-line {
     flex-direction: row;
     align-items: center;
     align-self: stretch;
+    flex-shrink: 0;
+}
+.roster-line__mood {
+    margin-right: 2px;
+    margin-bottom: 1px; /* NOTE: Matches the row's bottom margin, so the face centres on the box. */
+    flex-shrink: 0;
+}
+
+.roster-row {
+    flex-direction: row;
+    align-items: center;
+    flex-grow: 1;
+    min-width: 0;
     height: 14px;
     margin: 0 0 1px 0;
     padding: 0 2px 0 1px;
@@ -60,6 +77,8 @@
     flex-grow: 1;
     -unity-text-align: middle-center;
 }
+
+/* NOTE: The only column that grows and shrinks — it takes whatever the fixed parts leave, and clips. */
 .roster-row__name {
     flex-grow: 1;
     flex-shrink: 1;
@@ -67,6 +86,21 @@
     overflow: hidden;
     padding: 1px 2px;
     align-items: flex-start;
+}
+
+/* Ready flag (promotion / advancement) after the name. */
+.roster-row__ready {
+    margin-right: 2px;
+    flex-shrink: 0;
+}
+.roster-row__ready .icon-slot__letter .outlined-text__fill {
+    color: var(--color-accent);
+}
+
+/* NOTE: Class icon (12) + gap (2) left of the class name. */
+.roster-row__class-icon {
+    margin-right: 2px;
+    flex-shrink: 0;
 }
 .roster-row__class {
     width: 44px;
@@ -76,11 +110,27 @@
 .roster-row__class .outlined-text__fill {
     color: var(--color-text-disabled);
 }
+
 /* NOTE: The level, or the status for anyone not idle — the column grows to fit (the name column gives way). */
 .roster-row__level {
     min-width: 26px;
     padding-left: 2px;
     align-items: flex-end;
+}
+.roster-row__level .outlined-text__part {
+    white-space: nowrap;
+}
+.roster-row__level--status .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+
+/* NOTE: Only the name column shrinks (it clips) or grows; the badge, class and level keep their widths, and the level never
+   wraps. flex-grow 0 is explicit so no later rule can make them take the name's space. */
+.roster-row__badge,
+.roster-row__class,
+.roster-row__level {
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 
 /* ---------- Details (one scroll view) ---------- */
@@ -109,6 +159,13 @@
 }
 .adv-gap {
     margin-top: 2px;
+}
+.adv-icon-row {
+    flex-direction: row;
+    align-items: center;
+}
+.adv-class-icon {
+    margin-right: 2px;
 }
 
 /* XP and rank-progress bars: track + fill (fill width set in code, whole UI pixels) + text. */
@@ -139,7 +196,8 @@
 .adv-stats {
     margin-top: 2px;
 }
-/* NOTE: Long lines (affinities, gear, the promotion hint) wrap inside the scroll view. */
+
+/* NOTE: Long lines (affinities, gear, mood, the promotion hint) wrap inside the scroll view. */
 .adv-wrap {
     align-items: stretch;
 }
@@ -149,6 +207,15 @@
 .adv-wrap .outlined-text__part {
     white-space: normal;
 }
+
+/* The mood's reasons: indented and muted under the mood line. */
+.adv-mood-reasons {
+    padding-left: 4px;
+}
+.adv-mood-reasons .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+
 .adv-empty {
     flex-grow: 1;
     align-items: center;
@@ -170,6 +237,7 @@
     flex-shrink: 0;
     margin-top: 3px;
 }
+
 /* ---------- Class chooser (Advance) ---------- */
 /* NOTE: Display is set in code (none until opened); it dims the roster like the confirm overlay. */
 .chooser-overlay {
@@ -199,35 +267,4 @@
     margin: 0 0 2px 0;
     padding: 1px 4px;
     align-items: flex-start;
-}
-.adv-icon-row {
-    flex-direction: row;
-    align-items: center;
-}
-.adv-class-icon {
-    margin-right: 2px;
-}
-/* NOTE: Class icon (12) + gap (2) left of the class name; the name column absorbs the difference. */
-.roster-row__class-icon {
-    margin-right: 2px;
-}
-/* NOTE: Only the name column shrinks (it clips); the badge, class and level keep their widths, and the level never wraps. */
-.roster-row__badge,
-.roster-row__class,
-.roster-row__level {
-    flex-shrink: 0;
-}
-.roster-row__level .outlined-text__part {
-    white-space: nowrap;
-}
-.roster-row__level--status .outlined-text__fill {
-    color: var(--color-text-disabled);
-}
-/* Ready flag (promotion / advancement) after the name. */
-.roster-row__ready {
-    margin-right: 2px;
-    flex-shrink: 0;
-}
-.roster-row__ready .icon-slot__letter .outlined-text__fill {
-    color: var(--color-accent);
 }

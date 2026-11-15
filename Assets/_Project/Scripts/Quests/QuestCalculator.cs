@@ -45,13 +45,14 @@ namespace WanderersGuild
         public static float Difficulty(RequestData request, QuestSettings settings) =>
             settings.DifficultyPerMember(request.RecommendedRank) * request.RecommendedPartySize;
 
-        // NOTE: Weighted stats (incl. gear) × affinity bonus × (1 + Well fed + teamwork). The bonuses add, then multiply once.
+        // NOTE: Weighted stats (incl. gear) × affinity bonus × (1 + Well fed + teamwork + morale). The bonuses add, then
+        // multiply once.
         public static float MemberPower(Adventurer adventurer, QuestCategory category, QuestSettings settings)
         {
             var power = settings.Weights(category).Apply(adventurer.Stats);
             if (adventurer.Class.HasAffinity(category))
                 power *= 1f + settings.AffinityPowerBonus;
-            return power * (1f + adventurer.WellFedBonus + adventurer.TeamworkBonus);
+            return power * (1f + adventurer.WellFedBonus + adventurer.TeamworkBonus + adventurer.MoraleBonus);
         }
 
         public static float PartyPower(IEnumerable<Adventurer> members, QuestCategory category, QuestSettings settings)

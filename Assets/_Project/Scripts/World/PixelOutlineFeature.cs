@@ -1,4 +1,4 @@
-// URP renderer feature: draws a mask of hovered objects (one rendering-layer bit) and outlines it 1 render-pixel thick.
+// URP renderer feature: draws a mask of hovered objects (one rendering-layer bit) and outlines it one UI pixel thick.
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -46,6 +46,7 @@ namespace WanderersGuild
                 return;
 
             settings.outlineMaterial.SetColor(OutlineColorId, settings.color);
+            settings.outlineMaterial.SetFloat(OutlineWidthId, OutlineTexels());
             _maskPass.Setup(settings.maskMaterial, 1u << settings.renderingLayer);
             _compositePass.Setup(settings.outlineMaterial);
 
@@ -54,6 +55,17 @@ namespace WanderersGuild
         }
 
         private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
+        private static readonly int OutlineWidthId = Shader.PropertyToID("_OutlineWidth");
+        
+        // NOTE: UI pixels × world texels per UI pixel (Render Scale). No GameConfig (edit-mode Game view) → 1 texel.
+        private static float OutlineTexels()
+        {
+            if (!GameConfig.HasInstance)
+                return 1f;
+
+            var config = GameConfig.Instance;
+            return config.Interaction.OutlineWidth * config.WorldView.RenderScale;
+        }
 
         // Hands the mask from the mask pass to the composite pass within one frame.
         private class OutlineMaskData : ContextItem

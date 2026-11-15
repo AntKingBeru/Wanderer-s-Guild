@@ -1,6 +1,6 @@
 /* Armory screen in 320×180 UI pixels: items for sale (left) + the selected item (right), restock info in the footer. */
 .arm-window {
-    width: 300px;
+    width: 316px;
     height: 164px;
 }
 /* NOTE: The theme's pixel-window centres its children — body and footer stretch to the window's width. */

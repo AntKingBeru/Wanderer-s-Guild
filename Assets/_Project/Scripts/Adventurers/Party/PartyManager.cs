@@ -37,6 +37,7 @@ namespace WanderersGuild
             GameEventsRelay.OnQuestEnded.AddListener(OnQuestEnded);
             GameEventsRelay.OnAdventurerLeft.AddListener(OnAdventurerLeft);
             GameEventsRelay.OnAdventurerDismissed.AddListener(OnAdventurerDismissed);
+            GameEventsRelay.OnAdventurerQuit.AddListener(OnAdventurerQuit);
         }
 
         private void OnDisable()
@@ -44,6 +45,7 @@ namespace WanderersGuild
             GameEventsRelay.OnQuestEnded.RemoveListener(OnQuestEnded);
             GameEventsRelay.OnAdventurerLeft.RemoveListener(OnAdventurerLeft);
             GameEventsRelay.OnAdventurerDismissed.RemoveListener(OnAdventurerDismissed);
+            GameEventsRelay.OnAdventurerQuit.RemoveListener(OnAdventurerQuit);
         }
 
         private void Start()
@@ -206,6 +208,15 @@ namespace WanderersGuild
             var party = PartyOf(adventurer.Id);
             if (party != null)
                 Dissolve(party, PartyEndReason.Dismissed);
+            DropLineupsWith(new[] { adventurer.Id });
+        }
+        
+        // NOTE: Before the roster removal — the party ends as "left"; OnAdventurerLeft then finds no party.
+        private void OnAdventurerQuit(Adventurer adventurer, int _)
+        {
+            var party = PartyOf(adventurer.Id);
+            if (party != null)
+                Dissolve(party, PartyEndReason.Left);
             DropLineupsWith(new[] { adventurer.Id });
         }
 

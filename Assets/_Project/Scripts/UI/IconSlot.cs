@@ -61,6 +61,9 @@ namespace WanderersGuild
             Root.style.display = DisplayStyle.Flex;
             Root.style.visibility = Visibility.Hidden;
         }
+        
+        // Colors the placeholder letter (sprites keep their own colors).
+        public void SetLetterColor(Color color) => _letter.SetFillColor(color);
 
         // NOTE: The first letter or digit of the name, uppercased ("?" if none) — one glyph fits 12px.
         private static string Initial(string name)

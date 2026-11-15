@@ -23,7 +23,12 @@ namespace WanderersGuild
             new(SpeechTopic.MealChatter, "Pass the salt.", "Smells good!", "Is there more?", "Mmm..."),
             new(SpeechTopic.ShopChatter, "Shiny...", "Too pricey.", "I'll take that one!", "Just looking."),
             new(SpeechTopic.RestChatter, "Ugh...", "Need... rest.", "Everything hurts.", "Water, please."),
-            new(SpeechTopic.Sleeping, "Zzz...", "Zzz... zz...", "*snore*", "Mmh... treasure...")
+            new(SpeechTopic.Sleeping, "Zzz...", "Zzz... zz...", "*snore*", "Mmh... treasure..."),
+            new(SpeechTopic.HappyChatter, "Love this guild!", "Life is good.", "Best job ever!", "Feeling great!",
+                "Who wants a quest?"),
+            new(SpeechTopic.UnhappyChatter, "Is this worth it?", "Pay's too low...", "I'm so bored.", "Not happy here.",
+                "Sigh...", "Thinking of leaving..."),
+            new(SpeechTopic.FedUp, "I've had enough.", "I'm done with this place.", "Tomorrow, I'm gone.", "Nobody cares here...")
         };
 
         // This topic's lines (empty if none). NOTE: The first set with lines wins if a topic is listed twice.

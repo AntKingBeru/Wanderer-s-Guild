@@ -27,6 +27,7 @@
             <wg:OutlinedText name="world-card-info" class="world-card__line world-card__line--fill" text="Elf · Archer · Lv 2 · Rank F" />
         </ui:VisualElement>
         <wg:OutlinedText name="world-card-status" class="world-card__line" text="Idle · Well fed (+6%)" />
+        <wg:OutlinedText name="world-card-mood" class="world-card__line" text="Mood: Content" />
         <wg:OutlinedText name="world-card-room" class="world-card__line" text="Room: Bedroom 2" />
         <wg:OutlinedText name="world-card-party" class="world-card__line" text="The Iron Wolves" />
         <ui:VisualElement class="world-card__buttons" picking-mode="Ignore">

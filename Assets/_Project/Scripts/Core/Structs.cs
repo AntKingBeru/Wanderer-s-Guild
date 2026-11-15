@@ -1159,6 +1159,26 @@ namespace WanderersGuild
             LeanDegrees = leanDegrees;
         }
     }
+    
+    // One avatar as the sidestep solver sees it this frame: its path position, where it's heading, and whether it's walking.
+    public readonly struct SidestepAgent
+    {
+        public AdventurerAvatar Avatar { get; }
+        public Vector3 Position { get; }   // NOTE: The PATH position (not the drawn one).
+        public Vector3 Direction { get; }  // NOTE: Normalized, flat (XZ); zero = standing still.
+
+        public SidestepAgent(AdventurerAvatar avatar, Vector3 position, Vector3 direction)
+        {
+            Avatar = avatar;
+            Position = position;
+            Direction = direction;
+        }
+
+        public bool IsWalking => Direction.sqrMagnitude > 0.0001f;
+
+        // The walker's right, flat (Unity is left-handed: forward +Z → right +X).
+        public Vector3 Right => new(Direction.z, 0f, -Direction.x);
+    }
     #endregion
     
     #region Risks
@@ -1396,6 +1416,113 @@ namespace WanderersGuild
         {
             Title = title;
             Body = body;
+        }
+    }
+    #endregion
+    
+    #region Satisfaction
+    // One fading memory: full amount at the start, linearly down to 0 at the end (in-game minutes). Saved as is.
+    [Serializable]
+    public struct MoodMemory
+    {
+        [SerializeField] private MoodReason reason;
+        [SerializeField] private float amount;
+        [SerializeField] private long startedAt;
+        [SerializeField] private long endsAt;
+
+        public MoodMemory(MoodReason reason, float amount, long startedAt, long endsAt)
+        {
+            this.reason = reason;
+            this.amount = amount;
+            this.startedAt = startedAt;
+            this.endsAt = endsAt;
+        }
+
+        public MoodReason Reason => reason;
+        public float Amount => amount;
+        public long StartedAt => startedAt;
+        public long EndsAt => endsAt;
+
+        // Its value now (0 once it has faded).
+        public float ValueAt(long nowMinutes)
+        {
+            if (nowMinutes >= endsAt || endsAt <= startedAt)
+                return 0f;
+            if (nowMinutes <= startedAt)
+                return amount;
+            return amount * (endsAt - nowMinutes) / (endsAt - startedAt);
+        }
+    }
+
+    // One reason behind a mood right now and its points (for the details pane and debug).
+    public readonly struct MoodEntry
+    {
+        public MoodReason Reason { get; }
+        public float Value { get; }
+
+        public MoodEntry(MoodReason reason, float value)
+        {
+            Reason = reason;
+            Value = value;
+        }
+    }
+
+    // A memory's tuning: its points at the start and how many in-game days it takes to fade.
+    [Serializable]
+    public struct MoodEventValue
+    {
+        [SerializeField] private MoodReason reason;
+        [Tooltip("Satisfaction points at the start (negative = upsetting). Pay: points per 10% away from the fair share. " +
+                 "Injured: points for a Serious injury (Light ×0.5, Grave ×1.5).")]
+        [SerializeField] private float amount;
+        [Tooltip("In-game days it takes to fade to nothing.")]
+        [SerializeField, Min(0f)] private float days;
+
+        public MoodEventValue(MoodReason reason, float amount, float days)
+        {
+            this.reason = reason;
+            this.amount = amount;
+            this.days = days;
+        }
+
+        public MoodReason Reason => reason;
+        public float Amount => amount;
+        public long DurationMinutes => (long)(Math.Max(0f, days) * GameCalendar.MinutesPerDay);
+    }
+
+    // One member's saved mood: memories and the dawn counters.
+    [Serializable]
+    public struct SavedMood
+    {
+        [SerializeField] private int adventurerId;
+        [SerializeField] private MoodMemory[] memories;
+        [SerializeField] private int idleDays;
+        [SerializeField] private int miserableDays;
+
+        public SavedMood(int adventurerId, MoodMemory[] memories, int idleDays, int miserableDays)
+        {
+            this.adventurerId = adventurerId;
+            this.memories = memories;
+            this.idleDays = idleDays;
+            this.miserableDays = miserableDays;
+        }
+
+        public int AdventurerId => adventurerId;
+        public MoodMemory[] Memories => memories ?? Array.Empty<MoodMemory>();
+        public int IdleDays => idleDays;
+        public int MiserableDays => miserableDays;
+    }
+    
+    // A mood at a glance: the score now and its level.
+    public readonly struct MoodSnapshot
+    {
+        public float Score { get; }
+        public SatisfactionLevel Level { get; }
+
+        public MoodSnapshot(float score, SatisfactionLevel level)
+        {
+            Score = score;
+            Level = level;
         }
     }
     #endregion

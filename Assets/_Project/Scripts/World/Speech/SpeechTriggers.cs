@@ -1,5 +1,4 @@
-// Turns game events into speech requests: quest departures and results, coming back, level-ups, injuries, supper remarks
-// and hourly chatter.
+// Turns game events into speech requests: quest departures and results, coming back, level-ups, injuries, supper remarks, being fed up, and hourly chatter.
 using System;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
@@ -30,6 +29,7 @@ namespace WanderersGuild
             GameEventsRelay.OnAdventurerInjured.AddListener(OnInjured);
             GameEventsRelay.OnSupperServed.AddListener(OnSupperServed);
             GameEventsRelay.OnHourStarted.AddListener(OnHourStarted);
+            GameEventsRelay.OnAdventurerLeavingSoon.AddListener(OnLeavingSoon);
         }
 
         public void Unbind()
@@ -45,6 +45,7 @@ namespace WanderersGuild
             GameEventsRelay.OnAdventurerInjured.RemoveListener(OnInjured);
             GameEventsRelay.OnSupperServed.RemoveListener(OnSupperServed);
             GameEventsRelay.OnHourStarted.RemoveListener(OnHourStarted);
+            GameEventsRelay.OnAdventurerLeavingSoon.RemoveListener(OnLeavingSoon);
             _departedQuests.Clear();
         }
 
@@ -82,6 +83,7 @@ namespace WanderersGuild
         private void OnClassTrialFailed(Adventurer adventurer, ClassData _) => SayTo(adventurer, SpeechTopic.CameBack);
         private void OnLeveledUp(Adventurer adventurer) => SayTo(adventurer, SpeechTopic.LeveledUp);
         private void OnInjured(Adventurer adventurer, InjurySeverity _, int __) => SayTo(adventurer, SpeechTopic.Injured);
+        private void OnLeavingSoon(Adventurer adventurer) => SayTo(adventurer, SpeechTopic.FedUp);
 
         // NOTE: Only some of those who ate speak, spread over the next minutes so they don't all talk at once.
         private void OnSupperServed(int served, int _, long __)

@@ -1,5 +1,5 @@
 .credits-window {
-    width: 200px;
+    width: 216px;
     height: 150px;
 }
 /* NOTE: Zero basis plus grow: the list fills only the space left after the title and Back button,

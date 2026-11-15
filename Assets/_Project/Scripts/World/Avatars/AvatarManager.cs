@@ -26,6 +26,7 @@ namespace WanderersGuild
         private PartyProcessions _processions;
         private AvatarSettings _settings;
         private Vector2Int _entrance;
+        private SidestepSolver _sidesteps;
         private bool _hasEntrance;
         private bool _isReady;
         private bool _warnedEntrance;
@@ -54,6 +55,7 @@ namespace WanderersGuild
             _settings = GameConfig.Instance.Avatars;
             _navigator = new GuildNavigator(grid);
             _processions = new PartyProcessions(this);
+            _sidesteps = new SidestepSolver(CellOf);
         }
 
         private void OnEnable()
@@ -154,6 +156,9 @@ namespace WanderersGuild
                 if (scheduleChanged || dwellOver)
                     Plan(avatar, wanted, now);
             }
+            
+            // NOTE: After planning — routes set this frame are what walkers ease around (the snapshot holds every avatar).
+            _sidesteps.Solve(_snapshot, _navigator, GameConfig.Instance.AvatarSidestep);
         }
 
         // NOTE: Whoever's turn it is appears at the entrance — if still at the guild and not already shown.

@@ -91,3 +91,24 @@ MonoBehaviour:
     - Zzz... zz...
     - '*snore*'
     - Mmh... treasure...
+  - topic: 12
+    lines:
+    - Love this guild!
+    - Life is good.
+    - Best job ever!
+    - Feeling great!
+    - Who wants a quest?
+  - topic: 13
+    lines:
+    - Is this worth it?
+    - "Pay\u2019s too low..."
+    - "I\u2019m so bored."
+    - Not happy here.
+    - Sigh...
+    - Thinking of leaving...
+  - topic: 14
+    lines:
+    - "I\u2019ve had enough."
+    - "I\u2019m done with this place."
+    - "Tomorrow, I\u2019m gone."
+    - Nobody cares here...

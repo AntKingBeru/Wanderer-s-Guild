@@ -1,11 +1,12 @@
-// One pooled roster row: rank badge, given name, a ready flag (promotion / advancement), class icon + class, and the level —
-// or the status for anyone not idle. Hidden rows are disabled so keyboard navigation skips them.
+// One pooled roster line: the mood face (outside the row's box), then the row — rank badge, given name, ready flag, class
+// icon + class, and the level (or the status for anyone not idle). Hidden lines are disabled so keyboard navigation skips them.
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace WanderersGuild
 {
+    // NOTE: Root (the line) goes into the list; Button stays the row itself — selection, clicks and navigation use it only.
     public sealed class RosterRowView
     {
         private const string SelectedClass = "roster-row--selected";
@@ -15,15 +16,22 @@ namespace WanderersGuild
         private readonly OutlinedText _badgeLabel;
         private readonly OutlinedText _name;
         private readonly IconSlot _ready;
+        private readonly IconSlot _mood;
         private readonly IconSlot _classIcon;
         private readonly OutlinedText _class;
         private readonly OutlinedText _level;
 
+        // The whole line (mood face + row) — what the list holds.
+        public VisualElement Root { get; }
         public Button Button { get; }
         public Adventurer Adventurer { get; private set; }
 
         public RosterRowView(Action<RosterRowView> onClicked)
         {
+            Root = new VisualElement { pickingMode = PickingMode.Ignore };
+            Root.AddToClassList("roster-line");
+            _mood = IconSlot.Create("roster-line__mood");
+
             Button = new Button(() => onClicked(this));
             Button.AddToClassList("pixel-button");
             Button.AddToClassList("roster-row");
@@ -46,12 +54,15 @@ namespace WanderersGuild
             Button.Add(_class);
             Button.Add(_level);
 
+            Root.Add(_mood.Root);
+            Root.Add(Button);
+
             Hide();
         }
 
         // NOTE: Only the given name fits the row; the full name shows in the details pane. Every part is set on each Show, so
-        // a pooled row never keeps the last adventurer's flag or status color.
-        public void Show(Adventurer adventurer, Color rankColor, bool isSelected, RosterReadiness readiness)
+        // a pooled line never keeps the last adventurer's flag, mood or status color.
+        public void Show(Adventurer adventurer, Color rankColor, bool isSelected, RosterReadiness readiness, SatisfactionLevel? mood)
         {
             Adventurer = adventurer;
 
@@ -59,6 +70,7 @@ namespace WanderersGuild
             _badgeLabel.Text = RankFormatter.BadgeLabel(adventurer.Rank);
             _name.Text = AdventurerFormatter.GivenName(adventurer.Name);
             ShowReadiness(readiness);
+            ShowMood(mood);
             _classIcon.Set(adventurer.Class.IconFor(adventurer.Rank), adventurer.Class.DisplayName);
             _class.Text = adventurer.Class.DisplayName;
 
@@ -67,15 +79,16 @@ namespace WanderersGuild
             _level.EnableInClassList(StatusClass, status != null);
 
             Button.EnableInClassList(SelectedClass, isSelected);
-            Button.style.display = DisplayStyle.Flex;
+            Root.style.display = DisplayStyle.Flex;
             Button.SetEnabled(true);
         }
 
-        // NOTE: display:none alone keeps the button enabled — keyboard navigation could land on it. Disabled rows are skipped.
+        // NOTE: The whole line leaves the layout (no empty face slots); the button is also disabled — display:none alone
+        // would keep it reachable by keyboard navigation.
         public void Hide()
         {
             Adventurer = null;
-            Button.style.display = DisplayStyle.None;
+            Root.style.display = DisplayStyle.None;
             Button.SetEnabled(false);
         }
 
@@ -94,6 +107,22 @@ namespace WanderersGuild
                     _ready.Hide();
                     break;
             }
+        }
+
+        // NOTE: GameConfig › Satisfaction › Mood Icons; without a sprite, the level's letter in its color. No system → hidden
+        // (every line alike, so the boxes still line up).
+        private void ShowMood(SatisfactionLevel? mood)
+        {
+            if (mood == null)
+            {
+                _mood.Hide();
+                return;
+            }
+
+            var settings = GameConfig.Instance.Satisfaction;
+            var level = mood.Value;
+            _mood.Set(settings.IconFor(level), MoodFormatter.LevelName(level));
+            _mood.SetLetterColor(settings.ColorOf(level));
         }
 
         private static OutlinedText Part(string className)

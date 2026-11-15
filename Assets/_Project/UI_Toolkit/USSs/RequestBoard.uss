@@ -12,7 +12,7 @@
 }
 
 .board-window {
-    width: 300px;
+    width: 316px;
     height: 164px;
 }
 .board-body {

@@ -170,7 +170,7 @@
     display: none;
 }
 .confirm-window {
-    width: 200px;
+    width: 216px;
 }
 .confirm-message {
     margin: 2px 0 6px 0;

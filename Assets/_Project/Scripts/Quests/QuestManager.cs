@@ -329,8 +329,9 @@ namespace WanderersGuild
                 return;
 
             var parties = PartyManager.HasInstance ? PartyManager.Instance.Parties : System.Array.Empty<GuildParty>();
+            System.Func<Adventurer, float> required = SatisfactionManager.HasInstance ? SatisfactionManager.Instance.RequiredAppeal : null;
             var filled = QuestSignUps.Run(AdventurerManager.Instance.Adventurers, _quests, parties,
-                AdventurerManager.Instance.Find, _settings, nowMinutes, OnSignedUp);
+                AdventurerManager.Instance.Find, _settings, nowMinutes, OnSignedUp, required);
             foreach (var quest in filled.Where(quest => quest.MarkReadyIfFull()))
             {
                 GameEventsRelay.OnQuestUpdated.Invoke(quest);

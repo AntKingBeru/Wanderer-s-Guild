@@ -1,6 +1,6 @@
 /* Reception desk in 320×180 UI pixels: Requests (left half) and Applications (right half), Close below. */
 .desk-window {
-    width: 250px;
+    width: 266px;
 }
 /* NOTE: ~30px between the halves — the focus/hover scale pop grows each half into the gap, never over its neighbour. */
 .desk-halves {
