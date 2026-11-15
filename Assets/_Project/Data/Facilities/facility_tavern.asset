@@ -23,7 +23,7 @@ MonoBehaviour:
   costs: f401000000000000l
   buildDays: 02000000i
   unlockRanks: 00000000i
-  limit: 0
+  limit: 2
   levelPrefabs:
   - {fileID: 2578081604567545320, guid: a1805fc903a229446af5a67201feecb7, type: 3}
   effects:

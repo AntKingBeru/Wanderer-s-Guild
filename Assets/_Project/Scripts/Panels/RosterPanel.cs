@@ -1,4 +1,5 @@
-// Adventurer roster panel: sorted list (rank, then level) + details; Promote asks first, then starts the rank exam.
+// Adventurer roster panel: sorted list (rank, then level) + details; Promote asks first, then starts the rank exam; Dismiss
+// (with an office) asks first, then lets the adventurer go.
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -59,6 +60,7 @@ namespace WanderersGuild
             _buttons.Add(_details.Move);
             _buttons.Add(_details.Promote);
             _buttons.Add(_details.Disband);
+            _buttons.Add(_details.Dismiss);
             _buttons.Add(_close);
             _buttons.AddRange(_confirm.Buttons);
             _buttons.AddRange(_chooser.Buttons);
@@ -68,6 +70,7 @@ namespace WanderersGuild
             _navigationOrder.Add(_details.Move);
             _navigationOrder.Add(_details.Promote);
             _navigationOrder.Add(_details.Disband);
+            _navigationOrder.Add(_details.Dismiss);
             _navigationOrder.Add(_close);
             return true;
         }
@@ -79,6 +82,7 @@ namespace WanderersGuild
             _close.clicked += Close;
             _confirm.Initialize();
             _details.Disband.clicked += AskDisband;
+            _details.Dismiss.clicked += AskDismiss;
             _details.Move.clicked += MoveRoom;
             _chooser.Cancel.clicked += CloseChooser;
 
@@ -99,6 +103,8 @@ namespace WanderersGuild
             GameEventsRelay.OnPartyChanged.AddListener(OnPartyEvent);
             GameEventsRelay.OnPartyDisbanded.AddListener(OnPartyDisbanded);
             GameEventsRelay.OnLodgingChanged.AddListener(OnLodgingChanged);
+            GameEventsRelay.OnFacilityCompleted.AddListener(OnFacilityEvent);
+            GameEventsRelay.OnFacilityRemoved.AddListener(OnFacilityEvent);
         }
 
         protected override void OnDestroy()
@@ -115,6 +121,8 @@ namespace WanderersGuild
             GameEventsRelay.OnPartyChanged.RemoveListener(OnPartyEvent);
             GameEventsRelay.OnPartyDisbanded.RemoveListener(OnPartyDisbanded);
             GameEventsRelay.OnLodgingChanged.RemoveListener(OnLodgingChanged);
+            GameEventsRelay.OnFacilityCompleted.RemoveListener(OnFacilityEvent);
+            GameEventsRelay.OnFacilityRemoved.RemoveListener(OnFacilityEvent);
             base.OnDestroy();
         }
         
@@ -202,7 +210,7 @@ namespace WanderersGuild
         }
 
         // NOTE: StartExam re-checks eligibility and spends with TrySpend — if anything changed meanwhile, nothing happens
-        // and the hint shows why.
+        // and the hint shows why. The chance shown uses today's Well fed bonus (a supper meanwhile can change it), hence "~".
         private void AskPromote()
         {
             if (!IsPanelActive || !PromotionManager.HasInstance || !AdventurerManager.HasInstance)
@@ -212,22 +220,25 @@ namespace WanderersGuild
             if (adventurer == null)
                 return;
 
-            var check = PromotionManager.Instance.Check(adventurer);
+            var promotion = PromotionManager.Instance;
+            var check = promotion.Check(adventurer);
             if (!check.CanPromote)
                 return;
 
+            var days = FacilityFormatter.Days(promotion.ExamDays(check.Target));
+            var chance = Mathf.RoundToInt(promotion.ExamChance(adventurer) * 100f);
             var adventurerId = adventurer.Id;
             var confirmed = false;
-            _confirm.Show($"Take the Rank {check.Target} exam?\n(-{check.Fee:N0}g)",
-                          onConfirm: () => confirmed = true,
-                          onClosed: () =>
-                          {
-                              if (confirmed && PromotionManager.HasInstance)
-                                  PromotionManager.Instance.StartExam(adventurerId);
+            _confirm.Show($"Take the Rank {check.Target} exam?\n{check.Fee:N0}g · {days} · ~{chance}% pass",
+                onConfirm: () => confirmed = true,
+                onClosed: () =>
+                {
+                    if (confirmed && PromotionManager.HasInstance)
+                        PromotionManager.Instance.StartExam(adventurerId);
 
-                              Refresh();
-                              Focus((Focusable)_list.ButtonFor(_selectedId) ?? _close);
-                          });
+                    Refresh();
+                    Focus((Focusable)_list.ButtonFor(_selectedId) ?? _close);
+                });
         }
         
         private void CloseChooser()
@@ -258,6 +269,11 @@ namespace WanderersGuild
 
             _title.Text = $"Adventurers {_sorted.Count}/{capacity}";
             _list.Show(_sorted, _selectedId, GameConfig.Instance.GuildRanks);
+            
+            // NOTE: Dismiss shows once the office exists; enabled only for someone free (idle or injured).
+            var recruitment = RecruitmentManager.HasInstance ? RecruitmentManager.Instance : null;
+            var hasOffice = recruitment != null && recruitment.AcceptsApplicants;
+            _details.SetDismiss(hasOffice, selected != null && recruitment != null && recruitment.CheckDismissal(selected).Allowed);
 
             if (selected == null)
             {
@@ -338,6 +354,38 @@ namespace WanderersGuild
                     Focus((Focusable)_list.ButtonFor(_selectedId) ?? _close);
                 });
         }
+        
+        // NOTE: Asks first with the reputation cost; RecruitmentManager re-checks on Yes (they may have signed up meanwhile).
+        // The selection then moves to the neighboring row.
+        private void AskDismiss()
+        {
+            if (!IsPanelActive || !RecruitmentManager.HasInstance || !AdventurerManager.HasInstance)
+                return;
+
+            var adventurer = AdventurerManager.Instance.Find(_selectedId);
+            if (adventurer == null)
+                return;
+
+            var check = RecruitmentManager.Instance.CheckDismissal(adventurer);
+            if (!check.Allowed)
+                return;
+
+            var adventurerId = adventurer.Id;
+            var cost = check.ReputationLoss > 0 ? $"(-{check.ReputationLoss} reputation)" : "(no reputation lost)";
+            var confirmed = false;
+            _confirm.Show($"Dismiss {AdventurerFormatter.GivenName(adventurer.Name)} from the guild?\n{cost}",
+                onConfirm: () => confirmed = true,
+                onClosed: () =>
+                {
+                    if (confirmed && RecruitmentManager.HasInstance)
+                        RecruitmentManager.Instance.Dismiss(adventurerId);
+                    Refresh();
+                    Focus((Focusable)_list.ButtonFor(_selectedId) ?? _close);
+                });
+        }
+
+        // NOTE: The office being finished or demolished shows or hides Dismiss.
+        private void OnFacilityEvent(PlacedFacility _) => RefreshIfOpen();
         
         private void OnPartyEvent(GuildParty _) => RefreshIfOpen();
         private void OnPartyDisbanded(GuildParty _, PartyEndReason __) => RefreshIfOpen();

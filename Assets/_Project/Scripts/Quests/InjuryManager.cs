@@ -1,4 +1,5 @@
-// Game-scene owner of quest risks: applies injuries and deaths from each quest's outcome, and recovers the injured on time.
+// Game-scene owner of quest risks: applies injuries and deaths from each quest's outcome, speeds recovery with the
+// infirmary, and recovers the injured on time.
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +11,9 @@ namespace WanderersGuild
     public class InjuryManager : Singleton<InjuryManager>
     {
         private readonly List<Adventurer> _due = new();
+        private readonly Dictionary<int, float> _hasteCarry = new(); // NOTE: Fractions of a minute each patient has earned.
         private InjurySettings _settings;
+        private long _lastTickMinutes = -1; // NOTE: −1 = no tick yet (time before a load is never counted).
 
         protected override void OnSingletonAwake() => _settings = GameConfig.Instance.Injuries;
 
@@ -76,11 +79,14 @@ namespace WanderersGuild
             }
         }
 
-        // NOTE: Due adventurers are collected first, then recovered (recovering raises events that may touch the roster).
+        // NOTE: The infirmary's time comes off first, so anyone it brings to zero recovers on this same tick. Adventurers
+        // that due, are collected first, then recovered (recovering raises events that may touch the roster).
         private void OnTimeTick(GameDateTime now)
         {
             if (!AdventurerManager.HasInstance)
                 return;
+
+            HasteRecovery(now.TotalMinutes);
 
             _due.Clear();
             foreach (var adventurer in AdventurerManager.Instance.Adventurers)
@@ -90,6 +96,34 @@ namespace WanderersGuild
             }
             foreach (var adventurer in _due)
                 RecoverNow(adventurer);
+        }
+
+        // NOTE: Each patient — lying in an infirmary bed right now (InfirmaryCare) — loses (speed − 1) extra minutes per
+        // elapsed minute; everyone else recovers at the normal rate and their carry is dropped. The first tick only sets
+        // the clock.
+        private void HasteRecovery(long nowMinutes)
+        {
+            var elapsed = _lastTickMinutes < 0 ? 0L : nowMinutes - _lastTickMinutes;
+            _lastTickMinutes = nowMinutes;
+            if (elapsed <= 0)
+                return;
+
+            foreach (var adventurer in AdventurerManager.Instance.Adventurers)
+            {
+                var speed = adventurer.Status == AdventurerStatus.Injured ? InfirmaryCare.SpeedFor(adventurer.Id) : 1f;
+                if (speed <= 1f)
+                {
+                    _hasteCarry.Remove(adventurer.Id);
+                    continue;
+                }
+
+                _hasteCarry.TryGetValue(adventurer.Id, out var carry);
+                carry += elapsed * (speed - 1f);
+                var whole = (long)carry;
+                _hasteCarry[adventurer.Id] = carry - whole;
+                if (whole > 0)
+                    adventurer.HasteRecovery(whole);
+            }
         }
 
         private void ApplyInjury(Adventurer adventurer, InjurySeverity severity, int days)

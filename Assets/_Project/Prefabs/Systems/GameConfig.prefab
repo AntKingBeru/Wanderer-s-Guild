@@ -471,10 +471,10 @@ MonoBehaviour:
       pointsRequired: 0
       color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
     - rank: 1
-      pointsRequired: 100
+      pointsRequired: 60
       color: {r: 0.3764706, g: 0.72156864, b: 0.34509805, a: 1}
     - rank: 2
-      pointsRequired: 300
+      pointsRequired: 250
       color: {r: 0.2509804, g: 0.6901961, b: 0.65882355, a: 1}
     - rank: 3
       pointsRequired: 700
@@ -666,22 +666,28 @@ MonoBehaviour:
     oneBelowProgress: 0.5
     minLevelByRank: 010000000300000006000000030000000600000003000000060000000a000000i
     feeByRank: 000000000000000032000000000000006400000000000000c800000000000000900100000000000020030000000000004006000000000000800c000000000000l
-    examDays: 2
+    examDaysByRank: 0100000001000000020000000200000003000000030000000400000005000000i
+    examDifficultyScale: 0.85
+    failProgressKept: 0.5
     passReputation: 5
+    readyIcon: {fileID: 0}
   recruitment:
     waitDays: 3
+    baseReputationLoss: 1
+    reputationLossPerRank: 1
+    reputationLossPerLevel: 0.2
   worldView:
     renderSize: {x: 640, y: 360}
     renderScale: 2
   guildCamera:
     fieldOfView: 30
-    farDistance: 80
+    farDistance: 110
     nearDistance: 50
     farPitch: 60
     nearPitch: 55
     startZoom: 1
     startYaw: 45
-    zoomStep: 0.25
+    zoomStep: 0.2
     zoomSmoothTime: 0.12
     rotationStep: 45
     rotationSmoothTime: 0.15
@@ -708,11 +714,13 @@ MonoBehaviour:
     builtReputation: 1
     scaffoldPrefab: {fileID: 7208577845384851530, guid: 054400daf5632514185576856b443046, type: 3}
     cameraBoundsPadding: 1
+    entranceClearWidth: 20
   buildMode:
     ghostMaterial: {fileID: 2100000, guid: 4b27ad8e3bd9ab342bc67f6b0299b3b0, type: 2}
     validColor: {r: 0.4, g: 1, b: 0.45, a: 0.45}
     invalidColor: {r: 1, g: 0.35, b: 0.3, a: 0.45}
     gridColor: {r: 1, g: 1, b: 1, a: 0.15}
+    entranceLaneColor: {r: 1, g: 0.3, b: 0.25, a: 0.18}
     gridRadius: 6
     snapDistance: 2.5
     rotationSnapPenalty: 0.5
@@ -833,6 +841,7 @@ MonoBehaviour:
     feeMultiplier: 1
     trialDays: 2
     passReputation: 1
+    readyIcon: {fileID: 0}
   marquee:
     speed: 20
     pause: 1
@@ -919,6 +928,12 @@ MonoBehaviour:
       goal: Build an Office
       intro: Your guild reached rank E! With an office, newcomers wait as applicants and you choose who joins.
       built: Your office is ready. Click it to review applicants, then accept or decline them.
+    - facility: {fileID: 11400000, guid: 24e2b318e7b4da844bddf6d71930637c, type: 2}
+      minRank: 1
+      needsGold: 1
+      goal: Build an Infirmary
+      intro: You can afford an Infirmary! Injured adventurers recover faster while it stands.
+      built: "The Infirmary is open! Injured adventurers now recover \xD71.5 as fast \u2014 upgrade it for more."
     - facility: {fileID: 11400000, guid: 441770f4078b37b408c4d88c015bbd4c, type: 2}
       minRank: 1
       needsGold: 1

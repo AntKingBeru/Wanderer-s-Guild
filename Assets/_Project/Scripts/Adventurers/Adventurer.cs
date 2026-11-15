@@ -226,6 +226,15 @@ namespace WanderersGuild
             InjuredUntilMinutes = System.Math.Max(InjuredUntilMinutes, untilMinutes);
             Status = AdventurerStatus.Injured;
         }
+        
+        // NOTE: The infirmary takes time off an injury; the recovery itself happens at the injury system's next check.
+        public void HasteRecovery(long minutes)
+        {
+            if (Status != AdventurerStatus.Injured || minutes <= 0)
+                return;
+
+            InjuredUntilMinutes = System.Math.Max(0L, InjuredUntilMinutes - minutes);
+        }
 
         // Healed: back to Idle.
         public void Recover()
@@ -256,10 +265,10 @@ namespace WanderersGuild
             EndExam();
         }
 
-        // Failed: progress halves.
-        public void FailExam()
+        // Failed: progress keeps this share (GameConfig › Promotion › Fail Progress Kept).
+        public void FailExam(float keptShare)
         {
-            RankProgress *= 0.5f;
+            RankProgress *= System.Math.Clamp(keptShare, 0f, 1f);
             EndExam();
         }
 

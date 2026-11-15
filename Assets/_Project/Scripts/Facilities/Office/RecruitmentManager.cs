@@ -121,6 +121,29 @@ namespace WanderersGuild
             End(applicant, ApplicantEndReason.Declined);
             return true;
         }
+        
+        // Whether this adventurer can be dismissed now, and what it would cost (the roster's Dismiss button and confirm).
+        public DismissalCheck CheckDismissal(Adventurer adventurer) => DismissalRules.Check(adventurer, AcceptsApplicants, _settings);
+
+        // Dismisses an adventurer: re-checked here, the guild loses reputation, their party breaks up, and they leave with
+        // their gear. False = nothing changed.
+        // NOTE: OnAdventurerDismissed fires before the roster removal, so the party ends as "dismissed" (not "died"); the
+        // removal's own event then frees the bed and takes the avatar away, as for any departure.
+        public bool Dismiss(int adventurerId)
+        {
+            var adventurer = AdventurerManager.HasInstance ? AdventurerManager.Instance.Find(adventurerId) : null;
+            var check = CheckDismissal(adventurer);
+            if (!check.Allowed)
+                return false;
+
+            GameEventsRelay.OnAdventurerDismissed.Invoke(adventurer, check.ReputationLoss);
+            if (adventurer != null && !AdventurerManager.Instance.RemoveMember(adventurer.Id))
+                return false;
+
+            if (check.ReputationLoss > 0 && GuildManager.HasInstance)
+                GuildManager.Instance.Reputation.Change(-check.ReputationLoss, ReputationSource.AdventurerDismissed);
+            return true;
+        }
 
         // Debug and testing: every waiting applicant leaves now (as if their time ran out).
         public void ExpireAllNow()

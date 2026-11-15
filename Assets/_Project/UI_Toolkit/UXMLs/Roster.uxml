@@ -53,9 +53,11 @@
                 </ui:VisualElement>
             </ui:VisualElement>
 
-            <!-- Disband sits next to Close (it ends the selected adventurer's party; disabled when they have none). -->
+            <!-- Disband ends the selected adventurer's party (disabled without one); Dismiss lets them go (shown once the
+                 office exists). -->
             <ui:VisualElement class="roster-footer" picking-mode="Ignore">
                 <ui:Button name="adv-disband" class="pixel-button panel-button"><wg:OutlinedText text="Disband" /></ui:Button>
+                <ui:Button name="adv-dismiss" class="pixel-button panel-button"><wg:OutlinedText text="Dismiss" /></ui:Button>
                 <ui:Button name="roster-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>

@@ -26,5 +26,5 @@ MonoBehaviour:
   source: 0
   recommendedPartySize: 3
   reward:
-    gold: 175
+    gold: 185
   expirationDays: 3

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: equipment_start_robe
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.EquipmentData
   id: equipment_start_robe
-  displayName: Cloth Robes
+  displayName: Starter Cloth Robes
   description: Very useful if one wants to not be naked.
   icon: {fileID: 1959849414, guid: 04b85aef8eed30d4a963bd033f215d67, type: 3}
   slot: 2

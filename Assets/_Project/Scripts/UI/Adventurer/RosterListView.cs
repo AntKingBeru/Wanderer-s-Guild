@@ -47,7 +47,8 @@ namespace WanderersGuild
                 if (i < adventurers.Count)
                 {
                     var adventurer = adventurers[i];
-                    _rows[i].Show(adventurer, ranks.ColorOf(adventurer.Rank), adventurer.Id == selectedId);
+                    _rows[i].Show(adventurer, ranks.ColorOf(adventurer.Rank), adventurer.Id == selectedId,
+                        RosterReadinessRules.Of(adventurer));
                 }
                 else
                 {

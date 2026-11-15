@@ -1,5 +1,5 @@
-// Promotion rules (pure): whether an adventurer can take the next rank's exam, its fee, and the solo pass chance used by exams
-// and class trials (stats + Well fed vs a rank's per-member difficulty).
+// Promotion rules (pure): whether an adventurer can take the next rank's exam, its fee, and the solo pass chances used by
+// exams (eased by the exam scale) and class trials (stats + Well fed vs a rank's per-member difficulty).
 namespace WanderersGuild
 {
     public static class PromotionRules
@@ -35,13 +35,20 @@ namespace WanderersGuild
             return guildGold < fee ? PromotionCheck.Blocked(target, fee, $"Exam fee {fee:N0}g: not enough gold") : PromotionCheck.Eligible(target, fee);
         }
 
-        // Solo pass chance (exams and class trials): all four stats weighted evenly, × (1 + Well fed), vs one member
-        // of the given rank — the quest formula.
+        // Solo pass chance for a class trial: the full difficulty of one member of the given rank.
         // NOTE: Rolled when they return; supper never touches someone away, so the buff they left with is the one that counts.
-        public static float ExamChance(Adventurer adventurer, GuildRank against, QuestSettings quests)
+        public static float ExamChance(Adventurer adventurer, GuildRank against, QuestSettings quests) =>
+            SoloChance(adventurer, quests.DifficultyPerMember(against), quests);
+
+        // Solo pass chance for a promotion exam: the target rank's per-member difficulty × the exam scale (easier than a quest).
+        public static float PromotionExamChance(Adventurer adventurer, GuildRank target, QuestSettings quests, PromotionSettings settings) =>
+            SoloChance(adventurer, quests.DifficultyPerMember(target) * settings.ExamDifficultyScale, quests);
+
+        // NOTE: All four stats weighted evenly, × (1 + Well fed) — the quest formula for one member.
+        private static float SoloChance(Adventurer adventurer, float difficulty, QuestSettings quests)
         {
             var power = adventurer.Stats.Total * 0.25f * (1f + adventurer.WellFedBonus);
-            return QuestCalculator.SuccessChance(power, quests.DifficultyPerMember(against), quests);
+            return QuestCalculator.SuccessChance(power, difficulty, quests);
         }
     }
 }

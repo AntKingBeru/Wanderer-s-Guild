@@ -76,8 +76,10 @@
 .roster-row__class .outlined-text__fill {
     color: var(--color-text-disabled);
 }
+/* NOTE: The level, or the status for anyone not idle — the column grows to fit (the name column gives way). */
 .roster-row__level {
-    width: 26px;
+    min-width: 26px;
+    padding-left: 2px;
     align-items: flex-end;
 }
 
@@ -217,4 +219,15 @@
 }
 .roster-row__level .outlined-text__part {
     white-space: nowrap;
+}
+.roster-row__level--status .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+/* Ready flag (promotion / advancement) after the name. */
+.roster-row__ready {
+    margin-right: 2px;
+    flex-shrink: 0;
+}
+.roster-row__ready .icon-slot__letter .outlined-text__fill {
+    color: var(--color-accent);
 }

@@ -172,9 +172,8 @@ namespace WanderersGuild
             return true;
         }
 
-        // An arrival right now, ignoring the dawn chance (debug and testing): an applicant if the office is active,
-        // otherwise a direct join. False if there's no room or nobody can be created.
-        public bool ForceArrival() => Arrive();
+        // Debug and testing: someone arrives now (if there's room) — reported like a dawn arrival.
+        public bool ForceArrival() => ArriveAndReport();
 
         public void WriteTo(GameSaveData data)
         {
@@ -233,8 +232,7 @@ namespace WanderersGuild
             RefreshCapacity();
         }
 
-        // NOTE: One roll per day at dawn. With an office, the waiting list's room matters (a full guild still gets
-        // applicants); without one, a full guild means nobody arrives. Nobody arrives while the start tutorial holds them back.
+        // NOTE: One roll each dawn; nobody arrives while the start tutorial holds them back.
         private void OnHourStarted(GameDateTime now)
         {
             if (now.Minute != 0 || now.Hour != GameConfig.Instance.Time.DawnHour || !HasRoomForArrival)
@@ -243,7 +241,18 @@ namespace WanderersGuild
                 return;
 
             if (Random.value < _settings.ArrivalChance(CurrentReputation))
-                Arrive();
+                ArriveAndReport();
+        }
+        
+        // NOTE: "Applicant or member" is decided before the arrival, the same way Arrive decides it.
+        private bool ArriveAndReport()
+        {
+            var asApplicant = UsesApplicants;
+            if (!Arrive())
+                return false;
+
+            GameEventsRelay.OnAdventurersArrived.Invoke(1, asApplicant);
+            return true;
         }
 
         private bool HasRoomForArrival => UsesApplicants ? RecruitmentManager.Instance.HasRoom : !_roster.IsFull;

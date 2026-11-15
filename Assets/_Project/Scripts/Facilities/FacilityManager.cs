@@ -79,6 +79,13 @@ namespace WanderersGuild
 
         // The room occupying a grid cell, or null.
         public PlacedFacility RoomAt(Vector2Int cell) => _grid.TryGetRoomAt(cell, out var room) ? room : null;
+        
+        // The room whose footprint holds this world point (null outside every room). NOTE: Cell Swizzle XZY — cell y = world z.
+        public PlacedFacility RoomAtWorld(Vector3 worldPosition)
+        {
+            var cell = grid.WorldToCell(worldPosition);
+            return RoomAt(new Vector2Int(cell.x, cell.y));
+        }
 
         // Outlines a room (hover / selection in build mode), or removes the outline.
         public void SetHighlighted(PlacedFacility room, bool highlighted)
@@ -88,7 +95,13 @@ namespace WanderersGuild
         }
 
         public FacilityCheck CanPlace(FacilityData data, Vector2Int origin, int rotation) =>
-            FacilityRules.CanPlace(data, origin, rotation, _grid, _rooms, GuildRank, Gold, _settings);
+            FacilityRules.CanPlace(data, origin, rotation, _grid, _rooms, GuildRank, Gold, _settings, EntranceLane);
+
+        // The strip kept clear in front of the Guild Hall's door (none without a hall, an entrance marker or a width).
+        // NOTE: Worked out on demand from the marker, so it follows the hall if its model is re-spawned.
+        public EntranceLane EntranceLane => EntranceLaneFinder.Find(grid, Hall, _settings.EntranceClearWidth);
+
+        private PlacedFacility Hall => _hallId >= 0 ? _rooms.Find(room => room.Id == _hallId) : null;
 
         public FacilityCheck CanUpgrade(PlacedFacility room) => FacilityRules.CanUpgrade(room, GuildRank, Gold);
 

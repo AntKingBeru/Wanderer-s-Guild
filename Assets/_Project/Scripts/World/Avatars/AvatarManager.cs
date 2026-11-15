@@ -1,6 +1,7 @@
 // Game-scene owner of avatars: one per adventurer at the guild; arrivals one at a time and quest parties leaving together
 // through the entrance; daily schedule at activity spots (sleep, supper, shopping, leisure); grid upkeep.
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace WanderersGuild
@@ -20,6 +21,7 @@ namespace WanderersGuild
         private readonly List<Vector2Int> _path = new();
         private readonly ArrivalQueue _arrivals = new();
         private readonly FurnitureExits _exits = new();
+        private readonly List<Adventurer> _waitingInjured = new();
         private GuildNavigator _navigator;
         private PartyProcessions _processions;
         private AvatarSettings _settings;
@@ -176,8 +178,9 @@ namespace WanderersGuild
                                           GameConfig.Instance.Tavern.SupperHour, GameConfig.Instance.Equipment.ShoppingHour);
         }
 
-        // NOTE: Spot kind by activity; Sleep falls back to a Seat, everything falls back to wandering. Spot activities hold
-        // until the schedule changes; leisure re-decides after its dwell.
+        // NOTE: Spot kind by activity. Resting (injured) tries a free infirmary bed first, then their own bed, then a seat;
+        // sleeping uses their own bed, then a seat; everything falls back to wandering. Spot activities hold until the
+        // schedule changes (or an infirmary bed frees up — SendInjuredToInfirmary); leisure re-decides after its dwell.
         private void Plan(AdventurerAvatar avatar, AvatarActivity activity, long now)
         {
             ActivitySpotRegistry.Release(avatar.AdventurerId);
@@ -185,7 +188,10 @@ namespace WanderersGuild
 
             var atSpot = activity switch
             {
-                AvatarActivity.Sleep or AvatarActivity.Rest => TryGoToSpot(avatar, SpotKind.Bed, OwnRoom(avatar)) || TryGoToSpot(avatar, SpotKind.Seat),
+                AvatarActivity.Rest => TryGoToSpot(avatar, SpotKind.Bed, IsUsableInfirmaryBed) ||
+                                       TryGoToSpot(avatar, SpotKind.Bed, OwnRoom(avatar)) ||
+                                       TryGoToSpot(avatar, SpotKind.Seat),
+                AvatarActivity.Sleep => TryGoToSpot(avatar, SpotKind.Bed, OwnRoom(avatar)) || TryGoToSpot(avatar, SpotKind.Seat),
                 AvatarActivity.Supper => TryGoToSpot(avatar, SpotKind.Table),
                 AvatarActivity.Shop => TryGoToSpot(avatar, SpotKind.Counter),
                 _ => Random.value < _settings.SeatChance && TryGoToSpot(avatar, SpotKind.Seat)
@@ -205,17 +211,21 @@ namespace WanderersGuild
             return room > 0 ? room : int.MinValue;
         }
 
-        // NOTE: Only spots whose cell is walkable (and, for a room id ≥ 0, inside that room — int.MinValue matches none) are
-        // offered. Spots on furniture (chairs, beds) sit on blocked cells: the path ends at the nearest free cell beside the
-        // spot (on the avatar's side), which is remembered as where they'll get up later; then the final step goes onto the
-        // spot, they face its arrow and sit / lie at its height (counters: standing).
-        private bool TryGoToSpot(AdventurerAvatar avatar, SpotKind kind, int roomId = -1)
+                // NOTE: −1 = any room; int.MinValue matches none (outside lodgers / unhoused never get someone else's bed).
+        private bool TryGoToSpot(AdventurerAvatar avatar, SpotKind kind, int roomId = -1) =>
+            TryGoToSpot(avatar, kind, spot =>
+            {
+                var cell = CellOf(spot.Position);
+                return _navigator.IsWalkable(cell) && (roomId == -1 || _navigator.RoomOf(cell) == roomId);
+            });
+
+        // NOTE: Only spots passing `usable` are offered. Spots on furniture (chairs, beds) sit on blocked cells: the path ends
+        // at the nearest free cell beside the spot (on the avatar's side), which is remembered as where they'll get up later;
+        // then the final step goes onto the spot, they face its arrow and sit / lie at its height (counters: standing) — and
+        // the spot is marked reached (an infirmary patient starts recovering faster only from then on).
+        private bool TryGoToSpot(AdventurerAvatar avatar, SpotKind kind, System.Func<ActivitySpot, bool> usable)
         {
-            if (!ActivitySpotRegistry.TryReserve(kind, avatar.AdventurerId, spot =>
-                {
-                    var cell = CellOf(spot.Position);
-                    return _navigator.IsWalkable(cell) && (roomId == -1 || _navigator.RoomOf(cell) == roomId);
-                }, out var target))
+            if (!ActivitySpotRegistry.TryReserve(kind, avatar.AdventurerId, usable, out var target))
                 return false;
 
             if (!_navigator.TryNearestFree(CellOf(target.Position), avatar.Cell, out var approach) || !TryRouteTo(avatar, approach))
@@ -225,6 +235,7 @@ namespace WanderersGuild
             }
 
             _exits.Remember(avatar.AdventurerId, approach);
+            var adventurerId = avatar.AdventurerId;
             var facing = target.Facing;
             var surface = target.Position.y;
             var pose = PoseFor(kind);
@@ -232,9 +243,18 @@ namespace WanderersGuild
             {
                 avatar.FaceTowards(facing);
                 avatar.SetPose(pose, surface);
+                ActivitySpotRegistry.MarkReached(target, adventurerId);
             });
             return true;
         }
+
+        // A free-able infirmary bed: walkable cell, inside a room with an infirmary effect.
+        private bool IsUsableInfirmaryBed(ActivitySpot spot) =>
+            _navigator.IsWalkable(CellOf(spot.Position)) && InfirmaryCare.IsInfirmaryAt(spot.Position);
+
+        private static bool HoldsInfirmaryBed(int adventurerId) =>
+            ActivitySpotRegistry.TryGetHeld(adventurerId, out var spot) && spot.Kind == SpotKind.Bed &&
+            InfirmaryCare.IsInfirmaryAt(spot.Position);
         
         // NOTE: Fills _path from the avatar to goal. An avatar on furniture (sitting/lying on a blocked cell, whose neighbors
         // may all be blocked too — a bed between beds) first gets up onto a free cell beside it, the side it came from; it's
@@ -426,13 +446,39 @@ namespace WanderersGuild
             }
         }
 
-        // NOTE: Outside lodgers walk out at bedtime and come back at dawn (OnAdventurerChanged does the spawn/leave).
+        // NOTE: Outside lodgers walk out at bedtime and come back at dawn (OnAdventurerChanged does the spawn/leave); then
+        // injured adventurers resting elsewhere move into any free infirmary beds.
         private void OnHourStarted(GameDateTime _)
         {
             if (!_isReady || !AdventurerManager.HasInstance)
                 return;
             foreach (var adventurer in AdventurerManager.Instance.Adventurers)
                 OnAdventurerChanged(adventurer);
+
+            SendInjuredToInfirmary();
+        }
+
+        // NOTE: At most one per free infirmary bed, worst injuries first — they re-plan next frame (Rest tries the infirmary
+        // first). Anyone already holding an infirmary bed (lying there or on the way) stays put; the rest keep resting.
+        private void SendInjuredToInfirmary()
+        {
+            var free = ActivitySpotRegistry.CountFree(SpotKind.Bed, IsUsableInfirmaryBed);
+            if (free <= 0)
+                return;
+
+            _waitingInjured.Clear();
+            foreach (var adventurer in from avatar in _avatars.Values where avatar != null && !avatar.IsLeaving && !HoldsInfirmaryBed(avatar.AdventurerId)
+                     select AdventurerManager.Instance.Find(avatar.AdventurerId) into adventurer where adventurer is { Status: AdventurerStatus.Injured } select adventurer)
+            {
+                _waitingInjured.Add(adventurer);
+            }
+
+            _waitingInjured.Sort((a, b) => b.Injury.CompareTo(a.Injury));
+            for (var i = 0; i < _waitingInjured.Count && i < free; i++)
+            {
+                if (_avatars.TryGetValue(_waitingInjured[i].Id, out var avatar))
+                    avatar.PlannedFor = AvatarActivity.None;
+            }
         }
 
         // NOTE: Re-checks presence first (an outside lodger housed at night walks out now), then re-plans where they sleep.

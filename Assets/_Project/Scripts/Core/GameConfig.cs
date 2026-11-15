@@ -1432,7 +1432,7 @@ namespace WanderersGuild
     {
         [Header("Rank progress")]
         [Tooltip("Progress needed before an adventurer can take the exam for the next rank.")]
-        [SerializeField, Min(0.5f)] private float progressRequired = 5f;
+        [SerializeField, Min(0.5f)] private float progressRequired = 4f;
         [Tooltip("Progress per successful quest: quest one or more ranks above the adventurer's, same rank, one rank below. Two or more below gives 0.")]
         [SerializeField, Min(0f)] private float aboveRankProgress = 2f;
         [SerializeField, Min(0f)] private float sameRankProgress = 1f;
@@ -1446,14 +1446,24 @@ namespace WanderersGuild
         [Header("Exam")]
         [Tooltip("Fee the guild pays for an exam, by target rank F → National.")]
         [SerializeField] private long[] feeByRank = { 0, 50, 100, 200, 400, 800, 1600, 3200 };
-        [Tooltip("In-game days the adventurer is away.")]
-        [SerializeField, Range(1, 10)] private int examDays = 2;
+        [Tooltip("In-game days the adventurer is away for the exam, by target rank F → National (F is never a target).")]
+        [SerializeField] private int[] examDaysByRank = { 1, 1, 2, 2, 3, 3, 4, 5 };
+        [Tooltip("Exams are judged against this share of the target rank's per-member quest difficulty (1 = as hard as a " +
+                 "quest slot of that rank; lower = easier). Class trials aren't affected.")]
+        [SerializeField, Range(0.5f, 1f)] private float examDifficultyScale = 0.85f;
+        [Tooltip("Share of rank progress kept after a failed exam (0.5 = half).")]
+        [SerializeField, Range(0f, 1f)] private float failProgressKept = 0.5f;
         [Tooltip("Reputation when an adventurer passes (an adventurer achievement).")]
         [SerializeField] private int passReputation = 1;
+        
+        [Tooltip("Roster flag for someone ready for their promotion exam (gold aside). Empty = a framed \"P\".")]
+        [SerializeField] private Sprite readyIcon;
 
         public float ProgressRequired => progressRequired;
-        public int ExamDays => examDays;
+        public float ExamDifficultyScale => examDifficultyScale;
+        public float FailProgressKept => failProgressKept;
         public int PassReputation => passReputation;
+        public Sprite ReadyIcon => readyIcon;
 
         // Progress a successful quest of this rank gives an adventurer of that rank.
         public float ProgressFor(GuildRank questRank, GuildRank adventurerRank)
@@ -1470,6 +1480,9 @@ namespace WanderersGuild
         public int MinLevel(GuildRank target) => Mathf.Max(1, ByIndex(minLevelByRank, (int)target, 1));
         public long Fee(GuildRank target) => Math.Max(0L, ByIndex(feeByRank, (int)target, 0L));
 
+        // NOTE: At least 1 day; a short or empty list uses its last value (or 2 days).
+        public int ExamDays(GuildRank target) => Mathf.Max(1, ByIndex(examDaysByRank, (int)target, 2));
+
         private static T ByIndex<T>(T[] values, int index, T fallback) =>
             values == null || values.Length == 0 ? fallback : values[Mathf.Clamp(index, 0, values.Length - 1)];
     }
@@ -1480,7 +1493,18 @@ namespace WanderersGuild
         [Tooltip("In-game days an applicant waits at the Guild Master's Office before leaving.")]
         [SerializeField, Range(1, 30)] private int waitDays = 3;
 
+        [Header("Dismissal (needs the office)")]
+        [Tooltip("Reputation lost for dismissing anyone.")]
+        [SerializeField, Min(0f)] private float baseReputationLoss = 1f;
+        [Tooltip("Extra reputation lost per adventurer rank above F (F = 0, E = 1 …).")]
+        [SerializeField, Min(0f)] private float reputationLossPerRank = 1f;
+        [Tooltip("Extra reputation lost per level above 1 (their level in their current class).")]
+        [SerializeField, Min(0f)] private float reputationLossPerLevel = 0.2f;
+
         public long WaitMinutes => (long)waitDays * GameCalendar.MinutesPerDay;
+        public float BaseReputationLoss => baseReputationLoss;
+        public float ReputationLossPerRank => reputationLossPerRank;
+        public float ReputationLossPerLevel => reputationLossPerLevel;
     }
     #endregion
     
@@ -1610,6 +1634,10 @@ namespace WanderersGuild
 
         [Tooltip("Extra space (units) around all rooms for the camera's bounds.")]
         [SerializeField, Min(0f)] private float cameraBoundsPadding = 1f;
+        
+        [Tooltip("Width (cells) kept clear in front of the Guild Hall's front door, from the hall to the edge of the build " +
+                 "area (no length limit). Centred on the GuildEntrance marker. 0 = off.")]
+        [SerializeField, Min(0)] private int entranceClearWidth = 2;
 
         public FacilityDatabase Database => database;
         public string GuildHallId => guildHallId;
@@ -1620,6 +1648,7 @@ namespace WanderersGuild
         public int BuiltReputation => builtReputation;
         public GameObject ScaffoldPrefab => scaffoldPrefab;
         public float CameraBoundsPadding => cameraBoundsPadding;
+        public int EntranceClearWidth => entranceClearWidth;
     }
     
     [Serializable]
@@ -1631,6 +1660,8 @@ namespace WanderersGuild
         [SerializeField] private Color validColor = new(0.4f, 1f, 0.45f, 0.45f);
         [SerializeField] private Color invalidColor = new(1f, 0.35f, 0.3f, 0.45f);
         [SerializeField] private Color gridColor = new(1f, 1f, 1f, 0.15f);
+        [Tooltip("Tint of the kept-clear strip in front of the Guild Hall's door while in build mode.")]
+        [SerializeField] private Color entranceLaneColor = new(1f, 0.3f, 0.25f, 0.18f);
 
         [Tooltip("Grid lines drawn this many cells around the cursor.")]
         [SerializeField, Range(1, 20)] private int gridRadius = 6;
@@ -1649,6 +1680,7 @@ namespace WanderersGuild
         public Color ValidColor => validColor;
         public Color InvalidColor => invalidColor;
         public Color GridColor => gridColor;
+        public Color EntranceLaneColor => entranceLaneColor;
         public int GridRadius => gridRadius;
         public float SnapDistance => snapDistance;
         public float RotationSnapPenalty => rotationSnapPenalty;
@@ -1953,10 +1985,14 @@ namespace WanderersGuild
 
         [Tooltip("Reputation when someone passes a class trial.")]
         [SerializeField] private int passReputation = 1;
+        
+        [Tooltip("Roster flag for someone ready for a class advancement trial (gold aside). Empty = a framed \"A\".")]
+        [SerializeField] private Sprite readyIcon;
 
         public float FeeMultiplier => feeMultiplier;
         public int TrialDays => trialDays;
         public int PassReputation => passReputation;
+        public Sprite ReadyIcon => readyIcon;
     }
     #endregion
     

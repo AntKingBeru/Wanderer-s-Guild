@@ -147,6 +147,9 @@ namespace WanderersGuild
         #region Quests
         // A request was posted to the board (dawn batch or starting batch). Arg: the request.
         public static readonly UnityEvent<ActiveRequest> OnRequestAdded = new();
+        
+        // A batch of new requests reached the board (dawn, the starting batch, the batch after the tutorial). Arg: how many.
+        public static readonly UnityEvent<int> OnRequestsArrived = new();
 
         // A request left the board. Args: the request, and why (accepted, dismissed, expired).
         public static readonly UnityEvent<ActiveRequest, RequestEndReason> OnRequestRemoved = new();
@@ -164,7 +167,10 @@ namespace WanderersGuild
         public static readonly UnityEvent<Quest> OnQuestPartyReady = new();
         #endregion
         
-        #region Advnenturers
+        #region Adventurers
+        // New adventurers came to the guild (the dawn roll). Args: how many, and whether they wait at the office as applicants.
+        public static readonly UnityEvent<int, bool> OnAdventurersArrived = new();
+        
         // An adventurer joined the guild (arrival or starting adventurer). Arg: the adventurer.
         public static readonly UnityEvent<Adventurer> OnAdventurerJoined = new();
 
@@ -192,6 +198,9 @@ namespace WanderersGuild
 
         // An applicant stopped waiting. Args: the applicant, and why (accepted, declined, expired, office closed).
         public static readonly UnityEvent<Applicant, ApplicantEndReason> OnApplicantLeft = new();
+        
+        // An adventurer was dismissed (raised just before they leave the roster). Args: them, the reputation it cost.
+        public static readonly UnityEvent<Adventurer, int> OnAdventurerDismissed = new();
         
         // An advanced class became available to arrivals (someone advanced into it). Arg: the class.
         public static readonly UnityEvent<ClassData> OnClassUnlocked = new();

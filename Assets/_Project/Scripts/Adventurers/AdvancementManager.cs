@@ -101,6 +101,12 @@ namespace WanderersGuild
         public void FinishTrialsNow() => ResolveDue(long.MaxValue);
 
         public void WriteTo(GameSaveData data) => data.SetUnlockedClasses(_unlocked);
+        
+        // Ready for a class trial except, perhaps, the fee (the roster's flag — gold changes don't flip it).
+        public bool IsReady(Adventurer adventurer) =>
+            AdventurerManager.HasInstance &&
+            AdvancementRules.Check(adventurer, GuildRank, long.MaxValue, GameConfig.Instance.Promotion, _settings,
+                AdventurerManager.Instance.Classes).CanAdvance;
 
         private void OnTimeTick(GameDateTime now) => ResolveDue(now.TotalMinutes);
 

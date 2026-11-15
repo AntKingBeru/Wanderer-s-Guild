@@ -91,9 +91,7 @@ namespace WanderersGuild
                 AdventurerStatus.OnQuest => "Status: On quest",
                 AdventurerStatus.InExam =>
                     $"Status: In exam (back {RequestFormatter.TimeLeft(System.Math.Max(0L, adventurer.ExamReturnsAtMinutes - nowMinutes))})",
-                AdventurerStatus.Injured =>
-                    $"Status: Injured ({adventurer.Injury.ToString().ToLowerInvariant()}, " +
-                    $"{RequestFormatter.TimeLeft(System.Math.Max(0L, adventurer.InjuredUntilMinutes - nowMinutes))})",
+                AdventurerStatus.Injured => InjuredStatus(adventurer, nowMinutes),
                 AdventurerStatus.Returning =>
                     $"Status: Returning (back {RequestFormatter.TimeLeft(System.Math.Max(0L, adventurer.ReturningUntilMinutes - nowMinutes))})",
                 AdventurerStatus.InTrial =>
@@ -107,9 +105,34 @@ namespace WanderersGuild
                 : status;
         }
 
+        // "Status: Injured (serious, 2d)", plus " · Infirmary ×1.5" while lying in an infirmary bed — the time shown is at that
+        // patient's speed right now.
+        private static string InjuredStatus(Adventurer adventurer, long nowMinutes)
+        {
+            var speed = InfirmaryCare.SpeedFor(adventurer.Id);
+            var left = System.Math.Max(0L, adventurer.InjuredUntilMinutes - nowMinutes);
+            if (speed > 1f)
+                left = (long)System.Math.Ceiling(left / speed);
+
+            var status = $"Status: Injured ({adventurer.Injury.ToString().ToLowerInvariant()}, {RequestFormatter.TimeLeft(left)})";
+            return speed > 1f ? $"{status} · Infirmary ×{speed:0.#}" : status;
+        }
+
         // "Rank E exam ready: 50g", or why not.
         public static string PromotionHint(PromotionCheck check) =>
             check.CanPromote ? $"Rank {check.Target} exam ready: {check.Fee:N0}g" : check.Reason;
+        
+        // The roster row's short status for anyone not idle ("On quest", "Injured"…); null when idle (the row shows the level).
+        public static string RowStatus(Adventurer adventurer) => adventurer.Status switch
+        {
+            AdventurerStatus.SignedUp => "Signed up",
+            AdventurerStatus.OnQuest => "On quest",
+            AdventurerStatus.InExam => "In exam",
+            AdventurerStatus.Injured => "Injured",
+            AdventurerStatus.Returning => "Returning",
+            AdventurerStatus.InTrial => "In trial",
+            _ => null
+        };
 
         private static string Number(long value) => value.ToString("N0", CultureInfo.InvariantCulture);
         

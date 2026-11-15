@@ -292,6 +292,14 @@ namespace WanderersGuild
         Expired = 2,
         OfficeClosed = 3
     }
+    
+    // What a roster row flags: ready for a promotion exam, or for a class advancement trial (gold aside).
+    public enum RosterReadiness
+    {
+        None = 0,
+        Promotion = 1,
+        Advancement = 2
+    }
     #endregion
     
     #region Facilities
@@ -385,7 +393,8 @@ namespace WanderersGuild
     {
         Death = 0,
         Failures = 1,
-        Player = 2
+        Player = 2,
+        Dismissed = 3 // A member was dismissed from the guild.
     }
     #endregion
     

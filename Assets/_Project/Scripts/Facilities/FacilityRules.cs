@@ -9,9 +9,10 @@ namespace WanderersGuild
     {
         private static readonly List<int> Linked = new();
 
-        // NOTE: Order = what the player most needs to know first: rank, limit, space, connection, gold.
+        // NOTE: Lock (rank/limit) → geometry (area, overlap, connection) → the hall's entrance strip → gold.
         public static FacilityCheck CanPlace(FacilityData data, Vector2Int origin, int rotation, FacilityGrid grid,
-                                             IReadOnlyList<PlacedFacility> rooms, GuildRank guildRank, long gold, FacilitySettings settings)
+            IReadOnlyList<PlacedFacility> rooms, GuildRank guildRank, long gold, FacilitySettings settings,
+            EntranceLane entrance)
         {
             var lockReason = LockReason(data, rooms, guildRank);
             if (lockReason != null)
@@ -21,8 +22,20 @@ namespace WanderersGuild
             if (geometry != null)
                 return FacilityCheck.No(geometry);
 
+            if (BlocksEntrance(data, origin, rotation, entrance))
+                return FacilityCheck.No("Keep the hall's entrance clear");
+
             var cost = data.CostFor(1);
             return gold < cost ? FacilityCheck.No($"Costs {cost:N0}g: not enough gold", cost) : FacilityCheck.Ok(cost);
+        }
+
+        // True if any cell of this footprint lies in the strip kept clear in front of the Guild Hall's door.
+        public static bool BlocksEntrance(FacilityData data, Vector2Int origin, int rotation, EntranceLane entrance)
+        {
+            if (!entrance.IsValid)
+                return false;
+
+            return FacilityFootprint.Cells(origin, data.Size, rotation).Any(entrance.Blocks);
         }
 
         // Position-independent reasons a facility can't be built at all right now (rank, limit), or null.

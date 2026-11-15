@@ -7,10 +7,12 @@ namespace WanderersGuild
     {
         // The snapped origin/rotation, or the free one if nothing fits within range. The player's rotation is
         // preferred; other rotations cost a small penalty.
+        // NOTE: Spots in the hall's entrance strip are skipped too, so the ghost never snaps where it can't be built.
         public static (Vector2Int origin, int rotation) Snap(FacilityData data, Vector2Int freeOrigin, int rotation,
                                                              FacilityManager manager, BuildModeSettings build, FacilitySettings settings)
         {
             var freeCentre = Centre(freeOrigin, data.Size, rotation);
+            var entrance = manager.EntranceLane;
             (Vector2Int origin, int rotation) best = (freeOrigin, rotation);
             var bestScore = float.MaxValue;
 
@@ -39,6 +41,8 @@ namespace WanderersGuild
                             if (score >= bestScore)
                                 continue;
                             if (FacilityRules.GeometryReason(data, origin, r, manager.Grid, settings) != null)
+                                continue;
+                            if (FacilityRules.BlocksEntrance(data, origin, r, entrance))
                                 continue;
 
                             bestScore = score;

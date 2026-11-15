@@ -26,7 +26,7 @@ namespace WanderersGuild
         // The beds this room provides right now (its finished level).
         public static int CapacityOf(PlacedFacility room)
         {
-            CapacityEffect effect = room.Data.Effect<CapacityEffect>();
+            var effect = room.Data.Effect<CapacityEffect>();
             return effect ? effect.CapacityAt(room.Level) : 0;
         }
     }

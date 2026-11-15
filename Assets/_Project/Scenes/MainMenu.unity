@@ -2058,7 +2058,7 @@ MonoBehaviour:
   upperLayer: {fileID: 451206255}
   upperJoinPixelY: 0
   lowerLayer: {fileID: 1163963847}
-  lowerJoinPixelY: 170
+  lowerJoinPixelY: 165
   matchVerticalPointer: 1
 --- !u!4 &1093905535
 Transform:

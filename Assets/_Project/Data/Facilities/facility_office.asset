@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: facility_office
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.FacilityData
   id: facility_office
-  displayName: Guild Manager's Office
+  displayName: Manager's Office
   description: Gives you the ability to filter incoming advneturers.
   icon: {fileID: 0}
   size: {x: 20, y: 16}

@@ -30,6 +30,7 @@ namespace WanderersGuild
         private RoomCardView _card;
         private BuildGhost _ghost;
         private BuildGridOverlay _gridOverlay;
+        private EntranceLaneOverlay _laneOverlay;
         private FacilityData _selected;
         private PlacedFacility _hoverRoom;
         private PlacedFacility _selectedRoom;
@@ -103,12 +104,14 @@ namespace WanderersGuild
 
             _ghost = new BuildGhost(grid, transform);
             _gridOverlay = new BuildGridOverlay(grid, transform);
+            _laneOverlay = new EntranceLaneOverlay(grid, transform);
         }
 
         protected override void OnDestroy()
         {
             _ghost?.Clear();
             _gridOverlay?.Destroy();
+            _laneOverlay?.Destroy();
             base.OnDestroy();
         }
 
@@ -131,6 +134,7 @@ namespace WanderersGuild
             RefreshCatalog();
             RefreshHint();
             _view.Show();
+            RefreshLane();
             GameEventsRelay.OnBuildModeChanged.Invoke(true);
         }
 
@@ -150,6 +154,7 @@ namespace WanderersGuild
             _view.Hide();
             _card.Hide();
             _gridOverlay?.Hide();
+            _laneOverlay?.Hide();
             GameEventsRelay.OnBuildModeChanged.Invoke(false);
         }
 
@@ -379,6 +384,15 @@ namespace WanderersGuild
 
             _card.Show(_selectedRoom, Facilities.CanUpgrade(_selectedRoom), Facilities.CanDemolish(_selectedRoom), Now);
         }
+        
+        // NOTE: Re-worked out on every facility change while open (a hall upgrade re-spawns the model and its entrance marker).
+        private void RefreshLane()
+        {
+            if (!IsActive || _laneOverlay == null || !FacilityManager.HasInstance)
+                return;
+
+            _laneOverlay.Show(Facilities.EntranceLane, GameConfig.Instance.Facilities.BuildArea, Settings.FloorHeight);
+        }
 
         // NOTE: TryUpgrade / TryDemolish re-check on Yes. After a demolish the card closes (the room's removal event).
         private void AskToUpgrade()
@@ -479,6 +493,7 @@ namespace WanderersGuild
         {
             RefreshCatalog();
             RefreshCard();
+            RefreshLane();
         }
 
         // NOTE: Raised before the room's views are destroyed — drop it from hover/selection first.
@@ -490,6 +505,7 @@ namespace WanderersGuild
                 SelectRoom(null);
             RefreshCatalog();
             RefreshCard();
+            RefreshLane();
         }
 
         private static InputAction Enable(InputActionReference reference)

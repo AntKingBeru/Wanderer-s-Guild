@@ -757,6 +757,24 @@ namespace WanderersGuild
         public SavedAdventurer Adventurer => adventurer;
         public long ExpiresAtMinutes => expiresAtMinutes;
     }
+    
+    // Whether an adventurer can be dismissed now, what it costs the guild in reputation, and why not.
+    public readonly struct DismissalCheck
+    {
+        public bool Allowed { get; }
+        public int ReputationLoss { get; }
+        public string Reason { get; }
+
+        private DismissalCheck(bool allowed, int reputationLoss, string reason)
+        {
+            Allowed = allowed;
+            ReputationLoss = reputationLoss;
+            Reason = reason;
+        }
+
+        public static DismissalCheck Ok(int reputationLoss) => new(true, reputationLoss, string.Empty);
+        public static DismissalCheck No(string reason, int reputationLoss = 0) => new(false, reputationLoss, reason);
+    }
     #endregion
     
     #region Facilities
@@ -1057,6 +1075,40 @@ namespace WanderersGuild
 
         public QuestCategory Category => category;
         public Sprite Icon => icon;
+    }
+    
+    // The strip in front of the Guild Hall's front door that must stay clear: every cell past the hall's front edge whose
+    // center lies within half the width of the door's center line (no length limit). default = no strip.
+    public readonly struct EntranceLane
+    {
+        public bool IsValid { get; }
+        public Vector2Int Outward { get; } // Away from the hall along one axis: (±1, 0) or (0, ±1).
+        public int FrontLine { get; } // The first cell index outside the hall along that axis.
+        public float Centre { get; } // The door's center across the axis (cell space — a cell's center is index + 0.5).
+        public float HalfWidth { get; }
+
+        public EntranceLane(Vector2Int outward, int frontLine, float centre, float halfWidth)
+        {
+            IsValid = true;
+            Outward = outward;
+            FrontLine = frontLine;
+            Centre = centre;
+            HalfWidth = halfWidth;
+        }
+
+        // NOTE: "Along" = the outward axis, "across" = the other one; strictly inside the width (a 2-wide strip = 2 cells).
+        public bool Blocks(Vector2Int cell)
+        {
+            if (!IsValid)
+                return false;
+
+            var alongX = Outward.x != 0;
+            var along = alongX ? cell.x : cell.y;
+            var direction = alongX ? Outward.x : Outward.y;
+            var across = (alongX ? cell.y : cell.x) + 0.5f;
+            var beyond = direction > 0 ? along >= FrontLine : along <= FrontLine;
+            return beyond && Mathf.Abs(across - Centre) < HalfWidth;
+        }
     }
     #endregion
     

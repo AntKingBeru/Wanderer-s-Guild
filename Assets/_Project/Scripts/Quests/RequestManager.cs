@@ -142,6 +142,7 @@ namespace WanderersGuild
 
         private void OnTimeTick(GameDateTime now) => ExpireDue(now.TotalMinutes);
 
+        // NOTE: Only requests that actually reached the board are counted for the notification (none → no toast).
         private void GenerateBatch(long nowMinutes)
         {
             var rank = GuildManager.HasInstance ? GuildManager.Instance.Rank.Rank : GameConfig.Instance.NewGuild.StartingRank;
@@ -151,12 +152,17 @@ namespace WanderersGuild
             if (count <= 0)
                 return;
 
+            var added = 0;
             foreach (var request in from template in _generator
                          .Pick(count, rank, reputation, _board) let expiresAt = nowMinutes + (long)template.ExpirationDays * GameCalendar.MinutesPerDay
                      select new ActiveRequest(_nextInstanceId++, template, nowMinutes, expiresAt) into request where _board.TryAdd(request) select request)
             {
                 GameEventsRelay.OnRequestAdded.Invoke(request);
+                added++;
             }
+
+            if (added > 0)
+                GameEventsRelay.OnRequestsArrived.Invoke(added);
         }
         
         // NOTE: The hand-made tutorial request (GameConfig › Tutorial › Starting Request). It never joins the generator's

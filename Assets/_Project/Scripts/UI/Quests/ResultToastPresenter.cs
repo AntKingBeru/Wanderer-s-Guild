@@ -1,4 +1,4 @@
-// Queues a toast for each result — quests, promotion exams, and applicants arriving / giving up.
+// Queues a toast for each result — quests, promotion exams, new requests and arrivals, applicants giving up, and more.
 using System.Linq;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -22,7 +22,8 @@ namespace WanderersGuild
             GameEventsRelay.OnQuestPartyReady.AddListener(OnPartyReady);
             GameEventsRelay.OnQuestEnded.AddListener(OnQuestEnded);
             GameEventsRelay.OnPromotionExamEnded.AddListener(OnExamEnded);
-            GameEventsRelay.OnApplicantArrived.AddListener(OnApplicantArrived);
+            GameEventsRelay.OnRequestsArrived.AddListener(OnRequestsArrived);
+            GameEventsRelay.OnAdventurersArrived.AddListener(OnAdventurersArrived);
             GameEventsRelay.OnApplicantLeft.AddListener(OnApplicantLeft);
             GameEventsRelay.OnArmorySalesCompleted.AddListener(OnArmorySales);
             GameEventsRelay.OnArmoryRestocked.AddListener(OnArmoryRestocked);
@@ -40,6 +41,7 @@ namespace WanderersGuild
             GameEventsRelay.OnClassAdvanced.AddListener(OnClassAdvanced);
             GameEventsRelay.OnClassTrialFailed.AddListener(OnClassTrialFailed);
             GameEventsRelay.OnClassUnlocked.AddListener(OnClassUnlocked);
+            GameEventsRelay.OnAdventurerDismissed.AddListener(OnAdventurerDismissed);
         }
 
         private void OnDisable()
@@ -47,7 +49,8 @@ namespace WanderersGuild
             GameEventsRelay.OnQuestPartyReady.RemoveListener(OnPartyReady);
             GameEventsRelay.OnQuestEnded.RemoveListener(OnQuestEnded);
             GameEventsRelay.OnPromotionExamEnded.RemoveListener(OnExamEnded);
-            GameEventsRelay.OnApplicantArrived.RemoveListener(OnApplicantArrived);
+            GameEventsRelay.OnRequestsArrived.RemoveListener(OnRequestsArrived);
+            GameEventsRelay.OnAdventurersArrived.RemoveListener(OnAdventurersArrived);
             GameEventsRelay.OnApplicantLeft.RemoveListener(OnApplicantLeft);
             GameEventsRelay.OnArmorySalesCompleted.RemoveListener(OnArmorySales);
             GameEventsRelay.OnArmoryRestocked.RemoveListener(OnArmoryRestocked);
@@ -65,6 +68,7 @@ namespace WanderersGuild
             GameEventsRelay.OnClassAdvanced.RemoveListener(OnClassAdvanced);
             GameEventsRelay.OnClassTrialFailed.RemoveListener(OnClassTrialFailed);
             GameEventsRelay.OnClassUnlocked.RemoveListener(OnClassUnlocked);
+            GameEventsRelay.OnAdventurerDismissed.RemoveListener(OnAdventurerDismissed);
             if (_wait.IsActive())
                 _wait.Kill();
             _queue.Clear();
@@ -96,10 +100,16 @@ namespace WanderersGuild
             Enqueue(passed ? $"{adventurer.Name} passed the Rank {target} exam"
                            : $"{adventurer.Name} failed the Rank {target} exam", !passed);
 
-        private void OnApplicantArrived(Applicant applicant)
+        private void OnRequestsArrived(int count) =>
+            Enqueue(count == 1 ? "1 new request at the reception desk" : $"{count} new requests at the reception desk", false);
+
+        // NOTE: Replaces the old per-applicant toast — with an office, an arrival is an applicant, so one summary covers both.
+        private void OnAdventurersArrived(int count, bool asApplicants)
         {
-            var a = applicant.Adventurer;
-            Enqueue($"New applicant: {a.Name} ({a.Class.DisplayName} Lv {a.Level})", false);
+            if (asApplicants)
+                Enqueue(count == 1 ? "1 new applicant at the office" : $"{count} new applicants at the office", false);
+            else
+                Enqueue(count == 1 ? "1 new adventurer joined the guild" : $"{count} new adventurers joined the guild", false);
         }
 
         // NOTE: Accepting / declining are the player's own actions — no toast. The office closing makes everyone leave at
@@ -181,6 +191,9 @@ namespace WanderersGuild
                 case PartyEndReason.Failures:
                     Enqueue($"{party.Name} broke up (two failures)", true);
                     break;
+                case PartyEndReason.Dismissed:
+                    Enqueue($"{party.Name} broke up (a member was dismissed)", true);
+                    break;
             }
         }
         
@@ -213,6 +226,10 @@ namespace WanderersGuild
         
         private void OnClassUnlocked(ClassData classData) =>
             Enqueue($"{classData.DisplayName} adventurers may now join your guild", false);
+        
+        private void OnAdventurerDismissed(Adventurer adventurer, int reputationLoss) =>
+            Enqueue(reputationLoss > 0 ? $"{adventurer.Name} was dismissed (-{reputationLoss} reputation)"
+                : $"{adventurer.Name} was dismissed", true);
 
         private static string Signed(long value) => value >= 0 ? $"+{value:N0}" : $"-{-value:N0}";
 

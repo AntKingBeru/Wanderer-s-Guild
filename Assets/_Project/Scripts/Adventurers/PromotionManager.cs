@@ -45,6 +45,16 @@ namespace WanderersGuild
         }
 
         public PromotionCheck Check(Adventurer adventurer) => PromotionRules.Check(adventurer, GuildRank, GuildGold, _settings);
+        
+        // The exam's pass chance right now (shown before the player confirms; the roll on return uses the same formula).
+        public float ExamChance(Adventurer adventurer)
+        {
+            var target = adventurer.Rank < GuildRank.National ? adventurer.Rank + 1 : GuildRank.National;
+            return PromotionRules.PromotionExamChance(adventurer, target, GameConfig.Instance.Quests, _settings);
+        }
+
+        // Days the exam for this target rank takes.
+        public int ExamDays(GuildRank target) => _settings.ExamDays(target);
 
         // Starts the exam if still eligible (re-checked here) and the guild pays. False = nothing changed.
         public bool StartExam(int adventurerId)
@@ -57,7 +67,8 @@ namespace WanderersGuild
             if (!check.CanPromote || !GuildManager.Instance.Wallet.TrySpend(check.Fee, GoldReason.PromotionFee))
                 return false;
 
-            adventurer.StartExam(Now + (long)_settings.ExamDays * GameCalendar.MinutesPerDay);
+            // NOTE: The return time is fixed now (and saved) — changing the days per rank later doesn't move running exams.
+            adventurer.StartExam(Now + (long)_settings.ExamDays(check.Target) * GameCalendar.MinutesPerDay);
             GameEventsRelay.OnAdventurerChanged.Invoke(adventurer);
             GameEventsRelay.OnPromotionExamStarted.Invoke(adventurer, check.Target);
             return true;
@@ -87,6 +98,9 @@ namespace WanderersGuild
                     GameEventsRelay.OnAdventurerChanged.Invoke(adventurer);
             }
         }
+        
+        // Ready for the exam except, perhaps, the fee (the roster's flag — gold changes don't flip it).
+        public bool IsReady(Adventurer adventurer) => PromotionRules.Check(adventurer, GuildRank, long.MaxValue, _settings).CanPromote;
 
         // NOTE: Progress depends on each member's rank at the moment the quest succeeds. Members no longer in the roster
         // are skipped.
@@ -130,7 +144,7 @@ namespace WanderersGuild
         {
             var target = adventurer.Rank < GuildRank.National ? adventurer.Rank + 1 : GuildRank.National;
             var passed = adventurer.Rank < GuildRank.National &&
-                          Random.value < PromotionRules.ExamChance(adventurer, target, GameConfig.Instance.Quests);
+                         Random.value < PromotionRules.PromotionExamChance(adventurer, target, GameConfig.Instance.Quests, _settings);
 
             if (passed)
             {
@@ -140,7 +154,7 @@ namespace WanderersGuild
             }
             else
             {
-                adventurer.FailExam();
+                adventurer.FailExam(_settings.FailProgressKept);
             }
 
             GameEventsRelay.OnAdventurerChanged.Invoke(adventurer);

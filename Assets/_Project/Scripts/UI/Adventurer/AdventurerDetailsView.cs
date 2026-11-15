@@ -1,5 +1,5 @@
 // The roster's details pane: name, species · class, rank · level, XP and rank-progress bars, stats (with gear), wealth,
-// affinities, gear, status, party, room, promotion / advancement hint; Promote (or Advance), Disband and Move buttons.
+// affinities, gear, status, party, room, promotion / advancement hint; Promote (or Advance), Disband, Dismiss and Move buttons.
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -31,6 +31,7 @@ namespace WanderersGuild
 
         public Button Promote { get; }
         public Button Disband { get; }
+        public Button Dismiss { get; }
         public Button Move { get; }
 
         // True when the Promote button currently means "Advance" (the adventurer is at their class cap).
@@ -57,6 +58,7 @@ namespace WanderersGuild
             _hint = root.Q<OutlinedText>("adv-promote-hint");
             Promote = root.Q<Button>("adv-promote");
             Disband = root.Q<Button>("adv-disband");
+            Dismiss = root.Q<Button>("adv-dismiss");
             Move = root.Q<Button>("adv-move");
             _promoteLabel = Promote?.Q<OutlinedText>();
             _experienceBar = experienceBar;
@@ -67,7 +69,7 @@ namespace WanderersGuild
             _content != null && _empty != null && _name != null && _classIcon != null && _speciesClass != null && _rankLevel != null &&
             _experience != null && _rankProgress != null && _statsTop != null && _statsBottom != null && _wealth != null &&
             _affinities != null && _gear != null && _status != null && _party != null && _room != null && _hint != null &&
-            Promote != null && _promoteLabel != null && Disband != null && Move != null;
+            Promote != null && _promoteLabel != null && Disband != null && Dismiss != null && Move != null;
 
         public static AdventurerDetailsView Bind(VisualElement root)
         {
@@ -145,6 +147,14 @@ namespace WanderersGuild
             Promote.SetEnabled(false);
             Disband.SetEnabled(false);
             Move.SetEnabled(false);
+        }
+        
+        // NOTE: Hidden until the guild has an office; disabled for anyone who can't be dismissed now. Hidden = also disabled,
+        // so keyboard navigation skips it.
+        public void SetDismiss(bool visible, bool enabled)
+        {
+            Dismiss.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            Dismiss.SetEnabled(visible && enabled);
         }
     }
 }
