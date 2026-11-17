@@ -36,14 +36,14 @@
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
-    padding: 1px 2px;
+    padding: 1px 0;
 }
 .world-card__name .outlined-text__fill {
     color: var(--color-accent);
 }
 .world-card__line {
     overflow: hidden;
-    padding: 1px 2px;
+    padding: 1px 0;
 }
 .world-card__line .outlined-text__fill {
     color: var(--color-text-disabled);

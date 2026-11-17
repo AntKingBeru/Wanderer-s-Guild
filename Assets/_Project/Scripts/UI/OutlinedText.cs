@@ -1,5 +1,5 @@
-// Pixel-art text with a crisp, square 1-pixel outline: eight offset outline copies drawn behind one fill label, inside a
-// 2px left/right gutter so a clipping parent never cuts the outline.
+// Pixel-art text with a crisp, square 1-pixel outline: eight offset outline copies behind one fill label, inside a 2px
+// left/right gutter, optically centred (the font's glyphs sit low and left in their line box).
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -21,9 +21,16 @@ namespace WanderersGuild
             new(1f, 0f), new(-1f, 1f), new(0f, 1f), new(1f, 1f)
         };
 
+        // NOTE: Optical centring (PixelTheme.uss › .outlined-text). monogram at 12px draws capitals 0.62px and lowercase 1.37px
+        // below the line box's center, and every glyph 0.375px left of its advance — so text is shifted by (x, y) to look
+        // centred. A "translate": layout, sizes and measurements never change.
+        private static readonly CustomStyleProperty<float> OpticalXProperty = new("--text-optical-x");
+        private static readonly CustomStyleProperty<float> OpticalYProperty = new("--text-optical-y");
+
         private readonly Label[] _outlines = new Label[8];
         private readonly Label _fill;
         private string _text = string.Empty;
+        private Vector2 _optical;
 
         // The displayed text. Set in UXML with the "text" attribute.
         [UxmlAttribute]
@@ -60,7 +67,6 @@ namespace WanderersGuild
                 outline.style.top = 0f;
                 outline.style.right = 0f;
                 outline.style.bottom = 0f;
-                outline.style.translate = new Translate(OutlineOffsets[i].x, OutlineOffsets[i].y);
 
                 _outlines[i] = outline;
                 stack.Add(outline);
@@ -69,6 +75,9 @@ namespace WanderersGuild
             // The fill stays in normal flow, so it alone decides the wrapper's (and this element's) size.
             _fill = CreatePart(FillUssClassName);
             stack.Add(_fill);
+
+            ApplyOffsets();
+            RegisterCallback<CustomStyleResolvedEvent>(OnCustomStyleResolved);
         }
 
         // NOTE: The left + right gutter every part carries (0 until styles resolve — callers measure after layout).
@@ -99,16 +108,6 @@ namespace WanderersGuild
         public float MeasureTextWidth() =>
             _fill.MeasureTextSize(_text, 0f, MeasureMode.Undefined, 0f, MeasureMode.Undefined).x + HorizontalGutter;
 
-        private static Label CreatePart(string partClass)
-        {
-            Label label = new();
-            label.RemoveFromClassList(Label.ussClassName); // NOTE: Drops default label padding/margins so all copies align exactly.
-            label.AddToClassList(PartUssClassName);
-            label.AddToClassList(partClass);
-            label.pickingMode = PickingMode.Ignore;
-            return label;
-        }
-
         // Sets different strings for the fill and the 8 outline copies (e.g. a typewriter: the fill keeps the hidden
         // tail with a transparent tag, the outlines get it blanked, because the SDF outline ignores rich-text alpha).
         // NOTE: Both strings must lay out identically (same length per line, same break points), or the outline drifts.
@@ -119,6 +118,38 @@ namespace WanderersGuild
             foreach (var copy in _outlines)
                 copy.text = outlineText;
             _fill.text = _text;
+        }
+
+        // NOTE: Only re-applies when the resolved values actually change (style resolution, never per frame).
+        private void OnCustomStyleResolved(CustomStyleResolvedEvent evt)
+        {
+            var x = evt.customStyle.TryGetValue(OpticalXProperty, out var opticalX) ? opticalX : 0f;
+            var y = evt.customStyle.TryGetValue(OpticalYProperty, out var opticalY) ? opticalY : 0f;
+            var optical = new Vector2(x, y);
+            if (optical == _optical)
+                return;
+
+            _optical = optical;
+            ApplyOffsets();
+        }
+
+        // NOTE: Inline translates — the outline copies already need one (their ±1px offset), so the optical offset is added in
+        // code; the fill gets the same offset, keeping the outline exactly around it.
+        private void ApplyOffsets()
+        {
+            for (var i = 0; i < _outlines.Length; i++)
+                _outlines[i].style.translate = new Translate(OutlineOffsets[i].x + _optical.x, OutlineOffsets[i].y + _optical.y);
+            _fill.style.translate = new Translate(_optical.x, _optical.y);
+        }
+
+        private static Label CreatePart(string partClass)
+        {
+            Label label = new();
+            label.RemoveFromClassList(Label.ussClassName); // NOTE: Drops default label padding/margins so all copies align exactly.
+            label.AddToClassList(PartUssClassName);
+            label.AddToClassList(partClass);
+            label.pickingMode = PickingMode.Ignore;
+            return label;
         }
     }
 }

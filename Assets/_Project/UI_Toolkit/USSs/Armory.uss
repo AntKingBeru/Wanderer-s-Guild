@@ -44,7 +44,7 @@
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
-    padding: 1px 2px;
+    padding: 1px 0;
 }
 .arm-row__info .outlined-text__fill {
     color: var(--color-text-disabled);
@@ -67,7 +67,7 @@
     min-height: 0;
 }
 .arm-content .unity-scroll-view__content-container {
-    padding: 1px 2px;
+    padding: 1px 0;
 }
 .arm-name {
     margin-bottom: 1px;
@@ -113,7 +113,7 @@
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
-    padding: 1px 2px;
+    padding: 1px 0;
 }
 .arm-footer-text .outlined-text__fill {
     color: var(--color-text-disabled);

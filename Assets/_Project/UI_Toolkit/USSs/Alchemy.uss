@@ -13,7 +13,7 @@
     flex-grow: 1;
 }
 .alc-list .unity-scroll-view__content-container {
-    padding: 1px 2px;
+    padding: 1px 0;
 }
 .alc-empty {
     position: absolute;
@@ -37,7 +37,7 @@
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
-    padding: 1px 2px;
+    padding: 1px 0;
 }
 .alc-row__stock {
     flex-shrink: 0;
@@ -82,7 +82,7 @@
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
-    padding: 1px 2px;
+    padding: 1px 0;
 }
 .alc-footer-text .outlined-text__fill {
     color: var(--color-text-disabled);

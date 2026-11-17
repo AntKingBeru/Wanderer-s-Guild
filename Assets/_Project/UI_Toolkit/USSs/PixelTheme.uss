@@ -41,6 +41,13 @@
     margin: 0;
     padding: 0 2px;
 }
+/* NOTE: Optical centring, read by OutlinedText and applied as a translate (layout unchanged). monogram at 12px sits low in
+   its line box (capitals 0.62px, lowercase 1.37px) and 0.375px left of its advance; -1 / +0.375 balances them. Override
+   per class for other sizes (24px stamps use double). Values are plain numbers in UI pixels. */
+.outlined-text {
+    --text-optical-x: 0.375;
+    --text-optical-y: -1;
+}
 /* NOTE: The 8 offset copies keep the outline square and crisp; the SDF outline fattens each copy slightly so the soft
    (anti-aliased) edges of neighbouring copies overlap and no lighter seams show. 0.3px = subtler, 0.8px = heavier. */
 .outlined-text__outline {

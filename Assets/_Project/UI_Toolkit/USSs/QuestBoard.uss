@@ -301,3 +301,8 @@
 .note-objective-scroll .unity-scroll-view__content-container {
     padding: 1px 2px;
 }
+/* NOTE: 24px stamp text: double the body's optical offset. */
+.outlined-text.note-lifted__stamp {
+    --text-optical-x: 0.75;
+    --text-optical-y: -2;
+}
