@@ -10,6 +10,9 @@ namespace WanderersGuild
         [SerializeField] private int music = 100;
         [SerializeField] private int sfx = 100;
         [SerializeField] private int character = 100;
+        [SerializeField] private bool playInBackground = true; // NOTE: Files saved before this field load as true.
+        
+        public bool PlayInBackground { get => playInBackground; set => playInBackground = value; }
 
         public int Get(AudioChannel channel) => channel switch
         {

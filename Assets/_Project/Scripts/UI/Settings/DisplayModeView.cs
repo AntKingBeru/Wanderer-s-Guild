@@ -135,5 +135,20 @@ namespace WanderersGuild
                                 index => Stage(_pending.WithMonitor(index)));
             _monitor.SetEnabled(count > 1);
         }
+        
+        // NOTE: Web only: no resolution, window mode or monitor (the browser owns them) — their rows are hidden and nothing
+        // here is focusable. The staged mode stays equal to the applied one, so nothing is ever pending. Call once after Bind.
+        public void ApplyPlatform()
+        {
+            if (PlatformInfo.HasWindowControl)
+                return;
+
+            foreach (var control in new VisualElement[] { _resolution, _windowMode, _monitor })
+            {
+                if (control.parent != null)
+                    control.parent.style.display = DisplayStyle.None;
+            }
+            _focusables.Clear();
+        }
     }
 }

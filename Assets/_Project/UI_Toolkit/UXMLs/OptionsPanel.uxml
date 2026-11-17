@@ -31,6 +31,10 @@
                     <ui:SliderInt name="volume-character" class="pixel-slider" low-value="0" high-value="100" />
                     <wg:OutlinedText name="volume-character-value" class="options-value" text="100" />
                 </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="Play Unfocused" />
+                    <ui:Toggle name="audio-background" class="pixel-toggle" />
+                </ui:VisualElement>
             </ui:VisualElement>
 
             <ui:ScrollView name="tab-page-display" class="options-page pixel-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden">
@@ -68,11 +72,14 @@
                     <wg:OutlinedText class="options-label" text="FPS Counter" />
                     <ui:Toggle name="display-fps-counter" class="pixel-toggle" />
                 </ui:VisualElement>
+                <ui:VisualElement class="options-row">
+                    <wg:OutlinedText class="options-label" text="Run Unfocused" />
+                    <ui:Toggle name="display-run-background" class="pixel-toggle" />
+                </ui:VisualElement>
             </ui:ScrollView>
 
-            <ui:VisualElement name="tab-page-controls" class="options-page">
-                <wg:OutlinedText class="options-placeholder" text="Coming later." />
-            </ui:VisualElement>
+            <ui:ScrollView name="tab-page-controls" class="options-page controls-list pixel-scroll" mode="Vertical"
+                           horizontal-scroller-visibility="Hidden" />
 
             <ui:VisualElement class="options-footer" picking-mode="Ignore">
                 <ui:Button name="options-restore" class="pixel-button options-footer-button"><wg:OutlinedText text="Restore Defaults" /></ui:Button>

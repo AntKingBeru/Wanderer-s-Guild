@@ -1,3 +1,5 @@
+// The Options screen: Audio, Display and Controls tabs, Restore Defaults, and Apply for screen-mode changes (desktop only —
+// the web build has no window settings).
 using System;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
@@ -21,6 +23,7 @@ namespace WanderersGuild
         private AudioSettingsView _audio;
         private DisplayModeView _displayMode;
         private DisplayQualityView _displayQuality;
+        private ControlsView _controls;
         private InlineConfirmation _confirm;
         private KeepSettingsPrompt _keepPrompt;
         private VisualElement _dropdownLayer;
@@ -45,6 +48,7 @@ namespace WanderersGuild
             _audio = AudioSettingsView.Bind(documentRoot);
             _displayMode = DisplayModeView.Bind(documentRoot);
             _displayQuality = DisplayQualityView.Bind(documentRoot);
+            _controls = ControlsView.Bind(documentRoot);
             _confirm = InlineConfirmation.Bind(documentRoot);
             _dropdownLayer = documentRoot.Q<VisualElement>(DropdownLayerName);
             _displayPage = documentRoot.Q<ScrollView>(DisplayPageName);
@@ -53,8 +57,8 @@ namespace WanderersGuild
             _back = documentRoot.Q<Button>(BackName);
 
             _buttons.Clear();
-            if (_tabs == null || _audio == null || _displayMode == null || _displayQuality == null || _confirm == null ||
-                _dropdownLayer == null || _displayPage == null || _restore == null || _apply == null || _back == null)
+            if (_tabs == null || _audio == null || _displayMode == null || _displayQuality == null || _controls == null ||
+                _confirm == null || _dropdownLayer == null || _displayPage == null || _restore == null || _apply == null || _back == null)
                 return false;
 
             _buttons.AddRange(_tabs.Buttons);
@@ -74,13 +78,19 @@ namespace WanderersGuild
             _audio.Initialize(audioConfig.VolumeStep);
             _displayMode.Initialize(_dropdownLayer, gameObject, UpdateApplyState);
             _displayQuality.Initialize(displayConfig.BrightnessStep);
+            _controls.Build(GameConfig.Instance.Controls);
             _confirm.Initialize();
             _keepPrompt = new KeepSettingsPrompt(_confirm, Root);
+
+            // NOTE: Web: the window rows disappear and leave the focus order (before any tab builds its order).
+            _displayMode.ApplyPlatform();
+            _displayQuality.ApplyPlatform();
 
             _restore.clicked += OnRestoreClicked;
             _apply.clicked += OnApplyClicked;
             _back.clicked += RequestClose;
-            _displayPage.RegisterCallback<FocusInEvent>(OnDisplayPageFocusIn);
+            _displayPage.RegisterCallback<FocusInEvent>(evt => ScrollToFocused(_displayPage, evt));
+            _controls.List.RegisterCallback<FocusInEvent>(evt => ScrollToFocused(_controls.List, evt));
 
             // NOTE: Registration order matters. Slider stepping runs before list navigation on the same root.
             AddPanelManipulator(new SliderStepNavigation(_audio.Sliders, () => IsPanelActive, audioConfig.VolumeStep));
@@ -128,30 +138,35 @@ namespace WanderersGuild
             }
         }
 
+        // NOTE: Apply exists only on the Display tab, and only where the window can be changed (never on the web).
         private void OnTabSelected(SettingsTab tab)
         {
             var isDisplay = tab == SettingsTab.Display;
+            var showApply = isDisplay && PlatformInfo.HasWindowControl;
 
             _focusOrder.Clear();
             _focusOrder.Add(_tabs.SelectedButton);
 
-            if (tab == SettingsTab.Audio)
+            switch (tab)
             {
-                _focusOrder.AddRange(_audio.Sliders);
-            }
-            else if (isDisplay)
-            {
-                _focusOrder.AddRange(_displayMode.Focusables);
-                _focusOrder.AddRange(_displayQuality.Focusables);
+                case SettingsTab.Audio:
+                    _focusOrder.AddRange(_audio.Focusables);
+                    break;
+                case SettingsTab.Display:
+                    _focusOrder.AddRange(_displayMode.Focusables);
+                    _focusOrder.AddRange(_displayQuality.Focusables);
+                    break;
+                case SettingsTab.Controls:
+                    _focusOrder.AddRange(_controls.Focusables);
+                    break;
             }
 
             _focusOrder.Add(_restore);
-            if (isDisplay)
+            if (showApply)
                 _focusOrder.Add(_apply);
             _focusOrder.Add(_back);
 
-            // NOTE: Apply exists only on the Display tab.
-            _apply.style.display = isDisplay ? DisplayStyle.Flex : DisplayStyle.None;
+            _apply.style.display = showApply ? DisplayStyle.Flex : DisplayStyle.None;
             _restore.SetEnabled(SettingsManager.HasInstance && SettingsManager.Instance.HasDefaults(tab));
             UpdateApplyState();
         }
@@ -170,11 +185,11 @@ namespace WanderersGuild
             return false;
         }
 
-        // NOTE: Keeps the focused row visible on the scrolling Display page.
-        private void OnDisplayPageFocusIn(FocusInEvent evt)
+        // NOTE: Keeps the focused row visible on a scrolling page (Display, Controls).
+        private static void ScrollToFocused(ScrollView page, FocusInEvent evt)
         {
-            if (evt.target is VisualElement element && element != _displayPage)
-                _displayPage.ScrollTo(element);
+            if (evt.target is VisualElement element && element != page)
+                page.ScrollTo(element);
         }
 
         private void UpdateApplyState() => _apply.SetEnabled(_displayMode.HasPendingChanges);
@@ -269,8 +284,9 @@ namespace WanderersGuild
                           },
                           onClosed: () =>
                           {
-                              // NOTE: The default screen mode is staged like any other change; Apply commits it.
-                              if (restored && tab == SettingsTab.Display)
+                              // NOTE: The default screen mode is staged like any other change; Apply commits it. Never on the
+                              // web — there's no Apply there, so it would only leave an unapplicable change behind.
+                              if (restored && tab == SettingsTab.Display && PlatformInfo.HasWindowControl)
                                   _displayMode.SetPending(SettingsManager.Instance.DefaultScreenMode);
 
                               UpdateApplyState();
@@ -305,6 +321,7 @@ namespace WanderersGuild
                 CloseNow();
         }
 
+        // NOTE: Settings are written here — on the web this is their reliable save point (tab close may skip quit hooks).
         private void CloseNow()
         {
             if (SettingsManager.HasInstance)

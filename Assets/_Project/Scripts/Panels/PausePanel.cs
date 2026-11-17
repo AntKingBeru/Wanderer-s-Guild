@@ -57,6 +57,13 @@ namespace WanderersGuild
                 return false;
 
             _menuButtons.AddRange(new[] { _resume, _save, _options, _quitMenu, _quitDesktop });
+
+            // NOTE: A browser tab can't close itself — the web build has no "Save & Quit to Desktop".
+            if (!PlatformInfo.CanQuit)
+            {
+                _quitDesktop.style.display = DisplayStyle.None;
+                _menuButtons.Remove(_quitDesktop);
+            }
             _buttons.AddRange(_menuButtons);
             _buttons.AddRange(_confirm.Buttons);
             return true;

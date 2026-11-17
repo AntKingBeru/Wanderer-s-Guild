@@ -14,7 +14,7 @@ namespace WanderersGuild
         public SaveSlotStore(SaveSlotSettings settings) => _settings = settings;
 
         public int SlotCount => _settings.SlotCount;
-        public string RootPath => Path.Combine(Application.persistentDataPath, _settings.RootFolder);
+        public string RootPath => Path.Combine(PlatformStorage.Root, _settings.RootFolder);
 
         // NOTE: Folders are numbered from 1 so they match what players would call them.
         public string SlotPath(int index) => Path.Combine(RootPath, $"slot_{index + 1}");
@@ -86,6 +86,8 @@ namespace WanderersGuild
 
                 foreach (var directory in Directory.GetDirectories(folder))
                     Directory.Delete(directory, true);
+                
+                PlatformStorage.Flush(); // NOTE: Deletions too — or the old guild's files come back after a web reload.
             }
             catch (Exception exception)
             {
@@ -136,6 +138,7 @@ namespace WanderersGuild
             {
                 if (Directory.Exists(path))
                     Directory.Delete(path, true);
+                PlatformStorage.Flush();
                 return true;
             }
             catch (Exception exception)

@@ -16,6 +16,7 @@ namespace WanderersGuild
         [SerializeField] private int brightness = 50;
         [SerializeField] private int uiScaleCap;
         [SerializeField] private bool showFpsCounter;
+        [SerializeField] private bool runInBackground;
 
         public ScreenModeSnapshot ScreenMode
         {
@@ -34,6 +35,7 @@ namespace WanderersGuild
         public int Brightness { get => brightness; set => brightness = Mathf.Clamp(value, 0, 100); }
         public int UIScaleCap { get => uiScaleCap; set => uiScaleCap = Mathf.Max(0, value); }
         public bool ShowFpsCounter { get => showFpsCounter; set => showFpsCounter = value; }
+        public bool RunInBackground { get => runInBackground; set => runInBackground = value; }
 
         // Defaults from GameConfig: native resolution on the primary monitor.
         public static DisplaySettingsData CreateDefault(DisplaySettingsConfig config) => new()
@@ -41,7 +43,8 @@ namespace WanderersGuild
             windowMode = config.DefaultWindowMode,
             vSync = config.DefaultVSync,
             fpsLimitIndex = config.DefaultFpsLimitIndex,
-            brightness = config.DefaultBrightness
+            brightness = config.DefaultBrightness,
+            runInBackground = config.DefaultRunInBackground
         };
 
         // Clamps every value into range (hand-edited or corrupted files).

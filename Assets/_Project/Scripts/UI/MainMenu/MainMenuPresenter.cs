@@ -138,13 +138,17 @@ namespace WanderersGuild
         // NOTE: Leaving the scene ends interactivity so Esc/Enter can't fire during the fade-out.
         private void OnSceneLoadStarted(SceneId _) => SetInteractive(false);
 
-        // NOTE: Also runs when save slots change (e.g. the last save was deleted), so Continue/Load gray out in time.
+        // NOTE: Also runs when save slots change (e.g. the last save was deleted), so Continue/Load gray out in time. Quit
+        // Game is hidden on the web (a browser tab can't close itself).
         private void RefreshAvailability()
         {
             foreach (var button in view.ButtonsInOrder)
             {
                 var action = (MenuAction)button.userData;
-                var available = _commands.TryGetValue(action, out var command) && command.IsAvailable;
+                var hidden = action == MenuAction.QuitGame && !PlatformInfo.CanQuit;
+                var available = !hidden && _commands.TryGetValue(action, out var command) && command.IsAvailable;
+
+                button.style.display = hidden ? DisplayStyle.None : DisplayStyle.Flex;
                 button.SetEnabled(available); // Disabled = greyed (USS :disabled) and skipped by navigation.
             }
         }

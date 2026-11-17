@@ -82,6 +82,44 @@ MonoBehaviour:
     buildMode: {fileID: 8375276412662802405, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
     buildRotate: {fileID: 8401335848834111592, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
     buildCancel: {fileID: -8253566798527813827, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+  controls:
+    entries:
+    - label: Move Camera
+      action: {fileID: -5542685772316801389, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+      keysOverride: WASD / Arrows
+    - label: Drag Camera
+      action: {fileID: 4159725362537257880, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+      keysOverride: Middle Mouse
+    - label: Rotate Camera
+      action: {fileID: 5200073120712144679, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+      keysOverride: 
+    - label: Zoom
+      action: {fileID: 3429882728573722687, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+      keysOverride: Mouse Wheel
+    - label: Select / Open
+      action: {fileID: -2270512615485987031, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+      keysOverride: Left Mouse
+    - label: Pause Time
+      action: {fileID: -2156492778693654700, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+      keysOverride: 
+    - label: Game Speed
+      action: {fileID: 1718325754125508370, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+      keysOverride: 1 / 2 / 3
+    - label: Build Mode
+      action: {fileID: 8375276412662802405, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+      keysOverride: 
+    - label: Rotate Room
+      action: {fileID: 8401335848834111592, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+      keysOverride: 
+    - label: Step Back
+      action: {fileID: -8253566798527813827, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+      keysOverride: Right Mouse / Esc
+    - label: Menu
+      action: {fileID: 5296796923681162282, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
+      keysOverride: 
+  platform:
+    simulateWebInEditor: 0
+    webStorageFolder: WanderersGuild
   playerSettings:
     fileName: settings.json
     volumeStep: 5
@@ -89,6 +127,7 @@ MonoBehaviour:
     defaultMusicVolume: 80
     defaultSfxVolume: 80
     defaultCharacterVolume: 80
+    defaultPlayInBackground: 1
   displaySettings:
     defaultWindowMode: 1
     defaultVSync: 1
@@ -100,6 +139,7 @@ MonoBehaviour:
     brightnessVolumePriority: 100
     keepPromptSeconds: 10
     fpsCounterInterval: 0.5
+    defaultRunInBackground: 1
   saveSlots:
     slotCount: 5
     rootFolder: saves
@@ -707,10 +747,14 @@ MonoBehaviour:
     panSpeed: 12
     panSmoothTime: 0.08
     boundsPadding: 1
+    footprintFitMargin: 1.1
+    maxFarDistance: 150
+    footprintZoomSmoothTime: 0.6
     pixelSnap: 1
   interaction:
     interactableLayer: 8
     outlineRenderingLayer: 7
+    outlineWidth: 1
     maxRayDistance: 200
     labelGap: 2
   facilities:
@@ -867,6 +911,7 @@ MonoBehaviour:
   speech:
     library: {fileID: 11400000, guid: 96ae9d2a97e631345a4ca926acf89fb6, type: 2}
     chatterChance: 0.1
+    moodChatterChance: 0.5
     wellFedChance: 0.35
     supperSpreadMinutes: 20
     arrivalWaitMinutes: 120
@@ -899,6 +944,15 @@ MonoBehaviour:
     leanDegrees: 4
     stepsPerSecond: 4
     cadenceVariation: 0.1
+  avatarSidestep:
+    enabled: 1
+    sideDistance: 0.5
+    clearance: 0.25
+    lookAhead: 2.5
+    passWidth: 1
+    keepBehind: 0.6
+    settleDistance: 1
+    easeSpeed: 2.5
   tutorial:
     startingRequest: {fileID: 11400000, guid: 0a408452edd6e6b42b7661983ecc9d48, type: 2}
     placements:
@@ -959,3 +1013,78 @@ MonoBehaviour:
       goal: Build an Armory
       intro: You can afford an Armory! It sells gear, and adventurers spend their own gold on upgrades.
       built: The Armory is open! It restocks every morning, and idle adventurers shop for better gear at 9.
+  satisfaction:
+    baseline: 50
+    miserableBelow: 20
+    unhappyBelow: 40
+    happyFrom: 75
+    memories:
+    - reason: 0
+      amount: 10
+      days: 5
+    - reason: 1
+      amount: 5
+      days: 2
+    - reason: 2
+      amount: -4
+      days: 2
+    - reason: 3
+      amount: 6
+      days: 4
+    - reason: 4
+      amount: -6
+      days: 4
+    - reason: 5
+      amount: 2
+      days: 4
+    - reason: 6
+      amount: -2
+      days: 4
+    - reason: 7
+      amount: -8
+      days: 5
+    - reason: 8
+      amount: 5
+      days: 4
+    - reason: 9
+      amount: 10
+      days: 6
+    - reason: 10
+      amount: -5
+      days: 3
+    - reason: 11
+      amount: 10
+      days: 6
+    - reason: 12
+      amount: -5
+      days: 3
+    - reason: 13
+      amount: 5
+      days: 4
+    - reason: 14
+      amount: -6
+      days: 4
+    - reason: 15
+      amount: -4
+      days: 3
+    fairSharePercent: 60
+    lodgingOutside: -8
+    ownBed: 4
+    idleGraceDays: 2
+    idlePerDay: -3
+    idleMaxPenalty: 12
+    unhappyAppeal: 1.2
+    miserableAppeal: 1.4
+    happyPowerBonus: 0.03
+    leaveAfterDays: 3
+    leaveReputation: 1
+    moodIcons:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    levelColors:
+    - {r: 0.86, g: 0.33, b: 0.31, a: 1}
+    - {r: 0.93, g: 0.63, b: 0.3, a: 1}
+    - {r: 0.86, g: 0.84, b: 0.78, a: 1}
+    - {r: 0.52, g: 0.85, b: 0.45, a: 1}

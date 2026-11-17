@@ -1,3 +1,5 @@
+// Owns the player's settings: loads and applies them at boot, applies changes live, saves them (to disk, or to browser
+// storage on the web), and keeps platform limits (no window control on the web).
 using System;
 using UnityEngine;
 
@@ -14,6 +16,7 @@ namespace WanderersGuild
         private AudioSettingsApplier _audioApplier;
         private DisplayModeApplier _displayModeApplier;
         private FrameRateApplier _frameRateApplier;
+        private BackgroundAudioMuter _backgroundAudio;
         private bool _isDirty;
 
         protected override void OnSingletonAwake()
@@ -21,6 +24,7 @@ namespace WanderersGuild
             _audioApplier = new AudioSettingsApplier(GameConfig.Instance.AudioMixer);
             _displayModeApplier = new DisplayModeApplier();
             _frameRateApplier = new FrameRateApplier();
+            _backgroundAudio = new BackgroundAudioMuter();
             _current = CreateDefaults();
         }
 
@@ -38,6 +42,7 @@ namespace WanderersGuild
             }
 
             _audioApplier.ApplyAll(_current.Audio);
+            _backgroundAudio.SetPlayInBackground(_current.Audio.PlayInBackground);
             ApplyDisplay();
             _isDirty = false;
             GameEventsRelay.OnSettingsApplied.Invoke();
@@ -46,7 +51,7 @@ namespace WanderersGuild
         #region Audio
         public int GetVolume(AudioChannel channel) => _current.Audio.Get(channel);
 
-        // Applies immediately; written to disk on the next SaveIfDirty (Options close, or quit).
+        // Applies immediately; written on the next SaveIfDirty (Options close, or quit).
         public void SetVolume(AudioChannel channel, int percent)
         {
             var value = Mathf.Clamp(percent, 0, 100);
@@ -55,6 +60,19 @@ namespace WanderersGuild
 
             _current.Audio.Set(channel, value);
             _audioApplier.Apply(channel, value);
+            _isDirty = true;
+        }
+
+        // Keep the audio playing while the game is unfocused.
+        public bool PlayInBackground => _current.Audio.PlayInBackground;
+
+        public void SetPlayInBackground(bool play)
+        {
+            if (_current.Audio.PlayInBackground == play)
+                return;
+
+            _current.Audio.PlayInBackground = play;
+            _backgroundAudio.SetPlayInBackground(play);
             _isDirty = true;
         }
         #endregion
@@ -66,6 +84,7 @@ namespace WanderersGuild
         public int Brightness => _current.Display.Brightness;
         public int UIScaleCap => _current.Display.UIScaleCap;
         public bool ShowFpsCounter => _current.Display.ShowFpsCounter;
+        public bool RunInBackground => _current.Display.RunInBackground;
         public int MonitorCount => _displayModeApplier.MonitorCount;
 
         // The configured default screen mode (native resolution, default window mode, primary monitor).
@@ -136,6 +155,17 @@ namespace WanderersGuild
             ApplyFpsCounter();
             _isDirty = true;
         }
+
+        // Keep the game running while it's unfocused.
+        public void SetRunInBackground(bool run)
+        {
+            if (_current.Display.RunInBackground == run)
+                return;
+
+            _current.Display.RunInBackground = run;
+            ApplyRunInBackground();
+            _isDirty = true;
+        }
         #endregion
 
         #region Defaults and persistence
@@ -150,10 +180,11 @@ namespace WanderersGuild
                 case SettingsTab.Audio:
                     ApplyAudioDefaults(_current.Audio);
                     _audioApplier.ApplyAll(_current.Audio);
+                    _backgroundAudio.SetPlayInBackground(_current.Audio.PlayInBackground);
                     break;
 
                 case SettingsTab.Display:
-                    ScreenModeSnapshot keptMode = _current.Display.ScreenMode;
+                    var keptMode = _current.Display.ScreenMode;
                     _current.Display = DisplaySettingsData.CreateDefault(GameConfig.Instance.DisplaySettings);
                     _current.Display.ScreenMode = keptMode; // NOTE: Screen-mode changes always go through Apply + the keep prompt.
                     ApplyDisplay();
@@ -176,8 +207,12 @@ namespace WanderersGuild
                 _isDirty = false;
         }
 
-        // NOTE: Covers quitting from anywhere, including stopping Play Mode in the Editor.
+        // NOTE: Covers quitting from anywhere, including stopping Play Mode in the Editor. Browsers may not run it on tab
+        // close — the web relies on the save when Options closes.
         private void OnApplicationQuit() => SaveIfDirty();
+
+        // NOTE: Unity calls this on every platform (window / tab focus); the muter decides whether to silence the audio.
+        private void OnApplicationFocus(bool hasFocus) => _backgroundAudio?.OnFocusChanged(hasFocus);
         #endregion
 
         #region Applying
@@ -188,11 +223,16 @@ namespace WanderersGuild
             ApplyBrightness();
             ApplyUIScale();
             ApplyFpsCounter();
+            ApplyRunInBackground();
         }
 
-        // NOTE: async void entry point; the applier itself makes sure the newest request wins.
+        // NOTE: async void entry point; the applier makes sure the newest request wins. Never on the web — the browser owns
+        // the canvas size.
         private async void ApplyScreenMode(ScreenModeSnapshot mode)
         {
+            if (!PlatformInfo.HasWindowControl)
+                return;
+
             try
             {
                 await _displayModeApplier.ApplyAsync(mode, destroyCancellationToken);
@@ -203,8 +243,15 @@ namespace WanderersGuild
             }
         }
 
+        // NOTE: The web always uses the browser's own pacing (target −1): any other value makes web builds stutter.
         private void ApplyFrameRate()
         {
+            if (!PlatformInfo.HasWindowControl)
+            {
+                _frameRateApplier.Apply(false, 0);
+                return;
+            }
+
             var config = GameConfig.Instance.DisplaySettings;
             _frameRateApplier.Apply(_current.Display.VSync, config.FpsLimitAt(_current.Display.FpsLimitIndex));
         }
@@ -230,6 +277,8 @@ namespace WanderersGuild
             if (FpsCounter.HasInstance)
                 FpsCounter.Instance.SetVisible(_current.Display.ShowFpsCounter);
         }
+
+        private void ApplyRunInBackground() => Application.runInBackground = _current.Display.RunInBackground;
         #endregion
 
         private static GameSettingsData CreateDefaults()
@@ -245,6 +294,7 @@ namespace WanderersGuild
             var config = GameConfig.Instance.PlayerSettings;
             foreach (var channel in AllChannels)
                 audio.Set(channel, config.DefaultVolume(channel));
+            audio.PlayInBackground = config.DefaultPlayInBackground;
         }
     }
 }

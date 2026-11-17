@@ -1,3 +1,5 @@
+// Options › Display, below the screen mode: V-Sync, FPS limit, brightness, UI scale, FPS counter and running unfocused.
+// V-Sync and the FPS limit are hidden on the web, where the browser paces frames.
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -13,6 +15,7 @@ namespace WanderersGuild
         private const string BrightnessValueName = "display-brightness-value";
         private const string UIScaleName = "display-ui-scale";
         private const string FpsCounterName = "display-fps-counter";
+        private const string RunBackgroundName = "display-run-background";
 
         private readonly Toggle _vSync;
         private readonly SliderInt _fps;
@@ -21,6 +24,7 @@ namespace WanderersGuild
         private readonly OutlinedText _brightnessValue;
         private readonly OptionCycler _uiScale;
         private readonly Toggle _fpsCounter;
+        private readonly Toggle _runBackground;
         private readonly List<VisualElement> _focusables;
         private readonly List<SliderInt> _brightnessSliders;
         private readonly List<SliderInt> _fpsSliders;
@@ -32,7 +36,7 @@ namespace WanderersGuild
         public IReadOnlyList<SliderInt> FpsSliders => _fpsSliders;
 
         private DisplayQualityView(Toggle vSync, SliderInt fps, OutlinedText fpsValue, SliderInt brightness,
-                                   OutlinedText brightnessValue, OptionCycler uiScale, Toggle fpsCounter)
+                                   OutlinedText brightnessValue, OptionCycler uiScale, Toggle fpsCounter, Toggle runBackground)
         {
             _vSync = vSync;
             _fps = fps;
@@ -41,7 +45,8 @@ namespace WanderersGuild
             _brightnessValue = brightnessValue;
             _uiScale = uiScale;
             _fpsCounter = fpsCounter;
-            _focusables = new List<VisualElement> { vSync, fps, brightness, uiScale, fpsCounter };
+            _runBackground = runBackground;
+            _focusables = new List<VisualElement> { vSync, fps, brightness, uiScale, fpsCounter, runBackground };
             _brightnessSliders = new List<SliderInt> { brightness };
             _fpsSliders = new List<SliderInt> { fps };
         }
@@ -56,10 +61,13 @@ namespace WanderersGuild
             var brightnessValue = root.Q<OutlinedText>(BrightnessValueName);
             var uiScale = root.Q<OptionCycler>(UIScaleName);
             var fpsCounter = root.Q<Toggle>(FpsCounterName);
+            var runBackground = root.Q<Toggle>(RunBackgroundName);
 
             var complete = vSync != null && fps != null && fpsValue != null && brightness != null &&
-                            brightnessValue != null && uiScale != null && fpsCounter != null;
-            return complete ? new DisplayQualityView(vSync, fps, fpsValue, brightness, brightnessValue, uiScale, fpsCounter) : null;
+                           brightnessValue != null && uiScale != null && fpsCounter != null && runBackground != null;
+            return complete
+                ? new DisplayQualityView(vSync, fps, fpsValue, brightness, brightnessValue, uiScale, fpsCounter, runBackground)
+                : null;
         }
 
         public void Initialize(int brightnessStep)
@@ -89,6 +97,23 @@ namespace WanderersGuild
             {
                 if (SettingsManager.HasInstance) SettingsManager.Instance.SetShowFpsCounter(evt.newValue);
             });
+
+            _runBackground.RegisterValueChangedCallback(evt =>
+            {
+                if (SettingsManager.HasInstance) SettingsManager.Instance.SetRunInBackground(evt.newValue);
+            });
+        }
+
+        // NOTE: Web only: V-Sync and the FPS limit rows are hidden and leave the focus order. Call once after Bind.
+        public void ApplyPlatform()
+        {
+            if (PlatformInfo.HasWindowControl)
+                return;
+
+            HideRow(_vSync);
+            HideRow(_fps);
+            _focusables.Remove(_vSync);
+            _focusables.Remove(_fps);
         }
 
         // Pulls current values without triggering change callbacks; rebuilds the UI scale choices.
@@ -104,6 +129,7 @@ namespace WanderersGuild
             _brightness.SetValueWithoutNotify(settings.Brightness);
             _brightnessValue.Text = settings.Brightness.ToString();
             _fpsCounter.SetValueWithoutNotify(settings.ShowFpsCounter);
+            _runBackground.SetValueWithoutNotify(settings.RunInBackground);
             RefreshUIScale(settings.UIScaleCap);
             UpdateFpsAvailability();
         }
@@ -137,6 +163,13 @@ namespace WanderersGuild
 
             _brightnessValue.Text = snapped.ToString();
             if (SettingsManager.HasInstance) SettingsManager.Instance.SetBrightness(snapped);
+        }
+
+        // NOTE: Each control sits in its own options-row.
+        private static void HideRow(VisualElement control)
+        {
+            if (control.parent != null)
+                control.parent.style.display = DisplayStyle.None;
         }
 
         private static string FpsLabel(int index)

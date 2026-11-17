@@ -6,7 +6,8 @@ namespace WanderersGuild
 {
     public static class SettingsStore
     {
-        public static string PathFor(string fileName) => Path.Combine(Application.persistentDataPath, fileName);
+        // NOTE: PlatformStorage picks the folder (disk, or the web's fixed browser-storage folder).
+        public static string PathFor(string fileName) => Path.Combine(PlatformStorage.Root, fileName);
 
         // False when the file is missing or unreadable — the caller then uses defaults.
         public static bool TryLoad(string fileName, out GameSettingsData data)

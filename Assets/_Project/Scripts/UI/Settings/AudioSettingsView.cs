@@ -1,3 +1,4 @@
+// Options › Audio: a slider + readout per volume channel, and whether the audio keeps playing while the game is unfocused.
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,17 +8,24 @@ namespace WanderersGuild
 {
     public sealed class AudioSettingsView
     {
+        private const string BackgroundName = "audio-background";
+
         private readonly Dictionary<AudioChannel, SliderInt> _sliders = new();
         private readonly Dictionary<AudioChannel, OutlinedText> _values = new();
         private readonly List<SliderInt> _ordered = new();
+        private readonly List<VisualElement> _focusables = new();
+        private Toggle _background;
         private int _step = 5;
 
-        // The sliders in on-screen order. Used for the focus order and slider stepping.
+        // The sliders in on-screen order (slider stepping).
         public IReadOnlyList<SliderInt> Sliders => _ordered;
+
+        // Everything focusable on the page, in on-screen order (the panel's focus order).
+        public IReadOnlyList<VisualElement> Focusables => _focusables;
 
         private AudioSettingsView() { }
 
-        // Finds each channel's slider ("volume-x") and readout ("volume-x-value"). Returns null if any is missing.
+        // Finds each channel's slider ("volume-x") and readout ("volume-x-value"), and the background toggle. Null if any is missing.
         public static AudioSettingsView Bind(VisualElement root)
         {
             AudioSettingsView view = new();
@@ -31,7 +39,13 @@ namespace WanderersGuild
                 view._sliders[channel] = slider;
                 view._values[channel] = value;
                 view._ordered.Add(slider);
+                view._focusables.Add(slider);
             }
+
+            view._background = root.Q<Toggle>(BackgroundName);
+            if (view._background == null)
+                return null;
+            view._focusables.Add(view._background);
             return view;
         }
 
@@ -45,6 +59,11 @@ namespace WanderersGuild
                 slider.highValue = 100;
                 slider.RegisterValueChangedCallback(evt => OnChanged(channel, slider, evt.newValue));
             }
+
+            _background.RegisterValueChangedCallback(evt =>
+            {
+                if (SettingsManager.HasInstance) SettingsManager.Instance.SetPlayInBackground(evt.newValue);
+            });
         }
 
         // Pulls the current values from SettingsManager without triggering change callbacks.
@@ -59,6 +78,8 @@ namespace WanderersGuild
                 pair.Value.SetValueWithoutNotify(value);
                 _values[pair.Key].Text = value.ToString();
             }
+
+            _background.SetValueWithoutNotify(SettingsManager.Instance.PlayInBackground);
         }
 
         // NOTE: Mouse drags produce every integer; snapping keeps values on the step grid the player sees.

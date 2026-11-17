@@ -16,6 +16,8 @@ namespace WanderersGuild
         [SerializeField] private TransitionSettings transitions = new();
         [SerializeField] private TweeningSettings tweening = new();
         [SerializeField] private InputBindingSettings inputBindings = new();
+        [SerializeField] private ControlsSettings controls = new();
+        [SerializeField] private PlatformSettings platform = new();
         [SerializeField] private PlayerSettingsConfig playerSettings = new();
         [SerializeField] private DisplaySettingsConfig displaySettings = new();
         [SerializeField] private SaveSlotSettings saveSlots = new();
@@ -78,6 +80,8 @@ namespace WanderersGuild
         public TransitionSettings Transitions => transitions;
         public TweeningSettings Tweening => tweening;
         public InputBindingSettings InputBindings => inputBindings;
+        public ControlsSettings Controls => controls;
+        public PlatformSettings Platform => platform;
         public PlayerSettingsConfig PlayerSettings => playerSettings;
         public DisplaySettingsConfig DisplaySettings => displaySettings;
         public SaveSlotSettings SaveSlots => saveSlots;
@@ -262,6 +266,15 @@ namespace WanderersGuild
         public InputActionReference BuildRotate => buildRotate;
         public InputActionReference BuildCancel => buildCancel;
     }
+    
+    [Serializable]
+    public class ControlsSettings
+    {
+        [Tooltip("The Options › Controls list, top to bottom.")]
+        [SerializeField] private ControlEntry[] entries = Array.Empty<ControlEntry>();
+
+        public IReadOnlyList<ControlEntry> Entries => entries ?? Array.Empty<ControlEntry>();
+    }
     #endregion
     
     #region Settings
@@ -279,9 +292,13 @@ namespace WanderersGuild
         [SerializeField, Range(0, 100)] private int defaultMusicVolume = 80;
         [SerializeField, Range(0, 100)] private int defaultSfxVolume = 80;
         [SerializeField, Range(0, 100)] private int defaultCharacterVolume = 80;
+        
+        [Tooltip("Keep the audio playing while the game isn't focused (only matters while it keeps running — Run Unfocused).")]
+        [SerializeField] private bool defaultPlayInBackground = true;
 
         public string FileName => fileName;
         public int VolumeStep => volumeStep;
+        public bool DefaultPlayInBackground => defaultPlayInBackground;
 
         public int DefaultVolume(AudioChannel channel) => channel switch
         {
@@ -316,6 +333,9 @@ namespace WanderersGuild
 
         [Tooltip("Seconds between FPS counter updates (averaged over that window).")]
         [SerializeField, Min(0.1f)] private float fpsCounterInterval = 0.5f;
+        
+        [Tooltip("Keep the game running while its window (or the browser) isn't focused.")]
+        [SerializeField] private bool defaultRunInBackground;
 
         public WindowModeSetting DefaultWindowMode => defaultWindowMode;
         public bool DefaultVSync => defaultVSync;
@@ -327,10 +347,33 @@ namespace WanderersGuild
         public float BrightnessVolumePriority => brightnessVolumePriority;
         public int KeepPromptSeconds => keepPromptSeconds;
         public float FpsCounterInterval => fpsCounterInterval;
+        public bool DefaultRunInBackground => defaultRunInBackground;
 
         // The FPS limit at a slider index; 0 means Unlimited.
         public int FpsLimitAt(int index) =>
             FpsLimitCount == 0 ? 0 : fpsLimits[Mathf.Clamp(index, 0, FpsLimitCount - 1)];
+    }
+    
+    // One line of the Options › Controls list: what it does, the action its keys come from, and optional key text.
+    [Serializable]
+    public struct ControlEntry
+    {
+        [SerializeField] private string label;
+        [SerializeField] private InputActionReference action;
+        [Tooltip("Shown instead of the action's own key text (e.g. \"WASD / Arrows\"). Empty = read from the action.")]
+        [SerializeField] private string keysOverride;
+
+        public string Label => label;
+
+        // NOTE: From the action itself (so future rebinding updates it), unless an override is given.
+        public string KeysText()
+        {
+            if (!string.IsNullOrWhiteSpace(keysOverride))
+                return keysOverride;
+
+            var inputAction = action != null ? action.action : null;
+            return inputAction != null ? inputAction.GetBindingDisplayString() : "-";
+        }
     }
     #endregion
     
@@ -2431,6 +2474,22 @@ namespace WanderersGuild
 
         public Color ColorOf(SatisfactionLevel level) =>
             levelColors != null && (int)level < levelColors.Length ? levelColors[(int)level] : Color.white;
+    }
+    #endregion
+    
+    #region Platform
+    [Serializable]
+    public class PlatformSettings
+    {
+        [Tooltip("Editor only: show the web build's Options and menus (no window settings, no Quit). Saves still go to disk.")]
+        [SerializeField] private bool simulateWebInEditor;
+
+        [Tooltip("Web build: the folder in the browser's storage (IndexedDB) for saves and settings. Keep it fixed — renaming " +
+                 "it loses every web player's saves.")]
+        [SerializeField] private string webStorageFolder = "WanderersGuild";
+
+        public bool SimulateWebInEditor => simulateWebInEditor;
+        public string WebStorageFolder => string.IsNullOrWhiteSpace(webStorageFolder) ? "WanderersGuild" : webStorageFolder.Trim();
     }
     #endregion
 }
