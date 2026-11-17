@@ -10,9 +10,10 @@ namespace WanderersGuild
     public class QuestManager : Singleton<QuestManager>, ISaveContributor
     {
         private readonly List<Quest> _quests = new();
-        private QuestSettings _settings;
         private Dictionary<string, RequestData> _requests = new();
         private IReadOnlyList<SavedQuest> _pendingRestore;
+        private QuestSettings _settings;
+        private QuestBoardLayout _board; // NOTE: The one slot layout — the Quest Board screen and the world board share it.
         private int _nextId = 1;
 
         public IReadOnlyList<Quest> Quests => _quests;
@@ -20,6 +21,24 @@ namespace WanderersGuild
         // Board slots open at the guild's current rank (3 + rank by default). Every posted quest uses one
         // until it ends — waiting, ready or away.
         public int OpenSlots => _settings.OpenSlots(CurrentGuildRank);
+        
+        // The quest in each board slot (null = free), shared by the Quest Board screen and the board's papers in the world.
+        // NOTE: Recomputed on read (cheap): kept quests stay in their slot, new ones take the lowest free open slot.
+        public IReadOnlyList<Quest> BoardSlots
+        {
+            get
+            {
+                _board.Update(_quests, OpenSlots);
+                return _board.Slots;
+            }
+        }
+
+        // The board slot a quest is pinned in (−1 = not on the board).
+        public int BoardSlotOf(int questId)
+        {
+            _board.Update(_quests, OpenSlots);
+            return _board.SlotOf(questId);
+        }
 
         public bool HasFreeSlot => _quests.Count < OpenSlots;
 
@@ -31,6 +50,7 @@ namespace WanderersGuild
         protected override void OnSingletonAwake()
         {
             _settings = GameConfig.Instance.Quests;
+            _board = new QuestBoardLayout(_settings.BoardSlots);
 
             var database = GameConfig.Instance.Requests.Database;
             if (database != null)
@@ -62,6 +82,7 @@ namespace WanderersGuild
                 SaveGameService.Instance.Register(this);
 
             Restore();
+            GameEventsRelay.OnQuestBoardChanged.Invoke(); // NOTE: Loaded quests appear on the world board.
             ReconcileStatuses();
         }
 
@@ -90,6 +111,7 @@ namespace WanderersGuild
             _quests.Add(quest);
 
             GameEventsRelay.OnQuestPosted.Invoke(quest);
+            GameEventsRelay.OnQuestBoardChanged.Invoke();
             return true;
         }
 
@@ -421,6 +443,7 @@ namespace WanderersGuild
 
             _quests.Remove(quest);
             GameEventsRelay.OnQuestEnded.Invoke(quest, reason);
+            GameEventsRelay.OnQuestBoardChanged.Invoke();
             ScriptedQuests.Forget(quest.Id);
         }
 

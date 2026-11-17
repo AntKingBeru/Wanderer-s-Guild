@@ -1587,6 +1587,14 @@ namespace WanderersGuild
 
         [Tooltip("How far inside the bounds box the focus point must stay.")]
         [SerializeField, Min(0f)] private float boundsPadding = 1f;
+        
+        [Tooltip("The zoomed-out distance grows with the guild: far enough to see the whole footprint (the camera bounds) × this " +
+                 "margin, never closer than Far Distance and never farther than Max Far Distance.")]
+        [SerializeField, Min(1f)] private float footprintFitMargin = 1.1f;
+        [Tooltip("Furthest zoom out (units). Keep it under URP Shadows › Max Distance, or rooms at the back lose their shadows.")]
+        [SerializeField, Min(1f)] private float maxFarDistance = 150f;
+        [Tooltip("Seconds the zoom range takes to follow a grown (or shrunk) guild.")]
+        [SerializeField, Min(0f)] private float footprintZoomSmoothTime = 0.6f;
 
         [Tooltip("Snap the camera to the render-pixel grid (at the focus distance) so textures don't crawl while panning.")]
         [SerializeField] private bool pixelSnap = true;
@@ -1605,6 +1613,9 @@ namespace WanderersGuild
         public float PanSpeed => panSpeed;
         public float PanSmoothTime => panSmoothTime;
         public float BoundsPadding => boundsPadding;
+        public float FootprintFitMargin => footprintFitMargin;
+        public float MaxFarDistance => Mathf.Max(maxFarDistance, FarDistance);
+        public float FootprintZoomSmoothTime => footprintZoomSmoothTime;
         public bool PixelSnap => pixelSnap;
     }
     

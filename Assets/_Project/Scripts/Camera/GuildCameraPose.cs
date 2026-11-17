@@ -5,9 +5,13 @@ namespace WanderersGuild
 {
     public static class GuildCameraPose
     {
-        // Distance from the focus at this zoom (0 = far, 1 = near).
+        // Distance from the focus at this zoom (0 = far, 1 = near), with the settings' own far distance.
         public static float Distance(float zoom01, GuildCameraSettings settings) =>
-            Mathf.Lerp(settings.FarDistance, settings.NearDistance, zoom01);
+            Distance(zoom01, settings, settings.FarDistance);
+
+        // NOTE: The far end can be pushed out (the rig grows it with the guild's footprint); never closer than Near.
+        public static float Distance(float zoom01, GuildCameraSettings settings, float farDistance) =>
+            Mathf.Lerp(Mathf.Max(farDistance, settings.NearDistance), settings.NearDistance, zoom01);
 
         public static float Pitch(float zoom01, GuildCameraSettings settings) =>
             Mathf.Lerp(settings.FarPitch, settings.NearPitch, zoom01);
@@ -26,10 +30,12 @@ namespace WanderersGuild
         /// <param name="zoom01"></param>
         /// <param name="settings"></param>
         /// <param name="referenceHeight">The reference render height (with the reference FOV it gives the true pixel size).</param>
+        /// <param name="farDistance">The zoomed-out distance to use (null = the settings' Far Distance).</param>
         public static (Vector3 position, Quaternion rotation) Compute(Vector3 focus, float yaw, float zoom01,
-                                                                      GuildCameraSettings settings, int referenceHeight)
+            GuildCameraSettings settings, int referenceHeight,
+            float? farDistance = null)
         {
-            var distance = Distance(zoom01, settings);
+            var distance = Distance(zoom01, settings, farDistance ?? settings.FarDistance);
             var rotation = Quaternion.Euler(Pitch(zoom01, settings), yaw, 0f);
             var position = focus - rotation * Vector3.forward * distance;
 

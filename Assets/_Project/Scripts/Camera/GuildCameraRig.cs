@@ -1,4 +1,4 @@
-// Guild camera: orbits a focus point on the floor — smoothed pan, 90° rotation steps, zoom that also tilts, bounds, pixel snap.
+// Guild camera: orbits a focus point on the floor — smoothed pan, 90° rotation steps, zoom that also tilts (and reaches farther as the guild grows), bounds, pixel snap.
 using UnityEngine;
 
 namespace WanderersGuild
@@ -18,9 +18,10 @@ namespace WanderersGuild
         private Vector3 _focus, _focusTarget, _focusVelocity;
         private float _yaw, _yawTarget, _yawVelocity;
         private float _zoom, _zoomTarget, _zoomVelocity;
+        private float _far, _farVelocity; // NOTE: The live zoomed-out distance (grows with the footprint).
 
         // Current distance from the focus point (between far and near).
-        public float Distance => GuildCameraPose.Distance(_zoom, _settings);
+        public float Distance => GuildCameraPose.Distance(_zoom, _settings, _far);
 
         // 0 at the far zoom, 1 at the near zoom.
         public float Zoom01 => _zoom;
@@ -39,6 +40,7 @@ namespace WanderersGuild
             _focus = _focusTarget = ClampFocus(startFocus, _settings);
             _zoom = _zoomTarget = _settings.StartZoom;
             _yaw = _yawTarget = Mathf.Repeat(_settings.StartYaw, 360f);
+            _far = TargetFar();
             Apply();
         }
 
@@ -78,6 +80,7 @@ namespace WanderersGuild
             _focus = Vector3.SmoothDamp(_focus, _focusTarget, ref _focusVelocity, _settings.PanSmoothTime, Mathf.Infinity, dt);
             _yaw = Mathf.SmoothDampAngle(_yaw, _yawTarget, ref _yawVelocity, _settings.RotationSmoothTime, Mathf.Infinity, dt);
             _zoom = Mathf.SmoothDamp(_zoom, _zoomTarget, ref _zoomVelocity, _settings.ZoomSmoothTime, Mathf.Infinity, dt);
+            _far = Mathf.SmoothDamp(_far, TargetFar(), ref _farVelocity, _settings.FootprintZoomSmoothTime, Mathf.Infinity, dt);
             Apply();
         }
 
@@ -85,7 +88,7 @@ namespace WanderersGuild
         // live texture height so every aspect keeps the same pixel size.
         private void Apply()
         {
-            var (position, rotation) = GuildCameraPose.Compute(_focus, _yaw, _zoom, _settings, ReferenceHeight);
+            var (position, rotation) = GuildCameraPose.Compute(_focus, _yaw, _zoom, _settings, ReferenceHeight, _far);
             _camera.fieldOfView = GuildCameraPose.VerticalFov(_settings.FieldOfView, LiveHeight, ReferenceHeight);
             transform.SetPositionAndRotation(position, rotation);
         }
@@ -99,5 +102,19 @@ namespace WanderersGuild
 
         private Vector3 ClampFocus(Vector3 point, GuildCameraSettings settings) =>
             bounds ? bounds.Clamp(point, settings.BoundsPadding) : point;
+        
+        // NOTE: Far enough that the bounds box's longer side fits the view at the far pitch (vertical reference FOV — wider
+        // screens see even more), × the margin, clamped to [Far Distance, Max Far Distance]. No bounds → Far Distance.
+        private float TargetFar()
+        {
+            if (bounds == null)
+                return _settings.FarDistance;
+
+            var size = bounds.Size;
+            var halfExtent = Mathf.Max(size.x, size.y) * 0.5f;
+            var halfFovTan = Mathf.Max(0.01f, Mathf.Tan(_settings.FieldOfView * 0.5f * Mathf.Deg2Rad));
+            var fit = halfExtent * Mathf.Sin(_settings.FarPitch * Mathf.Deg2Rad) / halfFovTan * _settings.FootprintFitMargin;
+            return Mathf.Clamp(fit, _settings.FarDistance, _settings.MaxFarDistance);
+        }
     }
 }

@@ -1,4 +1,5 @@
-// Pixel-art text with a crisp, square 1-pixel outline: eight offset outline copies drawn behind one fill label.
+// Pixel-art text with a crisp, square 1-pixel outline: eight offset outline copies drawn behind one fill label, inside a
+// 2px left/right gutter so a clipping parent never cuts the outline.
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -49,7 +50,8 @@ namespace WanderersGuild
             stack.AddToClassList(StackUssClassName);
             Add(stack);
 
-            // NOTE: Child order is draw order — outlines first (behind), fill last (on top).
+            // NOTE: Child order is draw order — outlines first (behind), fill last (on top). Every part carries the same
+            // gutter (PixelTheme.uss › .outlined-text__part), so the copies cover exactly the fill's box.
             for (var i = 0; i < OutlineOffsets.Length; i++)
             {
                 var outline = CreatePart(OutlineUssClassName);
@@ -69,17 +71,33 @@ namespace WanderersGuild
             stack.Add(_fill);
         }
 
+        // NOTE: The left + right gutter every part carries (0 until styles resolve — callers measure after layout).
+        private float HorizontalGutter
+        {
+            get
+            {
+                var newStyle = _fill.resolvedStyle;
+                var gutter = newStyle.paddingLeft + newStyle.paddingRight;
+                return float.IsNaN(gutter) ? 0f : gutter;
+            }
+        }
+
         // Overrides the fill (text) color. Pass StyleKeyword.Null to return to the stylesheet color.
         public void SetFillColor(StyleColor color) => _fill.style.color = color;
 
-        // Height the given text would take at this width, wrapped and styled exactly like this element's text.
-        public float MeasureTextHeight(string text, float width) =>
-            _fill.MeasureTextSize(text ?? string.Empty, width, MeasureMode.Exactly, 0f, MeasureMode.Undefined).y;
-        
-        // Width of this element's current text on one line per explicit line break (unwrapped), styled exactly like
-        // it — what a sliding (marquee) line needs to know, independent of how its container is laid out.
+        // Height the given text would take in an element this wide, wrapped and styled exactly like this element's text.
+        // NOTE: The glyphs wrap inside the gutter, so the wrap width is the element's width minus it.
+        public float MeasureTextHeight(string text, float width)
+        {
+            var inner = Mathf.Max(0f, width - HorizontalGutter);
+            return _fill.MeasureTextSize(text ?? string.Empty, inner, MeasureMode.Exactly, 0f, MeasureMode.Undefined).y;
+        }
+
+        // Width this element's current text needs on one line per explicit line break (unwrapped), styled exactly like it
+        // and including the gutter — what a sliding (marquee) line compares with its box, so the slide ends with the
+        // last glyph's outline in view.
         public float MeasureTextWidth() =>
-            _fill.MeasureTextSize(_text, 0f, MeasureMode.Undefined, 0f, MeasureMode.Undefined).x;
+            _fill.MeasureTextSize(_text, 0f, MeasureMode.Undefined, 0f, MeasureMode.Undefined).x + HorizontalGutter;
 
         private static Label CreatePart(string partClass)
         {
@@ -90,7 +108,7 @@ namespace WanderersGuild
             label.pickingMode = PickingMode.Ignore;
             return label;
         }
-        
+
         // Sets different strings for the fill and the 8 outline copies (e.g. a typewriter: the fill keeps the hidden
         // tail with a transparent tag, the outlines get it blanked, because the SDF outline ignores rich-text alpha).
         // NOTE: Both strings must lay out identically (same length per line, same break points), or the outline drifts.

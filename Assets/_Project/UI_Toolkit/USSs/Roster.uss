@@ -1,4 +1,9 @@
 /* Adventurer roster in 320×180 UI pixels: list (left) + scrolling details (right), Promote pinned under the details. */
+/* Name colours for adventurers ready to move on (the roster row's given name). */
+:root {
+    --roster-ready-promotion: var(--color-accent);
+    --roster-ready-advancement: rgb(120, 200, 255);
+}
 .roster-window {
     width: 316px;
     height: 164px;
@@ -78,23 +83,23 @@
     -unity-text-align: middle-center;
 }
 
-/* NOTE: The only column that grows and shrinks — it takes whatever the fixed parts leave, and clips. */
+/* NOTE: The only column that grows and shrinks — it takes whatever the fixed parts leave, and clips (the text's own 2px
+   gutter keeps the outline inside the clip). */
 .roster-row__name {
     flex-grow: 1;
     flex-shrink: 1;
     min-width: 0;
     overflow: hidden;
-    padding: 1px 2px;
+    padding: 1px 0;
     align-items: flex-start;
 }
 
-/* Ready flag (promotion / advancement) after the name. */
-.roster-row__ready {
-    margin-right: 2px;
-    flex-shrink: 0;
+/* Ready to move on: the given name is coloured instead of adding a flag (rows keep one width). */
+.roster-row__name--promotion .outlined-text__fill {
+    color: var(--roster-ready-promotion);
 }
-.roster-row__ready .icon-slot__letter .outlined-text__fill {
-    color: var(--color-accent);
+.roster-row__name--advancement .outlined-text__fill {
+    color: var(--roster-ready-advancement);
 }
 
 /* NOTE: Class icon (12) + gap (2) left of the class name. */
@@ -105,17 +110,18 @@
 .roster-row__class {
     width: 44px;
     overflow: hidden;
-    padding: 1px 2px;
+    padding: 1px 0;
 }
 .roster-row__class .outlined-text__fill {
     color: var(--color-text-disabled);
 }
 
-/* NOTE: The level, or the status for anyone not idle — the column grows to fit (the name column gives way). */
+/* NOTE: A fixed column — the level, or the status for anyone not idle (8 characters = 36px + the text's 4px gutter). Fixed
+   so the class icon and class name line up in every row; only the name column flexes. */
 .roster-row__level {
-    min-width: 26px;
-    padding-left: 2px;
+    width: 40px;
     align-items: flex-end;
+    overflow: hidden;
 }
 .roster-row__level .outlined-text__part {
     white-space: nowrap;

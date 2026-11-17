@@ -450,7 +450,8 @@ namespace WanderersGuild
 
         // ---------- Catalog, hint, events ----------
 
-        // NOTE: Guild Hall excluded; ordered by unlock rank, then cost. Rank/limit lock a card; gold only colors it.
+        // NOTE: Guild Hall excluded; rooms above the guild's rank aren't listed at all (they appear on the rank-up refresh);
+        // ordered by unlock rank, then cost. A room at its limit still shows (locked, with the reason); gold only colors a card.
         private void RefreshCatalog()
         {
             if (!IsActive || _view == null || !FacilityManager.HasInstance)
@@ -461,7 +462,7 @@ namespace WanderersGuild
             var hallId = GameConfig.Instance.Facilities.GuildHallId;
 
             _catalog.Clear();
-            foreach (var data in Facilities.Catalog.Where(d => d.Id != hallId)
+            foreach (var data in Facilities.Catalog.Where(d => d.Id != hallId && d.UnlockRankFor(1) <= rank)
                          .OrderBy(d => d.UnlockRankFor(1)).ThenBy(d => d.CostFor(1)))
             {
                 var reason = FacilityRules.LockReason(data, Facilities.Rooms, rank);

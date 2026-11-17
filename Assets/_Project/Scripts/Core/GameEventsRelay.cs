@@ -165,6 +165,9 @@ namespace WanderersGuild
         
         // A quest's party filled and is waiting for the player's approval. Arg: the quest.
         public static readonly UnityEvent<Quest> OnQuestPartyReady = new();
+        
+        // The board's contents changed (a quest posted or ended, or quests loaded). The world board's papers follow it.
+        public static readonly UnityEvent OnQuestBoardChanged = new();
         #endregion
         
         #region Adventurers

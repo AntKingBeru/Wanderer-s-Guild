@@ -16,7 +16,6 @@ namespace WanderersGuild
         private readonly List<Button> _buttons = new();
         private readonly List<VisualElement> _rowOrder = new();
         private readonly List<VisualElement> _columnOrder = new();
-        private QuestBoardLayout _layout;
         private QuestNoteDetailView _detail;
         private OutlinedText _title;
         private Button _close;
@@ -49,7 +48,6 @@ namespace WanderersGuild
                 return false;
 
             var slots = GameConfig.HasInstance ? Settings.BoardSlots : 10;
-            _layout = new QuestBoardLayout(slots);
 
             for (var i = 0; i < slots; i++)
             {
@@ -213,12 +211,12 @@ namespace WanderersGuild
             var open = QuestManager.HasInstance ? QuestManager.Instance.OpenSlots : 0;
             var ranks = GameConfig.Instance.GuildRanks;
 
-            _layout.Update(quests, open);
+            var slots = QuestManager.HasInstance ? QuestManager.Instance.BoardSlots : null;
             _title.Text = $"Quest Board {quests.Count}/{open}";
 
             for (var i = 0; i < _notes.Count; i++)
             {
-                var quest = _layout.Slots[i];
+                var quest = slots != null && i < slots.Count ? slots[i] : null;
                 if (quest != null)
                     _notes[i].ShowQuest(quest, Now, ranks.ColorOf(quest.Request.RecommendedRank));
                 else if (i >= open)
@@ -274,8 +272,8 @@ namespace WanderersGuild
 
         private void FocusNoteOr(int questId)
         {
-            var slot = questId >= 0 ? _layout.SlotOf(questId) : -1;
-            var target = slot >= 0 && _notes[slot].Quest != null ? _notes[slot].Button : DefaultFocus;
+            var slot = questId >= 0 && QuestManager.HasInstance ? QuestManager.Instance.BoardSlotOf(questId) : -1;
+            var target = slot >= 0 && slot < _notes.Count && _notes[slot].Quest != null ? _notes[slot].Button : DefaultFocus;
             target?.Focus();
         }
 

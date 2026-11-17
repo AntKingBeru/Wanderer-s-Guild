@@ -122,14 +122,15 @@ namespace WanderersGuild
         public static string PromotionHint(PromotionCheck check) =>
             check.CanPromote ? $"Rank {check.Target} exam ready: {check.Fee:N0}g" : check.Reason;
         
-        // The roster row's short status for anyone not idle ("On quest", "Injured"…); null when idle (the row shows the level).
+        // NOTE: At most 8 characters — the roster's status column is a fixed 38px (monogram at 12px = 4.5px per character),
+        // so every row's class icon and class name line up.
         public static string RowStatus(Adventurer adventurer) => adventurer.Status switch
         {
-            AdventurerStatus.SignedUp => "Signed up",
+            AdventurerStatus.SignedUp => "Applied",
             AdventurerStatus.OnQuest => "On quest",
             AdventurerStatus.InExam => "In exam",
             AdventurerStatus.Injured => "Injured",
-            AdventurerStatus.Returning => "Returning",
+            AdventurerStatus.Returning => "Homeward",
             AdventurerStatus.InTrial => "In trial",
             _ => null
         };

@@ -34,9 +34,6 @@
                     <wg:OutlinedText name="note-chance" class="note-ink note-chance" text="Success: —" />
                     <ui:VisualElement name="note-members" class="note-members" picking-mode="Ignore" />
                 </ui:VisualElement>
-
-                <wg:OutlinedText class="note-lifted__stamp" text="TAKEN" />
-
                 <ui:VisualElement class="note-lifted__buttons" picking-mode="Ignore">
                     <ui:Button name="note-back" class="pixel-button panel-button"><wg:OutlinedText text="Back" /></ui:Button>
                     <ui:Button name="note-cancel" class="pixel-button panel-button"><wg:OutlinedText text="Cancel" /></ui:Button>

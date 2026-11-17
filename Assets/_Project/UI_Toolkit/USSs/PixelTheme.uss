@@ -33,10 +33,13 @@
     -unity-font-definition: url("project://database/Assets/Fonts/monogram-extended SDF.asset");
 }
 
-/* OutlinedText parts. The outline rule comes after .unity-text-element so its colour wins. */
+/* NOTE: A 2px gutter left and right of every text, inside its own box. The outline reaches ~1.5px past the glyphs (the 1px
+   offset copies + the 0.5px SDF fattening), so without it a clipping parent (scroll views, sliding lines, list columns)
+   cuts the outline off at the text's edge. Every part (fill + the 8 outline copies) gets the same padding, so they keep
+   laying out identically. Heights are untouched (no vertical gutter). */
 .outlined-text__part {
     margin: 0;
-    padding: 0;
+    padding: 0 2px;
 }
 /* NOTE: The 8 offset copies keep the outline square and crisp; the SDF outline fattens each copy slightly so the soft
    (anti-aliased) edges of neighbouring copies overlap and no lighter seams show. 0.3px = subtler, 0.8px = heavier. */

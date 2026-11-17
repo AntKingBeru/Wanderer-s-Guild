@@ -24,6 +24,12 @@ namespace WanderersGuild
         private bool _isOutlined;
 
         public string DisplayName => displayName;
+        
+        // The hover label's text: the name plus a live count where one helps (InteractableLabels).
+        // NOTE: Explicit — the hover label reads it through IWorldInteractable, while code holding a GuildInteractable (the
+        // tutorial's texts) still gets the plain DisplayName.
+        string IWorldInteractable.DisplayName => InteractableLabels.HoverText(displayName, opens);
+        
         public MenuPanelId Opens => opens;
 
         // Every renderer's bounds together (the tutorial frames this on screen).

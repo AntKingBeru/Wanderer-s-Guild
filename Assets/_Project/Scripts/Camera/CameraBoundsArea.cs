@@ -7,6 +7,9 @@ namespace WanderersGuild
     {
         [Tooltip("Width (x) and depth (z) of the area, centred on this object. Height is ignored. Set by FacilityManager at runtime.")]
         [SerializeField] private Vector2 size = new(20f, 28f);
+        
+        // Width (x) and depth (z) of the area.
+        public Vector2 Size => size;
 
         // Moves and resizes the area (y of the center is ignored).
         public void SetArea(Vector3 centre, Vector2 newSize)
