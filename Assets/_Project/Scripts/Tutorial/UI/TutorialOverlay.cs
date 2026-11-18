@@ -92,7 +92,7 @@ namespace WanderersGuild
                 return;
             }
 
-            _box.Show(frame.Text, frame.NextLabel);
+            _box.Show(frame.Text, frame.NextLabel, frame.Controls);
             var size = _box.Size;
             var canPlace = size is { x: > 0f, y: > 0f } && screen is { x: > 0f, y: > 0f };
             var target = hasHighlight ? TutorialSpotlight.Framed(local, settings.HighlightPadding) : default;

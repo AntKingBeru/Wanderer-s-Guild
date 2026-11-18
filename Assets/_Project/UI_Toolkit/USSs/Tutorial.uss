@@ -55,6 +55,24 @@
     white-space: normal;
     -unity-text-align: upper-left;
 }
+/* ---------- Controls card (inside the box: control on the left, keys on the right) ---------- */
+/* NOTE: The box's 148px inner width fits "Step Back" + "Right Mouse / Esc" (25 characters) with room to spare. */
+.tutorial-controls {
+    margin-top: 3px;
+    align-self: stretch;
+    display: none;
+}
+.tutorial-controls__row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.tutorial-controls__row-label .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.tutorial-controls__row-keys .outlined-text__fill {
+    color: var(--color-accent);
+}
 .panel-button.tutorial-next {
     align-self: flex-end;
     margin: 3px 0 0 0;

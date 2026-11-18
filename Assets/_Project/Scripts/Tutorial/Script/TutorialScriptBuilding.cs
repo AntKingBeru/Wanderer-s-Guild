@@ -1,5 +1,6 @@
-// Part 2 of the start tutorial (the party is away): build mode, the hall and bedroom cards, the guided rooms at their spots,
-// skipping the bedrooms' wait (this once), the speed buttons, and what beds mean for the adventurer limit.
+// Part 2 of the start tutorial (the party is away): build mode and its catalog, the guided rooms at their spots, skipping the
+// bedrooms' wait (this once), and what beds mean for the adventurer limit.
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using static WanderersGuild.TutorialStepBuilder;
@@ -7,8 +8,8 @@ using static WanderersGuild.TutorialStepBuilder;
 namespace WanderersGuild
 {
     // NOTE: Time runs while building (the party walks out); explanations pause it. Rooms come from GameConfig › Tutorial ›
-    // Placements in order: the first facility is shown as "built at once", the first different one as "takes time". Their
-    // construction is finished by the tutorial right after the last one is placed.
+    // Placements in order: the first facility is named as "built at once", the first different one as "takes time". Their
+    // construction is finished by the tutorial right after the last one is placed. The speeds moved to the controls part.
     public static class TutorialScriptBuilding
     {
         public static void Append(List<TutorialStep> steps, TutorialContext c)
@@ -21,38 +22,31 @@ namespace WanderersGuild
             }
 
             var t = c.Targets;
-            steps.Add(Say("They're on their way! While they're out, let's grow the guild. Your adventurers still sleep outside.").TimeRuns());
+            steps.Add(Say("While they're out, let's grow the guild.").TimeRuns());
             steps.Add(Click(t.Hud("hud-build"), "Click the hammer to enter build mode.")
                       .BuildMode(TutorialBuildAccess.Open).Until(() => c.BuildModeActive).TimeRuns());
-            steps.Add(Say("Everything you can build. Locked rooms show what they need.")
-                      .Highlight(t.BuildUi("build-catalog")).BuildMode(TutorialBuildAccess.Kept).TimeRuns());
-            AppendCards(steps, c, placements);
+            steps.Add(Say(CatalogText(placements)).Highlight(t.BuildUi("build-catalog")).Controls(ControlGroup.Building)
+                      .BuildMode(TutorialBuildAccess.Kept).TimeRuns());
             AppendPlacements(steps, c, placements);
             AppendSkipWait(steps, c, placements);
 
             steps.Add(Click(t.Hud("hud-build"), "Click the hammer to leave build mode.")
                       .BuildMode(TutorialBuildAccess.Open).Until(() => !c.BuildModeActive).TimeRuns());
-            steps.Add(Say("These set the speed of time: pause, normal, fast and very fast. Speed up whenever you're waiting for " +
-                          "something, like a room being built.")
-                      .Highlight(t.HudFirst("hud-speeds")));
-            steps.Add(Say(() => $"Bedrooms add beds, and every bed raises your adventurer limit (now {c.Capacity}). " +
-                                "New adventurers only join while there's room.")
+            steps.Add(Say(() => $"Every bed raises your adventurer limit (now {c.Capacity}). Newcomers only join while there's " +
+                                "room, and need a bed: give them one from the Lounge or by clicking a bedroom.")
                       .Highlight(t.Hud("adv-count-root")));
         }
 
-        // NOTE: The hall builds at once (0 days); the bedroom takes time.
-        private static void AppendCards(List<TutorialStep> steps, TutorialContext c, IReadOnlyList<TutorialPlacement> placements)
+        // NOTE: "Everything you can build. Some rooms, like the Hall, are built at once; others, like the Bedroom, take time."
+        private static string CatalogText(IReadOnlyList<TutorialPlacement> placements)
         {
-            var t = c.Targets;
             var instant = placements[0].Facility;
             var timed = FirstOther(placements, instant);
+            if (instant == null || timed == null)
+                return "Everything you can build. Some rooms are built at once; others take time.";
 
-            if (instant != null)
-                steps.Add(Say($"{instant.DisplayName}s connect your rooms. Some rooms, like this one, are built at once.")
-                          .Highlight(t.BuildCard(instant)).BuildMode(TutorialBuildAccess.Kept).TimeRuns());
-            if (timed != null)
-                steps.Add(Say($"Others, like the {timed.DisplayName}, take time to build.")
-                          .Highlight(t.BuildCard(timed)).BuildMode(TutorialBuildAccess.Kept).TimeRuns());
+            return $"Everything you can build. Some rooms, like the {instant.DisplayName}, are built at once; others, like " +
+                   $"the {timed.DisplayName}, take time.";
         }
 
         private static void AppendPlacements(List<TutorialStep> steps, TutorialContext c, IReadOnlyList<TutorialPlacement> placements)
@@ -93,12 +87,7 @@ namespace WanderersGuild
 
         private static FacilityData FirstOther(IReadOnlyList<TutorialPlacement> placements, FacilityData other)
         {
-            foreach (var placement in placements)
-            {
-                if (placement.Facility != null && placement.Facility != other)
-                    return placement.Facility;
-            }
-            return null;
+            return (from placement in placements where placement.Facility != null && placement.Facility != other select placement.Facility).FirstOrDefault();
         }
 
         private static int FirstIndexOf(IReadOnlyList<TutorialPlacement> placements, FacilityData facility)

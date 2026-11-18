@@ -1,4 +1,5 @@
 // Runs the guided start tutorial: one step at a time (State pattern), driving the overlay, the input rules and the time pause.
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -40,6 +41,8 @@ namespace WanderersGuild
         private Button _clickButton;
         private Focusable _pendingFocus;
         private ITutorialTarget _pauseButton;
+        private bool _introOnly; // NOTE: Only the controls cards (after a skip) — ends quietly, never completes.
+        private List<ControlEntry> _controls; // The current step's controls card (a new list per step).
 
         // True while steps are being guided.
         public bool IsRunning => _steps != null;
@@ -68,18 +71,24 @@ namespace WanderersGuild
         }
 
         // ---------- Flow ----------
+        
+        private void Begin() => Run(TutorialScript.Build, introOnly: false);
 
-        // NOTE: A scene missing its pieces can't run the tutorial — it's completed instead, so the game isn't left blocked. Guild
-        // objects come with the spawned Guild Hall and are found when needed; a missing one only gets a warning (its step waits).
-        private void Begin()
+        // NOTE: After a skipped tutorial: only the controls cards, once (the tutorial is already done — nothing is held).
+        private void BeginControlsIntro() => Run(TutorialScriptControls.BuildAlone, introOnly: true);
+
+        // NOTE: A scene missing its pieces can't run the tutorial — the full one is completed instead, so the game isn't left
+        // blocked (the intro just doesn't run). Guild objects come with the spawned Guild Hall and are found when needed; a
+        // missing one only gets a warning (its step waits).
+        private void Run(Func<TutorialContext, List<TutorialStep>> script, bool introOnly)
         {
             if (IsRunning)
                 return;
 
             if (host == null || overlay == null || !overlay.IsBound)
             {
-                Debug.LogError("[TutorialDirector] Missing the panel host or the overlay — completing the tutorial.", this);
-                if (TutorialManager.HasInstance)
+                Debug.LogError("[TutorialDirector] Missing the panel host or the overlay — the tutorial can't be shown.", this);
+                if (!introOnly && TutorialManager.HasInstance)
                     TutorialManager.Instance.Complete();
                 return;
             }
@@ -89,17 +98,21 @@ namespace WanderersGuild
 
             var targets = new TutorialTargets(host, hud, buildMode, grid, new TutorialWorldProjector(worldCamera, view));
             _context = new TutorialContext(host, targets);
-            foreach (var target in new[] { _context.Desk, _context.QuestBoard, _context.Lounge })
+            if (!introOnly)
             {
-                if (!target.IsAvailable)
-                    Debug.LogWarning($"[TutorialDirector] No guild object opens {target.Opens} yet — its step will wait for one.", this);
+                foreach (var target in new[] { _context.Desk, _context.QuestBoard, _context.Lounge })
+                {
+                    if (!target.IsAvailable)
+                        Debug.LogWarning($"[TutorialDirector] No guild object opens {target.Opens} yet — its step will wait for one.", this);
+                }
             }
 
             _alwaysAllowed.Clear();
             _alwaysAllowed.Add(targets.HudFirst("hud-speeds"));
             _pauseButton = targets.Hud("hud-pause");
 
-            _steps = TutorialScript.Build(_context);
+            _steps = script(_context);
+            _introOnly = introOnly;
             _index = 0;
             _entered = false;
             overlay.SetNextHandler(OnNext);
@@ -159,9 +172,15 @@ namespace WanderersGuild
 
         // NOTE: Running out of steps never completes the tutorial — only the script's own last step does (TutorialContext.
         // CompleteTutorial). Until then guiding stops but the tutorial stays running: no requests, arrivals or saves, and its
-        // quest stays held.
+        // quest stays held. The intro-only run (after a skip) just ends.
         private void EndOfScript()
         {
+            if (_introOnly)
+            {
+                Stop();
+                return;
+            }
+
             Debug.Log("[Tutorial] The script ended without completing the tutorial — requests, arrivals and saving stay held. " +
                       "Debug › Tutorial › Complete Now finishes it.", this);
             Release();
@@ -204,6 +223,7 @@ namespace WanderersGuild
             _clicked = false;
             _missingFrames = 0;
             _text = step.Text?.Invoke();
+            _controls = ControlsFor(step);
 
             TutorialGate.Apply(step.Rules);
             SetPause(step.PausesTime);
@@ -227,21 +247,31 @@ namespace WanderersGuild
             TutorialGate.Apply(Locked);
         }
 
+        // NOTE: A step with both a condition and a Next button (the camera "try it") finishes on either.
         private bool IsDone(TutorialStep step)
         {
             if (step.Until != null)
-                return step.Until();
-            if (step.ClickTarget != null)
-                return _clicked;
-            return _nextPressed;
+                return step.Until() || _nextPressed;
+            return step.ClickTarget != null ? _clicked : _nextPressed;
         }
 
         private void Render(TutorialStep step)
         {
             var rect = default(Rect);
             var hasHighlight = step.Highlight != null && step.Highlight.TryGetRect(out rect);
-            overlay.Show(new TutorialFrame(_text, step.NextLabel, hasHighlight, rect), CollectHoles(step));
+            overlay.Show(new TutorialFrame(_text, step.NextLabel, hasHighlight, rect, _controls), CollectHoles(step));
             TryFocusPending();
+        }
+
+        // NOTE: A new list per step (the box rebuilds its rows only when the list changes); null = no card.
+        private static List<ControlEntry> ControlsFor(TutorialStep step)
+        {
+            if (!step.Controls.HasValue)
+                return null;
+
+            List<ControlEntry> rows = new();
+            GameConfig.Instance.Controls.EntriesIn(step.Controls.Value, rows);
+            return rows;
         }
 
         // NOTE: The speed buttons are always usable; the pause button isn't while build mode is kept open — the pause menu
@@ -327,8 +357,8 @@ namespace WanderersGuild
 
         // ---------- End ----------
 
-        // NOTE: Stops guiding — the current step, the input rules, the pause and the overlay. The tutorial quest stays held
-        // (the context is kept). Safe to call twice.
+        // NOTE: Stops guiding — the current step, the input rules, the pause, the camera practice and the overlay. The
+        // tutorial quest stays held (the context is kept). Safe to call twice.
         private void Release()
         {
             if (!IsRunning)
@@ -337,8 +367,11 @@ namespace WanderersGuild
             if (_entered && _index < _steps.Count)
                 Exit(_steps[_index]);
 
+            _context?.CameraPractice.End();
             _steps = null;
             _text = null;
+            _controls = null;
+            _introOnly = false;
             TutorialGate.Clear();
             SetPause(false);
             if (overlay != null)
@@ -354,7 +387,13 @@ namespace WanderersGuild
             _context = null;
         }
 
-        private void OnCompleted(bool _) => Stop();
+        // NOTE: A skipped tutorial still shows the controls cards once.
+        private void OnCompleted(bool skipped)
+        {
+            Stop();
+            if (skipped)
+                BeginControlsIntro();
+        }
 
         private void OnQuestPosted(Quest quest)
         {

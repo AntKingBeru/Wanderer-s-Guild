@@ -125,6 +125,12 @@ namespace WanderersGuild
 
         // Daylight changed (once per in-game minute). Arg: 0 = deepest night … 1 = brightest noon.
         public static readonly UnityEvent<float> OnDaylightChanged = new();
+        
+        // The player moved the camera (keys or a drag) this frame.
+        public static readonly UnityEvent OnCameraPannedByPlayer = new();
+
+        // The player zoomed the camera one step.
+        public static readonly UnityEvent OnCameraZoomedByPlayer = new();
         #endregion
         
         #region Guild

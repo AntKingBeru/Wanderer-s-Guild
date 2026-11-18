@@ -106,6 +106,15 @@ namespace WanderersGuild
         Borderless = 1,
         Windowed = 2
     }
+    
+    // Which tutorial controls card a control appears on (Options › Controls lists them all).
+    public enum ControlGroup
+    {
+        Camera = 0,
+        Time = 1,
+        Menus = 2,
+        Building = 3
+    }
     #endregion
     
     #region Guild

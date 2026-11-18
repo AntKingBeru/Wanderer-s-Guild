@@ -105,9 +105,10 @@ namespace WanderersGuild
             return this;
         }
 
-        public TutorialStepBuilder SkipIfMissing()
+        // Shows a controls card (the keys of one group, from GameConfig › Controls) under the text.
+        public TutorialStepBuilder Controls(ControlGroup group)
         {
-            _step.SkipIfMissing = true;
+            _step.Controls = group;
             return this;
         }
 

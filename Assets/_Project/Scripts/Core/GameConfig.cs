@@ -276,6 +276,13 @@ namespace WanderersGuild
         [SerializeField] private ControlEntry[] entries = Array.Empty<ControlEntry>();
 
         public IReadOnlyList<ControlEntry> Entries => entries ?? Array.Empty<ControlEntry>();
+        
+        // The entries on one tutorial controls card, in list order (blank labels skipped).
+        public void EntriesIn(ControlGroup group, List<ControlEntry> into)
+        {
+            into.Clear();
+            into.AddRange(Entries.Where(entry => entry.Group == group && !string.IsNullOrWhiteSpace(entry.Label)));
+        }
     }
     #endregion
     
@@ -364,8 +371,11 @@ namespace WanderersGuild
         [SerializeField] private InputActionReference action;
         [Tooltip("Shown instead of the action's own key text (e.g. \"WASD / Arrows\"). Empty = read from the action.")]
         [SerializeField] private string keysOverride;
+        [Tooltip("Which tutorial controls card lists it (Camera, Time, Menus, Building).")]
+        [SerializeField] private ControlGroup group;
 
         public string Label => label;
+        public ControlGroup Group => group;
 
         // NOTE: From the action itself (so future rebinding updates it), unless an override is given.
         public string KeysText()

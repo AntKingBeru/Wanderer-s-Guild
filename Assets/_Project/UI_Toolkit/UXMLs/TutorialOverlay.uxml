@@ -13,6 +13,8 @@
         <!-- Instruction box (positioned in code beside the target). -->
         <ui:VisualElement name="tutorial-box" class="pixel-window tutorial-box">
             <wg:OutlinedText name="tutorial-text" class="tutorial-text" text="Click the Reception Desk."/>
+            <!-- Controls card (control → keys), filled in code for steps that show one. -->
+            <ui:VisualElement name="tutorial-controls" class="tutorial-controls" picking-mode="Ignore"/>
             <ui:Button name="tutorial-next" class="pixel-button panel-button tutorial-next">
                 <wg:OutlinedText name="tutorial-next-label" text="Next"/>
             </ui:Button>

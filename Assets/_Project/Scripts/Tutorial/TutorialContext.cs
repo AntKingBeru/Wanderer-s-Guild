@@ -17,12 +17,15 @@ namespace WanderersGuild
             Desk = targets.World(MenuPanelId.ReceptionDesk);
             QuestBoard = targets.World(MenuPanelId.Quests);
             Lounge = targets.World(MenuPanelId.Roster);
+            
         }
 
         public TutorialTargets Targets { get; }
         public TutorialWorldTarget Desk { get; }
         public TutorialWorldTarget QuestBoard { get; }
         public TutorialWorldTarget Lounge { get; }
+        // The controls intro's camera "try it" (move and zoom).
+        public TutorialCameraPractice CameraPractice { get; } = new();
 
         // ---------- Screens, build mode ----------
 

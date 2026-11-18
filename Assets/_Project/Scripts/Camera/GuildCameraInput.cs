@@ -62,6 +62,7 @@ namespace WanderersGuild
             var settings = GameConfig.Instance.GuildCamera;
             var speed = settings.PanSpeed * rig.Distance / settings.FarDistance;
             rig.Pan(Vector2.ClampMagnitude(input, 1f) * speed * Time.unscaledDeltaTime);
+            GameEventsRelay.OnCameraPannedByPlayer.Invoke();
         }
 
         private void ReadRotate()
@@ -88,6 +89,7 @@ namespace WanderersGuild
                 return;
 
             rig.ZoomBy(value > 0f ? 1 : -1);
+            GameEventsRelay.OnCameraZoomedByPlayer.Invoke();
         }
 
         // NOTE: The first held frame only records the position (no jump); outside the view (letterbox) the drag stops.
@@ -99,8 +101,14 @@ namespace WanderersGuild
                 return;
             }
 
+            // NOTE: Only a drag that actually moves counts as the player panning.
             if (_isDragging)
-                rig.PanByViewPixels(pixel - _lastDragPixel);
+            {
+                var delta = pixel - _lastDragPixel;
+                rig.PanByViewPixels(delta);
+                if (delta != Vector2.zero)
+                    GameEventsRelay.OnCameraPannedByPlayer.Invoke();
+            }
 
             _lastDragPixel = pixel;
             _isDragging = true;

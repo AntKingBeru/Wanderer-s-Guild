@@ -1,4 +1,5 @@
 // Makes the tutorial's targets (Factory): elements of a game screen, the HUD or build mode, build spots, and guild objects.
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -68,6 +69,14 @@ namespace WanderersGuild
         // The guild object that opens this screen (desk → ReceptionDesk, quest board → Quests, lounge → Roster).
         public TutorialWorldTarget World(MenuPanelId opens) => new(opens, _projector);
         public ITutorialTarget Union(params ITutorialTarget[] parts) => new TutorialUnionTarget(parts);
+        
+        // Whichever of these is showing now (the first that is): the Close of whichever screen is open.
+        public ITutorialTarget EitherOf(params ITutorialTarget[] options) => new TutorialUiTarget(() => FirstElement(options));
+
+        private static VisualElement FirstElement(ITutorialTarget[] options)
+        {
+            return options.Select(option => option?.Element).FirstOrDefault(element => element != null);
+        }
 
         private VisualElement ScreenRoot(MenuPanelId id) => _host != null && _host.IsActive(id) ? _host.RootOf(id) : null;
         private static VisualElement DocumentRoot(UIDocument document) => document != null ? document.rootVisualElement : null;

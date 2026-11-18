@@ -1,4 +1,4 @@
-// The guided start tutorial, in order: request → quest, building while the party is away, then the results and the roster.
+// The guided start tutorial, in order: the controls, request → quest, building while the party is away, then the results.
 using System.Collections.Generic;
 
 namespace WanderersGuild
@@ -9,6 +9,7 @@ namespace WanderersGuild
         public static List<TutorialStep> Build(TutorialContext context)
         {
             List<TutorialStep> steps = new();
+            TutorialScriptControls.Append(steps, context);
             TutorialScriptRequests.Append(steps, context);
             TutorialScriptBuilding.Append(steps, context);
             TutorialScriptResults.Append(steps, context);

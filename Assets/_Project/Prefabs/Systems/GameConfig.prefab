@@ -87,36 +87,47 @@ MonoBehaviour:
     - label: Move Camera
       action: {fileID: -5542685772316801389, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
       keysOverride: WASD / Arrows
+      group: 0
     - label: Drag Camera
       action: {fileID: 4159725362537257880, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
       keysOverride: Middle Mouse
+      group: 0
     - label: Rotate Camera
       action: {fileID: 5200073120712144679, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
       keysOverride: 
+      group: 0
     - label: Zoom
       action: {fileID: 3429882728573722687, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
       keysOverride: Mouse Wheel
+      group: 0
     - label: Select / Open
       action: {fileID: -2270512615485987031, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
       keysOverride: Left Mouse
+      group: 2
     - label: Pause Time
       action: {fileID: -2156492778693654700, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
       keysOverride: 
+      group: 1
     - label: Game Speed
       action: {fileID: 1718325754125508370, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
       keysOverride: 1 / 2 / 3
+      group: 1
     - label: Build Mode
       action: {fileID: 8375276412662802405, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
       keysOverride: 
+      group: 3
     - label: Rotate Room
       action: {fileID: 8401335848834111592, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
       keysOverride: 
+      group: 3
     - label: Step Back
       action: {fileID: -8253566798527813827, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
       keysOverride: Right Mouse / Esc
+      group: 2
     - label: Menu
       action: {fileID: 5296796923681162282, guid: bc4e40ec80745fc40915d65f2118098b, type: 3}
       keysOverride: 
+      group: 2
   platform:
     simulateWebInEditor: 0
     webStorageFolder: WanderersGuild
@@ -899,9 +910,6 @@ MonoBehaviour:
     trialDays: 2
     passReputation: 1
     readyIcon: {fileID: 0}
-  marquee:
-    speed: 20
-    pause: 1
   doors:
     openRadius: 1.6
     swingSpeed: 300
@@ -926,6 +934,11 @@ MonoBehaviour:
     fadeInSeconds: 0.08
     fadeOutSeconds: 0.25
     headGapPixels: 2
+  attentionMarkers:
+    icon: {fileID: 0}
+    gapPixels: 3
+    bobPixels: 2
+    bobPeriod: 1.2
   processions:
     maxGatherSeconds: 15
     huddleSeconds: 0.8
@@ -994,7 +1007,7 @@ MonoBehaviour:
       needsGold: 0
       goal: Build an Office
       intro: Your guild reached rank E! With an office, newcomers wait as applicants and you choose who joins.
-      built: Your office is ready. Click it to review applicants, then accept or decline them.
+      built: Your office is ready. Click it to review applicants, then accept or decline them. Its log book records everything that happens in the guild.
     - facility: {fileID: 11400000, guid: 24e2b318e7b4da844bddf6d71930637c, type: 2}
       minRank: 1
       needsGold: 1
@@ -1088,3 +1101,6 @@ MonoBehaviour:
     - {r: 0.93, g: 0.63, b: 0.3, a: 1}
     - {r: 0.86, g: 0.84, b: 0.78, a: 1}
     - {r: 0.52, g: 0.85, b: 0.45, a: 1}
+  logBook:
+    retentionDays: 60
+    maxEntries: 1500

@@ -1360,12 +1360,18 @@ namespace WanderersGuild
         public bool HasHighlight { get; }
         public Rect Highlight { get; }
 
-        public TutorialFrame(string text, string nextLabel, bool hasHighlight, Rect highlight)
+        // NOTE: The controls card under the text (null = none). A new list per step — the box rebuilds its rows only when
+        // the list changes.
+        public IReadOnlyList<ControlEntry> Controls { get; }
+
+        public TutorialFrame(string text, string nextLabel, bool hasHighlight, Rect highlight,
+            IReadOnlyList<ControlEntry> controls = null)
         {
             Text = text;
             NextLabel = nextLabel;
             HasHighlight = hasHighlight;
             Highlight = highlight;
+            Controls = controls;
         }
 
         // Blocks the UI and shows nothing (between steps).

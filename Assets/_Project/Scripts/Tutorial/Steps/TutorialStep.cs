@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 namespace WanderersGuild
 {
-    // NOTE: Plain data filled by TutorialStepBuilder. Done = Until (polled) if set, else a click on ClickTarget, else Next.
-    // Nothing to show and no way to finish = instant (OnEnter runs, then the next step).
+    // NOTE: Plain data filled by TutorialStepBuilder. Done = Until (polled) or Next if both are set, else a click on
+    // ClickTarget, else Next. Nothing to show and no way to finish = instant (OnEnter runs, then the next step).
     public sealed class TutorialStep
     {
         private readonly List<ITutorialTarget> _holes = new();
@@ -19,6 +19,7 @@ namespace WanderersGuild
         public Action OnEnter { get; internal set; } // Runs once as the step starts.
         public bool PausesTime { get; internal set; } = true; // Holds the game paused while the step is up.
         public bool SkipIfMissing { get; internal set; } // Passed over when its highlight never shows (a hidden line).
+        public ControlGroup? Controls { get; internal set; } // A controls card under the text (null = none).
         public TutorialRules Rules { get; } = new(); // What the world and build mode allow meanwhile.
 
         // UI the player may use besides the instruction box.
