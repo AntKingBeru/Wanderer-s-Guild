@@ -33,6 +33,7 @@ namespace WanderersGuild
                 SpotKind.Seat => new Color(0.4f, 0.8f, 1f),
                 SpotKind.Table => new Color(1f, 0.7f, 0.3f),
                 SpotKind.Counter => new Color(0.9f, 0.4f, 0.9f),
+                SpotKind.Waiting => new Color(1f, 0.85f, 0.3f),
                 _ => new Color(0.6f, 1f, 0.6f)
             };
             var p = transform.position + Vector3.up * 0.05f;

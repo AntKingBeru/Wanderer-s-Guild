@@ -17,6 +17,8 @@ namespace WanderersGuild
         private bool _isOutlined;
         private int _adventurerId;
         private string _name;
+        private string _baseName;
+        private MenuPanelId? _opens;
 
         public string DisplayName => _name;
         
@@ -30,6 +32,7 @@ namespace WanderersGuild
         {
             _adventurerId = adventurerId;
             _name = displayName;
+            _baseName = displayName;
             _renderer = spriteRenderer;
             _view = view;
             _originalLayers = spriteRenderer.renderingLayerMask;
@@ -48,8 +51,26 @@ namespace WanderersGuild
             _isSelected = selected;
             ApplyOutline();
         }
+        
+        // NOTE: A guest (an applicant) is labeled with its role and a click opens that screen instead of the adventurer card;
+        // (null, null) = back to an ordinary member.
+        public void SetGuest(string role, MenuPanelId? opens)
+        {
+            _opens = opens;
+            _name = string.IsNullOrEmpty(role) ? _baseName : $"{_baseName} · {role}";
+        }
 
-        public void Interact(GamePanelHost panels) => GameEventsRelay.OnAdventurerCardRequested.Invoke(_adventurerId);
+        public void Interact(GamePanelHost panels)
+        {
+            if (_opens.HasValue)
+            {
+                if (panels != null)
+                    panels.Open(_opens.Value);
+                return;
+            }
+
+            GameEventsRelay.OnAdventurerCardRequested.Invoke(_adventurerId);
+        }
 
         // NOTE: One outline (and one outline-pass request) whether hovered, selected or both.
         private void ApplyOutline()

@@ -9,7 +9,7 @@ namespace WanderersGuild
     // NOTE: Scene-scoped — untick "Persist Across Scenes". Builds the grid and syncs everyone in Start (after the managers
     // have loaded and the Guild Hall exists); join events before then are ignored — Start catches them.
     // NOTE: No `using System;` — it would make Random ambiguous (System.Action is written out instead).
-    public class AvatarManager : Singleton<AvatarManager>, IProcessionHost
+    public class AvatarManager : Singleton<AvatarManager>, IGuestAvatarHost
     {
         [SerializeField] private Grid grid;
         [SerializeField] private Camera worldCamera;
@@ -24,6 +24,7 @@ namespace WanderersGuild
         private readonly List<Adventurer> _waitingInjured = new();
         private GuildNavigator _navigator;
         private PartyProcessions _processions;
+        private GuestAvatars _guests;
         private AvatarSettings _settings;
         private Vector2Int _entrance;
         private SidestepSolver _sidesteps;
@@ -33,6 +34,8 @@ namespace WanderersGuild
 
         public IReadOnlyDictionary<int, AdventurerAvatar> Avatars => _avatars;
         public GuildNavigator Navigator => _navigator;
+        // Avatars of non-members (applicants) — walked and fixed up here, sent around by ApplicantAvatars.
+        public GuestAvatars Guests => _guests;
 
         private static long Now => RequestManager.NowMinutes;
         private static bool IsAtGuild(Adventurer a) =>
@@ -55,6 +58,7 @@ namespace WanderersGuild
             _settings = GameConfig.Instance.Avatars;
             _navigator = new GuildNavigator(grid);
             _processions = new PartyProcessions(this);
+            _guests = new GuestAvatars(this);
             _sidesteps = new SidestepSolver(CellOf);
         }
 
@@ -135,7 +139,7 @@ namespace WanderersGuild
             _processions.Tick(delta);
             TickArrivals(delta);
 
-            if (_avatars.Count == 0)
+            if (_avatars.Count == 0 && _guests.Count == 0)
                 return;
 
             var now = Now;
@@ -157,7 +161,9 @@ namespace WanderersGuild
                     Plan(avatar, wanted, now);
             }
             
-            // NOTE: After planning — routes set this frame are what walkers ease around (the snapshot holds every avatar).
+            // NOTE: After planning — routes set this frame are what walkers ease around (the snapshot holds every avatar,
+            // guests included — added after the planning loop, which never plans them).
+            _guests.AddTo(_snapshot);
             _sidesteps.Solve(_snapshot, _navigator, GameConfig.Instance.AvatarSidestep);
         }
 
@@ -216,8 +222,8 @@ namespace WanderersGuild
             return room > 0 ? room : int.MinValue;
         }
 
-                // NOTE: −1 = any room; int.MinValue matches none (outside lodgers / unhoused never get someone else's bed).
-        private bool TryGoToSpot(AdventurerAvatar avatar, SpotKind kind, int roomId = -1) =>
+        // NOTE: Public for guests (applicants sent to the office's spots); members go through Plan.
+        public bool TryGoToSpot(AdventurerAvatar avatar, SpotKind kind, int roomId = -1) =>
             TryGoToSpot(avatar, kind, spot =>
             {
                 var cell = CellOf(spot.Position);
@@ -290,10 +296,11 @@ namespace WanderersGuild
                 avatar.Stop();
         }
 
-        // NOTE: Seats and tables seat them; beds lay them down; counters keep them standing.
+        // NOTE: Seats, tables and waiting chairs (applicants in the office) seat them; beds lay them down; counters keep them
+        // standing.
         private static AvatarPose PoseFor(SpotKind kind) => kind switch
         {
-            SpotKind.Seat or SpotKind.Table => AvatarPose.Sit,
+            SpotKind.Seat or SpotKind.Table or SpotKind.Waiting => AvatarPose.Sit,
             SpotKind.Bed => AvatarPose.Sleep,
             _ => AvatarPose.Stand
         };
@@ -338,10 +345,11 @@ namespace WanderersGuild
             }
         }
 
-        // NOTE: At the entrance, or a random FREE cell (never on furniture).
+        // NOTE: At the entrance, or a random FREE cell (never on furniture). Never for an id that's a guest (an applicant
+        // being accepted is adopted instead — AdoptGuest).
         private void Spawn(Adventurer adventurer, bool atEntrance)
         {
-            if (_avatars.ContainsKey(adventurer.Id))
+            if (_avatars.ContainsKey(adventurer.Id) || _guests.Contains(adventurer.Id))
                 return;
 
             Vector2Int cell;
@@ -350,12 +358,7 @@ namespace WanderersGuild
             else if (!_navigator.TryRandomFreeCell(out cell))
                 return;
 
-            var avatar = AvatarFactory.Create(adventurer, avatarsParent ? avatarsParent : transform,
-                                                           worldCamera, grid, _settings);
-            avatar.PlaceAt(cell);
-            avatar.PlannedFor = AvatarActivity.None;
-            avatar.NextDecisionAt = Now;
-            _avatars[adventurer.Id] = avatar;
+            _avatars[adventurer.Id] = CreateAvatar(adventurer, cell);
         }
 
         // NOTE: Frees their spot, walks to the entrance (getting up off furniture first), then disappears; with no path,
@@ -415,11 +418,51 @@ namespace WanderersGuild
             var corner = grid.CellToWorld(new Vector3Int(cell.x, cell.y, 0));
             return new Vector3(corner.x + 0.5f, _settings.FloorHeight, corner.z + 0.5f);
         }
+        
+        // ---------- Guests (IGuestAvatarHost) ----------
+
+        public AdventurerAvatar CreateAvatar(Adventurer adventurer, Vector2Int cell)
+        {
+            var parent = avatarsParent != null ? avatarsParent : transform;
+            var avatar = AvatarFactory.Create(adventurer, parent, worldCamera, grid, _settings);
+            avatar.PlaceAt(cell);
+            avatar.PlannedFor = AvatarActivity.None;
+            avatar.NextDecisionAt = Now;
+            return avatar;
+        }
+
+        public void ForgetExit(int adventurerId) => _exits.Forget(adventurerId);
+
+        // An accepted applicant: their guest avatar becomes a member's avatar where it stands and starts the daily schedule
+        // (or walks out if it's their time to be away). False = they had no avatar (the arrival queue brings them in).
+        // NOTE: Their spot reservation and furniture exit carry over — the first Plan releases the spot and gets them up.
+        public bool AdoptGuest(int adventurerId)
+        {
+            if (!_guests.TryRelease(adventurerId, out var avatar))
+                return false;
+
+            _arrivals.Remove(adventurerId);
+            if (!_avatars.TryAdd(adventurerId, avatar))
+            {
+                Destroy(avatar.gameObject);
+                return true;
+            }
+
+            avatar.IsLeaving = false;
+            avatar.PlannedFor = AvatarActivity.None;
+            avatar.NextDecisionAt = Now;
+
+            var adventurer = AdventurerManager.HasInstance ? AdventurerManager.Instance.Find(adventurerId) : null;
+            if (adventurer == null || !IsPresent(adventurer))
+                Leave(avatar);
+            return true;
+        }
 
         // ---------- Grid upkeep ----------
 
         // NOTE: Processions are dropped first (their cells and paths may be gone); then avatars on cells that are no longer
         // walkable go to the entrance; everyone re-plans, and leavers (incl. former procession members) re-path to the door.
+        // Guests get the same fix-up; ApplicantAvatars sends them on next frame.
         private void OnFacilitiesChanged(PlacedFacility _)
         {
             if (!_isReady)
@@ -449,6 +492,8 @@ namespace WanderersGuild
                     avatar.PlannedFor = AvatarActivity.None;
                 }
             }
+
+            _guests.AfterRoomsChanged(_navigator);
         }
 
         // NOTE: Outside lodgers walk out at bedtime and come back at dawn (OnAdventurerChanged does the spawn/leave); then

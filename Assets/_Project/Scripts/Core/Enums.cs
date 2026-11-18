@@ -348,7 +348,8 @@ namespace WanderersGuild
         Seat = 0,
         Table = 1,
         Counter = 2,
-        Bed = 3
+        Bed = 3,
+        Waiting = 4
     }
 
     // What the schedule wants an avatar doing right now. None = not planned yet (fresh avatar, after a change).

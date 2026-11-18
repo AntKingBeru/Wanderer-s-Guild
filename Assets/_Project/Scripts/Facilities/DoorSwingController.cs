@@ -33,6 +33,7 @@ namespace WanderersGuild
             }
         }
 
+        // NOTE: Members and guests (applicants) both open doors.
         private void GatherAvatarPositions()
         {
             _positions.Clear();
@@ -40,12 +41,17 @@ namespace WanderersGuild
                 return;
 
             foreach (var avatar in AvatarManager.Instance.Avatars.Values)
-            {
-                if (avatar == null)
-                    continue;
-                var p = avatar.transform.position;
-                _positions.Add(new Vector2(p.x, p.z));
-            }
+                AddPosition(avatar);
+            foreach (var avatar in AvatarManager.Instance.Guests.All)
+                AddPosition(avatar);
+        }
+
+        private void AddPosition(AdventurerAvatar avatar)
+        {
+            if (avatar == null)
+                return;
+            var p = avatar.transform.position;
+            _positions.Add(new Vector2(p.x, p.z));
         }
     }
 }

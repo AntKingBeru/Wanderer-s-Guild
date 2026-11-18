@@ -38,6 +38,34 @@ namespace WanderersGuild
         public bool AcceptsApplicants => MaxWaiting > 0;
 
         public bool HasRoom => _applicants.Count < MaxWaiting;
+        
+        // The finished office applicants wait in (its room id); −1 = none. With several, the one taking the most applicants.
+        public int OfficeRoomId
+        {
+            get
+            {
+                if (!FacilityManager.HasInstance)
+                    return -1;
+
+                var best = -1;
+                var bestMax = 0;
+                foreach (var room in FacilityManager.Instance.Rooms)
+                {
+                    if (room.Level <= 0)
+                        continue;
+                    var effect = room.Data.Effect<ApplicantsEffect>();
+                    if (effect == null)
+                        continue;
+
+                    var max = effect.MaxWaitingAt(room.Level);
+                    if (max <= bestMax)
+                        continue;
+                    best = room.Id;
+                    bestMax = max;
+                }
+                return best;
+            }
+        }
 
         private static long Now => RequestManager.NowMinutes;
 

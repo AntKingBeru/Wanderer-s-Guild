@@ -1,4 +1,5 @@
 // The avatars' navigation facade: the room grid, furniture blocks and wall clearance, path finding and smoothing — one API.
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,6 +57,20 @@ namespace WanderersGuild
                 return false;
             cell = _free[Random.Range(0, _free.Count)];
             return true;
+        }
+        
+        // A random free cell inside one room (reservoir pick — no allocation). False if the room has none.
+        public bool TryRandomFreeCellIn(int roomId, out Vector2Int cell)
+        {
+            cell = default;
+            var seen = 0;
+            foreach (var candidate in _free.Where(candidate => _grid.RoomOf(candidate) == roomId))
+            {
+                seen++;
+                if (Random.Range(0, seen) == 0)
+                    cell = candidate;
+            }
+            return seen > 0;
         }
 
         // NOTE: `from` itself if free; otherwise ring by ring (real steps, inside from's room — blocked cells are crossed but
