@@ -21,6 +21,7 @@ namespace WanderersGuild
         private OutlinedText _listEmpty;
         private RecruitDetailsView _details;
         private Button _close;
+        private Button _log;
         private int _selectedId = -1;
         private int _selectedIndex;
         private bool _warnedPool;
@@ -37,9 +38,10 @@ namespace WanderersGuild
             _list = documentRoot.Q<ScrollView>("rec-list");
             _listEmpty = documentRoot.Q<OutlinedText>("rec-list-empty");
             _close = documentRoot.Q<Button>("rec-close");
+            _log = documentRoot.Q<Button>("rec-log");
             _details = RecruitDetailsView.Bind(documentRoot);
 
-            if (_title == null || _list == null || _listEmpty == null || _close == null || _details == null)
+            if (_title == null || _list == null || _listEmpty == null || _close == null || _details == null || _log == null)
                 return false;
 
             for (var i = 0; i < RowPool; i++)
@@ -54,6 +56,7 @@ namespace WanderersGuild
             _buttons.Clear();
             _buttons.Add(_details.Decline);
             _buttons.Add(_details.Accept);
+            _navigationOrder.Add(_log);
             _buttons.Add(_close);
 
             // NOTE: Up/Down walks rows → Decline → Accept → Close; hidden/disabled ones are skipped.
@@ -70,6 +73,7 @@ namespace WanderersGuild
             _details.Decline.clicked += Decline;
             _details.Accept.clicked += Accept;
             _close.clicked += Close;
+            _log.clicked += OpenLog;
 
             AddPanelManipulator(new MenuNavigation(_navigationOrder, () => IsInteractable, null));
 
@@ -98,6 +102,13 @@ namespace WanderersGuild
         {
             if (IsInteractable)
                 Host.Close(Id);
+        }
+        
+        // NOTE: The host returns to this screen when the log book closes.
+        private void OpenLog()
+        {
+            if (IsInteractable)
+                Host.Open(MenuPanelId.LogBook);
         }
 
         // NOTE: Selection only changes on click/Submit (not on hover-focus).

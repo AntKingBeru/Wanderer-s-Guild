@@ -34,6 +34,7 @@
             </ui:VisualElement>
 
             <ui:VisualElement class="rec-footer" picking-mode="Ignore">
+                <ui:Button name="rec-log" class="pixel-button panel-button"><wg:OutlinedText text="Log book" /></ui:Button>
                 <ui:Button name="rec-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>

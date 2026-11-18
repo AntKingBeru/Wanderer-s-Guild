@@ -75,6 +75,7 @@ namespace WanderersGuild
         [SerializeField] private AvatarSidestepSettings avatarSidestep = new();
         [SerializeField] private TutorialSettings tutorial = new();
         [SerializeField] private SatisfactionSettings satisfaction = new();
+        [SerializeField] private LogBookSettings logBook = new();
 
         public SceneSettings Scenes => scenes;
         public TransitionSettings Transitions => transitions;
@@ -139,6 +140,7 @@ namespace WanderersGuild
         public AvatarSidestepSettings AvatarSidestep => avatarSidestep;
         public TutorialSettings Tutorial => tutorial;
         public SatisfactionSettings Satisfaction => satisfaction;
+        public LogBookSettings LogBook => logBook;
     }
     
     #region Scene Management
@@ -2526,6 +2528,21 @@ namespace WanderersGuild
 
         public bool SimulateWebInEditor => simulateWebInEditor;
         public string WebStorageFolder => string.IsNullOrWhiteSpace(webStorageFolder) ? "WanderersGuild" : webStorageFolder.Trim();
+    }
+    #endregion
+    
+    #region Log Book
+    [Serializable]
+    public class LogBookSettings
+    {
+        [Tooltip("In-game days an entry stays in the office log book.")]
+        [SerializeField, Min(1)] private int retentionDays = 60;
+
+        [Tooltip("Safety cap: past this many entries, the oldest are dropped even if they're recent.")]
+        [SerializeField, Min(50)] private int maxEntries = 1500;
+
+        public int RetentionDays => Mathf.Max(1, retentionDays);
+        public int MaxEntries => Mathf.Max(50, maxEntries);
     }
     #endregion
 }

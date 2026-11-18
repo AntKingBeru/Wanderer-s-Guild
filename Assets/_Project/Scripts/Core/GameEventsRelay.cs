@@ -313,6 +313,9 @@ namespace WanderersGuild
 
         // An adventurer failed a class trial. Args: adventurer, the class they tried for.
         public static readonly UnityEvent<Adventurer, ClassData> OnClassTrialFailed = new();
+        
+        // An adventurer started a class trial. Args: adventurer, the class they're trying for.
+        public static readonly UnityEvent<Adventurer, ClassData> OnClassTrialStarted = new();
         #endregion
         
         #region Tutorial
@@ -338,6 +341,11 @@ namespace WanderersGuild
 
         // An adventurer quit over their mood (raised just before they leave the roster). Args: them, the reputation it cost.
         public static readonly UnityEvent<Adventurer, int> OnAdventurerQuit = new();
+        #endregion
+        
+        #region Log Book
+        // A line was written to the office log book. Arg: the entry.
+        public static readonly UnityEvent<LogEntry> OnLogEntryAdded = new();
         #endregion
     }
 }

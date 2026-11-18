@@ -58,6 +58,7 @@ namespace WanderersGuild
         [SerializeField] private string[] completedGuides = Array.Empty<string>();
         
         [SerializeField] private List<SavedMood> moods = new();
+        [SerializeField] private List<LogEntry> logEntries = new();
 
         public int Version => version;
 
@@ -248,6 +249,12 @@ namespace WanderersGuild
 
         public void SetMoods(IEnumerable<SavedMood> items) =>
             moods = items != null ? new List<SavedMood>(items) : new List<SavedMood>();
+        
+        // The office log book, oldest first. Written by GuildLog. NOTE: Older saves have none (an empty log).
+        public IReadOnlyList<LogEntry> LogEntries => logEntries ?? (IReadOnlyList<LogEntry>)Array.Empty<LogEntry>();
+
+        public void SetLogEntries(IEnumerable<LogEntry> items) =>
+            logEntries = items != null ? new List<LogEntry>(items) : new List<LogEntry>();
 
         public bool IsValid =>
             version is >= 1 and <= CurrentVersion &&

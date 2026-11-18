@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:wg="WanderersGuild">
+    <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/LogBook.uss?fileID=7433441132597879392&amp;guid=4bde204a0ec148b4c8a8c8d0c36560e0&amp;type=3#LogBook"/>
+    <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
+        <ui:VisualElement name="panel-window" class="pixel-window log-window">
+            <wg:OutlinedText name="log-title" class="panel-title" text="Log book · last 60 days" />
+
+            <!-- Rows are made and recycled in code (virtualized). Up/Down scrolls. -->
+            <ui:VisualElement class="log-body" picking-mode="Ignore">
+                <ui:ListView name="log-list" class="log-list pixel-scroll" />
+                <wg:OutlinedText name="log-empty" class="log-empty" text="Nothing recorded yet." />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="log-footer" picking-mode="Ignore">
+                <ui:Button name="log-order" class="pixel-button panel-button"><wg:OutlinedText text="Newest first" /></ui:Button>
+                <ui:Button name="log-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

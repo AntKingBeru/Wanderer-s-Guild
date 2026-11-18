@@ -94,6 +94,8 @@ namespace WanderersGuild
 
             adventurer.StartTrial(classId, Now + (long)_settings.TrialDays * GameCalendar.MinutesPerDay);
             GameEventsRelay.OnAdventurerChanged.Invoke(adventurer);
+            if (AdventurerManager.Instance.Classes.TryGetValue(classId, out var target))
+                GameEventsRelay.OnClassTrialStarted.Invoke(adventurer, target);
             return true;
         }
 

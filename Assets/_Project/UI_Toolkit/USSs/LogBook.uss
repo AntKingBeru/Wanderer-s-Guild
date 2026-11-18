@@ -1,0 +1,79 @@
+/* Office log book in 320×180 UI pixels: one list of dated rows + Order / Close. */
+.log-window {
+    width: 316px;
+    height: 164px;
+}
+/* NOTE: The theme's pixel-window centres its children — body and footer stretch to the window's width. */
+.log-body {
+    flex-grow: 1;
+    min-height: 0;
+    align-self: stretch;
+}
+.log-list {
+    flex-grow: 1;
+}
+.log-empty {
+    position: absolute;
+    top: 4px;
+    left: 0;
+    right: 0;
+    align-items: center;
+    display: none;
+}
+/* NOTE: The ListView's own item wrappers: no padding, no hover / selection highlight (the log is read-only). */
+.log-list .unity-collection-view__item,
+.log-list .unity-collection-view__item:hover,
+.log-list .unity-collection-view__item--selected {
+    padding: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+/* ---------- Rows (fixed 10px; one line, cut at the right edge — about 58 characters) ---------- */
+.log-row {
+    flex-direction: row;
+    align-items: center;
+    height: 10px;
+}
+.log-row__time {
+    width: 30px;
+    flex-shrink: 0;
+}
+.log-row__time .outlined-text__fill {
+    color: var(--color-text-disabled);
+}
+.log-row__text {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    align-items: flex-start;
+}
+.log-row__text .outlined-text__stack {
+    flex-shrink: 0;
+}
+.log-row__text .outlined-text__part {
+    white-space: nowrap;
+    -unity-text-align: middle-left;
+}
+/* A day header: the date alone, in accent. */
+.log-row--header .log-row__time {
+    display: none;
+}
+.log-row--header .log-row__text .outlined-text__fill {
+    color: var(--color-accent);
+}
+.log-row--good .log-row__text .outlined-text__fill {
+    color: rgb(150, 210, 120);
+}
+.log-row--bad .log-row__text .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}
+
+/* ---------- Footer ---------- */
+.log-footer {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-self: stretch;
+    flex-shrink: 0;
+    margin-top: 3px;
+}

@@ -1563,4 +1563,46 @@ namespace WanderersGuild
             MaxLines == 1 ? $"{used}/{CharsPerLine} characters" : $"{used}/{MaxLines} lines of {CharsPerLine} characters";
     }
     #endregion
+    
+    #region Log Book
+    // One office log book entry: when (total game minutes), what it's about, how it reads, and the text. Saved as is.
+    [Serializable]
+    public struct LogEntry
+    {
+        [SerializeField] private long minutes;
+        [SerializeField] private LogCategory category;
+        [SerializeField] private LogTone tone;
+        [SerializeField] private string text;
+
+        public LogEntry(long minutes, LogCategory category, LogTone tone, string text)
+        {
+            this.minutes = minutes;
+            this.category = category;
+            this.tone = tone;
+            this.text = text;
+        }
+
+        public long Minutes => minutes;
+        public LogCategory Category => category;
+        public LogTone Tone => tone;
+        public string Text => text ?? string.Empty;
+    }
+
+    // One row of the log book's list: a day header ("Spring 4, Year 1") or an entry ("14:00" + its text).
+    public readonly struct LogLine
+    {
+        public LogLine(bool isHeader, string time, string text, LogTone tone)
+        {
+            IsHeader = isHeader;
+            Time = time;
+            Text = text;
+            Tone = tone;
+        }
+
+        public bool IsHeader { get; }
+        public string Time { get; }
+        public string Text { get; }
+        public LogTone Tone { get; }
+    }
+    #endregion
 }

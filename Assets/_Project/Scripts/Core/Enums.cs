@@ -78,7 +78,8 @@ namespace WanderersGuild
         Recruits = 11,
         Armory = 12,
         Alchemy = 13,
-        TutorialPrompt = 14
+        TutorialPrompt = 14,
+        LogBook = 15
     }
     
     // How a ParallaxGroup reacts to the pointer (strength + follow speed set in GameConfig › Parallax).
@@ -516,6 +517,26 @@ namespace WanderersGuild
         OwnBed = 51, // Situation.
         IdleTooLong = 52, // Situation.
         Debug = 99
+    }
+    #endregion
+    
+    #region Log Book
+    // What a log book entry is about (saved — keep the values).
+    public enum LogCategory
+    {
+        Quest = 0,
+        Promotion = 1,
+        Advancement = 2,
+        Arrival = 3,
+        Departure = 4
+    }
+
+    // How an entry reads in the log book: plain, good news (green) or bad news (red). Saved — keep the values.
+    public enum LogTone
+    {
+        Normal = 0,
+        Good = 1,
+        Bad = 2
     }
     #endregion
 }
