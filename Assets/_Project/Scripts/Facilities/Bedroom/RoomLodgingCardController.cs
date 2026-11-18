@@ -17,6 +17,8 @@ namespace WanderersGuild
         private readonly List<int> _residentIds = new();
         private readonly List<string> _names = new();
         private readonly List<AvatarInteractable> _selected = new();
+        private readonly List<int> _outsiderIds = new();
+        private readonly List<Adventurer> _outsiders = new();
         private ScopedActionListener _escapeListener;
         private InputAction _point, _click;
         private RoomLodgingCardView _card;
@@ -61,7 +63,7 @@ namespace WanderersGuild
 
         private void Start()
         {
-            _card = view != null ? RoomLodgingCardView.Bind(view.DocumentRoot, Close) : null;
+            _card = view != null ? RoomLodgingCardView.Bind(view.DocumentRoot, Close, MoveIn) : null;
             if (_card == null)
                 Debug.LogError("[RoomLodgingCardController] Missing 'room-card' elements in WorldView.uxml.", this);
         }
@@ -136,6 +138,15 @@ namespace WanderersGuild
 
             var title = $"{LodgingRules.Label(_room, FacilityManager.Instance.Rooms)} · Lv {_room.Level}";
             _card.SetContent(title, _names.Count, LodgingRules.Beds(_room), _names);
+            
+            // NOTE: Members lodging outside, offered while this room has a free bed (arrival order).
+            _outsiders.Clear();
+            LodgingManager.Instance.OutsideLodgers(_outsiderIds);
+            foreach (var outsider in _outsiderIds.Select(id => AdventurerManager.Instance.Find(id)).Where(outsider => outsider != null))
+            {
+                _outsiders.Add(outsider);
+            }
+            _card.SetAssignable(_outsiders, LodgingRules.FreeBeds(_room, LodgingManager.Instance.Assignments) > 0);
         }
 
         private void ClearSelection()
@@ -172,6 +183,13 @@ namespace WanderersGuild
                 return;
             _escapeFrame = Time.frameCount;
             Close();
+        }
+        
+        // NOTE: A "+ Name" button: moves them into this room (re-checked inside); OnLodgingChanged refreshes the card.
+        private void MoveIn(int adventurerId)
+        {
+            if (_room != null && LodgingManager.HasInstance)
+                LodgingManager.Instance.TryMove(adventurerId, _room.Id);
         }
 
         private void OnAdventurerCard(int _) => Close();

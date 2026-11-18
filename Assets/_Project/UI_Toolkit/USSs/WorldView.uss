@@ -179,3 +179,17 @@
     --text-optical-x: 0.75;
     --text-optical-y: -2;
 }
+/* ---------- Room card: move in members lodging outside ---------- */
+.room-card__assign {
+    margin-top: 2px;
+}
+/* NOTE: One per member, left-aligned ("+ Name"; 18 characters fit the card's 118px). */
+.pixel-button.room-card__assign-button {
+    align-self: stretch;
+    align-items: flex-start;
+    margin: 1px 0 0 0;
+    padding: 0 2px;
+}
+.pixel-button.room-card__assign-button:hover {
+    border-color: var(--frame-highlight-border);
+}

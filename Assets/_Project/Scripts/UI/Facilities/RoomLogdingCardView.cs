@@ -1,4 +1,5 @@
-// The floating room card in the world view: "Bedroom 2 · Lv 2", beds used, and the residents' names (pooled lines).
+// The floating room card in the world view: title, beds used, residents' names, and "+ Name" buttons that move in members
+// who need a room (all lines pooled).
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,20 +10,27 @@ namespace WanderersGuild
     public sealed class RoomLodgingCardView
     {
         private const int MaxLines = 8;
+        private const int MaxAssign = 4;
 
         private readonly VisualElement _root;
         private readonly OutlinedText _title;
         private readonly OutlinedText _beds;
         private readonly OutlinedText _empty;
+        private readonly VisualElement _assign;
+        private readonly OutlinedText _assignMore;
         private readonly List<OutlinedText> _lines = new();
+        private readonly List<Button> _assignButtons = new();
+        private readonly List<OutlinedText> _assignLabels = new();
+        private readonly int[] _assignIds = new int[MaxAssign];
 
         private RoomLodgingCardView(VisualElement root, OutlinedText title, OutlinedText beds, OutlinedText empty,
-                                    VisualElement list, Button close, Action onClose)
+                                    VisualElement list, VisualElement assign, Button close, Action onClose, Action<int> onAssign)
         {
             _root = root;
             _title = title;
             _beds = beds;
             _empty = empty;
+            _assign = assign;
 
             for (var i = 0; i < MaxLines; i++)
             {
@@ -32,23 +40,30 @@ namespace WanderersGuild
                 _lines.Add(line);
             }
 
+            _assignMore = BuildAssignSection(onAssign);
+
             // NOTE: Never focusable — Space is UI Submit and the time-pause hotkey.
             close.focusable = false;
             close.clicked += onClose;
             Hide();
         }
 
-        public static RoomLodgingCardView Bind(VisualElement documentRoot, Action onClose)
+        /// <param name="documentRoot"></param>
+        /// <param name="onClose"></param>
+        /// <param name="onAssign">Called with the adventurer id of a "+ Name" button.</param>
+        public static RoomLodgingCardView Bind(VisualElement documentRoot, Action onClose, Action<int> onAssign)
         {
             var root = documentRoot?.Q<VisualElement>("room-card");
             var title = documentRoot?.Q<OutlinedText>("room-card-title");
             var beds = documentRoot?.Q<OutlinedText>("room-card-beds");
             var empty = documentRoot?.Q<OutlinedText>("room-card-empty");
             var list = documentRoot?.Q<VisualElement>("room-card-residents");
+            var assign = documentRoot?.Q<VisualElement>("room-card-assign");
             var close = documentRoot?.Q<Button>("room-card-close");
 
-            return root != null && title != null && beds != null && empty != null && list != null && close != null
-                ? new RoomLodgingCardView(root, title, beds, empty, list, close, onClose)
+            return root != null && title != null && beds != null && empty != null && list != null && assign != null &&
+                   close != null
+                ? new RoomLodgingCardView(root, title, beds, empty, list, assign, close, onClose, onAssign)
                 : null;
         }
 
@@ -72,6 +87,31 @@ namespace WanderersGuild
             }
         }
 
+        // NOTE: Shown only with a free bed and someone lodging outside; past the pooled buttons, "+N more (roster)".
+        public void SetAssignable(IReadOnlyList<Adventurer> outsiders, bool hasFreeBed)
+        {
+            var show = hasFreeBed && outsiders.Count > 0;
+            _assign.style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
+            if (!show)
+                return;
+
+            var shown = Mathf.Min(outsiders.Count, MaxAssign);
+            for (var i = 0; i < _assignButtons.Count; i++)
+            {
+                var visible = i < shown;
+                _assignButtons[i].style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+                if (!visible)
+                    continue;
+
+                _assignIds[i] = outsiders[i].Id;
+                _assignLabels[i].Text = $"+ {outsiders[i].Name}";
+            }
+
+            var more = outsiders.Count - shown;
+            _assignMore.Text = more > 0 ? $"+{more} more (roster)" : string.Empty;
+            _assignMore.style.display = more > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
         // Places the card's top-left at a local position, clamped inside the area (whole pixels).
         public void Place(Vector2 localPosition, Rect area, float topMargin)
         {
@@ -89,5 +129,35 @@ namespace WanderersGuild
 
         public void Show() => _root.style.display = DisplayStyle.Flex;
         public void Hide() => _root.style.display = DisplayStyle.None;
+
+        // NOTE: "Needs a room:", the pooled "+ Name" buttons (never focusable — Space is the pause hotkey), then the overflow
+        // line. Each button reads its id when clicked, so the pool is reused as the queue changes.
+        private OutlinedText BuildAssignSection(Action<int> onAssign)
+        {
+            OutlinedText header = new() { Text = "Needs a room:", pickingMode = PickingMode.Ignore };
+            header.AddToClassList("world-card__line");
+            _assign.Add(header);
+
+            for (var i = 0; i < MaxAssign; i++)
+            {
+                var index = i;
+                Button button = new(() => onAssign?.Invoke(_assignIds[index])) { focusable = false };
+                button.RemoveFromClassList(Button.ussClassName); // NOTE: Default theme styles would override our frames.
+                button.AddToClassList("pixel-button");
+                button.AddToClassList("room-card__assign-button");
+
+                OutlinedText label = new();
+                button.Add(label);
+                _assign.Add(button);
+                _assignButtons.Add(button);
+                _assignLabels.Add(label);
+            }
+
+            OutlinedText more = new() { pickingMode = PickingMode.Ignore };
+            more.AddToClassList("world-card__line");
+            _assign.Add(more);
+            _assign.style.display = DisplayStyle.None;
+            return more;
+        }
     }
 }

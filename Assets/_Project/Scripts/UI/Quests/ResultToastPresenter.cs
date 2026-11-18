@@ -44,6 +44,7 @@ namespace WanderersGuild
             GameEventsRelay.OnAdventurerDismissed.AddListener(OnAdventurerDismissed);
             GameEventsRelay.OnAdventurerLeavingSoon.AddListener(OnAdventurerLeavingSoon);
             GameEventsRelay.OnAdventurerQuit.AddListener(OnAdventurerQuit);
+            GameEventsRelay.OnAdventurerNeedsRoom.AddListener(OnNeedsRoom);
         }
 
         private void OnDisable()
@@ -73,6 +74,7 @@ namespace WanderersGuild
             GameEventsRelay.OnAdventurerDismissed.RemoveListener(OnAdventurerDismissed);
             GameEventsRelay.OnAdventurerLeavingSoon.RemoveListener(OnAdventurerLeavingSoon);
             GameEventsRelay.OnAdventurerQuit.RemoveListener(OnAdventurerQuit);
+            GameEventsRelay.OnAdventurerNeedsRoom.RemoveListener(OnNeedsRoom);
             if (_wait.IsActive())
                 _wait.Kill();
             _queue.Clear();
@@ -210,6 +212,9 @@ namespace WanderersGuild
             if (fromOutside && LodgingManager.HasInstance)
                 Enqueue($"{adventurer.Name} moved into {LodgingManager.Instance.LabelFor(adventurer.Id)}", false);
         }
+        
+        // NOTE: After the tutorial newcomers lodge outside until the player gives them a room (roster Room / bedroom card).
+        private void OnNeedsRoom(Adventurer adventurer) => Enqueue($"{adventurer.Name} needs a room", false);
 
         // NOTE: Toasts only on progress (the first report at load just records the count).
         private void OnStarterLodgingsChanged(int built, int total)

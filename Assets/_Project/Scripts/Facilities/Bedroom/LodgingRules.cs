@@ -37,6 +37,10 @@ namespace WanderersGuild
             return $"{room.Data.DisplayName} {index}";
         }
         
+        // "Bedroom 2 · 3/4": the room's label + beds used / beds (hover label, roster room list).
+        public static string BedsLabel(PlacedFacility room, IReadOnlyList<PlacedFacility> rooms, LodgingAssignments assignments) =>
+            $"{Label(room, rooms)} · {assignments.CountIn(room.Id)}/{Beds(room)}";
+        
         // The room with this id, or null. (Rooms are exposed read-only, so there's no List.Find.)
         public static PlacedFacility FindRoom(IReadOnlyList<PlacedFacility> rooms, int roomId)
         {

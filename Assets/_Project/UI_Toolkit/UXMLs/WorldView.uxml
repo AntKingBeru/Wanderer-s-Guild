@@ -45,5 +45,7 @@
         <wg:OutlinedText name="room-card-beds" class="world-card__line" text="Beds 1/2" />
         <ui:VisualElement name="room-card-residents" class="room-card__residents" picking-mode="Ignore" />
         <wg:OutlinedText name="room-card-empty" class="world-card__line" text="No residents" />
+        <!-- "Needs a room:" + "+ Name" buttons (created in code), shown while this room has a free bed. -->
+        <ui:VisualElement name="room-card-assign" class="room-card__assign" picking-mode="Ignore" />
     </ui:VisualElement>
 </ui:UXML>

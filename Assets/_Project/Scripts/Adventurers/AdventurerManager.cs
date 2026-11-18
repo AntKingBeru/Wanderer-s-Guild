@@ -212,9 +212,10 @@ namespace WanderersGuild
             if (FacilityManager.HasInstance)
             {
                 var (total, anyProvider) = FacilityEffects.Capacity(FacilityManager.Instance.Rooms);
-                var outside = LodgingManager.HasInstance ? LodgingManager.Instance.OutsideCount : 0;
+                // NOTE: Only outside lodgers beyond the free beds add capacity (see LodgingManager.OverflowCount).
+                var overflow = LodgingManager.HasInstance ? LodgingManager.Instance.OverflowCount : 0;
                 if (anyProvider)
-                    return total + outside;
+                    return total + overflow;
 
                 if (!_warnedNoCapacityEffects)
                 {

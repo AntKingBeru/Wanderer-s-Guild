@@ -1,5 +1,5 @@
-// Game-scene owner of lodging: houses every member (most free beds, or outside for the starting party), moves outside
-// lodgers in when beds appear, re-houses residents of removed rooms, tracks the starter bedrooms, and saves it all.
+// Game-scene owner of lodging: houses members automatically during the tutorial (most free beds, else outside), after it's
+// newcomers lodge outside until the player picks a room; re-houses residents of removed rooms, tracks starters, saves it all.
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +22,22 @@ namespace WanderersGuild
 
         public LodgingAssignments Assignments => _assignments;
         public int OutsideCount => _assignments.OutsideCount;
+        
+        // NOTE: Automatic until the tutorial is done (starting party, starter bedrooms); then rooms are the player's choice.
+        public static bool IsManual => !TutorialManager.HasInstance || TutorialManager.Instance.IsDone;
+
+        // Free beds across every finished bedroom.
+        public int TotalFreeBeds
+        {
+            get
+            {
+                return Rooms.Sum(room => LodgingRules.FreeBeds(room, _assignments));
+            }
+        }
+
+        // Outside lodgers beyond the free beds — what lifts capacity past the beds (the starting party before bedrooms).
+        // NOTE: Someone outside while a bed is free doesn't count, or every outside newcomer would raise capacity.
+        public int OverflowCount => Mathf.Max(0, OutsideCount - TotalFreeBeds);
 
         private static IReadOnlyList<PlacedFacility> Rooms =>
             FacilityManager.HasInstance ? FacilityManager.Instance.Rooms : System.Array.Empty<PlacedFacility>();
@@ -119,6 +135,25 @@ namespace WanderersGuild
             var room = FindRoom(roomId);
             return room != null ? LodgingRules.Label(room, Rooms) : "No room";
         }
+        
+        // Everyone lodging outside, in assignment order (the bedroom card's "Needs a room" buttons).
+        public void OutsideLodgers(List<int> into) => _assignments.ResidentsOf(LodgingAssignments.Outside, into);
+
+        // The bedrooms they could sleep in, by id: their own (if any) and every other with a free bed.
+        public void RoomChoicesFor(int adventurerId, List<PlacedFacility> into)
+        {
+            into.Clear();
+            var current = RoomOf(adventurerId);
+            into.AddRange(Rooms.Where(room => LodgingRules.Beds(room) > 0).Where(room => room.Id == current || LodgingRules.FreeBeds(room, _assignments) > 0));
+            into.Sort((a, b) => a.Id.CompareTo(b.Id));
+        }
+
+        // True if a bedroom other than theirs has a free bed (the roster's Room button).
+        public bool HasFreeRoomFor(int adventurerId)
+        {
+            var current = RoomOf(adventurerId);
+            return Rooms.Any(room => room.Id != current && LodgingRules.FreeBeds(room, _assignments) > 0);
+        }
 
         // ---------- Player actions (21b UI) ----------
 
@@ -141,10 +176,20 @@ namespace WanderersGuild
 
         // ---------- Events ----------
 
+        // NOTE: Automatic during the tutorial; after it, newcomers lodge outside and the player is told to give them a room.
         private void OnJoined(Adventurer adventurer)
         {
-            if (_isReady)
+            if (!_isReady)
+                return;
+
+            if (!IsManual)
+            {
                 House(adventurer, allowOutside: true);
+                return;
+            }
+
+            Assign(adventurer, LodgingAssignments.Outside, false);
+            GameEventsRelay.OnAdventurerNeedsRoom.Invoke(adventurer);
         }
 
         private void OnLeft(Adventurer adventurer)
@@ -161,12 +206,14 @@ namespace WanderersGuild
             _starterRooms.Add(room.Id);
         }
 
-        // NOTE: A finished level (new room or upgrade) can add beds — outside lodgers move in first.
+        // NOTE: A finished level (new room or upgrade) can add beds — during the tutorial outside lodgers move in by
+        // themselves; after it, the player chooses.
         private void OnCompleted(PlacedFacility _)
         {
             if (!_isReady)
                 return;
-            MoveOutsidersIn();
+            if (!IsManual)
+                MoveOutsidersIn();
             PublishStarterProgress();
             RefreshCapacity();
         }
@@ -244,30 +291,6 @@ namespace WanderersGuild
         }
 
         private static PlacedFacility FindRoom(int roomId) => LodgingRules.FindRoom(Rooms, roomId);
-        
-        // The next bedroom (by id, wrapping) with a free bed, other than their own; null if none.
-        public PlacedFacility NextFreeRoomFor(int adventurerId)
-        {
-            var current = RoomOf(adventurerId);
-            PlacedFacility first = null, after = null;
-            foreach (var room in Rooms)
-            {
-                if (room.Id == current || LodgingRules.FreeBeds(room, _assignments) <= 0)
-                    continue;
-                if (first == null || room.Id < first.Id)
-                    first = room;
-                if (room.Id > current && (after == null || room.Id < after.Id))
-                    after = room;
-            }
-            return after ?? first;
-        }
-
-        // Moves them to <see cref="NextFreeRoomFor"/> (re-checked now). False if there's nowhere free.
-        public bool TryMoveToNext(int adventurerId)
-        {
-            var room = NextFreeRoomFor(adventurerId);
-            return room != null && TryMove(adventurerId, room.Id);
-        }
 
         // NOTE: Drops entries for adventurers or rooms that are gone and rooms over their beds (re-housed in Start).
         private void Restore()

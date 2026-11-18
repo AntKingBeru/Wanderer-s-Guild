@@ -31,6 +31,7 @@ namespace WanderersGuild
         private readonly RosterSorter _sorter = new();
         private RosterToolbarView _toolbar;
         private VisualElement _dropdownLayer;
+        private RoomPickerView _roomPicker;
         private RosterSort _sort = RosterSort.Rank; // NOTE: Kept while the scene lives (the panel isn't rebuilt).
         private RosterFilter _filter = RosterFilter.None;
         private bool _warnedPool;
@@ -39,11 +40,13 @@ namespace WanderersGuild
         protected override IReadOnlyList<Button> ListButtons => _list.Buttons;
         protected override Focusable DefaultFocus => (Focusable)_list.ButtonFor(_selectedId) ?? _close;
 
-        // NOTE: An open Sort/Filter list owns the keyboard; the roster waits until it closes.
-        private bool IsPanelActive => IsInteractable && !_confirm.IsOpen && !_chooser.IsOpen && !_toolbar.IsOpen;
+        // NOTE: An open Sort / Filter / Room list owns the keyboard; the roster waits until it closes.
+        private bool IsAnyListOpen => _toolbar.IsOpen || (_roomPicker != null && _roomPicker.IsOpen);
+        private bool IsPanelActive => IsInteractable && !_confirm.IsOpen && !_chooser.IsOpen && !IsAnyListOpen;
         private bool IsConfirmActive => IsInteractable && _confirm.IsOpen;
         private bool IsSortListActive => IsInteractable && _toolbar.Sort.IsOpen && !_confirm.IsOpen;
         private bool IsFilterListActive => IsInteractable && _toolbar.Filter.IsOpen && !_confirm.IsOpen;
+        private bool IsRoomListActive => IsInteractable && _roomPicker.IsOpen && !_confirm.IsOpen;
 
         private static AdventurerSettings Settings => GameConfig.Instance.Adventurers;
 
@@ -96,9 +99,10 @@ namespace WanderersGuild
             _confirm.Initialize();
             _details.Disband.clicked += AskDisband;
             _details.Dismiss.clicked += AskDismiss;
-            _details.Move.clicked += MoveRoom;
+            _details.Move.clicked += OpenRoomPicker;
             _chooser.Cancel.clicked += CloseChooser;
             _toolbar.Initialize(_dropdownLayer, gameObject, _sort, _filter, OnSortChanged, OnFilterChanged);
+            _roomPicker = new RoomPickerView(_details.Move, _dropdownLayer, gameObject, MoveTo);
 
             AddPanelManipulator(new MenuNavigation(_navigationOrder, () => IsPanelActive, null));
             AddPanelManipulator(new MenuNavigation(_confirm.Buttons, () => IsConfirmActive, null, NavigationAxis.Horizontal));
@@ -106,6 +110,7 @@ namespace WanderersGuild
                 () => IsInteractable && _chooser.IsOpen && !_confirm.IsOpen, null));
             AddPanelManipulator(new MenuNavigation(_toolbar.Sort.Items, () => IsSortListActive, null));
             AddPanelManipulator(new MenuNavigation(_toolbar.Filter.Items, () => IsFilterListActive, null));
+            AddPanelManipulator(new MenuNavigation(_roomPicker.Items, () => IsRoomListActive, null));
 
             GameEventsRelay.OnAdventurerJoined.AddListener(OnAdventurerEvent);
             GameEventsRelay.OnAdventurerLeveledUp.AddListener(OnAdventurerEvent);
@@ -152,6 +157,7 @@ namespace WanderersGuild
             _confirm.HideImmediate();
             _chooser.HideImmediate();
             _toolbar.CloseAll(refocus: false);
+            _roomPicker.Close(refocus: false);
             if (_selectOnNextOpen >= 0)
             {
                 _selectedId = _selectOnNextOpen;
@@ -167,6 +173,8 @@ namespace WanderersGuild
                 _confirm.Cancel();
             else if (_toolbar.IsOpen)
                 _toolbar.CloseAll(refocus: true);
+            else if (_roomPicker.IsOpen)
+                _roomPicker.Close(refocus: true);
             else if (_chooser.IsOpen)
                 CloseChooser();
             else
@@ -314,7 +322,7 @@ namespace WanderersGuild
             var check = PromotionManager.HasInstance ? PromotionManager.Instance.Check(selected) : PromotionCheck.HighestRank();
             var partyLine = PartyManager.HasInstance ? PartyManager.Instance.LineFor(selected) : string.Empty;
             var roomLine = LodgingManager.HasInstance ? $"Room: {LodgingManager.Instance.LabelFor(selected.Id)}" : string.Empty;
-            var canMove = LodgingManager.HasInstance && LodgingManager.Instance.NextFreeRoomFor(selected.Id) != null;
+            var canMove = LodgingManager.HasInstance && LodgingManager.Instance.HasFreeRoomFor(selected.Id);
             var advancement = AdvancementManager.HasInstance ? AdvancementManager.Instance.Check(selected) : AdvancementCheck.NotAtCap();
             _details.Show(selected, Settings.Experience, check, GameConfig.Instance.Promotion, RequestManager.NowMinutes,
                 partyLine, roomLine, canMove, advancement);
@@ -436,12 +444,17 @@ namespace WanderersGuild
         // NOTE: Someone moved rooms (Move, re-housing after a demolish, moving in from outside) — the "Room:" line changes.
         private void OnLodgingChanged(Adventurer _, int __, bool ___) => RefreshIfOpen();
         
-        // NOTE: Moves straight away (no confirm — it's easily undone by pressing again); re-checked inside LodgingManager.
-        private void MoveRoom()
+        // NOTE: Opens the room list above the Room button; the move happens on a pick (re-checked inside LodgingManager).
+        private void OpenRoomPicker()
         {
-            if (!IsPanelActive || !LodgingManager.HasInstance)
-                return;
-            LodgingManager.Instance.TryMoveToNext(_selectedId);
+            if (IsPanelActive)
+                _roomPicker.Open(_selectedId);
+        }
+
+        private void MoveTo(int adventurerId, int roomId)
+        {
+            if (LodgingManager.HasInstance)
+                LodgingManager.Instance.TryMove(adventurerId, roomId);
             Refresh();
         }
 

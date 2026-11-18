@@ -40,6 +40,13 @@ namespace WanderersGuild
         Vertical = 0,
         Horizontal = 1
     }
+    
+    // Which way a dropdown's list opens from its field.
+    public enum DropdownDirection
+    {
+        Down = 0,
+        Up = 1 // NOTE: For fields near the bottom of a panel (the roster's Room button).
+    }
     #endregion
     
     #region Menu

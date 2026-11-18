@@ -25,8 +25,10 @@ namespace WanderersGuild
         {
             get
             {
-                var used = LodgingManager.HasInstance ? LodgingManager.Instance.Assignments.CountIn(_room.Id) : 0;
-                return $"{LodgingRules.Label(_room, FacilityManager.Instance.Rooms)} · {used}/{LodgingRules.Beds(_room)}";
+                var rooms = FacilityManager.Instance.Rooms;
+                return LodgingManager.HasInstance
+                    ? LodgingRules.BedsLabel(_room, rooms, LodgingManager.Instance.Assignments)
+                    : $"{LodgingRules.Label(_room, rooms)} · 0/{LodgingRules.Beds(_room)}";
             }
         }
 

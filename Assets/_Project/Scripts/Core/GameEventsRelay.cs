@@ -297,6 +297,9 @@ namespace WanderersGuild
         
         // A bedroom was clicked in the world: show its room card. Arg: the room id.
         public static readonly UnityEvent<int> OnRoomCardRequested = new();
+        
+        // A new member joined with no room (after the tutorial, rooms are the player's choice). Arg: the adventurer.
+        public static readonly UnityEvent<Adventurer> OnAdventurerNeedsRoom = new();
         #endregion
         
         #region Recall

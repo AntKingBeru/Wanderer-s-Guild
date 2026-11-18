@@ -54,7 +54,7 @@
                     <wg:OutlinedText name="adv-empty" class="adv-empty" text="No adventurers yet." />
 
                     <ui:VisualElement class="adv-buttons" picking-mode="Ignore">
-                        <ui:Button name="adv-move" class="pixel-button panel-button"><wg:OutlinedText text="Move" /></ui:Button>
+                        <ui:Button name="adv-move" class="pixel-button panel-button"><wg:OutlinedText text="Room" /></ui:Button>
                         <ui:Button name="adv-promote" class="pixel-button panel-button"><wg:OutlinedText text="Promote" /></ui:Button>
                     </ui:VisualElement>
                 </ui:VisualElement>

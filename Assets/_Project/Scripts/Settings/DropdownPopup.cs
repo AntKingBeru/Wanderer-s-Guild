@@ -20,6 +20,8 @@ namespace WanderersGuild
         private readonly ScrollView _list;
         private readonly GameObject _linkTarget;
         private readonly Action _onOutsideClick;
+        private readonly DropdownDirection _direction;
+        private readonly float _minWidth;
         private readonly List<Button> _items = new();
 
         public bool IsOpen { get; private set; }
@@ -27,12 +29,21 @@ namespace WanderersGuild
         // NOTE: The same list instance for the popup's life (rebuilt in place) — safe to hand to MenuNavigation once.
         public IReadOnlyList<Button> Items => _items;
 
-        public DropdownPopup(VisualElement field, VisualElement layer, GameObject linkTarget, Action onOutsideClick)
+        /// <param name="field"></param>
+        /// <param name="layer"></param>
+        /// <param name="linkTarget"></param>
+        /// <param name="onOutsideClick"></param>
+        /// <param name="direction">Down (under the field) or Up (above it — for fields near the bottom of a panel).</param>
+        /// <param name="minWidth">The list is at least this wide (UI px), even under a narrower field.</param>
+        public DropdownPopup(VisualElement field, VisualElement layer, GameObject linkTarget, Action onOutsideClick,
+            DropdownDirection direction = DropdownDirection.Down, float minWidth = 0f)
         {
             _field = field;
             _layer = layer;
             _linkTarget = linkTarget;
             _onOutsideClick = onOutsideClick;
+            _direction = direction;
+            _minWidth = minWidth;
 
             _list = new ScrollView(ScrollViewMode.Vertical) { horizontalScrollerVisibility = ScrollerVisibility.Hidden };
             _list.AddToClassList(ListUssClassName);
@@ -119,14 +130,27 @@ namespace WanderersGuild
             _layer.style.display = DisplayStyle.None;
         }
 
-        // NOTE: Just under the field, in layer space (works inside scrolled pages and at any UI scale); as wide as the field.
+        // NOTE: Under the field (Down) or above it (Up — placed by its bottom edge, so its height doesn't matter), in layer
+        // space; at least as wide as the field. The layer fills its parent, so the parent's height is the layer's.
         private void PositionList()
         {
             var field = _field.worldBound;
-            var topLeft = _layer.WorldToLocal(new Vector2(field.xMin, field.yMax));
-            _list.style.left = topLeft.x;
-            _list.style.top = topLeft.y;
-            _list.style.width = field.width;
+            _list.style.width = Mathf.Max(field.width, _minWidth);
+
+            if (_direction == DropdownDirection.Up)
+            {
+                var top = _layer.WorldToLocal(new Vector2(field.xMin, field.yMin));
+                var height = _layer.parent != null ? _layer.parent.layout.height : 0f;
+                _list.style.left = top.x;
+                _list.style.top = StyleKeyword.Auto;
+                _list.style.bottom = height - top.y;
+                return;
+            }
+
+            var bottom = _layer.WorldToLocal(new Vector2(field.xMin, field.yMax));
+            _list.style.left = bottom.x;
+            _list.style.top = bottom.y;
+            _list.style.bottom = StyleKeyword.Auto;
         }
 
         private void SetInteractable(bool interactable)
