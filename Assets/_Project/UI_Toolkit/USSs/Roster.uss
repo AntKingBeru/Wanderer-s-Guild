@@ -8,6 +8,32 @@
     width: 316px;
     height: 164px;
 }
+/* ---------- Title row: count + Sort / Filter dropdowns ---------- */
+/* NOTE: The window centres its children; the row stretches to its width. The title keeps its 4px bottom margin, so the row
+   is exactly as tall as the title was (the 12px fields fit inside it). */
+.roster-header {
+    flex-direction: row;
+    align-items: flex-start;
+    align-self: stretch;
+    flex-shrink: 0;
+}
+.roster-title {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+}
+/* NOTE: Fixed widths so the row never jumps: "Sort: Status" (12 characters) and "Filter: Injured" (15) + the arrow. Each
+   list opens as wide as its field. */
+.roster-sort {
+    width: 76px;
+    margin-left: 4px;
+    flex-shrink: 0;
+}
+.roster-filter {
+    width: 90px;
+    margin-left: 4px;
+    flex-shrink: 0;
+}
 .roster-body {
     flex-direction: row;
     flex-grow: 1;

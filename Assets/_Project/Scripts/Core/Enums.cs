@@ -303,6 +303,28 @@ namespace WanderersGuild
         Promotion = 1,
         Advancement = 2
     }
+    
+    // How the roster list is ordered. NOTE: Values are the sort list's item indices — keep them 0, 1, 2… in order.
+    public enum RosterSort
+    {
+        Rank = 0,
+        Level = 1,
+        Class = 2,
+        Status = 3,
+        Name = 4,
+        Mood = 5
+    }
+
+    // Which adventurers the roster lists (combinable): every ticked flag adds its group. None = everyone ("All").
+    [System.Flags]
+    public enum RosterFilter
+    {
+        None = 0,
+        Idle = 1,
+        Busy = 2,
+        Injured = 4,
+        Ready = 8
+    }
     #endregion
     
     #region Facilities

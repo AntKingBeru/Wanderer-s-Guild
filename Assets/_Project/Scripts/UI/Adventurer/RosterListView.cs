@@ -37,11 +37,12 @@ namespace WanderersGuild
             }
         }
 
-        /// <param name="adventurers">Already sorted. Anything beyond the pooled rows isn't listed (the panel warns).</param>
+        /// <param name="adventurers">Already filtered and sorted. Anything beyond the pooled rows isn't listed (the panel warns).</param>
         /// <param name="selectedId"></param>
         /// <param name="ranks"></param>
+        /// <param name="emptyMessage">Shown when the list is empty (the filter's message).</param>
         // NOTE: The mood face uses the LIVE level (the same the details pane shows); none without the satisfaction system.
-        public void Show(IReadOnlyList<Adventurer> adventurers, int selectedId, GuildRankSettings ranks)
+        public void Show(IReadOnlyList<Adventurer> adventurers, int selectedId, GuildRankSettings ranks, string emptyMessage)
         {
             var satisfaction = SatisfactionManager.HasInstance ? SatisfactionManager.Instance : null;
             for (var i = 0; i < _rows.Count; i++)
@@ -59,6 +60,7 @@ namespace WanderersGuild
                 }
             }
 
+            _empty.Text = emptyMessage;
             _empty.style.display = adventurers.Count == 0 ? DisplayStyle.Flex : DisplayStyle.None;
         }
 

@@ -2,7 +2,12 @@
     <Style src="project://database/Assets/_Project/UI_Toolkit/USSs/Roster.uss?fileID=7433441132597879392&amp;guid=4a282725381ba3043b85013f08c061e9&amp;type=3#Roster"/>
     <ui:VisualElement name="panel-root" class="panel-root panel-root--dim">
         <ui:VisualElement name="panel-window" class="pixel-window roster-window">
-            <wg:OutlinedText name="roster-title" class="panel-title" text="Adventurers 0/6" />
+            <!-- Title row: the count on the left; Sort (one choice) and Filter (several) dropdowns on the right. -->
+            <ui:VisualElement class="roster-header" picking-mode="Ignore">
+                <wg:OutlinedText name="roster-title" class="panel-title roster-title" text="Adventurers 0/6" />
+                <wg:PixelDropdown name="roster-sort" class="roster-sort" />
+                <wg:PixelChecklistDropdown name="roster-filter" class="roster-filter" />
+            </ui:VisualElement>
 
             <ui:VisualElement class="roster-body" picking-mode="Ignore">
                 <!-- Left: rows are created in code (a fixed pool). -->
@@ -63,6 +68,8 @@
                 <ui:Button name="roster-close" class="pixel-button panel-button"><wg:OutlinedText text="Close" /></ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
+        <!-- Sort / Filter lists open here, over the panel; a click outside the open list closes it. -->
+        <ui:VisualElement name="roster-dropdown-layer" class="dropdown-layer" />
         <!-- Class chooser (Advance): one button per offered class (created in code) + Cancel. -->
         <ui:VisualElement name="chooser-overlay" class="chooser-overlay">
             <ui:VisualElement class="pixel-window chooser-window">

@@ -210,3 +210,56 @@
 .icon-slot--placeholder .icon-slot__letter {
     display: flex;
 }
+/* ---------- Pixel dropdowns (PixelDropdown, PixelChecklistDropdown) ---------- */
+.pixel-dropdown {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 12px;
+    padding: 0 3px;
+    border-width: 1px;
+    border-color: var(--frame-normal-border);
+    background-color: var(--frame-normal-bg);
+}
+.pixel-dropdown:focus {
+    border-color: var(--frame-highlight-border);
+    background-color: var(--frame-highlight-bg);
+}
+/* NOTE: Hidden until a list opens; then it covers the panel and catches clicks outside the list (to close it). */
+.dropdown-layer {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    display: none;
+}
+.pixel-dropdown__list {
+    max-height: 72px;
+    border-width: 1px;
+    border-color: var(--frame-highlight-border);
+    background-color: var(--frame-normal-bg);
+}
+/* NOTE: A row, left-aligned: an optional check box, then the label. */
+.pixel-dropdown__item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    align-self: stretch;
+    margin: 0;
+    padding: 0 3px;
+    border-width: 0;
+}
+/* The chosen option of a single-choice list. */
+.pixel-dropdown__item--current .outlined-text__fill {
+    color: var(--color-accent);
+}
+/* NOTE: A drawn box (the font has no check glyph): 7×7 with a 1px frame, filled when ticked. */
+.pixel-dropdown__check {
+    width: 7px;
+    height: 7px;
+    margin-right: 3px;
+    flex-shrink: 0;
+    border-width: 1px;
+    border-color: var(--color-text);
+}
+.pixel-dropdown__check--on {
+    background-color: var(--color-accent);
+}

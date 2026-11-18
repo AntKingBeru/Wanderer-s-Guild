@@ -1,4 +1,4 @@
-// Adventurer roster panel: sorted list (rank, then level) + details; Promote asks first, then starts the rank exam; Dismiss
+// Adventurer roster panel: list (sort + filter dropdowns) + details; Promote asks first, then starts the rank exam; Dismiss
 // (with an office) asks first, then lets the adventurer go.
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +8,8 @@ namespace WanderersGuild
 {
     public class RosterPanel : MenuPanel
     {
-        private const string EmptyMessage = "No adventurers yet.";
-
+        private const string DropdownLayerName = "roster-dropdown-layer";
+        
         // NOTE: Rows are created once and can't grow afterward (MenuPanel sets them up in Initialize) — far more than any
         // realistic guild; past this, the extra adventurers aren't listed and a warning says to raise it.
         private const int RowPool = 48;
@@ -28,14 +28,22 @@ namespace WanderersGuild
         private ClassChooserView _chooser;
         private int _selectedId = -1;
         private int _selectedIndex;
+        private readonly RosterSorter _sorter = new();
+        private RosterToolbarView _toolbar;
+        private VisualElement _dropdownLayer;
+        private RosterSort _sort = RosterSort.Rank; // NOTE: Kept while the scene lives (the panel isn't rebuilt).
+        private RosterFilter _filter = RosterFilter.None;
         private bool _warnedPool;
 
         protected override IReadOnlyList<Button> Buttons => _buttons;
         protected override IReadOnlyList<Button> ListButtons => _list.Buttons;
         protected override Focusable DefaultFocus => (Focusable)_list.ButtonFor(_selectedId) ?? _close;
 
-        private bool IsPanelActive => IsInteractable && !_confirm.IsOpen && !_chooser.IsOpen;
+        // NOTE: An open Sort/Filter list owns the keyboard; the roster waits until it closes.
+        private bool IsPanelActive => IsInteractable && !_confirm.IsOpen && !_chooser.IsOpen && !_toolbar.IsOpen;
         private bool IsConfirmActive => IsInteractable && _confirm.IsOpen;
+        private bool IsSortListActive => IsInteractable && _toolbar.Sort.IsOpen && !_confirm.IsOpen;
+        private bool IsFilterListActive => IsInteractable && _toolbar.Filter.IsOpen && !_confirm.IsOpen;
 
         private static AdventurerSettings Settings => GameConfig.Instance.Adventurers;
 
@@ -48,11 +56,13 @@ namespace WanderersGuild
             _details = AdventurerDetailsView.Bind(documentRoot);
             _confirm = InlineConfirmation.Bind(documentRoot);
             _chooser = ClassChooserView.Bind(documentRoot);
+            _toolbar = RosterToolbarView.Bind(documentRoot);
+            _dropdownLayer = documentRoot.Q<VisualElement>(DropdownLayerName);
 
             if (_title == null || scroll == null || listEmpty == null || _close == null || _details == null || _confirm == null)
                 return false;
             
-            if (_chooser == null)
+            if (_chooser == null || _toolbar == null || _dropdownLayer == null)
                 return false;
 
             _list = new RosterListView(scroll, listEmpty, RowPool, Select);
@@ -67,6 +77,8 @@ namespace WanderersGuild
             _buttons.AddRange(_chooser.Buttons);
 
             _navigationOrder.Clear();
+            _navigationOrder.Add(_toolbar.Sort);
+            _navigationOrder.Add(_toolbar.Filter);
             _navigationOrder.AddRange(_list.Buttons);
             _navigationOrder.Add(_details.Move);
             _navigationOrder.Add(_details.Promote);
@@ -86,11 +98,14 @@ namespace WanderersGuild
             _details.Dismiss.clicked += AskDismiss;
             _details.Move.clicked += MoveRoom;
             _chooser.Cancel.clicked += CloseChooser;
+            _toolbar.Initialize(_dropdownLayer, gameObject, _sort, _filter, OnSortChanged, OnFilterChanged);
 
             AddPanelManipulator(new MenuNavigation(_navigationOrder, () => IsPanelActive, null));
             AddPanelManipulator(new MenuNavigation(_confirm.Buttons, () => IsConfirmActive, null, NavigationAxis.Horizontal));
             AddPanelManipulator(new MenuNavigation(new List<VisualElement>(_chooser.Buttons),
                 () => IsInteractable && _chooser.IsOpen && !_confirm.IsOpen, null));
+            AddPanelManipulator(new MenuNavigation(_toolbar.Sort.Items, () => IsSortListActive, null));
+            AddPanelManipulator(new MenuNavigation(_toolbar.Filter.Items, () => IsFilterListActive, null));
 
             GameEventsRelay.OnAdventurerJoined.AddListener(OnAdventurerEvent);
             GameEventsRelay.OnAdventurerLeveledUp.AddListener(OnAdventurerEvent);
@@ -136,6 +151,7 @@ namespace WanderersGuild
         {
             _confirm.HideImmediate();
             _chooser.HideImmediate();
+            _toolbar.CloseAll(refocus: false);
             if (_selectOnNextOpen >= 0)
             {
                 _selectedId = _selectOnNextOpen;
@@ -144,11 +160,13 @@ namespace WanderersGuild
             Refresh();
         }
 
-        // NOTE: Esc answers the promote prompt (No) first; otherwise it closes the roster.
+        // NOTE: Esc answers the prompt (No) first, then closes an open Sort/Filter list or the chooser, then the roster.
         protected override void OnCancel()
         {
             if (_confirm.IsOpen)
                 _confirm.Cancel();
+            else if (_toolbar.IsOpen)
+                _toolbar.CloseAll(refocus: true);
             else if (_chooser.IsOpen)
                 CloseChooser();
             else
@@ -252,14 +270,22 @@ namespace WanderersGuild
             Focus(_details.Promote.enabledSelf ? _details.Promote : (Focusable)_close);
         }
 
-        // NOTE: Sorted by rank, then level (highest first), then name. The selection is kept by adventurer id, among the
-        // listed rows only.
+        // NOTE: Filtered, then sorted (RosterSorter — ties by rank, level, name). The title counts everyone; an empty list
+        // says why (the filter's message). The selection is kept by adventurer id, among the listed rows only.
         private void Refresh()
         {
             _sorted.Clear();
+            var total = 0;
             if (AdventurerManager.HasInstance)
-                _sorted.AddRange(AdventurerManager.Instance.Adventurers);
-            _sorted.Sort(CompareForRoster);
+            {
+                foreach (var adventurer in AdventurerManager.Instance.Adventurers)
+                {
+                    total++;
+                    if (RosterFilterRules.Passes(adventurer, _filter))
+                        _sorted.Add(adventurer);
+                }
+            }
+            _sorter.Sort(_sorted, _sort);
 
             if (_sorted.Count > _list.RowCount && !_warnedPool)
             {
@@ -269,9 +295,10 @@ namespace WanderersGuild
 
             var selected = ResolveSelection();
             var capacity = AdventurerManager.HasInstance ? AdventurerManager.Instance.Capacity : Settings.Capacity;
+            var emptyMessage = RosterFilterRules.EmptyMessage(_filter);
 
-            _title.Text = $"Adventurers {_sorted.Count}/{capacity}";
-            _list.Show(_sorted, _selectedId, GameConfig.Instance.GuildRanks);
+            _title.Text = $"Adventurers {total}/{capacity}";
+            _list.Show(_sorted, _selectedId, GameConfig.Instance.GuildRanks, emptyMessage);
             
             // NOTE: Dismiss shows once the office exists; enabled only for someone free (idle or injured).
             var recruitment = RecruitmentManager.HasInstance ? RecruitmentManager.Instance : null;
@@ -280,7 +307,7 @@ namespace WanderersGuild
 
             if (selected == null)
             {
-                _details.ShowEmpty(EmptyMessage);
+                _details.ShowEmpty(emptyMessage);
                 return;
             }
 
@@ -303,11 +330,16 @@ namespace WanderersGuild
                 _chooser.HideImmediate();
         }
 
-        private static int CompareForRoster(Adventurer a, Adventurer b)
+        private void OnSortChanged(RosterSort sort)
         {
-            if (a.Rank != b.Rank)
-                return b.Rank.CompareTo(a.Rank);
-            return a.Level != b.Level ? b.Level.CompareTo(a.Level) : string.CompareOrdinal(a.Name, b.Name);
+            _sort = sort;
+            RefreshIfOpen();
+        }
+
+        private void OnFilterChanged(RosterFilter filter)
+        {
+            _filter = filter;
+            RefreshIfOpen();
         }
 
         private Adventurer ResolveSelection()

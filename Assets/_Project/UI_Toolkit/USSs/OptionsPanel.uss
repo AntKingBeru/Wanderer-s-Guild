@@ -160,39 +160,13 @@
 
 /* ---------- Pixel dropdown ---------- */
 .pixel-dropdown {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    height: 12px;
-    padding: 0 3px;
-    border-width: 1px;
-    border-color: var(--frame-normal-border);
-    background-color: var(--frame-normal-bg);
-}
-.pixel-dropdown:focus {
-    border-color: var(--frame-highlight-border);
-    background-color: var(--frame-highlight-bg);
+    margin-top: auto;
 }
 /* NOTE: Hidden until a dropdown opens; then it catches clicks outside the list (to close it). */
 .options-dropdown-layer {
     position: absolute;
     left: 0; top: 0; right: 0; bottom: 0;
     display: none;
-}
-.pixel-dropdown__list {
-    max-height: 72px;
-    border-width: 1px;
-    border-color: var(--frame-highlight-border);
-    background-color: var(--frame-normal-bg);
-}
-.pixel-dropdown__item {
-    align-self: stretch;
-    margin: 0;
-    padding: 0 3px;
-    border-width: 0;
-}
-.pixel-dropdown__item > .outlined-text {
-    align-self: flex-start;
 }
 
 /* ---------- Confirmation overlay (Restore Defaults / Keep settings / Apply changes) ---------- */
