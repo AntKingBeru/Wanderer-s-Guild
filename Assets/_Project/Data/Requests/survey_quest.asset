@@ -14,11 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WanderersGuild.RequestData
   id: survey_quest
   displayName: Official Request
-  objective: 'This is an official Request from Verasia.
+  objective: 'Official request from Verasia.
 
-    We need help surveying the nearby forest for runaway criminals,
-
-    Our forces are busy doing more important matters.
+    Help us survey the nearby forest for runaway criminals, our forces are busy with more important matters.
 
     From High Guard Gin Franz.'
   category: 4

@@ -48,9 +48,12 @@ namespace WanderersGuild
 
             var starterSlot = LodgingManager.HasInstance && LodgingManager.Instance.StarterSlotOpen(data);
             if (!starterSlot && data.Limit > 0 && CountNonStarter(data, rooms) >= data.Limit)
-                return $"Limit reached ({data.Limit})";
+                return LimitReason(data.Limit);
             return null;
         }
+        
+        // The limit lock text (shown in place of a catalog card's cost line; the text validator checks it).
+        public static string LimitReason(int limit) => $"Limit reached ({limit})";
 
         private static int CountNonStarter(FacilityData data, IReadOnlyList<PlacedFacility> rooms)
         {

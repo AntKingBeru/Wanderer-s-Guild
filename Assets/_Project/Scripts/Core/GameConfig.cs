@@ -65,7 +65,6 @@ namespace WanderersGuild
         [SerializeField] private LodgingSettings lodging = new();
         [SerializeField] private QuestRecallSettings questRecall = new();
         [SerializeField] private AdvancementSettings advancement = new();
-        [SerializeField] private MarqueeSettings marquee = new();
         [SerializeField] private DoorSettings doors = new();
         [SerializeField] private InteriorLightSettings interiorLightSettings = new();
         [SerializeField] private SpeechSettings speech = new();
@@ -129,7 +128,6 @@ namespace WanderersGuild
         public LodgingSettings Lodging => lodging;
         public QuestRecallSettings QuestRecall => questRecall;
         public AdvancementSettings Advancement => advancement;
-        public MarqueeSettings Marquee => marquee;
         public DoorSettings Doors => doors;
         public InteriorLightSettings InteriorLights => interiorLightSettings;
         public SpeechSettings Speech => speech;
@@ -2079,18 +2077,30 @@ namespace WanderersGuild
     }
     #endregion
     
-    #region Marquee
-    [Serializable]
-    public class MarqueeSettings
+    #region Text Limits
+    // NOTE: Constants, not inspector values: they mirror the font and the USS box sizes, so the editor's text validator reads
+    // them without a scene. When a box's USS size changes, change its width here (each comment names the rule).
+    public static class TextLimits
     {
-        [Tooltip("UI pixels per second a too-long line slides at.")]
-        [SerializeField, Min(1f)] private float speed = 20f;
+        // monogram-extended at 12px: every character advances 4.5 UI px, a line is 9.49 UI px tall (× lines = a box's USS
+        // max-height), and every OutlinedText adds a 2px gutter on each side.
+        public const float CharAdvance = 4.5f;
+        public const float LineHeight = 9.49f;
+        public const float Gutter = 4f;
 
-        [Tooltip("Seconds it rests at each end before sliding back.")]
-        [SerializeField, Min(0f)] private float pause = 1f;
+        // Request board details (RequestBoard.uss › .board-details: 302 − 149 list − 4 gap) and the lifted note's request
+        // column (QuestBoard.uss › .note-col--request) — both 149px, so a description wraps the same in each.
+        public static readonly TextBox RequestTitle = new("Title", 149f, 1);
+        public static readonly TextBox RequestObjective = new("Description", 149f, 6);
 
-        public float Speed => speed;
-        public float Pause => pause;
+        // Lifted note's party column (QuestBoard.uss › .note-col--party, 119px): "Name · Lv 12".
+        public static readonly TextBox NoteMember = new("Quest note member line", 119f, 1);
+
+        // Build catalog card text (BuildMode.uss › .build-card: 104 − 2 border − 4 padding − 14 icon = 84px).
+        public static readonly TextBox BuildCardLine = new("Build card line", 84f, 1);
+
+        // Room card title (BuildMode.uss › .room-card: 156 − 2 border − 8 padding − 13 close button = 133px).
+        public static readonly TextBox RoomCardTitle = new("Room card title", 133f, 1);
     }
     #endregion
     

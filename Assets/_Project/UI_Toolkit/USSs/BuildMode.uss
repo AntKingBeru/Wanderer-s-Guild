@@ -15,7 +15,8 @@
 }
 
 /* ---------- Room card (fixed above the build bar, left) ---------- */
-/* NOTE: The bar is 46px tall; the card sits 2px above it. Children stretch (the theme's window centres them by default). */
+/* NOTE: The bar is 46px tall; the card sits 2px above it and grows upward with its lines. Children stretch (the theme's
+   window centres them by default). Inner width 146px. */
 .room-card {
     position: absolute;
     left: 4px;
@@ -31,10 +32,11 @@
     align-items: center;
     margin-bottom: 1px;
 }
+/* NOTE: One line (.one-line), cut before the close button: 133px → 28 characters (TextLimits.RoomCardTitle). */
 .room-card__title {
+    flex-grow: 1;
     flex-shrink: 1;
     min-width: 0;
-    overflow: hidden;
     padding: 1px 0;
 }
 .room-card__title .outlined-text__fill {
@@ -48,6 +50,13 @@
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
+}
+/* NOTE: Body lines wrap at the card's width (31 characters a line) and the card grows to fit them — nothing slides or clips. */
+.room-card__line {
+    align-items: stretch;
+}
+.room-card__line .outlined-text__stack {
+    align-self: stretch;
 }
 .room-card__line .outlined-text__part {
     white-space: normal;
@@ -101,7 +110,7 @@
     flex-shrink: 0;
 }
 /* NOTE: A fixed gap after the title; the hint takes the rest of the row, right-aligned, clipped if a narrow window squeezes it
-   (1px padding keeps glyph outlines inside the clip). */
+   (the text's gutter keeps glyph outlines inside the clip). */
 .build-title {
     flex-shrink: 0;
     margin-right: 8px;
@@ -143,10 +152,12 @@
 }
 
 /* ---------- Cards ---------- */
+/* NOTE: 104px wide (BuildModeView.FallbackCardStep = width + margin): the text column is 84px → 17 characters a line
+   (TextLimits.BuildCardLine). Two lines: name, then cost · size · days (or the lock reason). */
 .build-card {
     flex-direction: row;
     align-items: center;
-    width: 86px;
+    width: 104px;
     height: 28px;
     margin: 0 2px 0 0;
     padding: 1px 2px;
@@ -169,38 +180,34 @@
     flex-shrink: 0;
     -unity-background-scale-mode: scale-to-fit;
 }
-/* NOTE: The text column may be narrower than its lines, so long ones overflow and slide (MarqueeLine). */
 .build-card__text {
     flex-grow: 1;
     flex-shrink: 1;
     min-width: 0;
 }
-.build-card__info .outlined-text__fill,
-.build-card__reason .outlined-text__fill {
+.build-card__info .outlined-text__fill {
     color: var(--color-text-disabled);
 }
 .build-card--poor .build-card__info .outlined-text__fill {
     color: rgb(224, 112, 96);
 }
-/* ---------- Sliding lines (MarqueeLine) ---------- */
-/* NOTE: The line spans its column and clips; its text never wraps. 1px/2px padding keeps the outline inside the clip, and the
-   -1px vertical margin cancels that padding in the layout — each line takes exactly its text height (neighbours overlap by
-   the transparent pixel), so a locked catalog card's three lines still fit the card. */
-.marquee {
+
+/* ---------- One-line texts (catalog card lines, room card title) ---------- */
+/* NOTE: The line spans its column, never wraps, and cuts anything past the right edge — TextLimits says how many characters
+   fit, and Tools › Wanderer's Guild › Validate Text Lengths checks the data. The text's own gutter keeps the outline inside
+   the clip. */
+.one-line {
     align-self: stretch;
     align-items: flex-start;
     overflow: hidden;
-    padding: 1px 2px;
-    margin: -1px 0;
 }
-.marquee .outlined-text__stack {
+.one-line .outlined-text__stack {
     align-self: flex-start;
     flex-shrink: 0;
 }
-/* NOTE: The parts inherit the button's centred text alignment; a part as wide as its line box would centre an overflowing
-   line (cut on both sides). Left-aligned, every line starts at the box's left edge and overflows to the right, where it
-   slides. */
-.marquee .outlined-text__part {
+/* NOTE: The parts inherit a button's centred text alignment; centred, an overflowing line would be cut on both sides.
+   Left-aligned, it always starts at the left edge. */
+.one-line .outlined-text__part {
     white-space: nowrap;
     -unity-text-align: middle-left;
 }

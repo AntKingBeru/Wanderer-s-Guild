@@ -37,6 +37,7 @@ namespace Editor
             {
                 _isLoading = false;
                 AssetDatabase.Refresh();
+                TextLengthValidator.Validate(); // NOTE: Flags imported texts that won't fit their UI boxes.
             }
         }
 

@@ -10,7 +10,7 @@ namespace WanderersGuild
     public sealed class BuildModeView
     {
         private const string InvalidClass = "build-cursor--invalid";
-        private const float FallbackCardStep = 88f; // Card width 86 + margin 2, before the first layout.
+        private const float FallbackCardStep = 106f; // Card width 104 + margin 2, before the first layout.
 
         private readonly VisualElement _root;
         private readonly VisualElement _catalog;

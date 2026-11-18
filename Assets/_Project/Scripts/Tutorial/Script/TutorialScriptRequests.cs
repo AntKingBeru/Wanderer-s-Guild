@@ -33,7 +33,7 @@ namespace WanderersGuild
             steps.Add(Say("The rank it calls for, and the party size it suits.").Highlight(t.Panel(Requests, "detail-rank")));
             steps.Add(Say("The reward. You choose how it's split with the party.").Highlight(t.Panel(Requests, "detail-reward")));
             steps.Add(Say("Requests don't wait forever: answer before this runs out.").Highlight(t.Panel(Requests, "detail-time")));
-            steps.Add(Say("What needs doing.").Highlight(t.Panel(Requests, "detail-objective-scroll")));
+            steps.Add(Say("What needs doing.").Highlight(t.Panel(Requests, "detail-objective")));
             steps.Add(Click(t.Panel(Requests, "detail-accept"), "Accept it to write up a quest."));
 
             steps.Add(Say("Reward share: the party's cut. A bigger cut draws applicants; the rest goes to the guild.")

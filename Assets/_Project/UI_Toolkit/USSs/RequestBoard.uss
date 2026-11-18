@@ -24,7 +24,7 @@
 
 /* ---------- List ---------- */
 .board-list-frame {
-    width: 150px;
+    width: 149px;
     margin-right: 4px;
 }
 .board-list {
@@ -101,15 +101,36 @@
     color: rgb(224, 112, 96);
 }
 
+/* ---------- Header: title + board-full note ---------- */
+/* NOTE: The window centres its children; the header stretches to its width. The title keeps its 4px margin, so the row is
+   exactly as tall as the title was. */
+.board-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-self: stretch;
+    flex-shrink: 0;
+}
+/* NOTE: Shown only while the quest board has no free slot. */
+.detail-board {
+    display: none;
+}
+.detail-board .outlined-text__fill {
+    color: rgb(224, 112, 96);
+}
+
 /* ---------- Details ---------- */
+/* NOTE: 149px wide (302 window − 149 list − 4 gap) → 32 characters a line (TextLimits.RequestObjective). Height 104.5px:
+   title, 3 lines and a 6-line description (100px). */
 .board-details {
     flex-grow: 1;
     min-width: 0;
 }
-/* NOTE: Clips an over-long objective; the 1px padding keeps every line's outline inside the clip. */
+/* NOTE: Clips only as a safety net; 1px top/bottom keeps the outline inside the clip, the text's gutter covers the sides. */
 .detail-content {
     flex-grow: 1;
     min-height: 0;
+    flex-direction: column;
     overflow: hidden;
     padding: 1px 0;
 }
@@ -122,19 +143,19 @@
 .detail-line .outlined-text__fill {
     color: var(--color-text-disabled);
 }
+/* NOTE: Reward and time left share a row ("Reward: 1,350g · Expires in 12d" is 31 characters). */
+.detail-row {
+    flex-direction: row;
+}
 .detail-time--urgent .outlined-text__fill {
     color: rgb(224, 112, 96);
 }
-/* NOTE: Shown only while the quest board has no free slot. */
-.detail-board {
-    display: none;
-}
-.detail-board .outlined-text__fill {
-    color: rgb(224, 112, 96);
-}
-/* NOTE: The objective wraps within the pane's width and keeps its line breaks. */
+/* NOTE: The description box: wraps at 32 characters, keeps its line breaks, shows at most 6 lines (6 × 9.49 = 57px), never
+   scrolls. Longer text is cut and Validate Text Lengths reports it. */
 .detail-objective {
     margin-top: 3px;
+    max-height: 57px;
+    overflow: hidden;
     align-items: stretch;
 }
 .detail-objective .outlined-text__stack {
@@ -279,20 +300,6 @@
 .clip-stamp .outlined-text__fill {
     color: var(--clip-stamp);
     font-size: var(--text-size-title);
-}
-/* NOTE: Only the description scrolls — it takes whatever height the lines above leave; its content's 1px/2px padding keeps
-   the outline inside the clip. */
-.detail-content {
-    flex-direction: column;
-}
-.detail-objective-scroll {
-    flex-grow: 1;
-    flex-shrink: 1;
-    min-height: 0;
-    margin-top: 2px;
-}
-.detail-objective-scroll .unity-scroll-view__content-container {
-    padding: 1px 2px;
 }
 /* NOTE: 24px stamp text: double the body's optical offset. */
 .outlined-text.clip-stamp {

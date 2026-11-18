@@ -1,5 +1,5 @@
-// The request board's details pane: title, category/source, rank/party, reward, time left, objective, board-full note, Accept/Dismiss.
-using UnityEngine;
+// The request board's details pane: title, category/source, rank/party, reward + time left, the description (a fixed box of
+// at most 6 lines, no scrolling), Accept/Dismiss, and the board-full note in the panel's title row.
 using UnityEngine.UIElements;
 
 namespace WanderersGuild
@@ -10,6 +10,9 @@ namespace WanderersGuild
         private const string EmptyName = "detail-empty";
         private const string UrgentClass = "detail-time--urgent";
 
+        // NOTE: The time sits right after the reward on one row; the two texts' gutters make the gap before the "·".
+        private const string TimePrefix = "· Expires in ";
+
         private readonly VisualElement _content;
         private readonly OutlinedText _empty;
         private readonly OutlinedText _title;
@@ -19,8 +22,6 @@ namespace WanderersGuild
         private readonly OutlinedText _time;
         private readonly OutlinedText _boardFull;
         private readonly OutlinedText _objective;
-        private readonly ScrollView _objectiveScroll;
-        private int _shownId = -1;
 
         public Button Accept { get; }
         public Button Dismiss { get; }
@@ -36,14 +37,13 @@ namespace WanderersGuild
             _time = root.Q<OutlinedText>("detail-time");
             _boardFull = root.Q<OutlinedText>("detail-board");
             _objective = root.Q<OutlinedText>("detail-objective");
-            _objectiveScroll = root.Q<ScrollView>("detail-objective-scroll");
             Accept = root.Q<Button>("detail-accept");
             Dismiss = root.Q<Button>("detail-dismiss");
         }
 
         private bool IsComplete =>
             _content != null && _empty != null && _title != null && _categorySource != null && _rankParty != null && _reward != null
-            && _time != null && _boardFull != null && _objective != null && Accept != null && Dismiss != null && _objectiveScroll != null;
+            && _time != null && _boardFull != null && _objective != null && Accept != null && Dismiss != null;
 
         public static RequestDetailsView Bind(VisualElement root)
         {
@@ -61,19 +61,12 @@ namespace WanderersGuild
             var minutesLeft = request.MinutesLeft(nowMinutes);
             var hasBoard = openSlots > 0;
             var boardFull = hasBoard && postedQuests >= openSlots;
-            
-            // NOTE: A different request starts its description at the top; refreshing the same one keeps the scroll.
-            if (request.InstanceId != _shownId)
-            {
-                _shownId = request.InstanceId;
-                _objectiveScroll.scrollOffset = Vector2.zero;
-            }
 
             _title.Text = data.DisplayName;
             _categorySource.Text = RequestFormatter.CategoryAndSource(data);
             _rankParty.Text = RequestFormatter.RankAndParty(data);
             _reward.Text = $"Reward: {RequestFormatter.Reward(data.Reward)}";
-            _time.Text = $"Expires in {RequestFormatter.TimeLeft(minutesLeft)}";
+            _time.Text = TimePrefix + RequestFormatter.TimeLeft(minutesLeft);
             _time.EnableInClassList(UrgentClass, RequestFormatter.IsLastDay(minutesLeft));
             _objective.Text = data.Objective;
 
@@ -92,7 +85,6 @@ namespace WanderersGuild
             _content.style.display = DisplayStyle.None;
             _empty.style.display = DisplayStyle.Flex;
             _boardFull.style.display = DisplayStyle.None;
-            _shownId = -1;
             Accept.SetEnabled(false);
             Dismiss.SetEnabled(false);
         }

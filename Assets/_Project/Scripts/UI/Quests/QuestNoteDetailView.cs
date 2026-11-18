@@ -1,4 +1,5 @@
-// The lifted note: a large readable copy of a pinned quest over the dimmed board, with Back and Cancel/Recall; scales up and back.
+// The lifted note: a large copy of a pinned quest over the dimmed board — request column, party column (chance + members),
+// Back and Cancel/Recall; scales up and back.
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
@@ -30,10 +31,8 @@ namespace WanderersGuild
         private readonly VisualElement _members;
         private readonly List<OutlinedText> _memberLines = new();
         private readonly GameObject _linkTarget;
-        private readonly ScrollView _objectiveScroll;
         private Sequence _sequence;
         private float _shown;
-        private int _shownQuestId = -1;
 
         public Button Back { get; }
 
@@ -63,13 +62,12 @@ namespace WanderersGuild
             Back = root.Q<Button>("note-back");
             Cancel = root.Q<Button>("note-cancel");
             _cancelLabel = Cancel?.Q<OutlinedText>();
-            _objectiveScroll = root.Q<ScrollView>("note-objective-scroll");
         }
 
         private bool IsComplete =>
             _layer != null && _note != null && _badge != null && _badgeLabel != null && _title != null && _objective != null &&
             _meta != null && _terms != null && _split != null && _time != null && _chance != null && _stamp != null &&
-            _members != null && Back != null && Cancel != null && _cancelLabel != null && _objectiveScroll != null;
+            _members != null && Back != null && Cancel != null && _cancelLabel != null;
 
         public static QuestNoteDetailView Bind(VisualElement root, GameObject linkTarget)
         {
@@ -91,12 +89,6 @@ namespace WanderersGuild
         {
             var request = quest.Request;
             var stamp = QuestFormatter.Stamp(quest);
-            
-            if (quest.Id != _shownQuestId)
-            {
-                _shownQuestId = quest.Id;
-                _objectiveScroll.scrollOffset = Vector2.zero;
-            }
 
             _badge.style.backgroundColor = rankColor;
             _badgeLabel.Text = RankFormatter.BadgeLabel(request.RecommendedRank);
@@ -124,7 +116,6 @@ namespace WanderersGuild
             IsBusy = false;
             Apply(0f);
             _layer.style.display = DisplayStyle.None;
-            _shownQuestId = -1;
         }
 
         public void Open(QuestPanelSettings settings, Action onOpened)
@@ -170,7 +161,8 @@ namespace WanderersGuild
             _note.style.scale = new Scale(new Vector3(scale, scale, 1f));
         }
 
-        // NOTE: Member lines are pooled — created on first need, reused and hidden afterward.
+        // NOTE: Member lines are pooled — created on first need, reused and hidden afterward. "Name · Lv 12" fits the party
+        // column (TextLimits.NoteMember: 25 characters, a 16-character name + " · Lv 99"); a longer one is clipped.
         private void ShowMembers(IReadOnlyList<Adventurer> members)
         {
             var lines = members.Count == 0 ? 1 : members.Count;
@@ -190,9 +182,7 @@ namespace WanderersGuild
                 if (!visible)
                     continue;
 
-                _memberLines[i].Text = members.Count == 0
-                    ? NoMembersText
-                    : $"{members[i].Name} · {members[i].Class.DisplayName} · Lv {members[i].Level}";
+                _memberLines[i].Text = members.Count == 0 ? NoMembersText : $"{members[i].Name} · Lv {members[i].Level}";
             }
         }
 

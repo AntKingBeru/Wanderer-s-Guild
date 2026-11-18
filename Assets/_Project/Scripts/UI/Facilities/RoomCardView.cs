@@ -1,4 +1,5 @@
 // The room info card in build mode (above the build bar): title, state, effects, next level, reasons, Upgrade / Demolish / close.
+// The title is one clipped line; the other lines wrap and the card grows to fit.
 using System;
 using UnityEngine.UIElements;
 
@@ -16,7 +17,6 @@ namespace WanderersGuild
         private readonly OutlinedText _upgradeLabel;
         private readonly Button _demolish;
         private readonly OutlinedText _demolishLabel;
-        private readonly MarqueeLine[] _marquees;
 
         private RoomCardView(VisualElement root, OutlinedText title, OutlinedText state, OutlinedText effects, OutlinedText next,
                              OutlinedText reasons, Button upgrade, OutlinedText upgradeLabel, Button demolish,
@@ -40,8 +40,6 @@ namespace WanderersGuild
             upgrade.clicked += onUpgrade;
             demolish.clicked += onDemolish;
             close.clicked += onClose;
-            _marquees = new[] { new MarqueeLine(title), new MarqueeLine(state), new MarqueeLine(effects),
-                new MarqueeLine(next), new MarqueeLine(reasons) };
             Hide();
         }
 
@@ -60,7 +58,7 @@ namespace WanderersGuild
             var demolishLabel = demolish?.Q<OutlinedText>();
 
             var complete = root != null && title != null && state != null && effects != null && next != null && reasons != null &&
-                            upgrade != null && demolish != null && close != null && upgradeLabel != null && demolishLabel != null;
+                           upgrade != null && demolish != null && close != null && upgradeLabel != null && demolishLabel != null;
             return complete
                 ? new RoomCardView(root, title, state, effects, next, reasons, upgrade, upgradeLabel, demolish, demolishLabel,
                                    close, onUpgrade, onDemolish, onClose)
@@ -89,20 +87,11 @@ namespace WanderersGuild
             _demolish.SetEnabled(demolish.Allowed);
 
             _root.style.display = DisplayStyle.Flex;
-            
-            foreach (var line in _marquees)
-                line.Refresh();
         }
 
-        public void Hide()
-        {
-            _root.style.display = DisplayStyle.None;
-            if (_marquees == null)
-                return;
-            foreach (var line in _marquees)
-                line.Stop();
-        }
+        public void Hide() => _root.style.display = DisplayStyle.None;
 
+        // NOTE: An empty line is hidden, so it takes no height in the card.
         private static void SetLine(OutlinedText line, string text)
         {
             line.Text = text;

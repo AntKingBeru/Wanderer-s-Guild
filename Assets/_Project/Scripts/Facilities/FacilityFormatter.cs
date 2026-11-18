@@ -6,11 +6,18 @@ namespace WanderersGuild
     public static class FacilityFormatter
     {
         // "Bedroom · Lv 1/3" ("Lv —" while a new room is still being built).
-        public static string Title(PlacedFacility room)
+        public static string Title(PlacedFacility room) => TitleFor(room.Data, room.Level);
+        
+        // The card title for a level of this facility (0 = "—"); the text validator checks the widest one.
+        public static string TitleFor(FacilityData data, int level)
         {
-            var level = room.Level > 0 ? room.Level.ToString() : "—";
-            return $"{room.Data.DisplayName} · Lv {level}/{room.Data.MaxLevel}";
+            var shown = level > 0 ? level.ToString() : "—";
+            return $"{data.DisplayName} · Lv {shown}/{data.MaxLevel}";
         }
+        
+        // Catalog card info: "150g · 8x12 · 1d" (level-1 cost, footprint, build days).
+        public static string CardInfo(FacilityData data) =>
+            $"{data.CostFor(1):N0}g · {data.Size.x}x{data.Size.y} · {data.BuildDaysFor(1)}d";
 
         // "Complete", "Under construction: 2d left" or "Upgrading to Lv 2: 1d left".
         public static string State(PlacedFacility room, long nowMinutes)

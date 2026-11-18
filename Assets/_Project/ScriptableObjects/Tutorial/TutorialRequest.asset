@@ -16,9 +16,7 @@ MonoBehaviour:
   displayName: Pesky critters afoot.
   objective: 'Hey there!
 
-    We have recently found a few rats in our basement, and we are TERRIFIED of rats.
-
-    Please send your best to kill the rats so we can make bread again!'
+    We have recently found a few rats in our basement, and we are TERRIFIED of rats!'
   category: 0
   recommendedRank: 0
   source: 4

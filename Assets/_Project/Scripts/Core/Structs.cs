@@ -1526,4 +1526,41 @@ namespace WanderersGuild
         }
     }
     #endregion
+    
+    #region Text Limits
+    // A text box measured in characters of the monospace pixel font: the text element's width and how many lines it shows.
+    public readonly struct TextBox
+    {
+        public TextBox(string label, float width, int maxLines)
+        {
+            Label = label;
+            Width = width;
+            MaxLines = Mathf.Max(1, maxLines);
+        }
+
+        public string Label { get; }
+
+        // NOTE: The OutlinedText element's width in UI px, its gutter included (what the USS sizes).
+        public float Width { get; }
+        public int MaxLines { get; }
+        public int CharsPerLine => TextFit.CharsPerLine(Width);
+
+        // NOTE: One-line boxes never wrap (they clip), so they compare the longest line in characters; the others count
+        // wrapped lines. used is in those same units.
+        public bool Fits(string text, out int used)
+        {
+            if (MaxLines == 1)
+            {
+                used = TextFit.LongestLine(text);
+                return used <= CharsPerLine;
+            }
+
+            used = TextFit.CountLines(text, CharsPerLine);
+            return used <= MaxLines;
+        }
+
+        public string Usage(int used) =>
+            MaxLines == 1 ? $"{used}/{CharsPerLine} characters" : $"{used}/{MaxLines} lines of {CharsPerLine} characters";
+    }
+    #endregion
 }

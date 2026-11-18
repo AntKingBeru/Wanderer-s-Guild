@@ -209,9 +209,12 @@
     background-color: rgba(0, 0, 0, 0.4);
     display: none;
 }
+/* NOTE: 288×168 (inner 274px): request column 149px (32 characters, the same width as the request board's details) + 6px
+   gap + party column 119px (25 characters). Heights fit by design: a 6-line description, the terms and a 2-line split on
+   the left; the chance and a party of 7 on the right. */
 .note-lifted {
-    width: 200px;
-    height: 160px;
+    width: 288px;
+    height: 168px;
     padding: 15px 6px 4px 6px;
     border-width: 1px;
     border-color: var(--qb-paper-edge);
@@ -220,7 +223,7 @@
 .note-lifted__pin {
     position: absolute;
     top: -3px;
-    left: 96px;
+    left: 140px;
     width: 8px;
     height: 8px;
     border-width: 1px;
@@ -232,12 +235,27 @@
     left: 2px;
     display: flex;
 }
-/* NOTE: Clips an over-long objective/member list; the 1px padding keeps every glyph inside the clip. */
+/* NOTE: Clips only as a safety net (everything fits by design); 1px top/bottom keeps the outline inside the clip, the text's
+   gutter covers the sides. */
 .note-lifted__body {
     flex-grow: 1;
     min-height: 0;
+    flex-direction: row;
     overflow: hidden;
-    padding: 1px 2px;
+    padding: 1px 0;
+}
+.note-col {
+    flex-direction: column;
+    flex-shrink: 0;
+}
+.note-col--request {
+    width: 149px;
+}
+.note-col--party {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    margin-left: 6px;
 }
 .note-title {
     margin-bottom: 2px;
@@ -251,7 +269,11 @@
 .note-wrap .outlined-text__part {
     white-space: normal;
 }
+/* NOTE: The description box: wraps at 32 characters and shows at most 6 lines (6 × 9.49 = 57px); longer text is cut and
+   Validate Text Lengths reports it. */
 .note-objective {
+    max-height: 57px;
+    overflow: hidden;
     margin-bottom: 3px;
 }
 .note-faint .outlined-text__fill {
@@ -261,12 +283,20 @@
     color: var(--qb-stamp);
 }
 .note-chance {
-    margin-top: 2px;
+    margin-bottom: 2px;
 }
+/* NOTE: "Name · Lv 12" on one line (TextLimits.NoteMember); an over-long name is cut, never wrapped. */
+.note-member {
+    overflow: hidden;
+}
+.note-member .outlined-text__part {
+    white-space: nowrap;
+}
+/* NOTE: Bottom-right of the party column — below a full party of 7, so it never covers a name. */
 .note-lifted__stamp {
     position: absolute;
-    right: 12px;
-    top: 40px;
+    right: 16px;
+    bottom: 10px;
     padding: 2px 6px;
     border-width: 2px;
     border-color: var(--qb-stamp);
@@ -276,6 +306,11 @@
 .note-lifted__stamp .outlined-text__fill {
     color: var(--qb-stamp);
     font-size: var(--text-size-title);
+}
+/* NOTE: 24px stamp text: double the body's optical offset. */
+.outlined-text.note-lifted__stamp {
+    --text-optical-x: 0.75;
+    --text-optical-y: -2;
 }
 .note-lifted--stamped .note-lifted__stamp {
     display: flex;
@@ -290,19 +325,4 @@
     flex-direction: row;
     justify-content: flex-end;
     flex-shrink: 0;
-}
-/* NOTE: The lifted note's description scrolls inside the note; capped so the terms, time and members always stay visible. */
-.note-objective-scroll {
-    flex-grow: 1;
-    flex-shrink: 1;
-    min-height: 0;
-    max-height: 40px;
-}
-.note-objective-scroll .unity-scroll-view__content-container {
-    padding: 1px 2px;
-}
-/* NOTE: 24px stamp text: double the body's optical offset. */
-.outlined-text.note-lifted__stamp {
-    --text-optical-x: 0.75;
-    --text-optical-y: -2;
 }

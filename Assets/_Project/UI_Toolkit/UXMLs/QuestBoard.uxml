@@ -12,7 +12,8 @@
             </ui:VisualElement>
         </ui:VisualElement>
 
-        <!-- Lifted note: a large copy over the dimmed board. The layer catches clicks. -->
+                <!-- Lifted note: a large copy over the dimmed board. The layer catches clicks. Two columns — the request (left) and
+             the party (right); every line has a known character limit (TextLimits), so nothing scrolls. -->
         <ui:VisualElement name="note-layer" class="note-layer">
             <ui:VisualElement name="note-lifted" class="note-lifted">
                 <ui:VisualElement class="note-lifted__pin" picking-mode="Ignore" />
@@ -21,18 +22,19 @@
                 </ui:VisualElement>
 
                 <ui:VisualElement class="note-lifted__body" picking-mode="Ignore">
-                    <wg:OutlinedText name="note-title" class="note-ink note-title" text="Title" />
-                    <ui:ScrollView name="note-objective-scroll" class="note-objective-scroll pixel-scroll" mode="Vertical"
-                                   horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto" focusable="false">
-                        <wg:OutlinedText name="note-objective" class="note-ink note-objective" text="Objective" />
-                    </ui:ScrollView>
-                    <wg:OutlinedText name="note-meta" class="note-ink note-faint" text="Combat · Merchant · Rank F" />
-                    <wg:OutlinedText name="note-terms" class="note-ink note-faint" text="Min. rank F · Party of 2" />
-                    <wg:OutlinedText name="note-split" class="note-ink note-faint note-wrap" text="Party 0g (0g each) · Guild 0g" />
+                    <ui:VisualElement class="note-col note-col--request" picking-mode="Ignore">
+                        <wg:OutlinedText name="note-title" class="note-ink note-title" text="Title" />
+                        <wg:OutlinedText name="note-objective" class="note-ink note-wrap note-objective" text="Objective" />
+                        <wg:OutlinedText name="note-meta" class="note-ink note-faint" text="Combat · Merchant · Rank F" />
+                        <wg:OutlinedText name="note-terms" class="note-ink note-faint" text="Min. rank F · Party of 2" />
+                        <wg:OutlinedText name="note-split" class="note-ink note-faint note-wrap" text="Party 0g (0g each) · Guild 0g" />
+                        <wg:OutlinedText name="note-time" class="note-ink note-faint" text="Expires in 0d" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="note-col note-col--party" picking-mode="Ignore">
+                        <wg:OutlinedText name="note-chance" class="note-ink note-chance" text="Success: —" />
+                        <ui:VisualElement name="note-members" class="note-members" picking-mode="Ignore" />
+                    </ui:VisualElement>
                     <wg:OutlinedText name="note-stamp" class="note-lifted__stamp" text="READY" />
-                    <wg:OutlinedText name="note-time" class="note-ink note-faint" text="Expires in 0d" />
-                    <wg:OutlinedText name="note-chance" class="note-ink note-chance" text="Success: —" />
-                    <ui:VisualElement name="note-members" class="note-members" picking-mode="Ignore" />
                 </ui:VisualElement>
                 <ui:VisualElement class="note-lifted__buttons" picking-mode="Ignore">
                     <ui:Button name="note-back" class="pixel-button panel-button"><wg:OutlinedText text="Back" /></ui:Button>
