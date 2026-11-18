@@ -153,3 +153,29 @@
     border-right-width: 0;
     background-color: var(--bubble-border);
 }
+/* ---------- Attention marks (created in code under world-markers) ---------- */
+.world-markers {
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+}
+/* NOTE: left/top = the mark's bottom-centre (whole pixels, set in code); the translate puts it centred above that point. */
+.attention-marker {
+    position: absolute;
+    translate: -50% -100%;
+    display: none;
+}
+.attention-marker__icon {
+    -unity-background-scale-mode: stretch-to-fill;
+}
+/* NOTE: The size goes on every part (fill + the 8 outline copies), so the outline stays around the 24px glyph. */
+.attention-marker__text .outlined-text__part {
+    font-size: var(--text-size-title);
+}
+.attention-marker__text .outlined-text__fill {
+    color: var(--color-accent);
+}
+/* NOTE: 24px text: double the body's optical offset. */
+.outlined-text.attention-marker__text {
+    --text-optical-x: 0.75;
+    --text-optical-y: -2;
+}

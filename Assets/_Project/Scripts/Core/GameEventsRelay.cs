@@ -153,6 +153,9 @@ namespace WanderersGuild
 
         // A request left the board. Args: the request, and why (accepted, dismissed, expired).
         public static readonly UnityEvent<ActiveRequest, RequestEndReason> OnRequestRemoved = new();
+        
+        // A request was viewed for the first time (its NEW tag cleared). Arg: the request.
+        public static readonly UnityEvent<ActiveRequest> OnRequestSeen = new();
 
         // A request was turned into a posted quest. Arg: the quest.
         public static readonly UnityEvent<Quest> OnQuestPosted = new();

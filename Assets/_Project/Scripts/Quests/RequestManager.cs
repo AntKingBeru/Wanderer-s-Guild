@@ -105,6 +105,7 @@ namespace WanderersGuild
         }
 
         // Marks a request as viewed (clears its NEW tag). Saved with the request.
+        // NOTE: OnRequestSeen only on the first view — the desk's attention mark follows it.
         public void MarkSeen(int instanceId)
         {
             foreach (var request in _board.Requests)
@@ -112,7 +113,8 @@ namespace WanderersGuild
                 if (request.InstanceId != instanceId)
                     continue;
 
-                request.MarkSeen();
+                if (request.MarkSeen())
+                    GameEventsRelay.OnRequestSeen.Invoke(request);
                 return;
             }
         }

@@ -4,7 +4,8 @@
     <ui:VisualElement name="world-view" class="world-view" picking-mode="Ignore" />
     <!-- Speech bubbles (created in code), under the label and cards. Never picks. -->
     <ui:VisualElement name="world-bubbles" class="world-bubbles" picking-mode="Ignore" />
-
+    <!-- Bobbing "!" marks above guild objects that need the player (created in code), under the label and cards. Never picks. -->
+    <ui:VisualElement name="world-markers" class="world-markers" picking-mode="Ignore" />
     <!-- Goals under the HUD bar: the opening lodging goal, then the room guide's goal (each hidden when not needed). -->
     <ui:VisualElement name="world-goals" class="world-goals" picking-mode="Ignore">
         <wg:OutlinedText name="world-goal" class="world-goal" text="Build lodgings: 0/3" />

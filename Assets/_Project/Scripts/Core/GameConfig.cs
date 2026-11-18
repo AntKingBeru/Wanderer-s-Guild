@@ -68,6 +68,7 @@ namespace WanderersGuild
         [SerializeField] private DoorSettings doors = new();
         [SerializeField] private InteriorLightSettings interiorLightSettings = new();
         [SerializeField] private SpeechSettings speech = new();
+        [SerializeField] private AttentionMarkerSettings attentionMarkers = new();
         [SerializeField] private ProcessionSettings processions = new();
         [SerializeField] private NavigationSettings navigation = new();
         [SerializeField] private AvatarBobSettings avatarBob = new();
@@ -131,6 +132,7 @@ namespace WanderersGuild
         public DoorSettings Doors => doors;
         public InteriorLightSettings InteriorLights => interiorLightSettings;
         public SpeechSettings Speech => speech;
+        public AttentionMarkerSettings AttentionMarkers => attentionMarkers;
         public ProcessionSettings Processions => processions;
         public NavigationSettings Navigation => navigation;
         public AvatarBobSettings AvatarBob => avatarBob;
@@ -2199,6 +2201,30 @@ namespace WanderersGuild
         // Seconds a line stays up: base + per character, capped.
         public float ReadingSeconds(int characters) =>
             Mathf.Clamp(baseSeconds + secondsPerCharacter * characters, baseSeconds, Mathf.Max(baseSeconds, maxSeconds));
+    }
+    #endregion
+    
+    #region Attention Markers
+    [Serializable]
+    public class AttentionMarkerSettings
+    {
+        [Tooltip("The bobbing mark above the reception desk / office while something waits there, drawn 1 sprite pixel = " +
+                 "1 UI pixel. Empty = an outlined accent \"!\".")]
+        [SerializeField] private Sprite icon;
+
+        [Tooltip("Gap between the object's top and the mark's bottom at its lowest point (UI pixels).")]
+        [SerializeField, Min(0f)] private float gapPixels = 3f;
+
+        [Tooltip("How high the mark bobs (whole UI pixels; 0 = still).")]
+        [SerializeField, Range(0, 6)] private int bobPixels = 2;
+
+        [Tooltip("Seconds for one bob up and down (real time).")]
+        [SerializeField, Min(0.1f)] private float bobPeriod = 1.2f;
+
+        public Sprite Icon => icon;
+        public float GapPixels => gapPixels;
+        public int BobPixels => bobPixels;
+        public float BobPeriod => Mathf.Max(0.1f, bobPeriod);
     }
     #endregion
     

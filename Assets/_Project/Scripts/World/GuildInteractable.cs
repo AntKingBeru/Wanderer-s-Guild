@@ -24,6 +24,8 @@ namespace WanderersGuild
         private bool _isOutlined;
 
         public string DisplayName => displayName;
+        // True while the pointer is over it (its name label is showing) — attention marks step aside then.
+        public bool IsHovered => _isHovered;
         
         // The hover label's text: the name plus a live count where one helps (InteractableLabels).
         // NOTE: Explicit — the hover label reads it through IWorldInteractable, while code holding a GuildInteractable (the
