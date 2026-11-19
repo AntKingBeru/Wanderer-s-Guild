@@ -1,3 +1,5 @@
+// Screen sizes for the Display options: what the monitor offers, its native size, and labels. Without window control (the web)
+// there's no monitor info — the canvas size stands in.
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,12 +10,16 @@ namespace WanderersGuild
         // Unique sizes (refresh-rate duplicates removed), sorted largest first. Never empty.
         public static List<Vector2Int> GetAvailable()
         {
-            HashSet<Vector2Int> unique = new();
-            foreach (var resolution in Screen.resolutions)
-                unique.Add(new Vector2Int(resolution.width, resolution.height));
+            List<Vector2Int> sorted = new();
+            if (PlatformInfo.HasWindowControl)
+            {
+                HashSet<Vector2Int> unique = new();
+                foreach (var resolution in Screen.resolutions)
+                    unique.Add(new Vector2Int(resolution.width, resolution.height));
 
-            List<Vector2Int> sorted = new(unique);
-            sorted.Sort((a, b) => a.x != b.x ? b.x.CompareTo(a.x) : b.y.CompareTo(a.y));
+                sorted.AddRange(unique);
+                sorted.Sort((a, b) => a.x != b.x ? b.x.CompareTo(a.x) : b.y.CompareTo(a.y));
+            }
 
             if (sorted.Count == 0)
                 sorted.Add(Native());
@@ -21,9 +27,13 @@ namespace WanderersGuild
             return sorted;
         }
 
-        // Native size of the monitor the window is currently on.
+        // Native size of the monitor the window is on; the canvas size where there's no window control.
+        // NOTE: Screen.mainWindowDisplayInfo throws outside desktop players — never read it without HasWindowControl.
         public static Vector2Int Native()
         {
+            if (!PlatformInfo.HasWindowControl)
+                return new Vector2Int(Screen.width, Screen.height);
+
             var display = Screen.mainWindowDisplayInfo;
             return display is { width: > 0, height: > 0 }
                 ? new Vector2Int(display.width, display.height)

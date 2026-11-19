@@ -30,9 +30,10 @@ namespace WanderersGuild
         // The staged (not yet applied) screen mode shown by the controls.
         public ScreenModeSnapshot Pending => _pending;
 
-        // True when the staged mode differs from the applied one ("native" is resolved before comparing).
+        // True when the staged mode differs from the applied one ("native" is resolved before comparing). Never on the web —
+        // nothing can be staged there.
         public bool HasPendingChanges =>
-            SettingsManager.HasInstance &&
+            PlatformInfo.HasWindowControl && SettingsManager.HasInstance &&
             !ResolutionCatalog.ResolveNative(_pending).Equals(ResolutionCatalog.ResolveNative(SettingsManager.Instance.ScreenMode));
 
         private DisplayModeView(PixelDropdown resolution, OptionCycler windowMode, OptionCycler monitor)
@@ -75,14 +76,15 @@ namespace WanderersGuild
         }
 
         // Rebuilds the option lists (e.g. after the screen size changed) while keeping the staged mode.
+        // NOTE: Not without window control — the rows are hidden (ApplyPlatform) and the monitor queries throw there.
         public void RefreshLists()
         {
-            if (!SettingsManager.HasInstance)
+            if (!SettingsManager.HasInstance || !PlatformInfo.HasWindowControl)
                 return;
 
             RefreshResolutions();
             _windowMode.SetOptions(WindowModeLabels, (int)_pending.WindowMode,
-                                   index => Stage(_pending.WithWindowMode((WindowModeSetting)index)));
+                index => Stage(_pending.WithWindowMode((WindowModeSetting)index)));
             RefreshMonitors();
         }
 

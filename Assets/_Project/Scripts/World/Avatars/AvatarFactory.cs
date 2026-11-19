@@ -18,9 +18,7 @@ namespace WanderersGuild
             GameObject root = new($"Avatar · {adventurer.Name}");
             root.transform.SetParent(parent, false);
 
-            var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            Object.Destroy(quad.GetComponent<Collider>());
-            quad.name = "Sprite";
+            var quad = PrimitiveObjects.CreateQuad("Sprite");
             quad.transform.SetParent(root.transform, false);
 
             var renderer = quad.GetComponent<MeshRenderer>();

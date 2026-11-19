@@ -56,10 +56,12 @@ namespace WanderersGuild
             Screen.SetResolution(size.x, size.y, unityMode);
         }
 
+        // NOTE: Desktop only (GetDisplayLayout throws elsewhere) — no layout = one monitor and no window moves.
         private void RefreshLayout()
         {
             _layout.Clear();
-            Screen.GetDisplayLayout(_layout);
+            if (PlatformInfo.HasWindowControl)
+                Screen.GetDisplayLayout(_layout);
         }
 
         private static Vector2Int ResolveSize(ScreenModeSnapshot mode, DisplayInfo target, bool hasLayout)

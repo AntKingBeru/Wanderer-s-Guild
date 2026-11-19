@@ -36,10 +36,8 @@ namespace WanderersGuild
             _model = prefab ? Object.Instantiate(prefab, _root.transform) : CreateBox(data.Size);
             Strip(_model);
 
-            _footprint = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            Object.DestroyImmediate(_footprint.GetComponent<Collider>());
+            _footprint = PrimitiveObjects.CreateQuad("Footprint");
             _footprint.transform.SetParent(_root.transform, false);
-            _footprint.name = "Footprint";
 
             _renderers = _root.GetComponentsInChildren<Renderer>(true);
             foreach (var target in _renderers)
